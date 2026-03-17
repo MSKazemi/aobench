@@ -7,7 +7,7 @@ from exabench.cli.validate_cmd import validate_app
 
 app = typer.Typer(
     name="exabench",
-    help="ExaBench — benchmark framework for AI agents in HPC environments.",
+    help="ExaBench — benchmark framework for evaluating AI agents in HPC environments.",
     no_args_is_help=True,
 )
 

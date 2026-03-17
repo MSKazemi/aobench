@@ -23,7 +23,7 @@ ExaBench does **not** implement HPC agents; it benchmarks external agents (e.g.,
 
 ### Positioning
 
-> **ExaBench is a benchmark framework for evaluating HPC agent systems using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
+> **ExaBench is a benchmark framework for evaluating AI agents in HPC environments using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
 
 ### Long-term goal
 

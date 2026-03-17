@@ -4,21 +4,22 @@ Owner: Mohsen
 
 ## Purpose
 
-This page defines the structural architecture of **ExaBench** as a benchmark framework for evaluating AI agent systems in **High-Performance Computing (HPC)** environments.
+This page defines how the **ExaBench benchmark** is structured: its design principles, layers, entities, execution workflow, and relationships between tasks, environments, traces, and results.
+
+ExaBench is a framework for evaluating AI agents that operate in HPC environments (e.g., ODA, ExaSage). This page specifies the **benchmark design** — what is being evaluated, in what world, and how — not the software implementation (see [04 — Implementation](04-implementation.md)).
 
 It specifies:
 
 - the benchmark design principles
-- the benchmark layers
-- the core benchmark entities
-- the benchmark unit
+- the benchmark layers (task, interaction, execution)
+- the core entities (Task, Environment, Trace, Result)
+- the unit of evaluation
 - the execution architecture
-- the relationship between tasks, environments, traces, and results
 - the minimum viable v0.1 scope
 
 This page answers:
 
-> **What is ExaBench, structurally?**
+> **How is the ExaBench benchmark structured?**
 > 
 
 Detailed evaluation logic, scoring dimensions, trace schema, and pass/fail rules are defined in [06 — Evaluation](06-evaluation.md).
@@ -459,109 +460,48 @@ This scope is designed to validate the framework architecture before broader exp
 
 ## 11. Repository and Implementation Mapping
 
-A corresponding Python repository may follow a structure such as:
+The ExaBench repository structure (aligned with the [README](../README.md)):
 
 ```
-exabench/
-  docs/
-  data/
-    tasks/
-    environments/
-    gold/
-  exabench/
-    schemas/
-    tasks/
-    environments/
-    tools/
-    runners/
-    scorers/
-    reports/
-    baselines/
-    utils/
-  scripts/
-  notebooks/
-  tests/
+ExaBench/
+├── src/exabench/           # Python package (pip install exabench)
+│   ├── schemas/            # Pydantic data models
+│   ├── loaders/            # Task and environment loaders
+│   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC)
+│   ├── adapters/            # Agent backend adapters
+│   ├── runners/            # Execution runner and trace writer
+│   ├── scorers/            # Scoring engine (outcome, governance, efficiency)
+│   ├── reports/            # Report generation
+│   ├── utils/              # Shared utilities
+│   └── cli/                # exabench run / validate commands
+│
+├── benchmark/              # Benchmark dataset (static source data)
+│   ├── tasks/specs/        # Task specification files (JSON)
+│   ├── environments/       # HPC state snapshot bundles
+│   ├── configs/            # Scoring profiles, tool registry
+│   └── qa/                 # ExaBench-QA dataset (query corpus)
+│
+├── data/runs/              # Runtime artifacts (traces, results — gitignored)
+├── tests/                  # Unit and integration tests
+└── docs/                   # Documentation
+    └── framework/          # Framework design documents (01–07)
 ```
 
-Representative modules may include:
-
-- `exabench/tasks/loader.py`
-- `exabench/environments/snapshot.py`
-- `exabench/runners/base.py`
-- `exabench/runners/openai_runner.py`
-- `exabench/runners/langgraph_runner.py`
-- `exabench/reports/aggregate.py`
-
-Detailed implementation interfaces, CLI commands, and build milestones belong in **07 — Tool Architecture & Build Plan**.
-
-A corresponding Python repository may follow a structure such as:
-
-```
-exabench/
-  docs/
-  data/
-    tasks/
-    environments/
-    gold/
-  exabench/
-    schemas/
-    tasks/
-    environments/
-    tools/
-    runners/
-    scorers/
-    reports/
-    baselines/
-    utils/
-  scripts/
-  notebooks/
-  tests/
-```
-
-Representative modules may include:
-
-- `exabench/tasks/loader.py`
-- `exabench/environments/snapshot.py`
-- `exabench/runners/base.py`
-- `exabench/runners/openai_runner.py`
-- `exabench/runners/langgraph_runner.py`
-- `exabench/reports/aggregate.py`
-
-Detailed implementation interfaces, CLI commands, and build milestones belong in **07 — Tool Architecture & Build Plan**.
+Detailed implementation interfaces, CLI commands, and build milestones are in [04 — Implementation](04-implementation.md).
 
 ---
 
 ## 12. Page Responsibilities in the ExaBench Design
 
-To keep the framework consistent, the page responsibilities should remain separated:
+To keep the framework consistent, page responsibilities are separated as follows:
 
-- **03 — Architecture & Benchmark Specification**
-    - defines the benchmark structure and benchmark entities
-- **05 — Task Database**
-    - defines the task records and operational dataset fields
-- **06 — Environment Snapshots**
-    - defines the environment registry and snapshot metadata
-- **07 — Tool Architecture & Build Plan**
-    - defines software structure and implementation plan
-- **06 — Evaluation Protocol, Metrics & Trace Schema**
-    - defines scoring, trace schema, result schema, and evaluation rules
-
-This separation prevents design drift and duplicate benchmark logic.
-
-To keep the framework consistent, the page responsibilities should remain separated:
-
-- **03 — Architecture & Benchmark Specification**
-    - defines the benchmark structure and benchmark entities
-- **05 — Task Database**
-    - defines the task records and operational dataset fields
-- **06 — Environment Snapshots**
-    - defines the environment registry and snapshot metadata
-- **07 — Tool Architecture & Build Plan**
-    - defines software structure and implementation plan
-- **06 — Evaluation Protocol, Metrics & Trace Schema**
-    - defines scoring, trace schema, result schema, and evaluation rules
-
-This separation prevents design drift and duplicate benchmark logic.
+| Page | Responsibility |
+|------|----------------|
+| **03 — Architecture** (this page) | Benchmark structure, entities, workflow |
+| **04 — Implementation** | Software architecture, CLI, adapters, tools |
+| **05 — Environments** | Environment snapshot format and registry |
+| **06 — Evaluation** | Scoring, trace schema, result schema |
+| **07 — Taxonomy** | Roles, categories, task schema, access control |
 
 ---
 

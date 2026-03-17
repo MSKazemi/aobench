@@ -53,6 +53,6 @@ No existing benchmark, to our knowledge, simultaneously provides:
 
 ## 5. Positioning
 
-> **ExaBench is a benchmark framework for evaluating HPC agent systems using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
+> **ExaBench is a benchmark framework for evaluating AI agents in HPC environments using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
 
-For the full survey, see `docs/framework/01_motivation_vision.md` (archived/reference).
+For the full survey, see `docs/archive/framework_pre_integration/01_motivation_vision.md`.

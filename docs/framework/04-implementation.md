@@ -6,7 +6,7 @@ Owner: Mohsen
 
 This page defines the **software architecture and implementation plan** for **ExaBench v0.1**.
 
-ExaBench is not just a question dataset. It is a **benchmark runtime system** for evaluating HPC agent systems under:
+ExaBench is not just a question dataset. It is a **benchmark runtime system** for evaluating AI agents in HPC environments under:
 
 - role-aware tasks
 - deterministic environment snapshots

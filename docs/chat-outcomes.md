@@ -29,7 +29,7 @@ For each session, add:
 **Summary:** Clarified what ExaBench does, updated the README with a clearer intro, requirements, implementation status, ExaBench-QA details, and documentation links.
 
 **Key points:**
-- ExaBench benchmarks AI agents for HPC environments using deterministic snapshots and mock tools
+- ExaBench benchmarks AI agents in HPC environments using deterministic snapshots and mock tools
 - README now includes: Requirements (Python 3.10+), Implementation Status (Phases 1–3), expanded ExaBench-QA description, Documentation table
 - See [README.md](../README.md)
 
