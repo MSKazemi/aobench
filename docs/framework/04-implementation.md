@@ -35,6 +35,20 @@ It should be read together with:
 - [06 — Evaluation](06-evaluation.md)
 - [07 — Taxonomy](07-taxonomy.md)
 
+---
+
+## Table of Contents
+
+- [1. Purpose & Scope](#1-purpose) — What this page covers
+- [2. CLI Design](#cli-design) — `exabench validate`, `exabench run`
+- [3. Runtime Layers](#3-runtime-layers) — Architecture overview
+- [4. Execution Workflow](#4-core-execution-workflow) — Task → environment → adapter → trace → scorers
+- [5–11. Interfaces & Contracts](#5---core-data-contracts) — Task, Environment, Trace, Result, Loaders, Tools, Adapter, Runner, Scorer
+- [FAQs](#do-you-need-an-api) — API, MCP, A2A, databases
+- [Definition of Done](#10-definition-of-done)
+
+---
+
 # 2. System boundary
 
 What ExaBench includes and what it does not include
@@ -79,78 +93,35 @@ This page must not duplicate the conceptual rationale or full scoring theory fro
 
 The CLI is the primary developer and benchmark operator interface.
 
-### 13.1 `exabench validate`
+### `exabench validate benchmark`
 
-Validates tasks, environments, and configuration.
-
-Example:
+Validates all task specs and environment bundles in the benchmark directory.
 
 ```bash
-exabench validate \
-  --tasks data/tasks/tasks.json \
-  --environments data/environments/
+exabench validate benchmark
+# or with custom path:
+exabench validate benchmark --benchmark /path/to/benchmark
 ```
 
-### 13.2 `exabench run`
+### `exabench run task`
 
-Executes benchmark runs.
-
-Example:
+Runs a single benchmark task against an environment.
 
 ```bash
-exabench run \
-  --tasks data/tasks/tasks.json \
-  --environments data/environments/ \
-  --agent exabench.agents.openai_adapter:OpenAIAdapter \
-  --roles scientific_user sysadmin \
-  --qcats JOB MON \
-  --splits dev \
-  --output-dir data/runs/run_001/
+exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa
+# with OpenAI:
+exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o-mini
+# custom paths:
+exabench run task -t JOB_USR_001 -e env_01 -a direct_qa --benchmark benchmark --output data/runs
 ```
 
-### 13.3 `exabench score`
+Available adapters: `direct_qa`, `openai`, `openai:gpt-4o`, `openai:gpt-4o-mini`
 
-Re-scores existing traces or run outputs.
+### Planned CLI commands (v0.2+)
 
-Example:
-
-```bash
-exabench score \
-  --run-dir data/runs/run_001/ \
-  --weights config/weights.yaml
-```
-
-### 13.4 `exabench report`
-
-Generates aggregate benchmark reports.
-
-It should output (v0.1):
-
-- HTML benchmark summary
-- role/category slices
-- six-dimension score breakdown
-- failure taxonomy table
-
-Example:
-
-```bash
-exabench report \
-  --run-dir data/runs/run_001/ \
-  --format html \
-  --output data/reports/run_001_report.html
-```
-
-### 13.5 `exabench compare`
-
-Compares two benchmark runs.
-
-Example:
-
-```bash
-exabench compare \
-  --run-a data/runs/run_001/ \
-  --run-b data/runs/run_002/
-```
+- `exabench score` — Re-score existing traces
+- `exabench report` — Generate HTML/JSON benchmark reports
+- `exabench compare` — Compare two runs
 
 # Do you need an API?
 
@@ -291,14 +262,9 @@ This is what makes the benchmark an **agent benchmark**, not only a QA benchmark
 
 ## D. Agent Adapter Layer
 
-You need a standard interface to plug in different agents:
+A standard interface to invoke agents under evaluation.
 
-- OpenAI-based agent
-- LangGraph agent
-- local Python agent
-- your future ODA / ExaSage style agents
-
-This keeps the framework backend-independent .
+**Primary:** Connect to deployed HPC agents (ODA, ExaSage) via HTTP or MCP. **Baselines:** direct_qa, openai for development and validation. See [architecture-clarification](../architecture-clarification.md).
 
 ## E. Runner
 
@@ -762,13 +728,14 @@ This is exactly the right design direction already reflected in 03 and 07
 
 This isolates ExaBench from any specific framework or provider.
 
+**Primary use case:** ExaBench connects to deployed HPC agents (ODA, ExaSage, etc.) via HTTP, MCP, or other protocols. The adapter sends tasks and receives responses (and optionally traces).
+
+**Baseline adapters** (OpenAIAdapter, direct_qa) exist for developing and validating the benchmark when no external agent is available. They are not the systems being benchmarked.
+
 Adapters should support:
 
-- direct LLM baseline
-- RAG baseline
-- LangGraph-based agent
-- custom HPC agent
-- future multi-agent adapters
+- Connect adapters: HTTP/FastAPI, MCP — for evaluating deployed agents
+- Baseline adapters: direct_qa, openai — for pipeline validation and CI
 
 This is critical for scientific evaluation because you want the benchmark to outlive any single framework.
 
@@ -826,81 +793,28 @@ This should generate:
 
 ## 6.8 — Repository Structure
 
-The Python implementation should follow this package layout.
+The actual repository layout matches [03-architecture §11](03-architecture.md#11-repository-and-implementation-mapping) and the [README](../README.md):
 
 ```
-repo_root/
-  docs/
-  data/
-    tasks/
-    environments/
-    gold/
-    reports/
-    runs/
-  exabench/
-    __init__.py
-    schemas/
-      task.py
-      environment.py
-      trace.py
-      result.py
-      config.py
-    tasks/
-      loader.py
-      validator.py
-      filters.py
-    environments/
-      loader.py
-      validator.py
-      registry.py
-    tools/
-      base.py
-      registry.py
-      access.py
-      mock_slurm.py
-      mock_prometheus.py
-      mock_docs.py
-      mock_rbac.py
-      mock_facility.py
-    agents/
-      base_adapter.py
-      openai_adapter.py
-      langgraph_adapter.py
-      local_adapter.py
-    runners/
-      runner.py
-      session.py
-      execution_context.py
-    scorers/
-      base.py
-      outcome.py
-      tool_use.py
-      grounding.py
-      governance.py
-      robustness.py
-      efficiency.py
-      aggregate.py
-    reports/
-      json_writer.py
-      html_report.py
-      tables.py
-      slices.py
-    cli/
-      main.py
-      commands/
-        run.py
-        score.py
-        report.py
-        compare.py
-        validate.py
-    utils/
-      ids.py
-      time.py
-      io.py
-      logging.py
-  tests/
-  pyproject.toml
-  README.md
+ExaBench/
+├── src/exabench/           # Python package
+│   ├── schemas/            # Pydantic models
+│   ├── loaders/            # Task and environment loaders
+│   ├── tools/              # Mock HPC tools
+│   ├── adapters/           # Agent adapters (direct_qa, openai, ...)
+│   ├── runners/            # Benchmark runner
+│   ├── scorers/            # Scoring engine
+│   ├── reports/            # Report generation
+│   ├── utils/              # Utilities
+│   └── cli/                # exabench commands
+├── benchmark/              # Benchmark dataset
+│   ├── tasks/specs/        # Task JSON files
+│   ├── environments/      # Snapshot bundles
+│   ├── configs/           # Tool registry, scoring profiles
+│   └── qa/                # ExaBench-QA query corpus
+├── data/runs/              # Runtime artifacts (gitignored)
+├── tests/
+└── docs/
 ```
 
 ## 5 — Core Data Contracts
@@ -988,13 +902,13 @@ Minimum fields:
 
 Represents the full benchmark execution record for one run.
 
-Minimum fields are defined by **08 — Evaluation Protocol, Metrics & Trace Schema** and must be emitted by the runner.
+Minimum fields are defined by [06 — Evaluation](06-evaluation.md) and must be emitted by the runner.
 
 ### 5.5 Result
 
 Represents the scored outcome of one benchmark run.
 
-Minimum fields are defined by **08 — Evaluation Protocol, Metrics & Trace Schema** and must be emitted after scoring.
+Minimum fields are defined by [06 — Evaluation](06-evaluation.md) and must be emitted after scoring.
 
 # 7. Repository Structure
 
@@ -1011,7 +925,7 @@ exabench/
     05-task-database.md
     06-environment-snapshots.md
     07-software-architecture.md
-    08-evaluation-protocol.md
+    06-evaluation.md
 
   data/
     tasks/
@@ -1161,7 +1075,7 @@ This prevents the benchmark from relying only on after-the-fact scoring of viola
 
 ## 8 — Agent Adapter Interface
 
-The benchmark runner must call external agent systems through a stable adapter contract.
+The benchmark runner invokes agents through a stable adapter contract. **Primary:** connect to deployed agents (ODA, ExaSage) via HTTP/MCP. **Baselines:** direct_qa, openai for development.
 
 ### Adapter responsibilities
 
@@ -1253,7 +1167,7 @@ class ExaBenchRunner:
 
 ## 10 — Trace Output Contract
 
-Each run must emit a canonical trace object consistent with **08 — Evaluation Protocol, Metrics & Trace Schema**.
+Each run must emit a canonical trace object consistent with [06 — Evaluation](06-evaluation.md).
 
 ### Required trace properties
 
@@ -1317,7 +1231,7 @@ The ExaBench runner must support six canonical scorer families for v0.1:
 - `robustness`
 - `efficiency`
 
-These scorer families implement the canonical evaluation dimensions defined in `08 — Evaluation Protocol, Metrics & Trace Schema`.
+These scorer families implement the canonical evaluation dimensions defined in [06 — Evaluation](06-evaluation.md).
 
 Process-oriented diagnostics such as planning depth, sub-goal count, or recovery markers may be recorded as auxiliary analysis metrics, but they are not part of the canonical six-dimension scorecard for v0.1 unless later promoted explicitly.
 
