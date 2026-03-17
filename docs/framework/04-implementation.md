@@ -1,4 +1,4 @@
-# 07 — Software Architecture & Build Plan
+# 04 — Implementation
 
 Owner: Mohsen
 
@@ -29,11 +29,11 @@ This page serves as the **implementation reference** for ExaBench v0.1. It expla
 
 It should be read together with:
 
-- **00 — Project Framing & v0.1 Scope**
-- **03 — Architecture & Benchmark Specification**
-- **05 — Task Database**
-- **06 — Environment Snapshots**
-- **08 — Evaluation Protocol, Metrics & Trace Schema**
+- [01 — Overview](01-overview.md)
+- [03 — Architecture](03-architecture.md)
+- [05 — Environments](05-environments.md)
+- [06 — Evaluation](06-evaluation.md)
+- [07 — Taxonomy](07-taxonomy.md)
 
 # 2. System boundary
 
@@ -67,11 +67,11 @@ Those responsibilities belong to other pages in the workspace.
 
 To keep the workspace clean and non-overlapping:
 
-- **03** defines benchmark structure
-- **05** defines executable task records
-- **06** defines executable environment snapshots
-- **08** defines scoring and trace semantics
-- **07** defines how the software system implements those pages
+- [03](03-architecture.md) defines benchmark structure
+- [05](05-environments.md) defines environment snapshots
+- [06](06-evaluation.md) defines scoring and trace semantics
+- [07](07-taxonomy.md) defines taxonomy and task schema
+- This page defines how the software system implements those
 
 This page must not duplicate the conceptual rationale or full scoring theory from those pages.
 

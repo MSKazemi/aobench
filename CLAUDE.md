@@ -1,0 +1,1 @@
+if you add new command add in the make file also.

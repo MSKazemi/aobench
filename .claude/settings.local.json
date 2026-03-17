@@ -1,10 +1,36 @@
 {
   "permissions": {
+    "deny": [
+      "Read(.env)",
+      "Read(.venv/**)",
+      "Read(__pycache__/**)",
+      "Read(data/runs/**)",
+      "Read(uv.lock)",
+      "Read(*.parquet)",
+      "Read(*.csv)"
+      "Read(archive/**)"
+    ],
     "allow": [
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(cd:*)",
+      "Bash(pwd)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(rm:*)",
+      "Bash(touch:*)",
       "Bash(pip install:*)",
       "Bash(python -m pytest tests/ -v)",
       "Bash(python3 -m pytest tests/ -v)",
-      "Bash(make coverage-matrix:*)"
+      "Bash(make *)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Edit(src/**)",
+      "Edit(benchmark/**)",
+      "Edit(scripts/**)"
     ]
   }
 }

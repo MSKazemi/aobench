@@ -1,8 +1,15 @@
-"""OpenAI adapter — uses function calling to drive ExaBench mock tools."""
+"""OpenAI / Azure OpenAI adapter — uses function calling to drive ExaBench mock tools.
+
+Client selection (checked in order):
+  1. Explicit ``provider`` argument passed to ``__init__``.
+  2. ``LLM_PROVIDER`` env var (``"azure"`` or ``"openai"``).
+  3. Falls back to Azure if ``AZURE_OPENAI_ENDPOINT`` is set, else plain OpenAI.
+"""
 
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -108,13 +115,67 @@ def _filter_schemas(allowed: list[str]) -> list[dict[str, Any]]:
     return [s for s in _TOOL_SCHEMAS if s["function"]["name"].split("__")[0] in allowed]
 
 
+def _build_client(provider: str | None, model: str) -> tuple[Any, str]:
+    """Return (client, deployment_name).
+
+    For Azure the 'model' arg is treated as the deployment name.
+    Reads .env automatically if python-dotenv is available.
+    """
+    try:
+        from dotenv import load_dotenv
+        load_dotenv()
+    except ImportError:
+        pass  # dotenv optional; env vars may already be set
+
+    try:
+        from openai import AzureOpenAI, OpenAI
+    except ImportError:
+        raise ImportError("openai package required: pip install exabench[openai]")
+
+    resolved = provider or os.environ.get("LLM_PROVIDER", "").lower()
+    if not resolved:
+        resolved = "azure" if os.environ.get("AZURE_OPENAI_ENDPOINT") else "openai"
+
+    if resolved == "azure":
+        endpoint   = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
+        api_key    = os.environ.get("AZURE_OPENAI_API_KEY", "")
+        api_ver    = os.environ.get("AZURE_API_VERSION", "2024-02-01")
+        deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "").strip() or model
+        if not endpoint or not api_key:
+            raise EnvironmentError(
+                "Azure OpenAI requires AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY "
+                "in environment or .env file."
+            )
+        if not deployment:
+            raise EnvironmentError(
+                "Azure OpenAI requires a deployment name. "
+                "Set AZURE_OPENAI_DEPLOYMENT=<your-deployment-name> in .env\n"
+                "Find it in Azure AI Studio → Deployments."
+            )
+        client = AzureOpenAI(
+            azure_endpoint=endpoint,
+            api_key=api_key,
+            api_version=api_ver,
+        )
+        return client, deployment  # Azure uses deployment name, not model name
+
+    # Plain OpenAI
+    return OpenAI(), model
+
+
 class OpenAIAdapter(BaseAdapter):
-    """Agent adapter using OpenAI chat completions with function calling."""
+    """Agent adapter using OpenAI / Azure OpenAI chat completions with function calling."""
 
     name = "openai"
 
-    def __init__(self, model: str = "gpt-4o-mini", system_prompt: str | None = None) -> None:
+    def __init__(
+        self,
+        model: str = "gpt-4o-mini",
+        provider: str | None = None,
+        system_prompt: str | None = None,
+    ) -> None:
         self._model = model
+        self._provider = provider  # "azure" | "openai" | None (auto-detect)
         self._system_prompt = system_prompt or (
             "You are an HPC operations assistant. Use the available tools to investigate "
             "the user's question by querying the scheduler, telemetry, and documentation. "
@@ -122,12 +183,7 @@ class OpenAIAdapter(BaseAdapter):
         )
 
     def run(self, context: ExecutionContext) -> Trace:
-        try:
-            from openai import OpenAI
-        except ImportError:
-            raise ImportError("openai package required: pip install exabench[openai]")
-
-        client = OpenAI()
+        client, deployment = _build_client(self._provider, self._model)
         task = context.task
         tools_registry = context.tools
         allowed = tools_registry.available_tool_names
@@ -146,7 +202,7 @@ class OpenAIAdapter(BaseAdapter):
 
         for round_idx in range(_MAX_ROUNDS):
             response = client.chat.completions.create(
-                model=self._model,
+                model=deployment,
                 messages=messages,
                 tools=tool_schemas if tool_schemas else None,
                 tool_choice="auto" if tool_schemas else None,

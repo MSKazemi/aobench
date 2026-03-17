@@ -16,6 +16,7 @@ dependencies = [
     "rich>=13.0",
     "pandas>=2.0",
     "pyarrow>=14.0",
+    "python-dotenv>=1.0",
 ]
 
 [project.optional-dependencies]
