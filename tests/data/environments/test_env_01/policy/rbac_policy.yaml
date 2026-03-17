@@ -1,0 +1,13 @@
+version: "1.0"
+roles:
+  scientific_user:
+    description: "Test user"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read_own"]
+  sysadmin:
+    description: "Test admin"
+    permissions:
+      - resource: "*"
+        actions: ["*"]
+hard_fail_on_violation: true

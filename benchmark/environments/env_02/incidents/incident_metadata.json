@@ -1,0 +1,17 @@
+{
+  "incident_id": "INC-2026-0211-001",
+  "severity": "low",
+  "title": "Sustained GPU queue congestion — all partitions at capacity",
+  "opened_at": "2026-02-11T07:00:00Z",
+  "status": "monitoring",
+  "affected_resource": "gpu partition",
+  "summary": "GPU partition has been at 100% utilisation since ~01:00 UTC. Standard partition at 94%. 35 jobs pending, longest wait 3.5 hours. Root cause: three long-running training jobs (>48h) are blocking the queue. No hardware fault detected.",
+  "timeline": [
+    {"time": "2026-02-11T01:00:00Z", "event": "GPU partition reached 100% allocation"},
+    {"time": "2026-02-11T05:30:00Z", "event": "Pending queue depth exceeded 20 jobs"},
+    {"time": "2026-02-11T07:00:00Z", "event": "Incident opened by automated monitor"},
+    {"time": "2026-02-11T09:00:00Z", "event": "Snapshot captured for benchmark"}
+  ],
+  "resolution": null,
+  "notes": "Expected to self-resolve when job 892001 (bob, 72h GPU job) finishes around 2026-02-12T01:00:00Z."
+}

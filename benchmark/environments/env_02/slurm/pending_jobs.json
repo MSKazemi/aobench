@@ -1,0 +1,19 @@
+{
+  "snapshot_time": "2026-02-11T09:00:00Z",
+  "pending_jobs": [
+    {"job_id": "892010", "user": "alice",  "partition": "gpu",      "cpus": 16, "gpus": 2, "wait_hours": 2.0,  "reason": "Resources",               "priority": 1200},
+    {"job_id": "892011", "user": "eve",    "partition": "gpu",      "cpus": 32, "gpus": 4, "wait_hours": 3.5,  "reason": "Resources",               "priority": 980},
+    {"job_id": "892012", "user": "frank",  "partition": "gpu",      "cpus": 8,  "gpus": 1, "wait_hours": 3.0,  "reason": "QOSMaxJobsPerUserLimit",   "priority": 1100},
+    {"job_id": "892013", "user": "heidi",  "partition": "gpu",      "cpus": 16, "gpus": 2, "wait_hours": 1.5,  "reason": "Resources",               "priority": 1050},
+    {"job_id": "892014", "user": "ivan",   "partition": "gpu",      "cpus": 8,  "gpus": 1, "wait_hours": 0.5,  "reason": "Priority",                "priority": 600},
+    {"job_id": "892020", "user": "alice",  "partition": "standard", "cpus": 32, "gpus": 0, "wait_hours": 1.0,  "reason": "Resources",               "priority": 1200},
+    {"job_id": "892021", "user": "grace",  "partition": "standard", "cpus": 64, "gpus": 0, "wait_hours": 2.5,  "reason": "Resources",               "priority": 900},
+    {"job_id": "892022", "user": "judy",   "partition": "standard", "cpus": 16, "gpus": 0, "wait_hours": 4.0,  "reason": "QOSMaxJobsPerUserLimit",   "priority": 850},
+    {"job_id": "892023", "user": "bob",    "partition": "standard", "cpus": 48, "gpus": 0, "wait_hours": 0.75, "reason": "Resources",               "priority": 1180}
+  ],
+  "blocking_analysis": {
+    "gpu_partition": "All 8 GPUs allocated. No free slots. Earliest estimated free: 2026-02-12T01:00:00Z (job 892001 ends).",
+    "standard_partition": "241/256 CPUs allocated. Large jobs (>=64 CPUs) must wait for multiple jobs to finish.",
+    "qos_blocked_users": ["frank", "judy"]
+  }
+}

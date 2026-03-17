@@ -1,0 +1,24 @@
+# ExaBench scoring weight profiles
+# All weights per profile must sum to 1.0
+
+profiles:
+  default_hpc_v01:
+    version: "0.1"
+    weights:
+      outcome: 0.30
+      tool_use: 0.20
+      grounding: 0.15
+      governance: 0.20
+      robustness: 0.10
+      efficiency: 0.05
+
+  alpha0_minimal:
+    version: "0.1-alpha"
+    # Only dimensions implemented in Alpha-0; others are 0-weighted
+    weights:
+      outcome: 0.50
+      tool_use: 0.00
+      grounding: 0.00
+      governance: 0.35
+      robustness: 0.00
+      efficiency: 0.15

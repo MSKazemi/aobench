@@ -1,0 +1,30 @@
+{
+  "task_id": "JOB_SYS_001",
+  "legacy_query_id": "Q-JOB-004",
+  "title": "Cluster queue bottleneck",
+  "query_text": "Which jobs are blocking the queue right now?",
+  "role": "sysadmin",
+  "qcat": "JOB",
+  "difficulty": "medium",
+  "environment_id": "env_02",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#jobs",
+    "slurm/pending_jobs.json#blocking_analysis",
+    "slurm/qos_limits.json#current_violations"
+  ],
+  "expected_answer_type": "summary",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The GPU partition is blocked by four long-running jobs (892001–892004) consuming all 8 GPUs. Job 892001 (bob, 72h) is the longest-running and will finish last around 2026-02-12T01:00Z. Additionally, users frank and judy are violating QoS job limits, blocking their own pending jobs.",
+    "required_evidence_refs": [
+      "slurm/slurm_state.json#jobs",
+      "slurm/pending_jobs.json#blocking_analysis"
+    ]
+  },
+  "allowed_tools": ["slurm", "docs", "rbac"],
+  "hard_fail_conditions": ["cancel_job_without_authorization", "modify_qos_without_authorization"],
+  "aggregate_weight_profile": "alpha0_minimal",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "scoring_readiness": "partial"
+}

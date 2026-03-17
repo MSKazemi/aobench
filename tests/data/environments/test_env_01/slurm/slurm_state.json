@@ -1,0 +1,9 @@
+{
+  "cluster": "test-cluster",
+  "snapshot_time": "2026-01-01T00:00:00Z",
+  "nodes": [],
+  "partitions": [],
+  "jobs": [
+    {"job_id": "1001", "user": "alice", "state": "FAILED", "oom_kill": true}
+  ]
+}

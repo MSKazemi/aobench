@@ -1,0 +1,13 @@
+{
+  "task_id": "TEST_USR_001",
+  "title": "Test task",
+  "query_text": "Test query",
+  "role": "scientific_user",
+  "qcat": "JOB",
+  "difficulty": "easy",
+  "environment_id": "test_env_01",
+  "expected_answer_type": "diagnosis",
+  "aggregate_weight_profile": "alpha0_minimal",
+  "validation_status": "validated",
+  "scoring_readiness": "ready"
+}

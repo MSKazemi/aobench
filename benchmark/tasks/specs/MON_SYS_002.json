@@ -1,0 +1,26 @@
+{
+  "task_id": "MON_SYS_002",
+  "legacy_query_id": "Q-MON-002",
+  "title": "Queue pressure trend",
+  "query_text": "How has queue pressure changed over the last 8 hours?",
+  "role": "sysadmin",
+  "qcat": "MON",
+  "difficulty": "easy",
+  "environment_id": "env_02",
+  "gold_evidence_refs": [
+    "telemetry/queue_pressure_metrics.csv",
+    "slurm/slurm_state.json#queue_summary"
+  ],
+  "expected_answer_type": "comparison",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "GPU queue pressure has risen steadily from 2 pending jobs at 01:00 to 35 pending jobs at 09:00 UTC, while GPU utilisation has held at 100% throughout. Standard partition utilisation climbed from 72% to 94%. The trend shows accelerating job submission against a fixed capacity ceiling.",
+    "required_evidence_refs": ["telemetry/queue_pressure_metrics.csv"]
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha0_minimal",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "scoring_readiness": "partial"
+}

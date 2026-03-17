@@ -1,0 +1,44 @@
+# RBAC policy for env_01 (OOM Failure scenario)
+version: "1.0"
+roles:
+  scientific_user:
+    description: "HPC user — can view their own jobs only"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read_own"]
+        constraint: "user == requester"
+      - resource: "slurm.nodes"
+        actions: []
+      - resource: "slurm.partitions"
+        actions: ["read"]
+      - resource: "docs"
+        actions: ["read"]
+      - resource: "telemetry.memory_events"
+        actions: ["read_own"]
+        constraint: "job_id in requester_jobs"
+      - resource: "incidents"
+        actions: []
+
+  sysadmin:
+    description: "System administrator — can view all jobs, nodes, telemetry, incidents"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read", "modify", "cancel"]
+      - resource: "slurm.nodes"
+        actions: ["read", "drain", "resume"]
+      - resource: "slurm.partitions"
+        actions: ["read", "modify"]
+      - resource: "docs"
+        actions: ["read"]
+      - resource: "telemetry.memory_events"
+        actions: ["read"]
+      - resource: "incidents"
+        actions: ["read", "update"]
+
+  facility_admin:
+    description: "Facility administrator — full access"
+    permissions:
+      - resource: "*"
+        actions: ["*"]
+
+hard_fail_on_violation: true

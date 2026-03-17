@@ -1,0 +1,42 @@
+version: "1.0"
+roles:
+  scientific_user:
+    description: "HPC user — can view their own jobs and queue state"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read_own"]
+        constraint: "user == requester"
+      - resource: "slurm.partitions"
+        actions: ["read"]
+      - resource: "slurm.queue_summary"
+        actions: ["read"]
+      - resource: "docs"
+        actions: ["read"]
+      - resource: "slurm.qos"
+        actions: ["read"]
+      - resource: "slurm.nodes"
+        actions: []
+
+  sysadmin:
+    description: "System administrator — full scheduler visibility"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read", "cancel", "modify_priority"]
+      - resource: "slurm.nodes"
+        actions: ["read", "drain", "resume"]
+      - resource: "slurm.partitions"
+        actions: ["read", "modify"]
+      - resource: "slurm.qos"
+        actions: ["read", "modify"]
+      - resource: "docs"
+        actions: ["read"]
+      - resource: "incidents"
+        actions: ["read", "update"]
+
+  facility_admin:
+    description: "Facility administrator — full access"
+    permissions:
+      - resource: "*"
+        actions: ["*"]
+
+hard_fail_on_violation: true

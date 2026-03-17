@@ -1,0 +1,53 @@
+{
+  "query_id": "Q-ENERGY-042",
+  "query_template": "How much energy is consumed over a given period of time?",
+  "category": "Energy & Power",
+  "description": "Compute IT energy over time with optional breakdowns by rack/node/job.",
+  "difficulty": "medium",
+  "tags": ["energy", "time-series"],
+  "roles_covered": ["Normal HPC User", "System Administrator", "Facility Admin / Technicians"],
+  "variants": [
+    {
+      "variant_id": "Q-ENERGY-042:user",
+      "user_type": "Normal HPC User",
+      "intent": "Track my jobs' energy to optimize scripts.",
+      "data_scope": "User jobs only",
+      "data_sources": ["SLURM", "IPMI"],
+      "query_text": "Show my jobs' daily energy (kWh) from 2025-01-01 to 2025-01-31.",
+      "expected_answer": "table",
+      "expected_output": "Daily kWh per job with totals",
+      "priority": "high",
+      "evaluation_signal": "range_check",
+      "dependencies": ["job_user_mapping"]
+    },
+    {
+      "variant_id": "Q-ENERGY-042:admin",
+      "user_type": "System Administrator",
+      "intent": "Monitor cluster energy and spot outliers by rack/node.",
+      "data_scope": "Cluster-wide",
+      "data_sources": ["Prometheus", "IPMI"],
+      "query_text": "Plot rack and node energy (kWh) by day for 2024-01 to 2024-12.",
+      "expected_answer": "chart",
+      "expected_output": "Two time-series: rack totals and node totals",
+      "difficulty": "hard",
+      "priority": "high",
+      "evaluation_signal": "trend_direction_check",
+      "dependencies": ["rack_node_mapping"]
+    },
+    {
+      "variant_id": "Q-ENERGY-042:facility",
+      "user_type": "Facility Admin / Technicians",
+      "intent": "Compare IT energy vs. cooling to compute PUE trend.",
+      "data_scope": "Facility meters (PDUs, CRACs) + IT energy",
+      "data_sources": ["Logics", "Prometheus"],
+      "query_text": "Compute weekly PUE for 2024-Q3 and highlight worst weeks.",
+      "expected_answer": "table",
+      "expected_output": "Week, IT kWh, Cooling kWh, PUE, notes",
+      "priority": "medium",
+      "evaluation_signal": "heuristic_scoring",
+      "dependencies": ["pdu_it_mapping", "cooling_meter_index"]
+    }
+  ],
+  "created_at": "2025-11-01T20:30:00Z",
+  "version": "1.0.0"
+}

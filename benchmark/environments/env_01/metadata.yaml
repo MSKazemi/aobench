@@ -1,0 +1,33 @@
+environment_id: env_01
+snapshot_name: User OOM Failure
+scenario_type: job_failure
+cluster_name: exabench-cluster-a
+snapshot_timestamp: 2026-02-10T14:00:00Z
+bundle_root: data/environments/env_01
+supported_roles:
+  - scientific_user
+  - sysadmin
+supported_categories:
+  - JOB
+  - MON
+included_sources:
+  - slurm
+  - telemetry
+  - docs
+  - rbac
+  - incidents
+included_files:
+  - slurm/slurm_state.json
+  - slurm/job_details.json
+  - telemetry/telemetry_timeseries.parquet
+  - telemetry/memory_events.csv
+  - policy/rbac_policy.yaml
+  - docs/memory_request_guide.md
+  - docs/troubleshooting_oom.md
+  - incidents/incident_metadata.json
+implementation_status: bundled
+validation_status: not_checked
+description: >
+  Deterministic snapshot representing a user job failure caused by
+  out-of-memory pressure, with scheduler state, memory telemetry,
+  role-aware visibility, and user-facing troubleshooting documents.

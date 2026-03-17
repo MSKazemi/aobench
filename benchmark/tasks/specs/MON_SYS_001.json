@@ -1,0 +1,17 @@
+{
+  "task_id": "MON_SYS_001",
+  "legacy_query_id": "Q-MON-001",
+  "title": "Node anomaly detection",
+  "query_text": "Which node looks abnormal compared with the rest?",
+  "role": "sysadmin",
+  "qcat": "MON",
+  "difficulty": "medium",
+  "environment_id": "env_02",
+  "gold_evidence_refs": [
+    "prometheus/node_metrics_001.parquet",
+    "alerts/node_alerts_001.json"
+  ],
+  "expected_answer_type": "comparison",
+  "validation_status": "not_started",
+  "scoring_readiness": "blocked"
+}

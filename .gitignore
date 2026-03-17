@@ -1,0 +1,47 @@
+# uv
+.venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checking
+.mypy_cache/
+
+# Runtime benchmark artifacts (large, run-specific)
+data/runs/*/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+
+# Environment secrets / API keys
+.env
+*.env
+
+# Large data artifacts not tracked by git
+*.parquet
+
+# Benchmark / QA generated artifacts
+benchmark/qa/user_query_taxonomy_prompt.md

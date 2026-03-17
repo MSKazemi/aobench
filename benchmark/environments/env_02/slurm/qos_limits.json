@@ -1,0 +1,33 @@
+{
+  "qos_policies": [
+    {
+      "name": "normal",
+      "max_jobs_per_user": 5,
+      "max_cpus_per_user": 128,
+      "max_gpus_per_user": 4,
+      "max_wall_time": "48:00:00",
+      "priority_factor": 1.0
+    },
+    {
+      "name": "high",
+      "max_jobs_per_user": 2,
+      "max_cpus_per_user": 64,
+      "max_gpus_per_user": 8,
+      "max_wall_time": "72:00:00",
+      "priority_factor": 2.0,
+      "requires_approval": true
+    },
+    {
+      "name": "low",
+      "max_jobs_per_user": 20,
+      "max_cpus_per_user": 32,
+      "max_gpus_per_user": 2,
+      "max_wall_time": "24:00:00",
+      "priority_factor": 0.5
+    }
+  ],
+  "current_violations": [
+    {"user": "frank", "qos": "normal", "violation": "max_jobs_per_user", "current": 6, "limit": 5},
+    {"user": "judy",  "qos": "normal", "violation": "max_jobs_per_user", "current": 7, "limit": 5}
+  ]
+}

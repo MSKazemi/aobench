@@ -1,0 +1,536 @@
+Query,User Type,QCAT,Priority,Difficulty
+"How much energy is consumed by the nodes, racks, and machine over a given period of time?","HPC Researchers, Facility Admin, System Admin, System Designers",ENERGY,High,Medium
+How much energy is consumed by the cooling system (air and water) over a given period of time?,"Facility Admin, System Designers, HPC Researchers",FAC / ENERGY,High,Medium
+What is the PUE (Power Usage Effectiveness) of a machine or compute room over a given period of time?,"Facility Admin, System Designers, HPC Researchers",ENERGY,High,Medium
+How many jobs are running on a particular node over a given period of time?,"System Admin, Normal HPC User, HPC Researchers",JOB,High,Easy
+"Provide the distribution over time of the usage of resources (CPUs, GPUs, Memory) before a node fails, over a given period of time.","HPC Researchers, System Admin",PERF / MON / AIOPS,High,Hard
+Give me the node’s resource utilization distribution when the PUE is higher than a given value.,"HPC Researchers, System Designers",ENERGY / AIOPS,High,Hard
+Give me the node’s resource utilization distribution for a specific JobID whose job PUE is higher than a given value.,"HPC Researchers, System Admin",ENERGY / PERF / AIOPS,High,Hard
+Give me the node’s resource utilization distribution for a specific JobID whose job power is higher than a given value.,"HPC Researchers, System Admin",ENERGY / PERF,High,Medium
+Provide the node’s resource utilization (or users) distribution for all jobs whose node’s average job power is higher than a given value.,"HPC Researchers, System Admin",ENERGY / PERF / MON,High,Hard
+"What are the min, max, and average temperatures when a node is in use, over a given period of time?","Facility Admin, System Admin, HPC Researchers",MON / ENERGY,High,Medium
+"What are the min, max, and average of the derivative of temperature when a node is in use, over a given period of time?","HPC Researchers, Facility Admin",MON / ENERGY,High,Hard
+"What is the distribution of the temperature of a node before it fails, over a given period of time (period before failure)?","HPC Researchers, System Admin, Facility Admin",AIOPS / MON,High,Hard
+Provide the list of failing nodes over a given period of time.,"System Admin, Facility Admin, HPC Researchers",MON / AIOPS,High,Medium
+Give me the Job IDs whose node’s instantaneous (or average over time) power/temperature is higher than a given threshold.,"System Admin, HPC Researchers",ENERGY / MON / JOB,High,Medium
+What is the position of node X?,"Facility Admin, System Admin, System Designers",FAC / ARCH,Medium,Easy
+How many racks are there in an HPC system X?,"System Designers, Facility Admin, System Admin",ARCH / FAC,Medium,Easy
+Which nodes are part of the rack X?,"System Admin, Facility Admin, System Designers",FAC / ARCH,Medium,Easy
+How many HPC systems do we have?,"System Designers, System Admin",ARCH / FAC,Medium,Easy
+Give me a list of users who submitted jobs in a specified time period.,"System Admin, HPC Researchers",JOB / USER,High,Easy
+Give me a list of jobs submitted by the user X in a specified time period.,"System Admin, HPC Researchers, Normal HPC User",JOB,High,Easy
+Give me a list of jobs submitted in a specified time period.,"System Admin, HPC Researchers, Normal HPC User",JOB,High,Easy
+Which user submitted job X?,"System Admin, Normal HPC User",JOB / USER,High,Easy
+Give details of job X.,"System Admin, Normal HPC User",JOB / PERF,High,Medium
+How many jobs were running in a specified time period?,"System Admin, Normal HPC User",JOB / MON,High,Easy
+How many jobs had a time duration above a certain value?,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+Which user submitted jobs during a specified period?,System Admin,JOB / USER,Medium,Easy
+How many jobs did a user U submit on a compute node N in a specified period?,"System Admin, HPC Researchers",JOB / PERF / MON,Medium,Medium
+Which users belong to a group G?,System Admin,SEC / USER,Medium,Easy
+What is the power consumption of the node X in a specified time period?,"System Admin, HPC Researchers, Facility Admin",ENERGY / MON,High,Medium
+What is the power consumption of the rack X in a specified time period?,"System Admin, Facility Admin, System Designers",ENERGY / FAC,High,Medium
+What is the max/min/avg recorded metric X for compute node N from T1 to T2?,"System Admin, HPC Researchers, Facility Admin",MON / PERF,High,Medium
+What is the max/min/avg recorded metric X for rack R today?,"System Admin, Facility Admin",MON / ENERGY,High,Medium
+What is the max/min/avg recorded metric X for Job J?,"System Admin, HPC Researchers, Normal HPC User",MON / PERF,High,Medium
+Can you tell me the list of compute nodes that had temperatures higher than normal in a specified time period?,"Facility Admin, System Admin, HPC Researchers",MON / ENERGY / AIOPS,High,Medium
+Please provide me the compute node N average temperature during May 2025.,"Facility Admin, System Admin",MON / ENERGY,Medium,Easy
+What is the current total CPU utilization across all nodes?,"System Admin, HPC Researchers",PERF / MON,High,Easy
+Which nodes have the highest average CPU usage over the past 24 hours?,"System Admin, HPC Researchers",PERF / MON,High,Medium
+How much GPU memory is currently in use per GPU device?,"System Admin, Normal HPC User, HPC Researchers",PERF / MON,High,Easy
+What is the GPU utilization trend for the top 10 busiest GPUs this week?,"System Admin, HPC Researchers",PERF / MON,Medium,Medium
+How much RAM is allocated versus available in the cluster right now?,System Admin,PERF / MON,High,Easy
+Which nodes are running low on free memory or swap?,"System Admin, HPC Researchers",MON / PERF,High,Medium
+What is the total disk usage and free space per partition across nodes?,"System Admin, Facility Admin",DATA / MON,High,Medium
+What is the network traffic in/out per rack over the last hour?,"System Admin, Facility Admin",MON / NET / FAC,Medium,Medium
+Which nodes have the highest I/O wait percentage?,"System Admin, HPC Researchers",PERF / MON,Medium,Hard
+What are the top processes or jobs consuming the most CPU resources?,"System Admin, HPC Researchers, Normal HPC User",JOB / PERF,High,Medium
+What is the total power consumption of the entire cluster from IPMI sensors?,"System Admin, Facility Admin, HPC Researchers",ENERGY / MON,High,Medium
+How much power is used by CPUs versus GPUs in each node?,"HPC Researchers, System Designers",ENERGY / PERF,High,Hard
+Which racks have the highest power draw?,"Facility Admin, System Admin, System Designers",ENERGY / FAC,High,Medium
+What is the data center’s total IT power consumption (Logics plugin)?,"Facility Admin, System Designers",ENERGY / FAC,High,Medium
+"What is the total power used by CRACs, chillers, and pumps (Logics)?",Facility Admin,FAC / ENERGY,High,Medium
+What is the Power Usage Effectiveness (PUE) trend for the past week?,"Facility Admin, System Designers, HPC Researchers",ENERGY / FAC,High,Medium
+Which nodes show abnormal increases in power usage compared to average?,"System Admin, HPC Researchers",AIOPS / ENERGY / MON,High,Hard
+How much energy (kWh) was consumed by the IT equipment in the last 24 hours?,"Facility Admin, System Admin, HPC Researchers",ENERGY,Medium,Medium
+What is the correlation between node power consumption and CPU load?,"HPC Researchers, System Admin",PERF / ENERGY / AIOPS,High,Hard
+Are there any nodes exceeding their configured power limits?,"System Admin, Facility Admin",ENERGY / MON,High,Medium
+What are the inlet (ambient) temperatures per node from IPMI?,"Facility Admin, System Admin",MON / ENERGY,High,Easy
+Which nodes show high GPU or DIMM temperatures?,"System Admin, HPC Researchers, Facility Admin",MON / ENERGY,High,Medium
+How does node temperature correlate with power consumption?,"HPC Researchers, System Admin",AIOPS / ENERGY / PERF,High,Hard
+What is the current return and supply air temperature from Vertiv units?,Facility Admin,FAC / MON,Medium,Easy
+Which CRAC units are operating at maximum compressor utilization?,Facility Admin,FAC / COOL / MON,High,Medium
+What is the temperature delta between supply and return air across all units?,"Facility Admin, System Designers",FAC / MON / ENERGY,Medium,Medium
+What is the liquid cooling flow rate in each Schneider RDHx circuit?,Facility Admin,FAC / MON,Medium,Hard
+Which pumps or valves in the cooling system report alarms or faults?,Facility Admin,FAC / ALARM / MON,High,Medium
+How balanced are the temperatures between different cooling zones?,"Facility Admin, System Designers",FAC / ENERGY / MON,Medium,Medium
+"What are the outdoor weather temperature and humidity, and how do they affect inlet temperatures?","Facility Admin, HPC Researchers",FAC / ENV / ENERGY,Medium,Medium
+"How many jobs are currently running, pending, or failed in SLURM?","System Admin, Normal HPC User, HPC Researchers",JOB / MON,High,Easy
+Which partitions have the highest average waiting time for jobs?,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+What is the 95th percentile of job waiting time across all QoS classes?,"System Admin, HPC Researchers",JOB / PERF,Medium,Hard
+Which users or groups consume the most resources (CPU/GPU hours)?,"System Admin, HPC Researchers",JOB / PERF / USER,High,Medium
+What is the overall cluster CPU/GPU allocation efficiency?,"System Admin, HPC Researchers",PERF / AIOPS / JOB,High,Hard
+Which jobs consumed the most energy per run?,"HPC Researchers, System Admin",ENERGY / JOB,Medium,Medium
+What is the distribution of job durations by QoS and partition?,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+How many nodes are currently idle or down?,System Admin,MON / JOB,High,Easy
+What is the average node utilization across the past week?,"System Admin, HPC Researchers",MON / PERF,Medium,Medium
+Which jobs frequently fail or exit with non-zero codes?,"System Admin, HPC Researchers",JOB / DEBUG / PERF,High,Medium
+Which nodes have active Nagios alarms?,"System Admin, Facility Admin",MON / ALARM,High,Easy
+What are the most common critical service alerts from Nagios this month?,System Admin,ALARM / MON,Medium,Medium
+Are there any BMC or GPU memory ECC errors reported recently?,"System Admin, HPC Researchers",MON / AIOPS,High,Medium
+Which nodes experienced XID GPU errors or thermal violations?,"System Admin, HPC Researchers",MON / PERF / AIOPS,High,Hard
+What percentage of nodes are in maintenance or drained state?,System Admin,MON / NODE / JOB,High,Easy
+Which cooling pumps or valves triggered alarms in Schneider PLC logs?,Facility Admin,FAC / MON / ALARM,Medium,Medium
+What is the number of communication failures (Comlost) in Logics data?,Facility Admin,FAC / MON,Medium,Medium
+Are all network switches and storage systems reported healthy by Nagios?,"System Admin, Facility Admin",MON / NET / STOR,High,Medium
+Which nodes have rebooted within the last 24 hours?,"System Admin, Facility Admin",MON / NODE,High,Easy
+What is the overall cluster availability and health status summary?,"System Admin, System Designers",MON / AIOPS,High,Medium
+Detect nodes showing abnormal correlation between power and temperature.,"HPC Researchers, System Admin",AIOPS / ENERGY / MON,High,Hard
+Identify GPUs whose utilization dropped below 10 % for more than 6 hours.,"HPC Researchers, System Admin",AIOPS / PERF / MON,Medium,Hard
+Find nodes where CPU temperature increased faster than 10 °C in 5 minutes.,"HPC Researchers, Facility Admin",AIOPS / MON / ENERGY,High,Hard
+Detect outliers in power consumption versus average node group trend.,"HPC Researchers, System Admin",AIOPS / ENERGY / MON,High,Hard
+Which GPUs reported repeated ECC errors in the past week?,"System Admin, HPC Researchers",AIOPS / MON,Medium,Hard
+List nodes with more than 5 unexpected reboots this month.,"System Admin, Facility Admin",AIOPS / MON,Medium,Medium
+Highlight cooling units whose compressor utilization deviates > 20 % from peers.,"Facility Admin, System Designers",AIOPS / FAC / COOL,Medium,Hard
+Predict next 24 hours power consumption using last 7 days trend.,"HPC Researchers, System Designers",AIOPS / ENERGY,High,Hard
+Which nodes show an unusual pattern of memory errors correlated with ambient temperature?,"HPC Researchers, System Admin",AIOPS / MON / ENERGY,High,Hard
+Detect pumps or valves in Schneider data that oscillate abnormally (PID instability).,Facility Admin,AIOPS / FAC / MON,Medium,Hard
+What is the average CPU utilization trend over the last 30 days per partition?,"System Admin, System Designers",PERF / ARCH / MON,Medium,Medium
+How much GPU capacity remains unused per QoS class?,"System Admin, HPC Researchers",PERF / JOB,Medium,Medium
+Forecast when current storage utilization will reach 90 % capacity.,"System Admin, HPC Researchers, System Designers",AIOPS / DATA / PERF,High,Hard
+Which racks consistently operate near power limit thresholds?,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+What is the trend of job submission rate per user group?,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+Which partitions experience the longest cumulative queue times?,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+What is the ratio of idle vs allocated nodes across the past month?,System Admin,MON / JOB / PERF,Medium,Medium
+How many GPUs are typically idle during off-peak hours?,"System Admin, HPC Researchers",PERF / AIOPS,Medium,Medium
+How balanced is job distribution across nodes and racks?,"System Admin, HPC Researchers, System Designers",JOB / PERF / FAC,Medium,Hard
+What fraction of nodes remain powered on but unused for more than 12 hours daily?,"System Admin, Facility Admin",ENERGY / AIOPS / MON,Medium,Hard
+Compute PUE every 15 minutes and detect degradation periods.,"Facility Admin, System Designers",ENERGY / AIOPS,High,Medium
+Correlate ambient outdoor temperature with total cooling power consumption.,"HPC Researchers, Facility Admin",ENERGY / AIOPS / FAC,Medium,Hard
+Identify CRAC units with the poorest temperature regulation stability.,Facility Admin,FAC / AIOPS / COOL,Medium,Hard
+What is the efficiency difference between air-cooled and liquid-cooled racks?,"System Designers, Facility Admin",ENERGY / FAC / PERF,Medium,Medium
+Compute average energy per job and identify energy-intensive workloads.,"HPC Researchers, System Admin",ENERGY / JOB / PERF,High,Medium
+Estimate potential energy savings from consolidating low-load nodes.,"System Admin, System Designers",ENERGY / AIOPS / PERF,Medium,Hard
+Compare total IT energy (Logics) with IPMI-reported node energy to find discrepancies.,"HPC Researchers, System Admin",ENERGY / AIOPS / MON,Medium,Hard
+Identify nodes frequently exceeding 85 % of their power limit.,"System Admin, HPC Researchers",ENERGY / MON / AIOPS,High,Medium
+Compute cooling energy per °C of inlet temperature reduction.,"Facility Admin, System Designers",ENERGY / FAC / PERF,Medium,Hard
+Estimate CO₂ emissions based on total energy and regional carbon intensity.,"HPC Researchers, Facility Admin, System Designers",ENERGY / SUSTAIN,Medium,Hard
+Which fans in IPMI data show decreased RPM trends over time?,"System Admin, Facility Admin",MON / AIOPS / HEALTH,Medium,Hard
+List all nodes with “CRITICAL” state in Nagios for more than 1 hour.,System Admin,MON / ALARM,High,Medium
+Detect jobs that failed repeatedly due to hardware or thermal issues.,"System Admin, HPC Researchers",AIOPS / JOB / MON,High,Hard
+Which nodes have persistent “down” or “drained” state in SLURM?,System Admin,MON / JOB / NODE,High,Medium
+Identify power supplies showing unstable voltage or current readings.,"Facility Admin, System Admin",FAC / MON / AIOPS,Medium,Hard
+What percentage of cooling alarms were unresolved within 30 minutes?,Facility Admin,FAC / ALARM / MON,Medium,Medium
+List devices with missing data (Comlost = 1) in Logics telemetry.,Facility Admin,FAC / MON / DATA,Medium,Easy
+Which network switches reported hardware faults most often?,"System Admin, Facility Admin",NET / MON / AIOPS,Medium,Medium
+How many ECC errors per GPU occurred before a job crash?,"HPC Researchers, System Admin",AIOPS / MON / PERF,Medium,Hard
+Which nodes exhibit recurring BMC or BIOS sensor failures?,"System Admin, Facility Admin",AIOPS / MON / NODE,Medium,Medium
+How does outdoor humidity affect data center inlet temperature?,"Facility Admin, HPC Researchers",FAC / ENV / ENERGY,Medium,Medium
+Identify days when strong wind correlated with lower inlet temperature.,"Facility Admin, HPC Researchers",FAC / ENV / ENERGY,Low,Medium
+Compare weather pressure trends with CRAC static pressure values.,"Facility Admin, System Designers",FAC / ENV / MON,Low,Medium
+Compute daily dew-point average and correlate with humidity alarms.,"Facility Admin, HPC Researchers",FAC / MON / ENERGY,Medium,Medium
+Determine if weather temperature anomalies affect power usage efficiency.,"Facility Admin, HPC Researchers, System Designers",FAC / ENERGY / AIOPS,Medium,Hard
+Rank top 10 users by energy cost per job.,"System Admin, HPC Researchers",ENERGY / JOB / PERF,High,Medium
+Identify jobs that consumed most GPU time but least CPU utilization.,"HPC Researchers, System Admin",PERF / JOB / AIOPS,Medium,Hard
+Compute average waiting-time penalty per partition vs. resource availability.,"System Admin, HPC Researchers",JOB / PERF,Medium,Medium
+Show trend of maintenance alarms per subsystem over the past quarter.,"Facility Admin, System Admin",FAC / ALARM / MON,Medium,Medium
+"Generate summary of total uptime percentage for compute, cooling, and power systems.","System Admin, Facility Admin, System Designers",MON / FAC / AIOPS,High,Medium
+What jobs are currently running under my user ID?,"Normal HPC User, System Admin",JOB / MON,High,Easy
+Show me all my pending jobs and their waiting times.,"Normal HPC User, System Admin",JOB / QUEUE,High,Easy
+How long did job 458932 take to complete?,"Normal HPC User, HPC Researchers",JOB / PERF,High,Easy
+What is the status of job 458932?,"Normal HPC User, System Admin",JOB,High,Easy
+Which partition did my job 458932 run on?,"Normal HPC User, System Admin",JOB / QUEUE / PERF,Medium,Easy
+How many nodes were allocated to job 458932?,"Normal HPC User, System Admin",JOB / MON / RES,Medium,Easy
+What is the average waiting time in the queue today?,"Normal HPC User, System Admin",JOB / QUEUE,Medium,Easy
+Which queue has the shortest average waiting time?,"Normal HPC User, System Admin",JOB / QUEUE,High,Easy
+How many jobs failed in the last 24 hours?,"System Admin, Normal HPC User",JOB / MON / DEBUG,High,Easy
+What are the top users by number of submitted jobs this week?,"System Admin, HPC Researchers",JOB / USER / PERF,Medium,Medium
+Show CPU utilization for my last five jobs.,"Normal HPC User, HPC Researchers",PERF / MON / JOB,Medium,Medium
+What was the GPU utilization for job 458932?,"Normal HPC User, HPC Researchers",PERF / MON / JOB,Medium,Medium
+Plot memory usage over time for job 458932.,"Normal HPC User, HPC Researchers",PERF / MON,Medium,Medium
+What was the peak GPU temperature during my job?,"Normal HPC User, HPC Researchers",ENERGY / MON / PERF,Medium,Medium
+Show CPU idle percentage across all my allocated nodes.,"Normal HPC User, System Admin",MON / PERF,Medium,Medium
+What is the average CPU speed (MHz) for my current job nodes?,"Normal HPC User, HPC Researchers",PERF / MON,Medium,Medium
+How many GPUs were active during my last run?,"Normal HPC User, HPC Researchers",PERF / MON / JOB,Medium,Medium
+Did any of my jobs exceed the memory limit?,"Normal HPC User, System Admin",JOB / PERF / DEBUG,High,Easy
+Which nodes showed the highest load during my simulation?,"Normal HPC User, HPC Researchers",PERF / MON / JOB,Medium,Medium
+What is the total GPU energy consumption per job?,"Normal HPC User, HPC Researchers",ENERGY / JOB / PERF,Medium,Medium
+How much storage space am I currently using?,"Normal HPC User, System Admin",DATA / STOR / MON,High,Easy
+List my largest files in the scratch directory.,Normal HPC User,DATA / STOR,High,Easy
+What percentage of my project quota is used?,"Normal HPC User, System Admin",DATA / STOR / SEC,Medium,Easy
+Which directory has the highest disk usage?,Normal HPC User,DATA / STOR / MON,Medium,Medium
+Show total free disk space on my allocated nodes.,"Normal HPC User, System Admin",DATA / STOR / MON,Medium,Easy
+Has my job ever failed due to insufficient disk space?,"Normal HPC User, System Admin",DATA / DEBUG / JOB,Medium,Easy
+Compare disk usage between home and project directories.,"Normal HPC User, System Admin",DATA / STOR,Medium,Medium
+When was my quota last exceeded?,"Normal HPC User, System Admin",DATA / STOR / SEC,Medium,Medium
+How many files were modified in my scratch directory this week?,Normal HPC User,DATA / STOR / MON,Low,Easy
+List files older than 30 days to clean up.,Normal HPC User,DATA / STOR / AUTO,Medium,Easy
+Which modules are currently loaded in my session?,Normal HPC User,SOFT / MON,High,Easy
+What version of Python is available on the system?,"Normal HPC User, System Admin",SOFT / DOCS,Medium,Easy
+Load TensorFlow with CUDA support.,Normal HPC User,SOFT / GPU / ENV,High,Easy
+Is CUDA 12 available on this cluster?,"Normal HPC User, System Admin",SOFT / GPU / DOCS,Medium,Easy
+Show all installed scientific libraries related to MPI.,"Normal HPC User, System Admin",SOFT / DOCS / PERF,Medium,Easy
+Check if my environment has OpenBLAS enabled.,"Normal HPC User, System Admin",SOFT / PERF,Medium,Medium
+Which compiler version is recommended for my code?,"Normal HPC User, System Admin, HPC Researchers",SOFT / DOCS / PERF,Medium,Medium
+How can I load GROMACS with GPU acceleration?,Normal HPC User,SOFT / GPU / DOCS,Medium,Easy
+Display all available software modules related to machine learning.,Normal HPC User,SOFT / DOCS,Medium,Easy
+What MPI implementations are currently supported?,"Normal HPC User, System Admin",SOFT / DOCS / PERF,Medium,Easy
+Why did my last job fail?,"Normal HPC User, System Admin",JOB / DEBUG / LOGS,High,Easy
+Show me the error log for job 458932.,"Normal HPC User, System Admin",JOB / DEBUG / LOGS,High,Easy
+Which node caused my job failure?,"Normal HPC User, System Admin",JOB / DEBUG / MON,High,Medium
+Did my job exceed the time limit?,"Normal HPC User, System Admin",JOB / DEBUG / PERF,High,Easy
+What was the reason my job was requeued?,"Normal HPC User, System Admin",JOB / DEBUG / QUEUE,Medium,Easy
+Were there any thermal alerts on nodes used by my job?,"Normal HPC User, System Admin, HPC Researchers",ENERGY / MON / JOB,Medium,Medium
+Did the scheduler report resource contention for my job?,"Normal HPC User, System Admin, HPC Researchers",JOB / PERF / DEBUG,Medium,Medium
+Show exit code and state reason for failed jobs.,"Normal HPC User, System Admin",JOB / DEBUG / LOGS,High,Easy
+What percentage of my jobs finished successfully this month?,"Normal HPC User, System Admin",JOB / PERF / MON,Medium,Easy
+Suggest possible causes for MPI rank errors.,"Normal HPC User, HPC Researchers, System Admin",DEBUG / JOB / PERF,High,Medium
+Show current CPU utilization across the cluster.,"System Admin, HPC Researchers",MON / PERF,High,Easy
+What is the average GPU utilization in my partition?,"System Admin, HPC Researchers",MON / PERF,High,Medium
+Display node temperature trends for my active jobs.,"Normal HPC User, System Admin",MON / ENERGY,High,Medium
+Plot CPU and memory usage trends during my simulation.,"Normal HPC User, HPC Researchers",MON / PERF,High,Medium
+Which nodes are reporting high ambient temperature?,"System Admin, Facility Admin",MON / FAC / ENERGY,High,Medium
+Show total energy usage for my jobs today.,"Normal HPC User, HPC Researchers",ENERGY / JOB,Medium,Easy
+How many running processes are currently active per node?,System Admin,MON / PERF,Medium,Medium
+What was the network throughput for my job 458932?,"Normal HPC User, HPC Researchers",MON / PERF,Medium,Medium
+Display swap memory usage on my allocated nodes.,"Normal HPC User, System Admin",MON / PERF,Medium,Easy
+How many jobs are running on nodes with fan speed alerts?,System Admin,MON / ALARM / JOB,High,Medium
+Show GPU power consumption over time for my last job.,"Normal HPC User, HPC Researchers",ENERGY / MON / JOB,Medium,Medium
+What was the maximum GPU temperature reached today?,"System Admin, Normal HPC User",MON / ENERGY,Medium,Easy
+Display GPU ECC error counts in my allocated nodes.,"Normal HPC User, System Admin",MON / AIOPS,Medium,Medium
+Are there any GPUs with low utilization?,"System Admin, HPC Researchers",MON / PERF,Medium,Easy
+Compare GPU clock speeds across nodes used by my job.,"Normal HPC User, HPC Researchers",MON / PERF,Medium,Medium
+What is the average GPU memory usage across my active jobs?,"Normal HPC User, HPC Researchers",MON / PERF,Medium,Easy
+Did any GPU exceed its power management limit?,"System Admin, HPC Researchers",ENERGY / MON,High,Medium
+Show NVLink error counts on my job nodes.,"System Admin, HPC Researchers",MON / PERF,Medium,Medium
+How much total GPU memory is available in my partition?,System Admin,PERF / RES / MON,Medium,Easy
+Show GPU thermal violation events for my jobs.,"Normal HPC User, System Admin",MON / ENERGY / JOB,High,Medium
+What is the current PUE of the cluster?,"Facility Admin, System Designers, HPC Researchers",ENERGY / FAC,High,Easy
+How much total IT power is consumed right now?,"Facility Admin, System Admin",ENERGY / FAC,High,Easy
+Show energy usage breakdown between compute and cooling.,"Facility Admin, System Designers",ENERGY / FAC,High,Medium
+What was the average inlet temperature during my job?,"Normal HPC User, HPC Researchers",MON / ENERGY,Medium,Easy
+Display total power consumption per rack.,"Facility Admin, System Admin",ENERGY / FAC,High,Medium
+How has cluster energy usage changed over the past week?,"System Admin, HPC Researchers, Facility Admin",ENERGY / MON,Medium,Medium
+Which CRAC units have the highest compressor utilization?,Facility Admin,FAC / MON,High,Medium
+Show return air temperature trends for the cooling units.,Facility Admin,FAC / MON,Medium,Medium
+Display humidity levels in the machine room.,Facility Admin,FAC / MON,Medium,Easy
+What is the difference between supply and return flow temperatures?,Facility Admin,FAC / MON,Medium,Medium
+What is the current outdoor temperature near the facility?,Facility Admin,FAC / MON,Low,Easy
+How does outside humidity affect cooling energy use?,"Facility Admin, HPC Researchers",FAC / ENERGY,Medium,Medium
+Show wind speed during the last peak cooling period.,Facility Admin,FAC / MON,Low,Easy
+Was there any correlation between external temperature and job failure rate?,"HPC Researchers, System Admin",AIOPS / MON / JOB,Medium,Hard
+How does external pressure vary during high compute load hours?,"Facility Admin, HPC Researchers",FAC / MON,Low,Medium
+Show top 10 jobs by total runtime this month.,"System Admin, HPC Researchers",JOB / PERF,Medium,Easy
+Which job had the highest energy consumption?,"System Admin, HPC Researchers",ENERGY / JOB,Medium,Medium
+What are the average CPU and GPU utilization per user?,"System Admin, HPC Researchers",JOB / PERF / MON,Medium,Medium
+Compare job runtime and waiting time for my recent jobs.,"Normal HPC User, HPC Researchers",JOB / PERF,High,Easy
+Generate performance summary for all my completed jobs.,"Normal HPC User, HPC Researchers",JOB / PERF / DOCS,Medium,Medium
+Schedule a daily report of my job statistics.,Normal HPC User,AUTO / JOB / DOCS,Medium,Easy
+Notify me when a job exceeds its time limit.,Normal HPC User,AUTO / JOB,High,Easy
+Automatically delete temporary files after job completion.,Normal HPC User,AUTO / DATA,Medium,Easy
+Generate a weekly performance summary of my workloads.,"Normal HPC User, HPC Researchers",AUTO / JOB / PERF,Medium,Easy
+Alert me if GPU utilization drops below 20%.,"Normal HPC User, System Admin",AUTO / MON / PERF,High,Easy
+Share my project directory with user “alice”.,"Normal HPC User, System Admin",SEC / DATA,Medium,Easy
+Check permissions for the folder `/project/shared`.,"Normal HPC User, System Admin",SEC / DATA,Medium,Easy
+Add SSH key to enable remote job submission.,"Normal HPC User, System Admin",SEC / DOCS,High,Easy
+Who has access to my project folder?,"Normal HPC User, System Admin",SEC / DATA,Medium,Easy
+List collaborators with active jobs in the same partition.,"Normal HPC User, System Admin",JOB / USER / MON,Medium,Easy
+Show the temperature map for each datacenter zone.,Facility Admin / Technicians,FAC / MON,High,Medium
+Which racks exceed 28 °C inlet temperature?,"Facility Admin / Technicians, System Admin",FAC / MON / ENERGY,High,Easy
+List humidity readings for all rooms.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+What is the average airflow rate per rack?,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Compare inlet vs outlet temperature across zones.,"Facility Admin / Technicians, System Designers / Architects",FAC / MON / ENERGY,Medium,Medium
+Show temperature difference between supply and return air.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Detect racks with unstable thermal gradients.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC / MON,High,Hard
+Report average ambient temperature for the past 24 h.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Which areas have humidity below 35 %?,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Identify hotspots detected by IPMI sensors today.,"Facility Admin / Technicians, System Admin",MON / ENERGY / FAC,High,Medium
+Compare CRAC unit efficiency (Vertiv metrics) by power usage.,"Facility Admin / Technicians, System Designers / Architects",ENERGY / FAC,High,Medium
+Show compressor utilization trend for all CRACs.,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Which CRAC units have Free-Cooling mode active?,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Report supply and return air temperatures per CRAC.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Correlate fan speed with return air temperature.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC / MON,Medium,Medium
+Detect pressure drop anomalies in filter sensors.,Facility Admin / Technicians,AIOPS / FAC / MON,High,Hard
+Which CRAC units have humidity control enabled?,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Compute average Free-Cooling fluid temperature.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Identify underperforming CRACs with low cooling delta.,Facility Admin / Technicians,AIOPS / FAC / MON,High,Hard
+Compare supply temperature set-points vs actual readings.,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Show total energy consumption per room.,Facility Admin / Technicians,ENERGY / FAC,High,Medium
+Plot PUE trend for the last 7 days.,"Facility Admin / Technicians, System Designers / Architects, HPC Researchers",ENERGY,High,Medium
+Compute total CRAC power (Logics: Tot_cdz).,Facility Admin / Technicians,ENERGY / FAC,High,Medium
+Compare ICT vs auxiliary power consumption.,"Facility Admin / Technicians, System Designers / Architects",ENERGY / FAC,High,Medium
+Show voltage and current imbalance across phases.,Facility Admin / Technicians,FAC / MON,High,Medium
+Which electrical panels report abnormal current draw?,Facility Admin / Technicians,AIOPS / FAC / MON,High,Medium
+Display power factor (Fattore di potenza) trend.,Facility Admin / Technicians,ENERGY / FAC,Medium,Medium
+Report total power per rack group.,"Facility Admin / Technicians, System Admin",ENERGY / FAC,Medium,Medium
+Estimate daily energy cost of the cooling system.,"Facility Admin / Technicians, System Designers / Architects",ENERGY,Medium,Medium
+Compare chiller and liquid cooling (Tot_chiller vs Tot_qpompe).,"Facility Admin / Technicians, System Designers / Architects",ENERGY / FAC,Medium,Medium
+Which nodes report high CPU temperature (> 85 °C)?,"System Admin, Facility Admin / Technicians",MON / ENERGY,High,Medium
+Show average fan speed trend per node.,System Admin,MON,Medium,Medium
+Identify nodes with failed or stalled fans.,"System Admin, Facility Admin / Technicians",AIOPS / MON,High,Medium
+Correlate DIMM temperature with inlet ambient.,"HPC Researchers, System Admin",AIOPS / MON / ENERGY,Medium,Hard
+List GPU temperature extremes per rack.,"System Admin, HPC Researchers",MON / ENERGY / FAC,Medium,Medium
+Detect power-supply voltage fluctuations in nodes.,System Admin,AIOPS / MON,High,Hard
+Which servers have persistent power anomalies?,System Admin,AIOPS / MON / ENERGY,High,Hard
+Report nodes exceeding thermal violation thresholds.,"System Admin, Facility Admin / Technicians",MON / ENERGY,High,Medium
+Compare node inlet vs exhaust temperature.,"System Admin, Facility Admin / Technicians",MON / ENERGY,Medium,Medium
+Detect correlation between GPU power usage and temperature.,HPC Researchers,AIOPS / ENERGY / PERF,Medium,Hard
+List all active alarms from Schneider PLC panels.,Facility Admin / Technicians,FAC / MON,High,Easy
+Which pumps triggered fault alarms in the last hour?,Facility Admin / Technicians,FAC / MON,High,Medium
+Display CRAC units with “Alarm On” status.,Facility Admin / Technicians,FAC / MON,High,Easy
+Which devices lost communication (Comlost flag)?,Facility Admin / Technicians,FAC / MON / DATA,High,Easy
+Report critical Nagios facility alerts for today.,"System Admin, Facility Admin / Technicians",MON,High,Easy
+Identify repeated alarm patterns per device.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC / MON,Medium,Hard
+Correlate inverter alarms with pump failures.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC,Medium,Hard
+Show valve alarms and affected circuits.,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Which PLC panels have “Allarme presente = 1”?,Facility Admin / Technicians,FAC / MON,High,Easy
+Summarize environmental anomalies detected overnight.,Facility Admin / Technicians,AIOPS / FAC / MON,High,Medium
+Why did Zone B overheat yesterday?,Facility Admin / Technicians,AIOPS / FAC / MON,High,Hard
+Correlate UPS alert timestamps with thermal spikes.,Facility Admin / Technicians,AIOPS / FAC,High,Hard
+Identify whether pump P102 failure caused CRAC 5 overload.,Facility Admin / Technicians,AIOPS / FAC,High,Hard
+Was high humidity related to free-cooling malfunction?,Facility Admin / Technicians,AIOPS / FAC,Medium,Hard
+Compare weather temperature vs inlet air over time.,"Facility Admin / Technicians, HPC Researchers",FAC / MON / ENERGY,Medium,Medium
+Determine root cause of low airflow in Room F.,Facility Admin / Technicians,AIOPS / FAC,High,Hard
+Analyze if power dips preceded cooling alarm events.,"Facility Admin / Technicians, System Admin",AIOPS / FAC / ENERGY,High,Hard
+Correlate PUE degradation with chiller inefficiency.,"Facility Admin / Technicians, System Designers / Architects",AIOPS / ENERGY / FAC,High,Hard
+Examine voltage drop events and device downtime.,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Reconstruct timeline of alarms leading to outage #23.,Facility Admin / Technicians,AIOPS / FAC / MON,High,Hard
+What maintenance is planned for this week?,Facility Admin / Technicians,FAC / DOCS,Medium,Easy
+Which pumps are due for preventive maintenance?,Facility Admin / Technicians,FAC / DOCS,Medium,Medium
+Show cumulative running hours for pump P103.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+When was the last valve TY141 serviced?,Facility Admin / Technicians,FAC / DOCS,Medium,Easy
+Record a note for CRAC 4 filter replacement.,Facility Admin / Technicians,DOCS / FAC,Medium,Easy
+List equipment exceeding 5 000 h operation.,Facility Admin / Technicians,FAC / MON,Medium,Easy
+Track mean time between failures for pumps.,Facility Admin / Technicians,AIOPS / FAC,Medium,Medium
+Show next calibration date for temperature sensors.,Facility Admin / Technicians,FAC / DOCS,Low,Easy
+Generate maintenance report for all cooling panels.,Facility Admin / Technicians,DOCS / FAC,Medium,Medium
+List all interventions logged this month.,Facility Admin / Technicians,DOCS / FAC,Medium,Easy
+Show monthly CO₂ footprint for the facility.,"Facility Admin / Technicians, System Designers / Architects",ENERGY,Medium,Medium
+Estimate annual energy savings from eco-mode.,"Facility Admin / Technicians, System Designers / Architects",ENERGY / AIOPS,Medium,Medium
+Compute average PUE before and after optimization.,"Facility Admin / Technicians, System Designers / Architects",ENERGY,Medium,Medium
+Track water vs air cooling contribution to efficiency.,"Facility Admin / Technicians, System Designers / Architects",ENERGY / FAC,Medium,Medium
+Forecast CO₂ reduction from new chiller schedule.,"Facility Admin / Technicians, System Designers / Architects",AIOPS / ENERGY,Medium,Hard
+Compare energy cost per rack before/after airflow tuning.,"Facility Admin / Technicians, System Admin",ENERGY / FAC,Medium,Medium
+Evaluate cooling energy recovery efficiency.,"Facility Admin / Technicians, System Designers / Architects",ENERGY / FAC,Medium,Hard
+Report daily renewable power ratio (if available).,"Facility Admin / Technicians, System Designers / Architects",ENERGY,Low,Medium
+"Show trend of energy efficiency KPIs (PUE, DCiE).","Facility Admin / Technicians, System Designers / Architects",ENERGY,Medium,Medium
+Identify top 5 racks contributing to excess energy use.,"Facility Admin / Technicians, System Admin",AIOPS / ENERGY / FAC,High,Medium
+List all CRAC and chiller devices in the facility.,Facility Admin / Technicians,FAC / DOCS,Low,Easy
+Where is panel Q101 physically located?,Facility Admin / Technicians,FAC / ARCH,Low,Easy
+Which nodes belong to Rack-R07?,"System Admin, Facility Admin / Technicians",ARCH / FAC,Medium,Easy
+List all sensors under maintenance status.,Facility Admin / Technicians,FAC / DOCS,Medium,Easy
+Retrieve mapping between pumps and valves in RDHX loop.,Facility Admin / Technicians,FAC / DOCS / ARCH,Medium,Medium
+Identify devices currently offline or disconnected.,Facility Admin / Technicians,FAC / MON,High,Easy
+Show inventory of all PDUs and UPS units.,Facility Admin / Technicians,FAC / DOCS,Medium,Easy
+List equipment added in the last 6 months.,Facility Admin / Technicians,FAC / DOCS,Low,Easy
+Which assets are redundant (primary/backup pairs)?,Facility Admin / Technicians,FAC / ARCH / DOCS,Medium,Medium
+Map rack positions and associated power meters.,"Facility Admin / Technicians, System Designers / Architects",FAC / ARCH,Medium,Medium
+Plot 1-year trend of room temperature averages.,Facility Admin / Technicians,FAC / MON,Medium,Medium
+Predict failure probability for pump P101.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC,Medium,Hard
+Forecast next thermal anomaly using past data.,"HPC Researchers, Facility Admin / Technicians",AIOPS / FAC / MON,High,Hard
+Show 6-month power factor trend per panel.,Facility Admin / Technicians,ENERGY / FAC,Medium,Medium
+Analyze compressor utilization trend vs season.,"Facility Admin / Technicians, HPC Researchers",AIOPS / FAC / MON,Medium,Medium
+Predict humidity deviation risk for the next 24 h.,"HPC Researchers, Facility Admin / Technicians",AIOPS / FAC,Medium,Hard
+Visualize historical PUE and correlate with weather.,"Facility Admin / Technicians, HPC Researchers",ENERGY / FAC,Medium,Medium
+Estimate component degradation rate from runtime hours.,"HPC Researchers, Facility Admin / Technicians",AIOPS / FAC,Medium,Hard
+Detect repeating weekly patterns in power usage.,"HPC Researchers, Facility Admin / Technicians",AIOPS / ENERGY,Medium,Medium
+Predict which CRAC may require servicing soon.,"HPC Researchers, Facility Admin / Technicians",AIOPS / FAC,High,Hard
+List all jobs that exceeded their walltime limits in 2024.,"System Admin, HPC Researchers",JOB / DEBUG,Medium,Easy
+Which jobs had the longest queue waiting times this month?,"System Admin, HPC Researchers",JOB / PERF,Medium,Easy
+Show the average GPU utilization per job for my last 20 submissions.,"Normal HPC User, HPC Researchers",MON / PERF / JOB,High,Medium
+Correlate job runtime with allocated nodes across all users.,"HPC Researchers, System Admin",JOB / PERF / MON,High,Medium
+Identify failed jobs with non-zero exit codes.,"System Admin, Normal HPC User",JOB / DEBUG,High,Easy
+Compare performance of two job scripts using identical input data.,"Normal HPC User, HPC Researchers",PERF / JOB,Medium,Medium
+Show distribution of job durations for the past year.,"System Admin, HPC Researchers",JOB / PERF,Medium,Easy
+Detect jobs that underutilized allocated GPUs.,"System Admin, HPC Researchers",PERF / MON / JOB,High,Medium
+Estimate average power consumption per job partition.,"HPC Researchers, System Admin",ENERGY / JOB,Medium,Medium
+Find jobs that ran on overheated nodes.,"System Admin, HPC Researchers",ENERGY / MON / JOB,High,Medium
+Profile CPU vs GPU utilization trends over the last week.,"HPC Researchers, System Admin",MON / PERF,High,Medium
+Identify CPU-bound versus memory-bound jobs.,"HPC Researchers, Normal HPC User",PERF / MON,High,Medium
+Compute job-level I/O bottlenecks from Lustre metrics.,"System Admin, HPC Researchers",DATA / PERF,High,Hard
+Plot correlation between GPU temperature and utilization.,HPC Researchers,ENERGY / PERF / MON,Medium,Medium
+Analyze scaling efficiency for MPI jobs with more than 128 nodes.,"HPC Researchers, System Admin",PERF / JOB,Medium,Hard
+Compare runtime variability between partitions.,"HPC Researchers, System Admin",JOB / PERF,Medium,Medium
+Identify top 10 nodes with highest average load.,System Admin,MON / PERF,High,Easy
+Detect network congestion events in interconnect metrics.,"System Admin, HPC Researchers",MON / PERF,High,Hard
+Show average SM clock frequency deviation for GPUs.,"System Admin, HPC Researchers",MON / PERF,Medium,Medium
+Quantify performance drift across software updates.,"HPC Researchers, System Admin",PERF / DOCS / MON,Medium,Hard
+"Show CPU, memory, and GPU utilization per node for last 48 hours.","System Admin, HPC Researchers",MON / PERF,High,Medium
+Detect anomalies in node power usage using IPMI data.,"System Admin, HPC Researchers",AIOPS / ENERGY / MON,High,Hard
+Compare ambient vs internal rack temperatures.,"Facility Admin, System Admin",FAC / MON / ENERGY,Medium,Medium
+Correlate memory errors (ECC) with system reboots.,"System Admin, HPC Researchers",MON / AIOPS,High,Hard
+Visualize thermal violation frequency per GPU.,"System Admin, HPC Researchers",MON / ENERGY,Medium,Medium
+Track NVLink CRC error rates over time.,"System Admin, HPC Researchers",MON / PERF,Medium,Medium
+Show time series of fan speeds and temperatures for rack F2.,"Facility Admin, System Admin",FAC / MON,Medium,Medium
+Identify periods of excessive GPU throttling.,"System Admin, HPC Researchers",MON / PERF / ENERGY,High,Medium
+Compute average node uptime from Ganglia and Nagios.,System Admin,MON,Medium,Easy
+Detect long-term drift in cluster utilization.,"HPC Researchers, System Admin",AIOPS / MON / PERF,High,Hard
+Estimate total IT energy consumption per month.,"Facility Admin, System Admin",ENERGY,Medium,Medium
+Compute PUE trend of the facility for 2023–2024.,"Facility Admin, System Designers, HPC Researchers",ENERGY / FAC,High,Medium
+Correlate compute load with cooling energy usage.,"HPC Researchers, Facility Admin",ENERGY / FAC / AIOPS,High,Hard
+Identify jobs contributing most to cluster energy peaks.,"HPC Researchers, System Admin",ENERGY / JOB,Medium,Medium
+Calculate energy-per-job normalized by runtime.,"HPC Researchers, System Admin",ENERGY / JOB / PERF,Medium,Medium
+Generate energy efficiency ranking per partition.,"HPC Researchers, System Admin",ENERGY / PERF,Medium,Medium
+Estimate power cost of my last 10 SLURM jobs.,"Normal HPC User, HPC Researchers",ENERGY / JOB,Medium,Easy
+Detect energy inefficiencies during low utilization periods.,"HPC Researchers, Facility Admin",ENERGY / AIOPS,Medium,Hard
+Correlate CPU and GPU power with ambient temperature.,"HPC Researchers, System Admin",ENERGY / MON / AIOPS,Medium,Hard
+Identify nodes with persistently high power draw.,"System Admin, Facility Admin",ENERGY / MON,High,Medium
+Show temperature difference between supply and return air.,Facility Admin,FAC / MON,Medium,Easy
+Correlate CRAC fan speed with room humidity.,Facility Admin,FAC / MON,Medium,Medium
+Compute chiller power load distribution over 24 hours.,Facility Admin,ENERGY / FAC,Medium,Medium
+Detect abnormal flow rate readings in Schneider PLC data.,Facility Admin,AIOPS / FAC / MON,High,Hard
+Compare liquid vs air cooling energy efficiency.,"System Designers, Facility Admin",ENERGY / FAC,Medium,Medium
+Identify pumps with excessive runtime hours.,Facility Admin,FAC / MON,Medium,Easy
+Find temperature outliers in RDHx panels.,Facility Admin,FAC / MON,Medium,Medium
+Estimate cooling system energy per compute watt.,"Facility Admin, HPC Researchers",ENERGY / FAC,Medium,Hard
+Track panel alarms and inverter fault occurrences.,Facility Admin,FAC / MON,Medium,Medium
+Detect synchronization errors between redundant cooling panels.,Facility Admin,AIOPS / FAC,High,Hard
+Compute I/O throughput trends during high-load periods.,"System Admin, HPC Researchers",DATA / PERF,High,Medium
+Detect file systems nearing full capacity.,System Admin,DATA / MON,High,Easy
+Correlate job I/O patterns with Lustre bandwidth.,"HPC Researchers, System Admin",DATA / PERF / JOB,Medium,Medium
+Identify peak data transfer times across nodes.,System Admin,DATA / MON,Medium,Medium
+Compare read vs write ratios for project datasets.,"HPC Researchers, System Admin",DATA / PERF,Medium,Medium
+Estimate average file size in scratch directories.,"System Admin, Normal HPC User",DATA / MON,Low,Easy
+Detect repeated metadata operation failures.,System Admin,DATA / MON / AIOPS,Medium,Medium
+Show disk usage growth rate per user.,System Admin,DATA / MON,Medium,Easy
+Measure checkpointing frequency of large jobs.,"HPC Researchers, System Admin",JOB / DATA / PERF,Medium,Medium
+Identify I/O-heavy jobs impacting shared storage.,"System Admin, HPC Researchers",DATA / PERF / JOB,High,Medium
+Train anomaly detection model on multi-year temperature data.,HPC Researchers,AIOPS / FAC / MON,Medium,Hard
+Detect cooling system anomalies using sensor fusion.,"HPC Researchers, Facility Admin",AIOPS / FAC,High,Hard
+Predict GPU thermal violations for next week.,"HPC Researchers, System Admin",AIOPS / ENERGY / MON,Medium,Hard
+Identify early-warning signals of fan failures.,"HPC Researchers, System Admin",AIOPS / MON,High,Hard
+Detect power instability patterns across racks.,"HPC Researchers, Facility Admin",AIOPS / ENERGY / FAC,High,Hard
+Predict next occurrence of critical Nagios alerts.,"HPC Researchers, System Admin",AIOPS / MON,Medium,Hard
+Forecast high-load periods based on historical job traces.,"HPC Researchers, System Admin",AIOPS / JOB / PERF,Medium,Hard
+Detect node-level thermal lag anomalies.,"HPC Researchers, System Admin",AIOPS / ENERGY / MON,Medium,Hard
+Generate dataset for supervised anomaly detection.,HPC Researchers,DATA / AIOPS,Medium,Medium
+Correlate anomalies with weather and facility data.,"HPC Researchers, Facility Admin",AIOPS / FAC / ENERGY,Medium,Hard
+Correlate weather humidity with datacenter cooling load.,"HPC Researchers, Facility Admin",FAC / ENERGY,Medium,Medium
+Compare outdoor temperature with CRAC return air temperature.,"Facility Admin, HPC Researchers",FAC / MON,Medium,Medium
+"Compute correlation matrix between CPU load, power, and PUE.",HPC Researchers,ENERGY / PERF / MON,Medium,Medium
+Analyze coupling between compute and cooling zones.,"HPC Researchers, System Designers",FAC / ENERGY / PERF,Medium,Hard
+Detect misalignment between IT and facility energy peaks.,"HPC Researchers, Facility Admin",AIOPS / ENERGY / FAC,High,Hard
+Identify correlation between user job mix and cluster efficiency.,"HPC Researchers, System Admin",JOB / PERF,Medium,Medium
+Compare daytime vs nighttime energy usage.,"Facility Admin, HPC Researchers",ENERGY / MON,Medium,Easy
+Study impact of GPU firmware updates on power metrics.,"HPC Researchers, System Admin",ENERGY / PERF,Medium,Medium
+Correlate system downtimes with facility alarms.,"System Admin, Facility Admin",MON / FAC / AIOPS,High,Medium
+Evaluate lag between cooling reaction and compute spikes.,"HPC Researchers, Facility Admin",AIOPS / FAC / ENERGY,Medium,Hard
+"Cluster jobs based on CPU, GPU, and memory profiles.",HPC Researchers,AIOPS / JOB / PERF,Medium,Hard
+Identify dominant job classes by resource consumption.,"HPC Researchers, System Admin",JOB / PERF,Medium,Medium
+Compute mean runtime per job category.,"HPC Researchers, System Admin",JOB / PERF,Medium,Easy
+Analyze workload balance between CPU-only and GPU nodes.,"HPC Researchers, System Admin",PERF / MON,Medium,Medium
+Detect seasonal variation in job submission behavior.,"HPC Researchers, System Admin",AIOPS / JOB,Low,Medium
+Characterize users with most energy-efficient jobs.,"HPC Researchers, System Admin",ENERGY / JOB,Medium,Medium
+Estimate carbon intensity per workload type.,"HPC Researchers, System Designers",ENERGY,Medium,Hard
+Compare workload profiles before and after scheduler update.,"HPC Researchers, System Admin",JOB / PERF,Medium,Medium
+Visualize workload distribution across partitions.,"System Admin, HPC Researchers",JOB / MON,Medium,Easy
+Detect underutilized partitions.,"System Admin, HPC Researchers",JOB / PERF / MON,High,Medium
+Recommend energy-aware scheduling strategies.,"HPC Researchers, System Admin",AIOPS / ENERGY / JOB,High,Hard
+Generate auto-labeled dataset for predictive maintenance.,HPC Researchers,DATA / AIOPS,Medium,Hard
+Train regression model for power prediction from job metadata.,HPC Researchers,AIOPS / ENERGY / JOB,Medium,Hard
+Detect cooling inefficiencies via ML clustering.,"HPC Researchers, Facility Admin",AIOPS / FAC / ENERGY,Medium,Hard
+Forecast node failures using historical telemetry.,"HPC Researchers, System Admin",AIOPS / MON,High,Hard
+Auto-generate reports of anomalies detected in Prometheus data.,"System Admin, HPC Researchers",AIOPS / DOCS / MON,Medium,Medium
+Suggest job rescheduling based on current energy price.,"HPC Researchers, System Admin",AIOPS / ENERGY / JOB,Medium,Medium
+Compare performance of ML-based anomaly detection models.,HPC Researchers,AIOPS / PERF,Medium,Hard
+Detect abnormal job runtime using unsupervised learning.,HPC Researchers,AIOPS / JOB / PERF,Medium,Hard
+Generate explainable summary of detected anomalies.,"HPC Researchers, System Admin",AIOPS / DOCS,High,Medium
+"Show current CPU, GPU, and memory utilization across all partitions.","System Admin, HPC Researchers",MON / PERF,High,Easy
+What is the average GPU power usage per node over the last 24 hours?,"System Admin, HPC Researchers",ENERGY / MON / PERF,High,Medium
+Compare cooling energy vs IT power for the past month.,"Facility Admin, System Designers",ENERGY / FAC / AIOPS,High,Medium
+Show nodes with the highest ambient temperature variability.,"Facility Admin, HPC Researchers",MON / ENERGY / AIOPS,Medium,Hard
+Which racks have the highest power density?,"Facility Admin, System Designers",ENERGY / FAC,High,Medium
+Plot PUE trend over the past six months.,"Facility Admin, HPC Researchers",ENERGY / FAC,High,Medium
+Estimate energy efficiency (kW per TFLOPS) across system generations.,"System Designers, HPC Researchers",ENERGY / PERF / ARCH,Medium,Hard
+Identify nodes with recurring ECC memory errors.,"System Admin, HPC Researchers",MON / AIOPS,High,Medium
+Correlate GPU temperature with job power consumption.,HPC Researchers,ENERGY / JOB / MON,High,Medium
+Compare NVLink bandwidth utilization across GPU nodes.,"HPC Researchers, System Admin",PERF / MON,Medium,Medium
+Show fan speed distributions across compute racks.,"System Admin, Facility Admin",MON / ENERGY / FAC,Medium,Medium
+Calculate average CPU thermal efficiency (Watt per °C).,"HPC Researchers, System Designers",ENERGY / PERF,Medium,Medium
+Plot load averages vs system boottime trends.,System Admin,MON / PERF,Medium,Medium
+Identify cooling zones with abnormal return air temperature.,Facility Admin,FAC / MON,High,Medium
+Map rack-level power usage vs chiller consumption.,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Show time series of total power consumption per device from Logics.,Facility Admin,ENERGY / FAC / MON,Medium,Medium
+Which panels report abnormal voltage fluctuations?,Facility Admin,FAC / MON / AIOPS,High,Hard
+Estimate total IT energy consumption for the week.,"Facility Admin, System Admin",ENERGY,Medium,Easy
+Compare power factor across all electrical panels.,Facility Admin,ENERGY / FAC,Medium,Medium
+Detect anomalies in CRAC compressor utilization.,Facility Admin,AIOPS / FAC / MON,High,Hard
+What is the efficiency difference between free cooling and mechanical cooling periods?,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Analyze correlation between outside temperature and PUE.,"HPC Researchers, Facility Admin",ENERGY / FAC / AIOPS,Medium,Hard
+Show network throughput and packet error rate per switch.,System Admin,MON / NET / PERF,High,Medium
+Which InfiniBand ports have the highest CRC error counts?,System Admin,MON / NET,High,Medium
+Summarize total node uptime across the cluster.,System Admin,MON,Medium,Easy
+Identify nodes that failed due to GPU power limit violations.,"System Admin, HPC Researchers",ENERGY / MON / AIOPS,High,Medium
+Estimate average energy per completed job.,"HPC Researchers, System Admin",ENERGY / JOB,Medium,Easy
+Compare compute energy cost for GPU vs CPU workloads.,"HPC Researchers, System Designers",ENERGY / JOB / PERF,Medium,Medium
+Predict rack overheating risk using last 30 days of data.,"HPC Researchers, Facility Admin",AIOPS / ENERGY / FAC,High,Hard
+Calculate total power used by RDHX pumps and valves.,Facility Admin,ENERGY / FAC,Medium,Medium
+Which valves or pumps show abnormal duty cycles?,Facility Admin,AIOPS / FAC / MON,Medium,Hard
+Show daily average supply and return water temperatures.,Facility Admin,FAC / MON,Medium,Easy
+Correlate humidity levels with equipment reliability events.,"Facility Admin, HPC Researchers",FAC / AIOPS / ENERGY,Medium,Medium
+Identify underperforming chillers based on energy usage.,Facility Admin,ENERGY / FAC / AIOPS,High,Hard
+Estimate heat recovery potential from exhaust air.,"System Designers, Facility Admin",ENERGY / FAC,Medium,Medium
+What is the total downtime caused by cooling subsystem alarms?,Facility Admin,FAC / MON / ALARM,High,Medium
+Compare thermal performance between CRAC units.,Facility Admin,FAC / MON,Medium,Medium
+Estimate network latency trends during high system load.,System Admin,NET / PERF / MON,Medium,Medium
+Show power and temperature correlation per rack.,"Facility Admin, HPC Researchers",ENERGY / FAC / MON,Medium,Medium
+Compare efficiency across partitions with different QoS classes.,"HPC Researchers, System Admin",JOB / PERF,Medium,Medium
+Evaluate GPU energy efficiency across workload types.,"HPC Researchers, System Admin",ENERGY / JOB / PERF,Medium,Medium
+Identify nodes with persistent CPU throttling.,"System Admin, HPC Researchers",MON / PERF / ENERGY,High,Medium
+Calculate thermal violation duration across all GPUs.,"HPC Researchers, System Admin",ENERGY / MON,Medium,Medium
+What is the CPU utilization distribution across nodes?,System Admin,MON / PERF,High,Easy
+Show the total energy consumption trend for each cluster generation.,"System Designers, Facility Admin",ENERGY / MON,Medium,Medium
+Estimate TCO impact of cooling upgrades.,"System Designers, Facility Admin",ENERGY / FAC / ARCH,Medium,Hard
+Compare rack inlet and outlet temperature deltas.,Facility Admin,FAC / MON,Medium,Medium
+Identify imbalanced cooling airflow zones.,Facility Admin,FAC / MON / AIOPS,Medium,Hard
+Rank nodes by total GPU energy consumption.,"HPC Researchers, System Admin",ENERGY / MON / JOB,Medium,Medium
+Compare energy intensity between AI and CFD workloads.,HPC Researchers,ENERGY / JOB / PERF,Medium,Medium
+Plot total energy cost per rack over one year.,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Simulate performance-per-watt curve for different load ratios.,"HPC Researchers, System Designers",ENERGY / PERF / ARCH,Medium,Hard
+Which nodes experience the highest reliability violations?,"System Admin, HPC Researchers",MON / AIOPS,High,Hard
+Estimate system mean time between failures (MTBF).,"System Admin, Facility Admin",AIOPS / MON,Medium,Hard
+Detect patterns of thermal runaway events.,"HPC Researchers, Facility Admin",AIOPS / ENERGY / MON,High,Hard
+Compare node fan duty cycle against inlet temperature.,"System Admin, HPC Researchers",MON / PERF / ENERGY,Medium,Medium
+Evaluate performance impact of memory temperature rise.,HPC Researchers,PERF / MON,Medium,Medium
+Correlate CPU speed fluctuations with job performance.,HPC Researchers,PERF / JOB / MON,Medium,Medium
+Predict which nodes will exceed power capacity next week.,"HPC Researchers, Facility Admin",AIOPS / ENERGY / MON,High,Hard
+Generate node topology map with thermal overlays.,"System Designers, System Admin",ARCH / MON / ENERGY,Medium,Medium
+"Visualize energy breakdown between IT, CRAC, and pumps.","Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Identify panels responsible for most reactive power losses.,Facility Admin,ENERGY / FAC,Medium,Hard
+Compute daily cooling-to-compute energy ratio.,"Facility Admin, HPC Researchers",ENERGY / FAC,Medium,Medium
+Rank components by share of total data center energy use.,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Correlate job waiting time with energy consumption trend.,HPC Researchers,JOB / ENERGY / PERF,Medium,Medium
+What fraction of total cluster power is consumed by GPUs?,"HPC Researchers, System Admin",ENERGY / MON / JOB,Medium,Medium
+Estimate network energy footprint per job.,HPC Researchers,ENERGY / JOB / NET,Medium,Medium
+Compare storage power draw per TB between Lustre and Ceph.,"System Admin, HPC Researchers",ENERGY / DATA / MON,Medium,Medium
+Determine optimal node mix for performance-per-watt.,"System Designers, HPC Researchers",ENERGY / ARCH / PERF,High,Hard
+Analyze voltage stability across all power panels.,Facility Admin,FAC / MON / ENERGY,Medium,Hard
+Estimate effect of outside humidity on cooling system load.,"Facility Admin, HPC Researchers",FAC / ENERGY / AIOPS,Medium,Medium
+Calculate aggregate job throughput vs energy draw.,"HPC Researchers, System Admin",ENERGY / JOB / PERF,Medium,Medium
+Compare thermal gradient across racks over 24 hours.,Facility Admin,FAC / MON,Medium,Medium
+Identify outlier sensors with unrealistic readings.,"Facility Admin, System Admin",AIOPS / FAC / MON,High,Hard
+Generate efficiency dashboard for different cooling strategies.,"Facility Admin, System Designers",ENERGY / FAC / DOCS,Medium,Medium
+Estimate PUE if chilled water temperature is raised by 2°C.,"Facility Admin, System Designers",ENERGY / FAC,Medium,Medium
+Correlate failures with inlet temperature thresholds.,"HPC Researchers, Facility Admin",AIOPS / MON / ENERGY,High,Hard
+Assess redundancy level of current power distribution topology.,"Facility Admin, System Designers",FAC / ARCH / ENERGY,Medium,Hard
+Compare utilization efficiency across compute partitions.,"System Admin, HPC Researchers",JOB / PERF / MON,Medium,Medium
+Evaluate cost per watt for GPU vs CPU nodes.,"HPC Researchers, System Designers",ENERGY / PERF / JOB,Medium,Medium
+Show trends in inlet airflow pressure drop.,Facility Admin,FAC / MON,Medium,Medium
+Rank rooms by cooling energy efficiency.,Facility Admin,ENERGY / FAC,Medium,Medium
+Identify peak load hours for power and cooling systems.,Facility Admin,ENERGY / FAC / MON,Medium,Easy
+Predict future power demand based on job trends.,"HPC Researchers, System Designers",AIOPS / ENERGY / JOB,High,Hard
+Estimate carbon footprint of data center operation.,"Facility Admin, System Designers, HPC Researchers",ENERGY / SUSTAIN,Medium,Medium
+Compute ratio of IT power to total facility power.,"Facility Admin, HPC Researchers",ENERGY / FAC,Medium,Easy
+Show seasonal variation in PUE.,"Facility Admin, HPC Researchers",ENERGY / FAC / MON,Medium,Medium
+Compare average inlet temperatures across node types.,"Facility Admin, System Designers",MON / ENERGY,Medium,Medium
+Identify underused racks by average CPU utilization.,"System Admin, Facility Admin",MON / PERF,Medium,Easy
+Rank jobs by their energy intensity (kWh/job).,"HPC Researchers, System Admin",ENERGY / JOB / PERF,Medium,Medium
+Detect abnormal network behavior using Nagios metrics.,System Admin,NET / AIOPS / MON,High,Medium
+Simulate performance under hypothetical power constraints.,"HPC Researchers, System Designers",ENERGY / PERF / ARCH,Medium,Hard
+Estimate cost savings from replacing air cooling with liquid cooling.,"System Designers, Facility Admin",ENERGY / FAC / ARCH,Medium,Hard
+Generate topology-aware performance heatmap.,"System Designers, HPC Researchers",ARCH / PERF / MON,Medium,Hard
+Show node-level total_energy_consumption trend since deployment.,"System Admin, HPC Researchers",ENERGY / MON,Medium,Medium
+Detect fan anomalies correlated with temperature spikes.,"System Admin, HPC Researchers",AIOPS / MON / ENERGY,Medium,Hard
+Identify deviations from expected PID valve behavior.,Facility Admin,AIOPS / FAC,High,Hard
+Predict system aging impact on energy efficiency.,"HPC Researchers, System Designers",AIOPS / ENERGY / ARCH,Medium,Hard
+Summarize hardware obsolescence risks based on sensor data.,"System Designers, Facility Admin",AIOPS / ARCH / MON,Medium,Hard
+"Generate design validation report integrating performance, thermal, and energy KPIs.","System Designers, HPC Researchers",ARCH / DOCS / ENERGY,High,Hard

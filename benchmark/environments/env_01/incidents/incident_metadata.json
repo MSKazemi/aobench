@@ -1,0 +1,5 @@
+{
+  "_placeholder": true,
+  "description": "Incident metadata for env_01. Replace with deterministic incident record.",
+  "expected_schema": ["incident_id", "severity", "timeline"]
+}

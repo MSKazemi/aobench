@@ -1,0 +1,22 @@
+environment_id: test_env_01
+snapshot_name: Test OOM Failure
+scenario_type: job_failure
+cluster_name: test-cluster
+snapshot_timestamp: "2026-01-01T00:00:00Z"
+bundle_root: tests/data/environments/test_env_01
+supported_roles:
+  - scientific_user
+  - sysadmin
+supported_categories:
+  - JOB
+included_sources:
+  - slurm
+  - docs
+  - rbac
+included_files:
+  - slurm/slurm_state.json
+  - docs/guide.md
+  - policy/rbac_policy.yaml
+implementation_status: bundled
+validation_status: validated
+description: "Minimal test environment for unit and integration tests."

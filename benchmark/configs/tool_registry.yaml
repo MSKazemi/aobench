@@ -1,0 +1,18 @@
+# Tool-to-role permission matrix
+# Defines which tools are available by default for each role
+
+role_tool_defaults:
+  scientific_user:
+    - slurm
+    - docs
+    - telemetry
+  sysadmin:
+    - slurm
+    - docs
+    - telemetry
+    - rbac
+  facility_admin:
+    - slurm
+    - docs
+    - telemetry
+    - rbac

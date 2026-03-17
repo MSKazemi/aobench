@@ -1,0 +1,71 @@
+doc_key,doc_name,group_id,group_name,description,common_formats,owners,primary_qcat,secondary_qcat,intended_users
+ARCH_OVERVIEW,System Overview Document,1,System Architecture & Hardware Documentation,"Cluster architecture diagrams, vendor topology, compute node distribution.","PDF, Markdown, PNG, SVG","System Architects, Vendors",ARCH,DOCS,Architects;Sysadmins;Management
+ARCH_HW_DATASHEETS,Hardware Data Sheets,1,System Architecture & Hardware Documentation,"CPU/GPU specs, RAM configuration, NIC types, storage controllers.","PDF, XLSX","System Architects, Procurement",ARCH,FAC,Architects;Sysadmins
+ARCH_RACK_LAYOUT,Rack Layout Diagrams,1,System Architecture & Hardware Documentation,"Physical rack layout, node numbering, cooling zones.","Visio, PNG, PDF","Facility Engineers, Architects",FAC,ARCH,Facility;Sysadmins;Architects
+ARCH_NETWORK_TOPOLOGY,Network Topology Docs,1,System Architecture & Hardware Documentation,"Infiniband/Ethernet hierarchy, VLAN map, routing configuration.","PDF, Markdown, SVG",Network Engineers,ARCH,SEC,Network;Sysadmins;Architects
+ARCH_STORAGE_DESIGN,Storage Architecture Docs,1,System Architecture & Hardware Documentation,"Lustre/Ceph/BeeGFS layout, MDT/OST map, performance tiers.","PDF, Markdown",Storage Architects,ARCH,DATA,Storage;Sysadmins;Architects
+ARCH_BOM,Bill of Materials (BoM),1,System Architecture & Hardware Documentation,"Component inventory, serial numbers, firmware levels.","XLSX, CSV, PDF","Procurement, Asset Management",ARCH,DOCS,Procurement;Sysadmins;Management
+ARCH_BIOS_CFG,Firmware & BIOS Configuration,1,System Architecture & Hardware Documentation,"BIOS templates, SMT/NUMA, turbo mode settings.","TXT, PDF, Markdown","Sysadmins, Vendors",ARCH,SEC,Sysadmins
+OPS_ACCOUNT_POLICY,User Account Management Policy,2,System Administration & Operations Manuals,"Creation/deletion workflow, LDAP groups, SSH key management.","PDF, Wiki","Sysadmins, IAM",SEC,DOCS,Sysadmins;Helpdesk
+OPS_SCHEDULER_CONFIG,Queue / Scheduler Config Docs,2,System Administration & Operations Manuals,"SLURM partitions, fairshare policy, accounting settings.","CONF, Markdown",Sysadmins,JOB,SEC,Sysadmins
+OPS_BACKUP_RESTORE,Backup & Restore Procedures,2,System Administration & Operations Manuals,"Backup frequency, retention, restore guide.","PDF, Markdown","Sysadmins, Data Managers",DATA,SEC,Sysadmins;Data Managers
+OPS_DR_PLAN,Disaster Recovery Plan,2,System Administration & Operations Manuals,"Failover strategy, contacts, offsite recovery.",PDF,"Sysadmins, Management",SEC,FAC,Sysadmins;Management
+OPS_SW_INSTALL_POLICY,Software Installation & Module Policy,2,System Administration & Operations Manuals,"Module structure, compiler guidelines, testing workflow.",Markdown,Sysadmins,DOCS,JOB,Sysadmins;Users
+OPS_MAINTENANCE_PROC,Maintenance Procedures,2,System Administration & Operations Manuals,"Firmware upgrade checklists, preventive maintenance tasks.","PDF, Wiki",Sysadmins,FAC,ARCH,Sysadmins
+OPS_CHANGE_MGMT,Change Management Process,2,System Administration & Operations Manuals,"Request, approval, rollback documentation.",PDF,"Sysadmins, Management",SEC,DOCS,Sysadmins;Management
+OPS_RBAC,Access Control Policy (RBAC),2,System Administration & Operations Manuals,"Roles, sudoers configuration, escalation rules.","PDF, YAML","Sysadmins, Security",SEC,DOCS,Sysadmins;Security
+FAC_LAYOUT,Facility Layout Plan,3,Facility & Infrastructure Documentation,"Floor maps, airflow, rack placement.","CAD, PDF, PNG",Facility Engineers,FAC,ARCH,Facility;Architects
+FAC_COOLING_DESIGN,Cooling System Design,3,Facility & Infrastructure Documentation,"CRAC/CRAH, RDHX, chilled water system, P&ID diagrams.","PDF, PNG",Facility Engineers,FAC,ENERGY,Facility
+FAC_POWER_DIST,Power Distribution Docs,3,Facility & Infrastructure Documentation,"UPS/PDU specs, breaker list, one-line diagram.","PDF, DWG","Facility Engineers, Electrical",FAC,ENERGY,Facility
+FAC_SETPOINTS,Setpoint & Control Standards,3,Facility & Infrastructure Documentation,"Temperature, humidity, pressure, flow thresholds.","PDF, CSV",Facility Engineers,FAC,ENERGY,Facility;Sysadmins
+FAC_BMS_DCIM,BMS/DCIM Configuration Docs,3,Facility & Infrastructure Documentation,"Tag lists, SNMP/Modbus registers, alarm codes.","CSV, PDF",Facility Engineers,FAC,SEC,Facility;Sysadmins
+FAC_MAINT_LOGS,Facility Maintenance Logs (Structured),3,Facility & Infrastructure Documentation,"HVAC, pump, chiller inspection records.","CSV, XLSX",Facility Engineers,FAC,DOCS,Facility
+FAC_STANDARDS,Facility Standards & Certifications,3,Facility & Infrastructure Documentation,"ASHRAE TC9.9, ISO 50001, EN 50600.",PDF,"Facility Engineers, Compliance",FAC,SEC,Facility;Management
+USER_ONBOARD,User Onboarding Guide,4,User Documentation & Help Resources,"Registration, VPN, authentication, terms of use.","PDF, Wiki",User Support,DOCS,SEC,Users;Helpdesk
+USER_QUICKSTART,Quick Start Guide,4,User Documentation & Help Resources,"Login, job submission, file transfer basics.",PDF,User Support,DOCS,JOB,Users
+USER_SCHED_GUIDES,SLURM/PBS/LSF Guides,4,User Documentation & Help Resources,"Job scheduling commands, partitions, limits.","PDF, Markdown","User Support, Sysadmins",JOB,DOCS,Users;Sysadmins
+USER_SBATCH_TEMPLATES,Batch Script Examples,4,User Documentation & Help Resources,"CPU/GPU templates, MPI, containers.","TXT, .sbatch",User Support,JOB,PERF,Users
+USER_MODULES,Software Module Reference,4,User Documentation & Help Resources,"Installed software, versions, usage examples.","HTML, Markdown",Sysadmins,DOCS,JOB,Users;Sysadmins
+USER_STORAGE_POLICY,Data Storage & Quota Policy,4,User Documentation & Help Resources,"Home/project/scratch rules, retention.",PDF,Data Managers,DATA,DOCS,Users;Data Managers
+USER_ACCOUNTING,Accounting & Usage Policy,4,User Documentation & Help Resources,"CPU/GPU hour limits, billing, allocations.",PDF,"Management, Admin",DATA,DOCS,Users;Admins
+USER_HELPDESK_FAQ,Helpdesk & FAQ,4,User Documentation & Help Resources,"Ticket submission, support levels, escalation.","Wiki, HTML",Helpdesk,DOCS,JOB,Users;Helpdesk
+USER_TRAINING,Training Materials,4,User Documentation & Help Resources,"Workshop slides, tutorials, example datasets.","PDF, PPTX",User Support,DOCS,PERF,Users
+DATA_CLASSIFICATION,Data Classification Policy,5,Data Management & Governance,Confidentiality levels and labeling.,PDF,"Data Managers, Security",SEC,DATA,Users;Data Managers
+DATA_BACKUP_ARCHIVE,Backup & Archival Policy,5,Data Management & Governance,"Retention time, offsite copies, recovery verification.",PDF,Data Managers,DATA,SEC,Data Managers;Sysadmins
+DATA_RETENTION,Data Retention Policy,5,Data Management & Governance,"Automatic purging, project expiration.",PDF,Data Managers,DATA,SEC,Data Managers;Users
+DATA_TRANSFER,Data Transfer Policy,5,Data Management & Governance,"Approved tools (scp, rsync, Globus), bandwidth quotas.",PDF,"Data Managers, Security",DATA,SEC,Users;Sysadmins
+DATA_GDPR,GDPR / Compliance Docs,5,Data Management & Governance,Privacy and EU data-handling standards.,PDF,"Legal, Data Protection Officer",SEC,DOCS,All
+DATA_RDM,Research Data Management Plan (RDM),5,Data Management & Governance,Templates for user projects.,"PDF, DOCX",Data Managers,DATA,DOCS,Users;PIs
+POL_AUP,Acceptable Use Policy (AUP),6,Organizational & Policy Documents,Authorized activities and prohibited actions.,PDF,"Management, Legal",SEC,DOCS,All Users
+POL_SLA,Service Level Agreement (SLA),6,Organizational & Policy Documents,"Uptime targets, response SLAs, maintenance windows.",PDF,Management,DOCS,SEC,Users;Management
+POL_SECURITY,Security Policy,6,Organizational & Policy Documents,"Passwords, MFA, access control, vulnerabilities.",PDF,"Security, Sysadmins",SEC,DOCS,All
+POL_INCIDENT,Incident Response Plan,6,Organizational & Policy Documents,"Escalation tree, templates, response timeline.",PDF,"Security, Management",SEC,DOCS,Sysadmins;Security;Management
+POL_CHANGE_CONTROL,Change Control Policy,6,Organizational & Policy Documents,Approval and audit trails for changes.,PDF,"Management, Sysadmins",SEC,DOCS,Sysadmins;Management
+POL_ENERGY,Energy Management Policy,6,Organizational & Policy Documents,"PUE targets, sustainability goals, renewable integration.",PDF,"Sustainability, Facility",ENERGY,FAC,Management;Facility
+POL_PROCUREMENT,Procurement Policy,6,Organizational & Policy Documents,"Vendor selection, tendering process, contracts.",PDF,"Procurement, Management",DOCS,SEC,Management;Procurement
+POL_HS,Health & Safety Policy,6,Organizational & Policy Documents,"On-site conduct, hazard identification, PPE.",PDF,"Facility, HSE",FAC,SEC,All On-site
+POL_ENV_REPORTS,Environmental & Sustainability Reports,6,Organizational & Policy Documents,"Energy consumption, carbon footprint summaries.","PDF, XLSX","Sustainability, Management",ENERGY,DOCS,Management
+ADMIN_USER_DB,User Database (Structured),7,Administrative & Organizational Data,"Usernames, roles, projects, affiliations.","CSV, LDAP","Admins, IAM",DOCS,SEC,Admins;Sysadmins
+ADMIN_ALLOCATIONS,Project Allocation Docs,7,Administrative & Organizational Data,"Quotas, dates, utilization history.","PDF, XLSX","Admins, Management",DATA,DOCS,Admins;Management
+ADMIN_BILLING,Accounting / Billing Rules,7,Administrative & Organizational Data,"Cost-per-node-hour, GPU pricing, summaries.","XLSX, Markdown","Admins, Finance",DATA,DOCS,Admins;Finance
+ADMIN_MAINT_CAL,Maintenance Calendar,7,Administrative & Organizational Data,"Scheduled downtime, upgrade notifications.","ICS, Wiki",Sysadmins,DOCS,FAC,Sysadmins;Users
+ADMIN_CONTRACTS,Vendor Contracts / Warranties,7,Administrative & Organizational Data,"Service agreements, expiration dates.",PDF,"Procurement, Legal",DOCS,SEC,Procurement;Management
+ADMIN_INVOICES,Procurement Invoices & Specs,7,Administrative & Organizational Data,"Purchase orders, component quotes.","PDF, XLSX",Procurement,DOCS,DATA,Procurement;Finance
+KB_INTERNAL_PAGES,Internal Wiki Pages,8,Knowledge Base / Wiki / Portal Content,"Centralized documentation on system, users, software, policy.","Markdown, HTML",All Teams,DOCS,ARCH,All
+KB_FAQ,FAQ / Troubleshooting Pages,8,Knowledge Base / Wiki / Portal Content,"Job errors, permissions, data transfer issues.","Markdown, HTML",Helpdesk,DOCS,JOB,Users;Helpdesk
+KB_BEST_PRACTICES,Best Practice Guides,8,Knowledge Base / Wiki / Portal Content,"Performance, energy, storage optimization.",Markdown,"User Support, Admins",DOCS,PERF,Users;Admins
+KB_ARCH_OVERVIEWS,Architecture Overview Pages,8,Knowledge Base / Wiki / Portal Content,"Node types, interconnect overview, software stack.","HTML, SVG",Architects,DOCS,ARCH,Users;Architects
+KB_HOWTOS,Procedural How-Tos,8,Knowledge Base / Wiki / Portal Content,"Add users, update modules, restart services.",Wiki,"Helpdesk, Sysadmins",DOCS,SEC,Sysadmins;Helpdesk
+KB_PUBLIC_SITE,Public Website Content,8,Knowledge Base / Wiki / Portal Content,"News, events, announcements, status pages.",HTML,"Comms, User Support",DOCS,JOB,Users;Public
+KB_KB_DB,Helpdesk Portal Knowledge Base,8,Knowledge Base / Wiki / Portal Content,Searchable solutions and resolutions.,"DB export, JSON",Helpdesk,DOCS,JOB,Helpdesk;Users
+REF_THERMAL,Thermal & Environmental Setpoints,9,"Reference Standards, Setpoints & Configuration Tables","Inlet/outlet temperature, humidity, airflow.","CSV, PDF","Facility, Sysadmins",FAC,ENERGY,Facility;Sysadmins
+REF_POWER,Power & Electrical Standards,9,"Reference Standards, Setpoints & Configuration Tables","Rack power limits, breaker capacities.",PDF,Facility,FAC,ENERGY,Facility
+REF_SW_STANDARDS,Software Configuration Standards,9,"Reference Standards, Setpoints & Configuration Tables","Compiler flags, MPI versions, CUDA guidelines.","Markdown, YAML",Sysadmins,ARCH,PERF,Sysadmins;Users
+REF_FAC_COMPLIANCE,Facility Compliance Standards,9,"Reference Standards, Setpoints & Configuration Tables","ASHRAE, ISO, EN documentation.",PDF,"Facility, Compliance",FAC,SEC,Facility;Management
+REF_NODE_GROUPS,Node Group Definitions,9,"Reference Standards, Setpoints & Configuration Tables",Production/test/dev node groups.,"YAML, CONF",Sysadmins,JOB,ARCH,Sysadmins
+REF_QUEUE_DEFS,Queue Definitions,9,"Reference Standards, Setpoints & Configuration Tables","Partition list, limits, timeouts.","CONF, Markdown",Sysadmins,JOB,SEC,Sysadmins;Users
+ENG_TENDER,Tender / Procurement Docs,10,"Design, Engineering & Upgrade Documents","RFPs, vendor proposals, bid evaluations.",PDF,"Procurement, Architects",ARCH,DOCS,Management;Procurement
+ENG_SAT,System Acceptance Tests (SAT),10,"Design, Engineering & Upgrade Documents","Benchmark results, validation reports.",PDF,"Architects, Sysadmins",ARCH,PERF,Architects;Sysadmins
+ENG_UPGRADES,Upgrade / Expansion Plans,10,"Design, Engineering & Upgrade Documents","Additional racks, new cooling capacity, GPU extensions.",PDF,"Architects, Facility",ARCH,FAC,Architects;Facility;Management
+ENG_INTEGRATION,Integration Diagrams,10,"Design, Engineering & Upgrade Documents","Facility-to-system interconnects, network links.","Visio, SVG",Architects,ARCH,FAC,Architects;Facility
+ENG_CHANGE_FORMS,Change Request Forms,10,"Design, Engineering & Upgrade Documents","RFC templates, justification documents.",DOCX,"Sysadmins, Management",SEC,DOCS,Sysadmins;Management
