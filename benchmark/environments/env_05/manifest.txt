@@ -1,0 +1,8 @@
+power/node_power_005.csv
+rack/rack_telemetry_005.csv
+inventory/node_map.csv
+cooling/crac_status.json
+incidents/cooling_incident.json
+policy/rbac_policy.yaml
+docs/cooling_policy.md
+docs/rack_status.md

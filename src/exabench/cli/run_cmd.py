@@ -16,7 +16,7 @@ def _build_adapter(name: str):
         return DirectQAAdapter()
     if name.startswith("openai"):
         from exabench.adapters.openai_adapter import OpenAIAdapter
-        model = name.split(":", 1)[1] if ":" in name else "gpt-4o-mini"
+        model = name.split(":", 1)[1] if ":" in name else "gpt-4o"
         return OpenAIAdapter(model=model)
     raise ValueError(name)
 
@@ -40,7 +40,7 @@ def run_all(
     except ValueError:
         typer.echo(
             f"Unknown adapter '{adapter}'. "
-            "Available: direct_qa, openai, openai:gpt-4o, openai:gpt-4o-mini",
+            "Available: direct_qa, openai, openai:gpt-4o",
             err=True,
         )
         raise typer.Exit(1)
@@ -95,7 +95,7 @@ def run_task(
     except ValueError:
         typer.echo(
             f"Unknown adapter '{adapter}'. "
-            "Available: direct_qa, openai, openai:gpt-4o, openai:gpt-4o-mini",
+            "Available: direct_qa, openai, openai:gpt-4o",
             err=True,
         )
         raise typer.Exit(1)

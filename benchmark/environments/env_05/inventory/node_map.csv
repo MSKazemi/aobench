@@ -1,0 +1,13 @@
+node,rack,role,cpu_cores,ram_gb,gpu_count
+node-a01,rack-a,compute,64,256,0
+node-a02,rack-a,compute,64,256,0
+node-a03,rack-a,compute,64,256,2
+node-b01,rack-b,compute,64,256,0
+node-b02,rack-b,compute,64,256,0
+node-b03,rack-b,gpu,64,512,4
+node-c01,rack-c,compute,64,256,0
+node-c02,rack-c,compute,64,256,0
+node-c03,rack-c,compute,64,256,0
+node-c04,rack-c,compute,64,256,0
+node-d01,rack-d,login,32,128,0
+node-d02,rack-d,storage,16,64,0

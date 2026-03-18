@@ -11,9 +11,19 @@
 | --------------------------------------- | ---------------------------------- |
 | Benchmarking framework                  | Systems being benchmarked          |
 | You develop this                        | Others develop these               |
-| Connects to agents                      | Expose interfaces (API, MCP, etc.) |
+| Connects to agents (HTTP, MCP, FastAPI) | Expose interfaces (API, MCP, etc.) |
 | Sends tasks, receives responses, scores | Execute tasks, return answers      |
+| **Never** needs direct cluster access   | Have access to real SLURM, telemetry, etc. |
 
+### Connection model
+
+```
+ExaBench  ──(MCP / FastAPI / HTTP)──►  HPC Agent  ──(real tools)──►  SLURM, telemetry, cluster
+    │                                        │
+    └──── scores response / trace ◄──────────┘
+```
+
+ExaBench connects to the agent's API. The agent has cluster access; ExaBench does not.
 
 ---
 
@@ -43,10 +53,11 @@ The phrase **"ExaBench drives the agent"** refers to the **OpenAIAdapter** and s
 
 ## 2.1 Future: Production Agent Stress Testing
 
-Beyond v0.1, ExaBench will connect to agents **already deployed on HPC clusters** with access to the real cluster. In this mode:
+Beyond v0.1, ExaBench will connect to agents **already deployed on or near HPC clusters**. In this mode:
 
-- The agent under test uses its own access to live SLURM, telemetry, docs, etc.
-- ExaBench sends benchmark tasks (via HTTP, MCP, or another protocol) and evaluates responses.
+- **ExaBench** connects to the agent via HTTP, MCP, FastAPI, or another protocol — **ExaBench never needs direct access to real SLURM or the HPC cluster**.
+- **The agent under test** uses its own access to live SLURM, telemetry, docs, etc. The agent has cluster access; ExaBench does not.
+- ExaBench sends benchmark tasks and evaluates responses/traces returned by the agent.
 - This enables **stress testing production agents** under realistic conditions: latency, throughput, and correctness under load.
 
 This complements the current mock-tool mode (reproducible, offline) with in-situ evaluation of production HPC agents.

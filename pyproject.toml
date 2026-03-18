@@ -17,6 +17,7 @@ dependencies = [
     "pandas>=2.0",
     "pyarrow>=14.0",
     "python-dotenv>=1.0",
+    "rapidfuzz>=3.0",
 ]
 
 [project.optional-dependencies]

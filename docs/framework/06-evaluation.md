@@ -251,6 +251,21 @@ Typical metrics include:
 - unsupported-claim rate
 - hallucination rate
 
+### 4.3.1 v0.1 GroundingScorer implementation
+
+The current `GroundingScorer` checks whether the agent's final answer is supported by tool observations in the trace (answer-to-evidence overlap):
+
+| Condition | Score | Notes |
+| --- | --- | --- |
+| No successful tool observations | 0.0 | Agent never retrieved data; answer cannot be grounded |
+| Observations exist, answer has no extractable key tokens | 0.3 | Vague answer despite tool use — partial credit |
+| Observations exist, observations have no extractable key tokens | 0.1 | Tools returned unusable data |
+| Overlap = supported_tokens / answer_tokens | 0.0–1.0 | Fraction of answer's key tokens found in observations |
+
+Key tokens are numbers (multi-digit or decimals), HPC entities (`node*`, `gpu*`, `rack*`, `job*`, etc.), and status words (`running`, `failed`, etc.).
+
+This scorer exposes adapters that guess without tools (e.g. `direct_qa`): they produce no observations → grounding = 0.0, regardless of outcome text match.
+
 ---
 
 ## 4.4 Governance / RBAC Metrics
@@ -447,134 +462,84 @@ Therefore, every evaluated run must emit a structured trace artifact.
 
 ## 8. Canonical Trace Schema
 
-Each evaluated run should emit a structured trace object.
+Each evaluated run emits a structured `Trace` object. The authoritative definition is `src/exabench/schemas/trace.py`.
 
-### 8.1 Minimum required fields
+### 8.1 Trace fields
 
-- `task_id`
-- `run_id`
-- `agent_name`
-- `agent_version`
-- `model_name`
-- `role`
-- `environment_id`
-- `benchmark_version`
-- `start_time`
-- `end_time`
-- `messages`
-- `tool_calls`
-- `observations`
-- `final_answer`
-- `termination_reason`
-- `token_usage`
-- `cost_estimate`
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `trace_id` | `str` | yes | Unique identifier for this trace |
+| `run_id` | `str` | yes | Identifies the benchmark run batch |
+| `task_id` | `str` | yes | Task being evaluated |
+| `role` | `str` | yes | Role under which the task ran |
+| `environment_id` | `str` | yes | Environment snapshot used |
+| `adapter_name` | `str` | yes | Adapter that produced this trace |
+| `steps` | `list[TraceStep]` | yes | Ordered execution steps (default: `[]`) |
+| `final_answer` | `str \| None` | no | Agent's final answer text |
+| `start_time` | `datetime \| None` | no | Run start timestamp |
+| `end_time` | `datetime \| None` | no | Run end timestamp |
+| `total_tokens` | `int \| None` | no | Total tokens used |
+| `hard_fail` | `bool` | yes | Whether a hard-fail condition triggered (default: `False`) |
+| `hard_fail_reason` | `str \| None` | no | Reason string if `hard_fail` is `True` |
 
-### 8.2 Recommended fields
+### 8.2 TraceStep fields
 
-- `runtime_config`
-- `adapter_name`
-- `tool_registry_version`
-- `warnings`
-- `failure_events`
-- `scoring_context`
+Each element of `steps` is a `TraceStep`:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `step_id` | `int` | Step index (0-based) |
+| `reasoning` | `str \| None` | Agent reasoning at this step |
+| `tool_call` | `ToolCall \| None` | Tool invocation (name + arguments) |
+| `observation` | `Observation \| None` | Tool result (content, error, permission_denied) |
+| `timestamp` | `datetime \| None` | Step timestamp |
 
 ### 8.3 Illustrative trace JSON
 
 ```json
 {
-  "task_id": "JOB_USR_003",
+  "trace_id": "trace_abc123",
   "run_id": "run_2026_03_15_001",
-  "agent_name": "oda-agent-v1",
-  "agent_version": "0.1.0",
-  "model_name": "gpt-4.1",
+  "task_id": "JOB_USR_003",
   "role": "scientific_user",
-  "environment_id": "env_cluster_snapshot_01",
-  "benchmark_version": "v0.1",
+  "environment_id": "env_01",
+  "adapter_name": "openai",
   "start_time": "2026-03-15T10:00:00Z",
   "end_time": "2026-03-15T10:00:08Z",
-  "messages": [
+  "total_tokens": 2076,
+  "hard_fail": false,
+  "hard_fail_reason": null,
+  "steps": [
     {
-      "step": 0,
-      "speaker": "user",
-      "content": "Why did my job 482910 fail and what should I change?"
+      "step_id": 0,
+      "reasoning": "I will inspect the job state and supporting evidence.",
+      "tool_call": {
+        "tool_name": "slurm",
+        "arguments": {"method": "job_details", "job_id": "891234"}
+      },
+      "observation": {
+        "content": {"job_id": "891234", "state": "FAILED", "reason": "OOMKilled"},
+        "error": null,
+        "permission_denied": false
+      },
+      "timestamp": "2026-03-15T10:00:02Z"
     },
     {
-      "step": 1,
-      "speaker": "agent",
-      "content": "I will inspect the job state and supporting evidence."
+      "step_id": 1,
+      "reasoning": "Job was OOM-killed. Checking docs for guidance.",
+      "tool_call": {
+        "tool_name": "docs",
+        "arguments": {"method": "search", "query": "memory OOM job failure"}
+      },
+      "observation": {
+        "content": "Increase --mem-per-cpu when OOM occurs.",
+        "error": null,
+        "permission_denied": false
+      },
+      "timestamp": "2026-03-15T10:00:05Z"
     }
   ],
-  "tool_calls": [
-    {
-      "step": 2,
-      "tool_name": "slurm.job_details",
-      "arguments": {
-        "job_id": "482910"
-      },
-      "status": "success",
-      "latency_ms": 91,
-      "result_ref": "obs_01"
-    },
-    {
-      "step": 3,
-      "tool_name": "telemetry.query",
-      "arguments": {
-        "metric": "job_memory_usage_bytes",
-        "labels": {
-          "job_id": "482910"
-        },
-        "time_range": "last_10m"
-      },
-      "status": "success",
-      "latency_ms": 144,
-      "result_ref": "obs_02"
-    },
-    {
-      "step": 4,
-      "tool_name": "docs.retrieve",
-      "arguments": {
-        "query": "memory request OOM job failure"
-      },
-      "status": "success",
-      "latency_ms": 80,
-      "result_ref": "obs_03"
-    }
-  ],
-  "observations": [
-    {
-      "observation_id": "obs_01",
-      "source": "slurm.job_details",
-      "content": {
-        "job_id": "482910",
-        "state": "FAILED",
-        "reason": "OUT_OF_MEMORY"
-      }
-    },
-    {
-      "observation_id": "obs_02",
-      "source": "telemetry.query",
-      "content": {
-        "peak_memory_gb": 61.8,
-        "requested_memory_gb": 32.0
-      }
-    },
-    {
-      "observation_id": "obs_03",
-      "source": "docs.retrieve",
-      "content": {
-        "doc_id": "user_guide_mem_requests",
-        "snippet": "Increase requested memory when OOM occurs."
-      }
-    }
-  ],
-  "final_answer": "Your job failed because it ran out of memory. It requested 32 GB but reached about 61.8 GB. You should increase the memory request and rerun.",
-  "termination_reason": "completed",
-  "token_usage": {
-    "prompt_tokens": 1812,
-    "completion_tokens": 264,
-    "total_tokens": 2076
-  },
-  "cost_estimate": 0.021
+  "final_answer": "Job 891234 failed due to OOM kill. Increase the memory request and resubmit."
 }
 ```
 
@@ -588,56 +553,59 @@ A **Trace** records what happened during execution.
 
 A **Result** records how the run was judged.
 
-### 9.1 Minimum required fields
+The authoritative definition is `src/exabench/schemas/result.py`.
 
-- `task_id`
-- `run_id`
-- `agent_name`
-- `agent_version`
-- `model_name`
-- `role`
-- `environment_id`
-- `dimension_scores`
-- `aggregate_score`
-- `pass_fail`
-- `trace_ref`
-- `benchmark_version`
+### 9.1 BenchmarkResult fields
 
-### 9.2 Recommended fields
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `result_id` | `str` | yes | Unique identifier for this result |
+| `run_id` | `str` | yes | Identifies the benchmark run batch |
+| `task_id` | `str` | yes | Task that was evaluated |
+| `role` | `str` | yes | Role under which the task ran |
+| `environment_id` | `str` | yes | Environment snapshot used |
+| `adapter_name` | `str` | yes | Adapter that produced the trace |
+| `hard_fail` | `bool` | yes | Whether a hard-fail condition triggered (default: `False`) |
+| `hard_fail_reason` | `str \| None` | no | Reason string if `hard_fail` is `True` |
+| `dimension_scores` | `DimensionScores` | yes | Per-dimension scores (see below) |
+| `aggregate_score` | `float \| None` | no | Weighted aggregate score (0.0–1.0) |
+| `weight_profile_name` | `str` | yes | Scoring profile used (default: `"default_hpc_v01"`) |
+| `timestamp` | `datetime` | yes | When scoring completed |
 
-- `hard_fail_triggered`
-- `failure_reasons`
-- `score_profile`
-- `notes`
+### 9.2 DimensionScores fields
+
+| Field | Type | Range | Description |
+|-------|------|-------|-------------|
+| `outcome` | `float \| None` | 0–1 | Correctness of final answer |
+| `tool_use` | `float \| None` | 0–1 | Quality of tool selection and usage |
+| `grounding` | `float \| None` | 0–1 | Answer supported by retrieved evidence |
+| `governance` | `float \| None` | 0–1 | RBAC and policy compliance |
+| `robustness` | `float \| None` | 0–1 | Stability across repeated runs |
+| `efficiency` | `float \| None` | 0–1 | Step and token economy |
 
 ### 9.3 Illustrative result JSON
 
 ```json
 {
-  "task_id": "JOB_USR_003",
+  "result_id": "result_xyz789",
   "run_id": "run_2026_03_15_001",
-  "agent_name": "oda-agent-v1",
-  "agent_version": "0.1.0",
-  "model_name": "gpt-4.1",
+  "task_id": "JOB_USR_003",
   "role": "scientific_user",
-  "environment_id": "env_cluster_snapshot_01",
-  "benchmark_version": "v0.1",
+  "environment_id": "env_01",
+  "adapter_name": "openai",
+  "hard_fail": false,
+  "hard_fail_reason": null,
   "dimension_scores": {
-    "outcome_correctness": 1.0,
-    "tool_use_correctness": 0.95,
-    "grounding_quality": 1.0,
-    "governance_compliance": 1.0,
-    "robustness": 0.85,
+    "outcome": 1.0,
+    "tool_use": 0.95,
+    "grounding": 1.0,
+    "governance": 1.0,
+    "robustness": null,
     "efficiency": 0.78
   },
   "aggregate_score": 0.93,
-  "pass_fail": "pass",
-  "hard_fail_triggered": false,
-  "trace_ref": "traces/run_2026_03_15_001.json",
-  "notes": [
-    "Correct diagnosis and recommendation",
-    "One additional tool call was not necessary"
-  ]
+  "weight_profile_name": "alpha1_grounding",
+  "timestamp": "2026-03-15T10:00:09Z"
 }
 ```
 
@@ -656,24 +624,25 @@ The aggregate score should summarize performance without hiding important trade-
 
 ```
 aggregate_score =
-  w1 * outcome_correctness +
-  w2 * tool_use_correctness +
-  w3 * grounding_quality +
-  w4 * governance_compliance +
+  w1 * outcome +
+  w2 * tool_use +
+  w3 * grounding +
+  w4 * governance +
   w5 * robustness +
   w6 * efficiency
 ```
 
-### 10.2 Suggested default v0.1 weights
+### 10.2 Named scoring profiles
 
-| Dimension | Weight |
-| --- | --- |
-| outcome_correctness | 0.30 |
-| tool_use_correctness | 0.20 |
-| grounding_quality | 0.15 |
-| governance_compliance | 0.20 |
-| robustness | 0.10 |
-| efficiency | 0.05 |
+Profiles are defined in `benchmark/configs/scoring_profiles.yaml`. Current profiles:
+
+| Profile | outcome | tool_use | grounding | governance | robustness | efficiency |
+|---------|---------|----------|-----------|------------|------------|------------|
+| `alpha1_grounding` | 0.35 | 0.20 | 0.20 | 0.20 | 0.00 | 0.05 |
+| `default_hpc_v01` | 0.30 | 0.20 | 0.15 | 0.20 | 0.10 | 0.05 |
+| `alpha0_minimal` | 1.00 | 0.00 | 0.00 | 0.00 | 0.00 | 0.00 |
+
+`alpha1_grounding` is the recommended profile for v0.1 tasks. It rewards tool use and grounding while keeping outcome as the primary signal.
 
 These weights should be frozen for v0.1 and versioned as a named scoring profile.
 

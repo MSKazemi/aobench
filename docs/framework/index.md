@@ -27,5 +27,6 @@ See [01 — Overview](01-overview.md) for the single source of truth on principl
 - [Adapters & Tools](../adapters-and-tools.md) — Plain-English overview of adapters and tools
 - [Roadmap](../roadmap.md) — Implementation phases
 - [Architecture Clarification](../architecture-clarification.md) — ExaBench vs. agent development
+- [Repo Assessment](../REPO_ASSESSMENT.md) — Full repository assessment, backlogs, and improvement roadmap
 - [Chat Outcomes](../chat-outcomes.md) — Session notes
 - [Integration Plan](../docs-integration-plan.md) — How this structure was created

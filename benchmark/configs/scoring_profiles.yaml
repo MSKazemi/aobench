@@ -22,3 +22,15 @@ profiles:
       governance: 0.35
       robustness: 0.00
       efficiency: 0.15
+
+  alpha1_grounding:
+    version: "0.1-alpha1"
+    # Activates grounding and tool_use; use this profile for tasks where
+    # tool calls are expected and gold evidence refs are set
+    weights:
+      outcome: 0.35
+      tool_use: 0.20
+      grounding: 0.20
+      governance: 0.20
+      robustness: 0.00
+      efficiency: 0.05

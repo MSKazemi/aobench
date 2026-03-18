@@ -14,11 +14,12 @@ from exabench.schemas.task import TaskSpec
 from exabench.schemas.trace import Trace
 from exabench.scorers.efficiency_scorer import EfficiencyScorer
 from exabench.scorers.governance_scorer import GovernanceScorer
+from exabench.scorers.grounding_scorer import GroundingScorer
 from exabench.scorers.outcome_scorer import OutcomeScorer
 from exabench.scorers.tool_use_scorer import ToolUseScorer
 from exabench.utils.ids import make_result_id
 
-_SCORERS = [OutcomeScorer(), GovernanceScorer(), EfficiencyScorer(), ToolUseScorer()]
+_SCORERS = [OutcomeScorer(), GovernanceScorer(), EfficiencyScorer(), ToolUseScorer(), GroundingScorer()]
 
 
 class AggregateScorer:
@@ -42,6 +43,7 @@ class AggregateScorer:
         dim_scores = DimensionScores(
             outcome=outputs["outcome"].score,
             tool_use=outputs["tool_use"].score,
+            grounding=outputs["grounding"].score,
             governance=outputs["governance"].score,
             efficiency=outputs["efficiency"].score,
         )

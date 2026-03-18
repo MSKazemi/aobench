@@ -62,7 +62,7 @@ Agents must be evaluated in the presence of permissions, policy constraints, and
 
 ### 1.6 Extensibility
 
-The framework should support future extensions such as richer tools, live backends, multi-agent execution, human-in-the-loop workflows, and broader HPC operational coverage.
+The framework should support future extensions such as richer tools, live backends, multi-agent execution (benchmarking systems where the agent under test is a multi-agent orchestration; ExaBench still connects to a single entry point), human-in-the-loop workflows, and broader HPC operational coverage.
 
 ---
 

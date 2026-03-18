@@ -102,6 +102,60 @@ _TOOL_SCHEMAS: list[dict[str, Any]] = [
             },
         },
     },
+    {
+        "type": "function",
+        "function": {
+            "name": "facility__query_node_power",
+            "description": "Query per-node power consumption readings (kW) from the environment snapshot.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "node": {"type": "string", "description": "Filter by node name, e.g. 'node03' (optional)"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "facility__query_cluster_energy",
+            "description": "Query cluster-level and rack-level energy time series (kWh) from the environment snapshot.",
+            "parameters": {
+                "type": "object",
+                "properties": {},
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "facility__query_rack_telemetry",
+            "description": "Query rack telemetry: ambient temperature, hotspot temperature, humidity, and cooling status.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "rack_id": {"type": "string", "description": "Filter by rack ID, e.g. 'rack-b' (optional)"},
+                },
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "facility__list_inventory",
+            "description": "List facility inventory: nodes with their rack assignments (kind='nodes') or rack layout (kind='racks').",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["nodes", "racks"],
+                        "description": "Type of inventory to list: 'nodes' (default) or 'racks'",
+                    },
+                },
+            },
+        },
+    },
 ]
 
 
@@ -170,7 +224,7 @@ class OpenAIAdapter(BaseAdapter):
 
     def __init__(
         self,
-        model: str = "gpt-4o-mini",
+        model: str = "gpt-4o",
         provider: str | None = None,
         system_prompt: str | None = None,
     ) -> None:

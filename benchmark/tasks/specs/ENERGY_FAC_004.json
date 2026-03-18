@@ -1,0 +1,35 @@
+{
+  "task_id": "ENERGY_FAC_004",
+  "legacy_query_id": "Q-ENERGY-004",
+  "title": "Identify cooling failure impact",
+  "query_text": "A cooling unit has failed in the cluster. Which rack is affected, and which nodes are currently thermal-throttling? What is the throttle percentage?",
+  "role": "facility_admin",
+  "qcat": "ENERGY",
+  "difficulty": "medium",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "cooling/crac_status.json",
+    "rack/rack_telemetry_005.csv",
+    "power/node_power_005.csv",
+    "inventory/node_map.csv"
+  ],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "rack-c is affected. CRAC unit crac-c1 failed at 08:41 UTC due to COMPRESSOR_FAULT. Nodes node-c01, node-c02, node-c03, and node-c04 are thermal-throttling at 40% CPU frequency reduction (3200 MHz → 1920 MHz).",
+    "required_evidence_refs": [
+      "cooling/crac_status.json",
+      "rack/rack_telemetry_005.csv"
+    ]
+  },
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

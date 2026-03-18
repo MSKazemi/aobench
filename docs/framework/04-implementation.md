@@ -110,12 +110,12 @@ Runs a single benchmark task against an environment.
 ```bash
 exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa
 # with OpenAI:
-exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o-mini
+exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o
 # custom paths:
 exabench run task -t JOB_USR_001 -e env_01 -a direct_qa --benchmark benchmark --output data/runs
 ```
 
-Available adapters: `direct_qa`, `openai`, `openai:gpt-4o`, `openai:gpt-4o-mini`
+Available adapters: `direct_qa`, `openai`, `openai:gpt-4o`, `openai:gpt-4o`
 
 ### Planned CLI commands (v0.2+)
 
@@ -264,7 +264,7 @@ This is what makes the benchmark an **agent benchmark**, not only a QA benchmark
 
 A standard interface to invoke agents under evaluation.
 
-**Primary:** Connect to deployed HPC agents (ODA, ExaSage) via HTTP or MCP. **Baselines:** direct_qa, openai for development and validation. See [architecture-clarification](../architecture-clarification.md).
+**Primary:** Connect to deployed HPC agents (ODA, ExaSage) via HTTP, MCP, or FastAPI. ExaBench connects to the agent's API; the agent has cluster access — ExaBench never needs direct access to real SLURM or the cluster. **Baselines:** direct_qa, openai for development and validation. See [architecture-clarification](../architecture-clarification.md).
 
 ## E. Runner
 
@@ -600,7 +600,7 @@ This is exactly the right design direction already reflected in 03 and 07
 
 This isolates ExaBench from any specific framework or provider.
 
-**Primary use case:** ExaBench connects to deployed HPC agents (ODA, ExaSage, etc.) via HTTP, MCP, or other protocols. The adapter sends tasks and receives responses (and optionally traces).
+**Primary use case:** ExaBench connects to deployed HPC agents (ODA, ExaSage, etc.) via HTTP, MCP, or FastAPI. The adapter sends tasks and receives responses (and optionally traces). ExaBench never needs direct access to real SLURM or the HPC cluster — the agent under test has cluster access.
 
 **Baseline adapters** (OpenAIAdapter, direct_qa) exist for developing and validating the benchmark when no external agent is available. They are not the systems being benchmarked.
 
@@ -984,7 +984,7 @@ class BaseAgentAdapter:
 - OpenAI-specific, LangGraph-specific, or local-agent-specific logic must remain inside adapter modules.
 - The runner must not embed provider-specific behavior.
 
-**Future:** Later versions will support connecting to agents **deployed on HPC clusters** with access to the real cluster. ExaBench would then act as a workload driver to **stress-test production agents** under realistic conditions (latency, throughput, correctness under load).
+**Future:** Later versions will support connecting to agents deployed on or near HPC clusters via HTTP, MCP, or FastAPI. ExaBench connects to the agent's API — ExaBench never needs direct access to real SLURM or the cluster. The agent under test has cluster access; ExaBench would act as a workload driver to stress-test production agents under realistic conditions (latency, throughput, correctness under load).
 
 ## 9 — Runner Design
 
@@ -1288,7 +1288,7 @@ ExaBench v0.1 implements six canonical scorer families:
 2. `tool_use`
     - evaluates tool selection, argument correctness, acceptable sequence, unnecessary calls, and invalid calls
 3. `grounding`
-    - evaluates evidence-reference correctness, cross-source consistency, unsupported claims, and hallucination rate
+    - evaluates answer-to-evidence overlap: key tokens (numbers, HPC entity names) from the final answer must appear in tool observations; no tools → 0.0; see [06 — Evaluation](06-evaluation.md) § 4.3.1
 4. `governance`
     - evaluates RBAC compliance, refusal correctness, redaction correctness, and restricted-data leakage
 5. `robustness`
@@ -1437,7 +1437,7 @@ Design the core so an API can be added later.
 
 No for v0.1.
 
-Only later if you want to benchmark multi-agent systems.
+Only later if you want to benchmark **multi-agent systems** — i.e., systems where the agent under test is a multi-agent orchestration (coordinator + worker agents). ExaBench would connect to the orchestrator's entry point; the multi-agent structure is inside the system being benchmarked. ExaBench does not need to talk to multiple agents directly.
 
 ## Do I need MCP?
 
@@ -1584,20 +1584,15 @@ Because your benchmark question is currently:
 
 You do not need multiple agents talking to each other to answer that.
 
-## When A2A becomes useful
+## When A2A / multi-agent becomes useful
 
-A2A becomes useful only if later you benchmark systems like:
+Multi-agent benchmarking applies when the **agent under test** is a multi-agent system:
 
 - coordinator agent + telemetry agent + policy agent
 - planner agent + retriever agent + diagnosis agent
 - distributed operational copilots
 
-Then you may want to evaluate:
-
-- delegation quality
-- inter-agent messaging
-- coordination overhead
-- failure propagation across agents
+ExaBench connects to that system's **single entry point** (e.g., the orchestrator's API). The multi-agent structure is *inside* the system being benchmarked — ExaBench does not talk to each sub-agent directly. You would then evaluate delegation quality, inter-agent messaging, coordination overhead, failure propagation, etc.
 
 ## Recommendation
 
@@ -1607,7 +1602,7 @@ Do **not** build A2A into the core architecture.
 
 ### Later
 
-Support it as an **advanced execution mode**.
+Support it as an **advanced execution mode** — benchmarking multi-agent systems via their orchestrator entry point.
 
 # 10. Definition of done
 

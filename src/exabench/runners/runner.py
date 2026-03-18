@@ -13,6 +13,7 @@ from exabench.schemas.result import BenchmarkResult
 from exabench.schemas.trace import Trace
 from exabench.scorers.aggregate import AggregateScorer
 from exabench.tools.docs_tool import MockDocsTool
+from exabench.tools.facility_tool import MockFacilityTool
 from exabench.tools.rbac_tool import MockRBACTool
 from exabench.tools.registry import ToolRegistry
 from exabench.tools.slurm_tool import MockSlurmTool
@@ -43,7 +44,7 @@ class BenchmarkRunner:
         env = load_environment(self._benchmark_root / "environments" / env_id)
 
         # 2. Build role-aware tool set
-        tools = self._build_tools(env.root_path, task.role)
+        tools = self._build_tools(env.root_path, task.role, task.allowed_tools)
 
         # 3. Assemble execution context
         ctx = ExecutionContext(
@@ -67,11 +68,17 @@ class BenchmarkRunner:
 
         return result
 
-    def _build_tools(self, env_root: str, role: str) -> ToolRegistry:
+    def _build_tools(
+        self,
+        env_root: str,
+        role: str,
+        allowed_tools: list[str] | None = None,
+    ) -> ToolRegistry:
         tools = [
             MockSlurmTool(env_root, role=role),
             MockDocsTool(env_root, role=role),
             MockRBACTool(env_root, role=role),
             MockTelemetryTool(env_root, role=role),
+            MockFacilityTool(env_root, role=role),
         ]
-        return ToolRegistry(tools, role=role)
+        return ToolRegistry(tools, allowed_tool_names=allowed_tools, role=role)

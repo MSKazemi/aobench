@@ -1,0 +1,23 @@
+{
+  "incident_id": "INC-2026-042",
+  "title": "CRAC unit crac-c1 compressor fault — rack-c thermal event",
+  "severity": "high",
+  "status": "open",
+  "opened_at": "2026-02-20T08:43:00Z",
+  "affected_zone": "rack-c",
+  "affected_nodes": ["node-c01", "node-c02", "node-c03", "node-c04"],
+  "root_cause": "CRAC unit crac-c1 failed at 08:41 UTC due to compressor pressure fault. Airflow to rack-c dropped from 1200 CFM to 0 CFM. Ambient temperature in rack-c rose from 22 °C to 35.8 °C within 14 minutes.",
+  "impact": "All 4 nodes in rack-c entered CPU thermal-throttle mode at 40% frequency reduction (3200 MHz → 1920 MHz). 12 running jobs are experiencing degraded throughput. Estimated compute capacity loss: 40% of rack-c (4 nodes × 64 cores).",
+  "mitigations_applied": [
+    "Thermal throttle engaged automatically on node-c01 through node-c04",
+    "Alert raised to facilities team",
+    "Portable cooling unit procurement in progress"
+  ],
+  "recommended_action": "Drain jobs from node-c01 through node-c04 and drain rack-c. Dispatch facilities engineer to replace or repair crac-c1. ETA for portable cooling unit: 2 hours.",
+  "timeline": [
+    {"time": "2026-02-20T08:41:00Z", "event": "crac-c1 COMPRESSOR_FAULT — unit shuts down"},
+    {"time": "2026-02-20T08:43:00Z", "event": "Monitoring alert: rack-c ambient > 28 °C — INC-2026-042 opened"},
+    {"time": "2026-02-20T08:47:00Z", "event": "node-c01 through node-c04 enter thermal throttle"},
+    {"time": "2026-02-20T08:55:00Z", "event": "Snapshot captured: rack-c ambient 35.8 °C, hotspot 42.3 °C"}
+  ]
+}

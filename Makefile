@@ -64,7 +64,7 @@ run-alpha0:  ## Run Alpha-0 slice: JOB_USR_001 + env_01 + direct_qa adapter
 TASK   ?= JOB_USR_001
 ENV    ?= env_01
 ADAPTER ?= direct_qa
-MODEL  ?= gpt-4o-mini
+MODEL  ?= gpt-4o
 
 .PHONY: run
 run:  ## Run a single task (TASK=, ENV=, ADAPTER= overridable)
@@ -81,6 +81,26 @@ run-all:  ## Run all benchmark tasks (one run dir with traces + results per task
 .PHONY: run-all-openai
 run-all-openai:  ## Run all tasks with OpenAI adapter (MODEL= overridable)
 	$(EXABENCH) run all --adapter openai:$(MODEL)
+
+.PHONY: report
+report:  ## Generate JSON + HTML report for the latest run (RUN_DIR= overridable)
+	$(eval RUN_DIR ?= $(shell ls -td data/runs/run_* 2>/dev/null | head -1))
+	$(EXABENCH) report json $(RUN_DIR)
+	$(EXABENCH) report html $(RUN_DIR)
+	$(EXABENCH) report slices $(RUN_DIR)
+
+RUN_A ?= $(shell ls -td data/runs/run_* 2>/dev/null | sed -n '2p')
+RUN_B ?= $(shell ls -td data/runs/run_* 2>/dev/null | head -1)
+
+.PHONY: compare
+compare:  ## Compare last two runs (RUN_A= baseline, RUN_B= comparison)
+	$(EXABENCH) compare runs $(RUN_A) $(RUN_B)
+
+N ?= 5
+
+.PHONY: robustness
+robustness:  ## Run a single task N times and report score variance (TASK=, ENV=, ADAPTER=, N= overridable)
+	$(EXABENCH) robustness task --task $(TASK) --env $(ENV) --adapter $(ADAPTER) --n $(N)
 
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)

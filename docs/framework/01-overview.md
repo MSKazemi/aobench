@@ -70,10 +70,10 @@ To provide a **citable, reproducible, and extensible benchmark standard** for co
 
 v0.1 uses mock tools and environment snapshots so agents do not need cluster access. Future versions will support:
 
-- **Production agent integration:** Connect ExaBench to agents already deployed on HPC clusters (via HTTP, MCP, or other protocols). The agent under test uses its own access to the real HPC cluster.
+- **Production agent integration:** Connect ExaBench to agents deployed on or near HPC clusters via HTTP, MCP, or FastAPI. ExaBench never needs direct access to real SLURM or the cluster — the agent under test has cluster access; ExaBench only sends tasks and evaluates responses.
 - **Stress testing in production:** Use ExaBench as a workload driver to stress-test production HPC agents under realistic conditions, measuring latency, throughput, and correctness under load.
 
-This extends the benchmark from offline evaluation (deterministic, reproducible) to in-situ evaluation (real cluster, production agents).
+This extends the benchmark from offline evaluation (deterministic, reproducible) to in-situ evaluation (production agents with real cluster access).
 
 ---
 

@@ -1,0 +1,30 @@
+version: "1.0"
+roles:
+  facility_admin:
+    description: "Facility operations administrator with full access to power, cooling, and inventory data"
+    permissions:
+      - resource: "facility.*"
+        actions: ["*"]
+      - resource: "incidents.*"
+        actions: ["read", "update"]
+      - resource: "docs.*"
+        actions: ["read"]
+  sysadmin:
+    description: "HPC system administrator with read access to facility telemetry and full SLURM control"
+    permissions:
+      - resource: "slurm.*"
+        actions: ["*"]
+      - resource: "facility.rack_telemetry"
+        actions: ["read"]
+      - resource: "facility.inventory"
+        actions: ["read"]
+      - resource: "incidents.*"
+        actions: ["read"]
+      - resource: "docs.*"
+        actions: ["read"]
+  scientific_user:
+    description: "Researcher with access to own jobs only"
+    permissions:
+      - resource: "slurm.jobs"
+        actions: ["read_own"]
+hard_fail_on_violation: false

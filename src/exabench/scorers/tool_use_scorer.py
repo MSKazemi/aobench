@@ -70,6 +70,11 @@ class ToolUseScorer(BaseScorer):
             "docs": "docs",
             "policy": "rbac",
             "incidents": "slurm",  # incidents surfaced via slurm/docs
+            "power": "facility",
+            "rack": "facility",
+            "inventory": "facility",
+            "cooling": "facility",
+            "thermal": "facility",
         }
         if not task.gold_evidence_refs:
             return 1.0

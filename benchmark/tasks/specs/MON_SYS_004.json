@@ -1,0 +1,35 @@
+{
+  "task_id": "MON_SYS_004",
+  "legacy_query_id": "Q-MON-004",
+  "title": "Rack thermal anomaly root cause",
+  "query_text": "Monitoring alerts indicate a critical thermal anomaly in the cluster. Identify the root cause and the nodes that should be drained from the scheduler.",
+  "role": "sysadmin",
+  "qcat": "MON",
+  "difficulty": "medium",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "rack/rack_telemetry_005.csv",
+    "incidents/cooling_incident.json",
+    "docs/cooling_policy.md"
+  ],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Root cause: CRAC unit crac-c1 failed at 08:41 UTC (COMPRESSOR_FAULT), causing rack-c ambient temperature to reach 35.8 °C. Nodes to drain: node-c01, node-c02, node-c03, node-c04.",
+    "required_evidence_refs": [
+      "rack/rack_telemetry_005.csv",
+      "incidents/cooling_incident.json"
+    ]
+  },
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac",
+    "slurm"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

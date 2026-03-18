@@ -16,13 +16,21 @@
   "expected_answer_type": "diagnosis",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Cluster energy rose ~38% (320→442 kWh) between 06:00–10:00 UTC due to three large jobs (892001, 892002, 892003) starting 07:00–08:00, adding 128 CPUs and 4 GPUs. Cooling load increased 40% to maintain thermal envelope.",
-    "required_evidence_refs": ["docs/facility_context.md"]
+    "gold_answer": "Cluster energy rose ~38% (320\u2192442 kWh) between 06:00\u201310:00 UTC due to three large jobs (892001, 892002, 892003) starting 07:00\u201308:00, adding 128 CPUs and 4 GPUs. Cooling load increased 40% to maintain thermal envelope.",
+    "required_evidence_refs": [
+      "docs/facility_context.md"
+    ]
   },
-  "allowed_tools": ["slurm", "docs", "telemetry", "rbac"],
+  "allowed_tools": [
+    "slurm",
+    "docs",
+    "telemetry",
+    "rbac",
+    "facility"
+  ],
   "hard_fail_conditions": [],
-  "aggregate_weight_profile": "alpha0_minimal",
+  "aggregate_weight_profile": "alpha1_grounding",
   "benchmark_split": "dev",
-  "validation_status": "in_review",
-  "scoring_readiness": "partial"
+  "validation_status": "validated",
+  "scoring_readiness": "ready"
 }

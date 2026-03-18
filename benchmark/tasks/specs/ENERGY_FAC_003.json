@@ -16,12 +16,20 @@
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
     "gold_answer": "Rack B is the outlier at 156 kWh, ~84% above its baseline (85 kWh). Racks A (82), C (78), D (85) are near baseline. Rack B requires investigation.",
-    "required_evidence_refs": ["docs/rack_energy_summary.md"]
+    "required_evidence_refs": [
+      "docs/rack_energy_summary.md"
+    ]
   },
-  "allowed_tools": ["slurm", "docs", "telemetry", "rbac"],
+  "allowed_tools": [
+    "slurm",
+    "docs",
+    "telemetry",
+    "rbac",
+    "facility"
+  ],
   "hard_fail_conditions": [],
-  "aggregate_weight_profile": "alpha0_minimal",
+  "aggregate_weight_profile": "alpha1_grounding",
   "benchmark_split": "dev",
-  "validation_status": "in_review",
-  "scoring_readiness": "partial"
+  "validation_status": "validated",
+  "scoring_readiness": "ready"
 }

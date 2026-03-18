@@ -1,0 +1,37 @@
+environment_id: env_05
+snapshot_name: Cooling Unit Failure
+scenario_type: cooling_failure
+cluster_name: exabench-cluster-a
+snapshot_timestamp: 2026-02-20T08:45:00Z
+bundle_root: environments/env_05
+supported_roles:
+  - facility_admin
+  - sysadmin
+supported_categories:
+  - ENERGY
+  - MON
+included_sources:
+  - power
+  - rack
+  - inventory
+  - cooling
+  - incidents
+  - docs
+  - rbac
+included_files:
+  - power/node_power_005.csv
+  - rack/rack_telemetry_005.csv
+  - inventory/node_map.csv
+  - cooling/crac_status.json
+  - incidents/cooling_incident.json
+  - policy/rbac_policy.yaml
+  - docs/cooling_policy.md
+  - docs/rack_status.md
+implementation_status: bundled
+validation_status: validated
+description: >
+  Snapshot captured during a CRAC unit failure in rack-c.
+  Ambient temperature in rack-c exceeded 35 °C; nodes c01–c04 entered
+  thermal-throttle mode, reducing CPU frequency by 40%. Power draw per
+  node dropped as a consequence. Incident INC-2026-042 was raised.
+  Used for ENERGY and MON tasks targeting facility_admin and sysadmin roles.

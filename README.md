@@ -100,6 +100,7 @@ The `benchmark/qa/` directory contains the ExaBench-QA query dataset — ~95 HPC
 | [06 Evaluation](docs/framework/06-evaluation.md) | Metrics, trace schema, scoring |
 | [07 Taxonomy](docs/framework/07-taxonomy.md) | Roles, categories, access control |
 | [Roadmap](docs/roadmap.md) | Implementation phases and milestones |
+| [Repo Assessment](docs/REPO_ASSESSMENT.md) | Full assessment, backlogs, improvement roadmap |
 
 ## License
 
