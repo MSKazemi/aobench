@@ -254,7 +254,7 @@ The agent should not read raw files directly.
 Instead, it interacts through controlled tools such as:
 
 - `slurm.job_details`
-- `prom.query`
+- `telemetry.query`
 - `docs.retrieve`
 - `rbac.check`
 
@@ -394,7 +394,7 @@ Then the framework does:
 - expose only allowed tools for `scientific_user`
 - let the agent call:
     - `slurm.job_details`
-    - `prom.query`
+    - `telemetry.query`
     - `docs.retrieve`
 - capture those calls
 - check whether the answer:
@@ -434,187 +434,59 @@ That is the system behavior you should document.
 
 ## High-level architecture
 
-```
-                    ┌─────────────────────────────┐
-                    │      ExaBench CLI / API     │
-                    └──────────────┬──────────────┘
-                                   │
-                         ┌─────────▼─────────┐
-                         │   Benchmark Runner │
-                         └─────────┬─────────┘
-                                   │
-        ┌──────────────────────────┼──────────────────────────┐
-        │                          │                          │
-┌───────▼────────┐        ┌────────▼────────┐        ┌────────▼────────┐
-│  Task Loader   │        │ Environment     │        │ Agent Adapter   │
-│  + Validator   │        │ Loader          │        │ Layer           │
-└───────┬────────┘        └────────┬────────┘        └────────┬────────┘
-        │                          │                          │
-        │                  ┌───────▼────────┐                 │
-        │                  │ Tool Registry  │                 │
-        │                  │ + Access Ctrl  │                 │
-        │                  └───────┬────────┘                 │
-        │                          │                          │
-        │                  ┌───────▼────────┐                 │
-        │                  │ Mock Tools     │◄────────────────┘
-        │                  │ slurm/prom/docs│
-        │                  │ rbac/facility  │
-        │                  └───────┬────────┘
-        │                          │
-        └──────────────────┬───────┘
-                           │
-                    ┌──────▼──────┐
-                    │ Trace Store │
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │ Scorers      │
-                    │ outcome/...  │
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │ Result Store│
-                    └──────┬──────┘
-                           │
-                    ┌──────▼──────┐
-                    │ Reports     │
-                    └─────────────┘
-```
-
-# 2. Initial Architecture
-
-I recommend this layered architecture:
-
-```
-                +-----------------------------+
-                |      Benchmark Operator     |
-                |   CLI / Config / Run Spec   |
-                +-------------+---------------+
-                              |
-                              v
-                +-----------------------------+
-                |        Runner Engine        |
-                |  orchestrates benchmark run |
-                +-------------+---------------+
-                              |
-      +-----------------------+------------------------+
-      |                       |                        |
-      v                       v                        v
-+-------------+      +----------------+      +------------------+
-| Task Loader |      | Env Loader     |      | Agent Adapter    |
-| + Validator |      | + Validator    |      | (OpenAI/LG/etc.) |
-+------+------+      +--------+-------+      +---------+--------+
-       |                      |                          |
-       v                      v                          |
-+--------------+     +-------------------+               |
-| Task Record  |     | Snapshot Bundle   |               |
-+--------------+     +-------------------+               |
-                              |                          |
-                              v                          |
-                     +--------------------+              |
-                     | Tool Registry      |<-------------+
-                     | + Access Control   |
-                     +---------+----------+
-                               |
-                               v
-                    +----------------------+
-                    | Mock Tool Layer      |
-                    | slurm / prom / docs  |
-                    | rbac / facility      |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Trace Capture        |
-                    | tool calls, outputs, |
-                    | metadata, timings    |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Scoring Layer        |
-                    | outcome, grounding,  |
-                    | governance, etc.     |
-                    +----------+-----------+
-                               |
-                               v
-                    +----------------------+
-                    | Results + Reports    |
-                    | JSON / HTML / tables |
-                    +----------------------+
-```
-
 ```mermaid
-flowchart TD
-  CLI["CLI Layer<br>exabench validate/run/score/report/compare"] --> RUNCFG["Runner Config<br>roles, qcats, splits, adapter, paths"]
-
-  subgraph DATA["Dataset Layer"]
-    TASKS["Task Dataset Files<br>(tasks.json, splits, gold refs)"]
-    TLOAD["TaskLoader + Validator<br>schema + required fields"]
-    TASKS --> TLOAD
-  end
-
-  subgraph ENV["Environment Layer"]
-    ENVS["Environment Bundles<br>data/environments/env_0x/"]
-    ELOAD["EnvironmentLoader + Validator<br>metadata + inventory"]
-    ENVS --> ELOAD
-  end
-
-  subgraph TOOLS["Tool Layer (Mock + Policy)"]
-    REG["ToolRegistry<br>register tools"]
-    FILTER["Allowed Tool Exposure<br>(task.role + allowed_tools)"]
-    POLICY["Runtime Policy Checks<br>RBAC + resource-level rules"]
-    TOOLS_IMPL["Mock Tools<br>slurm.* prom.* docs.* rbac.* facility.*"]
-    REG --> FILTER --> TOOLS_IMPL --> POLICY
-  end
-
-  subgraph ADAPT["Agent Adapter Layer"]
-    ADAPTER["BaseAgentAdapter<br>framework/provider specific"]
+flowchart TB
+  subgraph INPUT["Input Layer"]
+    CLI["CLI / Operator<br>exabench validate / run / score / report"]
+    TASKS["Task Dataset<br>tasks.json, splits, gold refs"]
+    ENVS["Environment Bundles<br>env_01, env_02, ..."]
   end
 
   subgraph RUNNER["Runner Layer"]
-    ORCH["ExaBenchRunner<br>orchestrates per-task execution"]
-    TRACE["Trace Capture<br>messages, tool_calls, observations, metadata"]
-    RESULTRAW["Raw Run Output<br>final answer + tool logs + cost"]
-    ORCH --> ADAPTER
-    ORCH --> TRACE
-    ADAPTER --> RESULTRAW
+    ORCH["Benchmark Runner<br>orchestrates per-task execution"]
+    TLOAD["Task Loader + Validator"]
+    ELOAD["Environment Loader + Validator"]
+    REG["Tool Registry<br>+ Access Control (role, allowed_tools)"]
+    ADAPTER["Agent Adapter<br>HTTP / OpenAI / direct_qa"]
   end
 
-  subgraph SCORE["Scoring Layer"]
-    SREG["ScorerRegistry<br>resolve required_scorers"]
-    SDIM["Dimension Scorers<br>outcome/tool_use/grounding/<br>governance/robustness/efficiency"]
-    AGG["Aggregate + Hard-fail<br>weights + caps + fail reasons"]
-    SREG --> SDIM --> AGG
+  subgraph SUT["Agent Under Test (external)"]
+    AGENT["External Agent<br>ODA, ExaSage, or similar<br>— the system we benchmark"]
   end
 
-  subgraph OUT["Artifacts + Reporting"]
+  subgraph TOOLS["Tool Layer (Mock + Policy)"]
+    MOCK["Mock Tools<br>slurm | telemetry | docs | rbac | facility"]
+    POLICY["Runtime Policy<br>RBAC, resource-level"]
+  end
+
+  subgraph CAPTURE["Capture & Scoring"]
+    TRACE["Trace Capture<br>tool calls, outputs, metadata"]
+    SCORERS["Scorers<br>outcome | grounding | governance | efficiency"]
+    AGG["Result Aggregation"]
+  end
+
+  subgraph OUTPUT["Output"]
     ART["Artifacts<br>trace.json + result.json"]
-    REP["Reporting<br>role×QCAT tables + HTML/JSON"]
+    REP["Reports<br>HTML | JSON | role×QCAT tables"]
   end
 
-  RUNCFG --> ORCH
-  TLOAD --> ORCH
-  ELOAD --> ORCH
-  FILTER --> ORCH
-
-  TRACE --> SDIM
-  RESULTRAW --> SDIM
-  ELOAD --> SDIM
-  TLOAD --> SDIM
-
-  AGG --> ART --> REP
-  CLI --> REP
+  CLI --> ORCH
+  TASKS --> TLOAD --> ORCH
+  ENVS --> ELOAD --> ORCH
+  ORCH --> REG --> MOCK
+  ORCH --> ADAPTER
+  ADAPTER -->|"invokes"| AGENT
+  AGENT -->|"tool calls"| MOCK
+  MOCK --> POLICY
+  ADAPTER --> TRACE
+  MOCK --> TRACE
+  TRACE --> SCORERS
+  TLOAD --> SCORERS
+  ELOAD --> SCORERS
+  SCORERS --> AGG --> ART --> REP
 ```
 
-- **Old**
-    
-    Let me look deeper at your existing data files to understand what you already have before designing the benchmark tool.Good — I have a clear picture of your repo. Let me now design the full benchmark tool architecture based on what ExaBench-QA already has.Now let me show the six evaluation dimensions as a concrete scoring spec — this is the heart of what makes ExaBench different from generic benchmarks:Now here's the concrete plan for what to build — tied directly to your existing repo structure:
-    
-    ![image.png](07%20%E2%80%94%20Software%20Architecture%20&%20Build%20Plan/image.png)
-    
-    ![image.png](07%20%E2%80%94%20Software%20Architecture%20&%20Build%20Plan/image%201.png)
-    
+**Flow:** CLI invokes runner → loads task + environment → builds role-constrained tool registry → adapter invokes the **external agent under test** (ODA, ExaSage, etc.) → agent calls mock tools (backed by env snapshot) → trace captures all steps → scorers evaluate answer + trace + env → artifacts and reports.
 
 # How the system should work in practice
 
@@ -717,7 +589,7 @@ The agent must never read raw snapshot files directly.
 All access should go through:
 
 - `slurm.*`
-- `prom.*`
+- `telemetry.*`
 - `docs.*`
 - `rbac.*`
 - `facility.*`
@@ -855,7 +727,7 @@ Example fields:
 
 ```json
 {
-  "preferred_tool_sequence": ["slurm.job_details", "prom.query", "docs.retrieve"],
+  "preferred_tool_sequence": ["slurm.job_details", "telemetry.query", "docs.retrieve"],
   "required_tool_calls": ["slurm.job_details"],
   "forbidden_tool_calls": ["facility.get_billing_data"],
   "evaluation_mode": "semantic_match",
@@ -1025,7 +897,7 @@ Each tool must:
 ### 7.2 Initial v0.1 tool families
 
 - `slurm.*`
-- `prom.*`
+- `telemetry.*`
 - `docs.*`
 - `rbac.*`
 - `facility.*` (optional where needed by ENERGY/Facility tasks)
@@ -1034,7 +906,7 @@ Each tool must:
 
 - `slurm.query_jobs()`
 - `slurm.job_details(job_id)`
-- `prom.query(metric, labels, time_range)`
+- `telemetry.query(metric, labels, time_range)`
 - `docs.retrieve(query)`
 - `rbac.check(role, resource)`
 - `facility.get_rack_state(rack_id)`
@@ -1111,6 +983,8 @@ class BaseAgentAdapter:
 - The adapter interface must be framework-agnostic.
 - OpenAI-specific, LangGraph-specific, or local-agent-specific logic must remain inside adapter modules.
 - The runner must not embed provider-specific behavior.
+
+**Future:** Later versions will support connecting to agents **deployed on HPC clusters** with access to the real cluster. ExaBench would then act as a workload driver to **stress-test production agents** under realistic conditions (latency, throughput, correctness under load).
 
 ## 9 — Runner Design
 
@@ -1362,7 +1236,7 @@ What is in scope and what is deferred
 Do not do these yet:
 
 - full live Slurm integration
-- full Prometheus integration
+- full HPC monitoring/telemetry integration
 - complex distributed services
 - production-grade web UI
 - public leaderboard service
@@ -1521,7 +1395,7 @@ ExaBench v0.1
 ## Explicitly not required for v0.1
 
 - live Slurm integration
-- live Prometheus integration
+- live HPC monitoring/telemetry integration
 - heavy database stack
 - public REST API
 - A2A-first architecture
@@ -1605,7 +1479,7 @@ That is the correct choice for your first version .
 
 ### Use SQLite optionally for:
 
-- task registry indexing
+- task indexing
 - run metadata
 - result querying
 - experiment tracking

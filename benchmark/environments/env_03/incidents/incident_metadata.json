@@ -1,0 +1,13 @@
+{
+  "incident_id": "INC-2026-0212-001",
+  "severity": "low",
+  "title": "Rack B thermal warning",
+  "opened_at": "2026-02-12T10:00:00Z",
+  "status": "monitoring",
+  "affected_resource": "rack-b",
+  "summary": "Rack B hotspot 72°C, above 65°C warning threshold. Ambient 24°C. Cooling operational.",
+  "timeline": [
+    {"time": "2026-02-12T09:30:00Z", "event": "Rack B hotspot crossed 65°C"},
+    {"time": "2026-02-12T10:00:00Z", "event": "Snapshot captured"}
+  ]
+}

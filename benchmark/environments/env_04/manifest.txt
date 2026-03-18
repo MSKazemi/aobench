@@ -1,0 +1,6 @@
+metadata.yaml
+power/rack_energy_003.csv
+inventory/rack_layout.csv
+baseline/rack_energy_baseline.json
+docs/rack_energy_summary.md
+policy/rbac_policy.yaml

@@ -3,7 +3,7 @@ snapshot_name: User OOM Failure
 scenario_type: job_failure
 cluster_name: exabench-cluster-a
 snapshot_timestamp: 2026-02-10T14:00:00Z
-bundle_root: data/environments/env_01
+bundle_root: environments/env_01
 supported_roles:
   - scientific_user
   - sysadmin
@@ -26,7 +26,7 @@ included_files:
   - docs/troubleshooting_oom.md
   - incidents/incident_metadata.json
 implementation_status: bundled
-validation_status: not_checked
+validation_status: validated
 description: >
   Deterministic snapshot representing a user job failure caused by
   out-of-memory pressure, with scheduler state, memory telemetry,

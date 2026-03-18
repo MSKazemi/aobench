@@ -66,6 +66,17 @@ To provide a **citable, reproducible, and extensible benchmark standard** for co
 
 ---
 
+## Beyond v0.1 — Future Extensions
+
+v0.1 uses mock tools and environment snapshots so agents do not need cluster access. Future versions will support:
+
+- **Production agent integration:** Connect ExaBench to agents already deployed on HPC clusters (via HTTP, MCP, or other protocols). The agent under test uses its own access to the real HPC cluster.
+- **Stress testing in production:** Use ExaBench as a workload driver to stress-test production HPC agents under realistic conditions, measuring latency, throughput, and correctness under load.
+
+This extends the benchmark from offline evaluation (deterministic, reproducible) to in-situ evaluation (real cluster, production agents).
+
+---
+
 ## Documentation Map
 
 | Document | Purpose |

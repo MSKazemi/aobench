@@ -1,0 +1,12 @@
+{
+  "snapshot_time": "2026-02-11T09:00:00Z",
+  "nodes": [
+    {"node": "node01", "cpu_util_pct": 82, "memory_util_pct": 78, "temp_c": 48},
+    {"node": "node02", "cpu_util_pct": 76, "memory_util_pct": 71, "temp_c": 45},
+    {"node": "node03", "cpu_util_pct": 94, "memory_util_pct": 89, "temp_c": 72},
+    {"node": "node04", "cpu_util_pct": 68, "memory_util_pct": 62, "temp_c": 42},
+    {"node": "gpu01", "cpu_util_pct": 88, "memory_util_pct": 92, "temp_c": 55},
+    {"node": "gpu02", "cpu_util_pct": 91, "memory_util_pct": 85, "temp_c": 52}
+  ],
+  "anomaly_note": "node03 shows elevated temperature (72°C) and high utilisation compared to peers."
+}

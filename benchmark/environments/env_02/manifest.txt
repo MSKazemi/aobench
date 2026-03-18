@@ -3,6 +3,8 @@ slurm/slurm_state.json
 slurm/pending_jobs.json
 slurm/qos_limits.json
 telemetry/queue_pressure_metrics.csv
+telemetry/node_metrics.json
+alerts/node_alerts.json
 policy/rbac_policy.yaml
 docs/queue_policy.md
 docs/scheduling_faq.md

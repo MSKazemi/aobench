@@ -41,6 +41,18 @@ The phrase **"ExaBench drives the agent"** refers to the **OpenAIAdapter** and s
 
 ---
 
+## 2.1 Future: Production Agent Stress Testing
+
+Beyond v0.1, ExaBench will connect to agents **already deployed on HPC clusters** with access to the real cluster. In this mode:
+
+- The agent under test uses its own access to live SLURM, telemetry, docs, etc.
+- ExaBench sends benchmark tasks (via HTTP, MCP, or another protocol) and evaluates responses.
+- This enables **stress testing production agents** under realistic conditions: latency, throughput, and correctness under load.
+
+This complements the current mock-tool mode (reproducible, offline) with in-situ evaluation of production HPC agents.
+
+---
+
 ## 3. Gaps in Current Documentation
 
 ### 3.1 Primary vs. secondary adapter roles

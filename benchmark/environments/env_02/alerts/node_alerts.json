@@ -1,0 +1,14 @@
+{
+  "snapshot_time": "2026-02-11T09:00:00Z",
+  "alerts": [
+    {
+      "alert_id": "ALT-001",
+      "node": "node03",
+      "severity": "warning",
+      "metric": "temperature_celsius",
+      "value": 72,
+      "threshold": 65,
+      "message": "Node node03 temperature (72°C) exceeds warning threshold (65°C). Peer nodes in 42–55°C range."
+    }
+  ]
+}

@@ -8,10 +8,19 @@
   "difficulty": "medium",
   "environment_id": "env_02",
   "gold_evidence_refs": [
-    "prometheus/node_metrics_001.parquet",
-    "alerts/node_alerts_001.json"
+    "telemetry/node_metrics.json",
+    "alerts/node_alerts.json"
   ],
   "expected_answer_type": "comparison",
-  "validation_status": "not_started",
-  "scoring_readiness": "blocked"
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Node node03 is abnormal: temperature 72°C (others 42–55°C), CPU 94%, memory 89%. Alerts indicate thermal warning.",
+    "required_evidence_refs": ["telemetry/node_metrics.json"]
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha0_minimal",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "partial"
 }

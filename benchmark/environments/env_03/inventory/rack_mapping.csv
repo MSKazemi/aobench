@@ -1,0 +1,7 @@
+node,rack_id,position_u
+node01,rack-a,10
+node02,rack-a,20
+node03,rack-b,10
+node04,rack-b,20
+gpu01,rack-c,10
+gpu02,rack-c,20

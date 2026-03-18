@@ -1,0 +1,5 @@
+rack_id,timestamp,temp_ambient_c,temp_hotspot_c,humidity_pct,cooling_status
+rack-a,2026-02-12T10:00:00Z,22,45,35,ok
+rack-b,2026-02-12T10:00:00Z,24,72,38,warning
+rack-c,2026-02-12T10:00:00Z,21,42,33,ok
+rack-d,2026-02-12T10:00:00Z,23,48,36,ok

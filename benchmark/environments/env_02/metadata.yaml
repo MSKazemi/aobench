@@ -3,7 +3,7 @@ snapshot_name: Queue Congestion / Long Pending Jobs
 scenario_type: queue_congestion
 cluster_name: exabench-cluster-a
 snapshot_timestamp: 2026-02-11T09:00:00Z
-bundle_root: benchmark/environments/env_02
+bundle_root: environments/env_02
 supported_roles:
   - scientific_user
   - sysadmin
@@ -21,12 +21,14 @@ included_files:
   - slurm/pending_jobs.json
   - slurm/qos_limits.json
   - telemetry/queue_pressure_metrics.csv
+  - telemetry/node_metrics.json
+  - alerts/node_alerts.json
   - policy/rbac_policy.yaml
   - docs/queue_policy.md
   - docs/scheduling_faq.md
   - incidents/incident_metadata.json
 implementation_status: bundled
-validation_status: not_checked
+validation_status: validated
 description: >
   Deterministic snapshot representing queue congestion and long pending
   jobs, including queue state, scheduler policy context, role-aware

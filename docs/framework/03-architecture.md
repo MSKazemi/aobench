@@ -284,7 +284,7 @@ This workflow ensures a clean separation between:
 
 ### 7.1 v0.1 Tool Philosophy
 
-ExaBench v0.1 should not depend on live SLURM, Prometheus, Kepler, or production documentation systems.
+ExaBench v0.1 should not depend on live SLURM, HPC monitoring (Prometheus, Grafana, etc.), Kepler, or production documentation systems.
 
 Instead, v0.1 should use **deterministic mock tools** backed by local files, SQLite, or structured snapshot bundles. This makes the benchmark reproducible, portable, easier to debug, and easier to publish.
 
@@ -302,7 +302,7 @@ Illustrative examples:
 
 - `slurm.query_jobs()`
 -`slurm.job_details(job_id)`
--`prom.query(metric, labels, time_range)`
+- `telemetry.query(metric, labels, time_range)`
 -`docs.retrieve(query)`
 -`rbac.check(user_role, resource)`
 -`facility.get_rack_state(rack_id)`

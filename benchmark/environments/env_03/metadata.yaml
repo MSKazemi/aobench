@@ -1,0 +1,41 @@
+environment_id: env_03
+snapshot_name: Thermal and Power Monitoring
+scenario_type: thermal_power
+cluster_name: exabench-cluster-a
+snapshot_timestamp: 2026-02-12T10:00:00Z
+bundle_root: environments/env_03
+supported_roles:
+  - sysadmin
+  - facility_admin
+supported_categories:
+  - MON
+  - ENERGY
+included_sources:
+  - slurm
+  - telemetry
+  - power
+  - inventory
+  - docs
+  - rbac
+  - incidents
+included_files:
+  - rack/rack_telemetry_010.csv
+  - inventory/rack_mapping.csv
+  - thermal/policy.md
+  - power/node_power_001.csv
+  - inventory/node_map.csv
+  - power/cluster_energy_002.csv
+  - jobs/job_overlap_002.csv
+  - cooling/facility_context_002.md
+  - docs/thermal_policy.md
+  - docs/facility_context.md
+  - docs/power_summary.md
+  - docs/rack_telemetry.md
+  - policy/rbac_policy.yaml
+  - incidents/incident_metadata.json
+implementation_status: bundled
+validation_status: validated
+description: >
+  Deterministic snapshot for thermal and power monitoring tasks.
+  Rack-level telemetry, node power consumption, cluster energy trends,
+  and facility context for ENERGY and MON (thermal) categories.

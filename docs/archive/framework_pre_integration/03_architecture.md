@@ -2597,7 +2597,7 @@ That is the correct choice for your first version .
 
 ### Use SQLite optionally for:
 
-- task registry indexing
+- task indexing
 - run metadata
 - result querying
 - experiment tracking

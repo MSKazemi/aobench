@@ -99,10 +99,14 @@ After the core benchmark is stable, the framework can be extended with broader c
     - expose benchmark execution through a service interface if needed
 - **Multi-agent execution mode**
     - support future orchestration or agent-to-agent workflows
+- **Production agent integration**
+    - connect ExaBench to agents deployed on HPC clusters with access to the real cluster (SLURM, telemetry, etc.)
+    - enables stress testing of production agents under realistic load
+    - agent uses its own HPC access; ExaBench drives tasks and evaluates responses
 
 ### Goal of Phase 3
 
-This phase extends ExaBench beyond the minimal publishable benchmark toward a broader research and integration platform.
+This phase extends ExaBench beyond the minimal publishable benchmark toward a broader research and integration platform, including stress testing of production HPC agents.
 
 ---
 

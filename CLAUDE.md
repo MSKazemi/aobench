@@ -1,1 +1,2 @@
-if you add new command add in the make file also.
+- If you add a new command (e.g., a script or CLI entry point), also add a corresponding target to the Makefile.
+- If you add or update a command, also add or update it in `docs/COMMANDS.md`.

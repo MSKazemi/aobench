@@ -1,0 +1,10 @@
+{
+  "baseline_period": "2026-02-01 to 2026-02-12",
+  "rack_baselines_kwh": {
+    "rack-a": 80,
+    "rack-b": 85,
+    "rack-c": 75,
+    "rack-d": 82
+  },
+  "outlier_note": "rack-b at 156 kWh is ~84% above baseline (85 kWh)."
+}

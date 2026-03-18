@@ -517,7 +517,7 @@ Each evaluated run should emit a structured trace object.
     },
     {
       "step": 3,
-      "tool_name": "prom.query",
+      "tool_name": "telemetry.query",
       "arguments": {
         "metric": "job_memory_usage_bytes",
         "labels": {
@@ -552,7 +552,7 @@ Each evaluated run should emit a structured trace object.
     },
     {
       "observation_id": "obs_02",
-      "source": "prom.query",
+      "source": "telemetry.query",
       "content": {
         "peak_memory_gb": 61.8,
         "requested_memory_gb": 32.0

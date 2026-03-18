@@ -13,7 +13,7 @@ Who is asking in an ExaBench task. v0.1 uses: `scientific_user`, `sysadmin`, `fa
 | Role | Primary Mission | Key Data Sources | Example Query |
 |------|-----------------|------------------|---------------|
 | **Normal User** | Run workloads, manage data | Scheduler logs, job outputs | "Why did my job fail and how can I fix it?" |
-| **Researcher** | Analyze telemetry, performance, efficiency | Prometheus, parquet, SLURM logs | "Correlate node power with CPU load." |
+| **Researcher** | Analyze telemetry, performance, efficiency | HPC telemetry, parquet, SLURM logs | "Correlate node power with CPU load." |
 | **System Administrator** | Cluster reliability, security | Node metrics, scheduler, syslogs | "List nodes with GPU ECC errors." |
 | **Facility Admin** | Power and cooling operations | BMS/DCIM, IPMI, energy meters | "Which racks exceeded 28 °C today?" |
 | **System Designer/Architect** | Capacity planning, topology | Benchmark results, fleet telemetry | "Estimate LINPACK scaling for 512 nodes." |
@@ -81,7 +81,7 @@ Canonical keys for benchmark query/task records.
 | `category` | Functional domain (QCAT) | `"Energy"` |
 | `intent` | Underlying goal | `"Cluster energy trend over time"` |
 | `query_text` | User-facing text | `"Show total energy per rack..."` |
-| `data_sources` | Telemetry/datasets needed | `["IPMI","Prometheus"]` |
+| `data_sources` | Telemetry/datasets needed | `["IPMI","telemetry"]` |
 | `difficulty` | Complexity | `easy` \| `medium` \| `hard` \| `edge` |
 | `priority` | Evaluation weight | `"high"` |
 | `expected_answer` | Output format | `table` \| `chart` \| `fact` |

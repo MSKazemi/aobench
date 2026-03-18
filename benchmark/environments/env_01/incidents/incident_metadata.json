@@ -1,5 +1,18 @@
 {
-  "_placeholder": true,
-  "description": "Incident metadata for env_01. Replace with deterministic incident record.",
-  "expected_schema": ["incident_id", "severity", "timeline"]
+  "incident_id": "INC-2026-0210-001",
+  "severity": "medium",
+  "title": "User job OOM kill on node01",
+  "opened_at": "2026-02-10T01:47:00Z",
+  "status": "resolved",
+  "affected_resource": "node01",
+  "affected_job": "891234",
+  "summary": "Job 891234 (alice, molecular_dynamics_run42) was killed by OOM on node01. Job requested 64G, used 64.1G. Kernel oom_kill for lammps process.",
+  "timeline": [
+    {"time": "2026-02-09T22:15:00Z", "event": "Job 891234 submitted"},
+    {"time": "2026-02-10T01:47:12Z", "event": "OOM kill detected on node01"},
+    {"time": "2026-02-10T01:47:00Z", "event": "Job failed with exit code 1:0"},
+    {"time": "2026-02-10T14:00:00Z", "event": "Snapshot captured for benchmark"}
+  ],
+  "resolution": "Job resubmission with higher memory request recommended. See docs/troubleshooting_oom.md",
+  "notes": "User-facing diagnosis task. Evidence in slurm/job_details.json."
 }

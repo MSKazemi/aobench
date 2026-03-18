@@ -1,0 +1,14 @@
+version: "1.0"
+roles:
+  sysadmin:
+    permissions:
+      - resource: "slurm.*"
+        actions: ["read"]
+      - resource: "telemetry"
+        actions: ["read"]
+      - resource: "power"
+        actions: ["read"]
+  facility_admin:
+    permissions:
+      - resource: "*"
+        actions: ["*"]

@@ -63,7 +63,12 @@ run-alpha0:  ## Run Alpha-0 slice: JOB_USR_001 + env_01 + direct_qa adapter
 
 TASK   ?= JOB_USR_001
 ENV    ?= env_01
+ADAPTER ?= direct_qa
 MODEL  ?= gpt-4o-mini
+
+.PHONY: run
+run:  ## Run a single task (TASK=, ENV=, ADAPTER= overridable)
+	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter $(ADAPTER)
 
 .PHONY: run-openai
 run-openai:  ## Run a task with OpenAI adapter (TASK=, ENV=, MODEL= overridable)
@@ -77,10 +82,14 @@ coverage-matrix:  ## Print task coverage matrix (role × category)
 
 .PHONY: clean
 clean:  ## Remove build artifacts, caches, and coverage reports
-	rm -rf dist/ build/ .eggs/ *.egg-info/
+	rm -rf dist/ build/ .eggs/ *.egg-info/ src/*.egg-info/
 	rm -rf .pytest_cache/ .mypy_cache/ .ruff_cache/
 	rm -rf htmlcov/ .coverage
-	find . -type d -name __pycache__ -exec rm -rf {} +
+	find src tests scripts -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+
+.PHONY: build
+build:  ## Build distributable package (uv build)
+	uv build
 
 .PHONY: clean-runs
 clean-runs:  ## Remove all benchmark run artifacts from data/runs/
@@ -89,5 +98,5 @@ clean-runs:  ## Remove all benchmark run artifacts from data/runs/
 
 .PHONY: help
 help:  ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
+	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'

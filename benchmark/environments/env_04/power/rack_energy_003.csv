@@ -1,0 +1,5 @@
+rack_id,timestamp_utc,energy_kwh
+rack-a,2026-02-13T12:00:00Z,82
+rack-b,2026-02-13T12:00:00Z,156
+rack-c,2026-02-13T12:00:00Z,78
+rack-d,2026-02-13T12:00:00Z,85

@@ -299,7 +299,7 @@ Examples:
 
 - `slurm.query_jobs()`
 - `slurm.job_details(job_id)`
-- `prom.query(metric, labels, time_range)`
+- `telemetry.query(metric, labels, time_range)`
 - `docs.retrieve(query)`
 - `rbac.check(role, resource)`
 

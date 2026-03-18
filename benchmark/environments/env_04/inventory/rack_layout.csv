@@ -1,0 +1,5 @@
+rack_id,node_count,gpu_count,zone
+rack-a,2,0,north
+rack-b,2,0,north
+rack-c,2,4,south
+rack-d,2,4,south

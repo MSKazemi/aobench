@@ -1,0 +1,7 @@
+node,rack,role
+node01,rack-a,compute
+node02,rack-a,compute
+node03,rack-b,compute
+node04,rack-b,compute
+gpu01,rack-c,gpu
+gpu02,rack-c,gpu
