@@ -74,6 +74,14 @@ run:  ## Run a single task (TASK=, ENV=, ADAPTER= overridable)
 run-openai:  ## Run a task with OpenAI adapter (TASK=, ENV=, MODEL= overridable)
 	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter openai:$(MODEL)
 
+.PHONY: run-all
+run-all:  ## Run all benchmark tasks (one run dir with traces + results per task)
+	$(EXABENCH) run all --adapter $(ADAPTER)
+
+.PHONY: run-all-openai
+run-all-openai:  ## Run all tasks with OpenAI adapter (MODEL= overridable)
+	$(EXABENCH) run all --adapter openai:$(MODEL)
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py

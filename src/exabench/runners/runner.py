@@ -32,7 +32,12 @@ class BenchmarkRunner:
         self._benchmark_root = Path(benchmark_root)
         self._output_root = Path(output_root)
 
-    def run(self, task_id: str, env_id: str) -> BenchmarkResult:
+    def run(
+        self,
+        task_id: str,
+        env_id: str,
+        run_id: str | None = None,
+    ) -> BenchmarkResult:
         # 1. Load task and environment
         task = load_task(self._benchmark_root / "tasks" / "specs" / f"{task_id}.json")
         env = load_environment(self._benchmark_root / "environments" / env_id)
@@ -41,7 +46,10 @@ class BenchmarkRunner:
         tools = self._build_tools(env.root_path, task.role)
 
         # 3. Assemble execution context
-        ctx = ExecutionContext(task=task, env=env, tools=tools)
+        ctx = ExecutionContext(
+            task=task, env=env, tools=tools,
+            run_id=run_id or "",
+        )
 
         # 4. Run adapter → trace
         trace: Trace = self._adapter.run(ctx)

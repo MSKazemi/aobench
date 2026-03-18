@@ -17,4 +17,8 @@ class ExecutionContext:
     task: TaskSpec
     env: EnvironmentBundle
     tools: ToolRegistry
-    run_id: str = field(default_factory=make_run_id)
+    run_id: str = field(default="")
+
+    def __post_init__(self) -> None:
+        if not self.run_id:
+            self.run_id = make_run_id()

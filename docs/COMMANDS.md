@@ -8,6 +8,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 |---------|-------------|
 | `exabench validate benchmark` | Validate all task specs and environment bundles |
 | `exabench run task` | Run a single benchmark task against an environment |
+| `exabench run all` | Run all benchmark tasks (one run dir, one trace per task) |
 
 ---
 
@@ -25,7 +26,7 @@ exabench [OPTIONS] COMMAND [ARGS]...
 |--------|-------------|
 | `--install-completion` | Install shell completion (bash, zsh, etc.) |
 | `--show-completion` | Show completion script for manual setup |
-| `--help` | Show help and exit |
+| `-h`, `--help` | Show help and exit |
 
 ---
 
@@ -48,7 +49,7 @@ exabench validate benchmark [OPTIONS]
 | Option | Default | Description |
 |--------|---------|-------------|
 | `--benchmark` | `benchmark` | Path to benchmark root directory |
-| `--help` | — | Show help and exit |
+| `-h`, `--help` | — | Show help and exit |
 
 **Example:**
 
@@ -82,7 +83,7 @@ exabench run task [OPTIONS]
 | `--adapter` | `-a` | `direct_qa` | Adapter name |
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
-| `--help` | — | — | Show help and exit |
+| `-h`, `--help` | — | — | Show help and exit |
 
 **Adapters:**
 
@@ -102,6 +103,34 @@ exabench run task --task JOB_USR_001 --env env_01
 exabench run task -t JOB_USR_001 -e env_01 -a openai:gpt-4o-mini
 # Custom benchmark path and output
 exabench run task -t JOB_USR_001 -e env_01 -o results/
+```
+
+#### run all
+
+Run all benchmark tasks. Uses each task's `environment_id` from its spec. Creates one run directory with a trace and result file for every task.
+
+```bash
+exabench run all [OPTIONS]
+```
+
+| Option | Short | Default | Description |
+|--------|-------|---------|-------------|
+| `--adapter` | `-a` | `direct_qa` | Adapter name |
+| `--benchmark` | — | `benchmark` | Path to benchmark root |
+| `--output` | `-o` | `data/runs` | Output directory for runs |
+| `-h`, `--help` | — | — | Show help and exit |
+
+**Output structure:** One run directory (e.g. `data/runs/run_20260318_123456_abc123/`) containing:
+
+- `traces/<task_id>_trace.json` — one trace per task
+- `results/<task_id>_result.json` — one result per task
+
+**Examples:**
+
+```bash
+exabench run all
+exabench run all --adapter openai:gpt-4o-mini
+exabench run all -o my_runs/
 ```
 
 ---
@@ -125,6 +154,8 @@ Convenience targets that wrap CLI commands. Use `make help` to list all.
 | `make run` | Run a single task (overridable: `TASK=`, `ENV=`, `ADAPTER=`) |
 | `make run-alpha0` | Run Alpha-0 slice: JOB_USR_001 + env_01 + direct_qa |
 | `make run-openai` | Run a task with OpenAI adapter (overridable: `TASK=`, `ENV=`, `MODEL=`) |
+| `make run-all` | Run all tasks (one run dir, one trace per task; ADAPTER= overridable) |
+| `make run-all-openai` | Run all tasks with OpenAI (MODEL= overridable) |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
 
 **Example with overrides:**
@@ -132,6 +163,8 @@ Convenience targets that wrap CLI commands. Use `make help` to list all.
 ```bash
 make run TASK=JOB_USR_002 ENV=env_02
 make run-openai MODEL=gpt-4o
+make run-all
+make run-all-openai MODEL=gpt-4o
 ```
 
 ### Quality

@@ -9,6 +9,7 @@ app = typer.Typer(
     name="exabench",
     help="ExaBench — benchmark framework for evaluating AI agents in HPC environments.",
     no_args_is_help=True,
+    context_settings={"help_option_names": ["-h", "--help"]},
 )
 
 app.add_typer(run_app, name="run")
