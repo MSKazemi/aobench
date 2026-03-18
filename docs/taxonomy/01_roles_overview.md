@@ -10,15 +10,13 @@ This section defines **who is asking** in an ExaBench task, what that persona ty
 
 ### Persona list
 
-[01.1 — System administrator](01%20%E2%80%94%20Roles%20&%20Personas/01%201%20%E2%80%94%20System%20administrator%20323924e5e171800a852ccbf1558098c7.md)
-
-[01.2 — Facility operator / admin](01%20%E2%80%94%20Roles%20&%20Personas/01%202%20%E2%80%94%20Facility%20operator%20admin%20323924e5e17180d29dd2c0b5485a4c95.md)
-
-[01.3 — Researcher](01%20%E2%80%94%20Roles%20&%20Personas/01%203%20%E2%80%94%20Researcher%20323924e5e171803dadf3d2469903dca6.md)
-
-[01.4 — Normal user](01%20%E2%80%94%20Roles%20&%20Personas/01%204%20%E2%80%94%20Normal%20user%20323924e5e171803ebaa3cd8a880ab03b.md)
-
-[01.5 — System designer / architect](01%20%E2%80%94%20Roles%20&%20Personas/01%205%20%E2%80%94%20System%20designer%20architect%20323924e5e17180f3b9b0de3c28f8c7cc.md)
+| Schema value | Role | Detail page |
+|---|---|---|
+| `sysadmin` | System Administrator | [system_administrators.md](roles/system_administrators.md) |
+| `facility_admin` | Facility Admin / Technicians | [facility_admin.md](roles/facility_admin.md) |
+| `researcher` | HPC Researcher / Analyst | [researchers.md](roles/researchers.md) |
+| `scientific_user` | Normal User (Scientist / Engineer) | [normal_users.md](roles/normal_users.md) |
+| `system_designer` | System Designer / Architect | [system_designers.md](roles/system_designers.md) |
 
 ---
 

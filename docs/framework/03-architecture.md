@@ -161,7 +161,7 @@ Each ExaBench benchmark item is associated with a structured taxonomy. At minimu
 - **QCAT Category** — the primary HPC query category
 - **Capability Group** — the main competence being exercised
 - **Access / Policy Profile** — what data or actions are allowed
-- **Knowledge Source Scope** — which sources may be used as evidence
+- **Knowledge Source Scope** — which knowledge source groups (from `docs/taxonomy/05_knowledge_sources.md`) may be used as evidence
 - **Difficulty Level** — expected complexity of execution or reasoning
 - **Expected Output Type** — narrative answer, diagnosis, recommendation, table, structured JSON, and so on
 
@@ -195,7 +195,7 @@ Typical task fields include:
 -`query_text`
 -`required_capabilities`
 -`allowed_tools`
--`knowledge_source_scope`
+-`knowledge_source_scope` — list of `KnowledgeSourceCode` values from the knowledge source taxonomy
 -`access_tier`
 -`expected_outputs`
 -`gold_evidence_refs`
@@ -327,28 +327,12 @@ Each benchmark environment should be packaged as a deterministic snapshot bundle
 A snapshot may include artifacts such as:
 
 - scheduler state
--telemetry timeseries
--power or energy data
--topology metadata
--policy definitions
--document subsets
--incident metadata
-
-This design allows ExaBench to model realistic HPC conditions without depending on a live cluster.
-
-The operational registry of environments is defined in [05-environments](05-environments.md).
-
-Each benchmark environment should be packaged as a deterministic snapshot bundle referenced by `environment_id`.
-
-A snapshot may include artifacts such as:
-
-- scheduler state
--telemetry timeseries
--power or energy data
--topology metadata
--policy definitions
--document subsets
--incident metadata
+- telemetry timeseries
+- power or energy data
+- topology metadata
+- policy definitions
+- document subsets — keyed by `KnowledgeSourceCode` (e.g., `USR_DOC`, `OPS_DOC`, `FAC_DOC`); see `docs/taxonomy/05_knowledge_sources.md`
+- incident metadata
 
 This design allows ExaBench to model realistic HPC conditions without depending on a live cluster.
 

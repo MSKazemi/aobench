@@ -67,7 +67,7 @@ ADAPTER ?= direct_qa
 MODEL  ?= gpt-4o
 
 .PHONY: run
-run:  ## Run a single task (TASK=, ENV=, ADAPTER= overridable)
+run:  ## Run a single task and auto-generate reports (TASK=, ENV=, ADAPTER= overridable)
 	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter $(ADAPTER)
 
 .PHONY: run-openai
@@ -75,12 +75,18 @@ run-openai:  ## Run a task with OpenAI adapter (TASK=, ENV=, MODEL= overridable)
 	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter openai:$(MODEL)
 
 .PHONY: run-all
-run-all:  ## Run all benchmark tasks (one run dir with traces + results per task)
+run-all:  ## Run all benchmark tasks and auto-generate reports (ADAPTER= overridable)
 	$(EXABENCH) run all --adapter $(ADAPTER)
 
 .PHONY: run-all-openai
 run-all-openai:  ## Run all tasks with OpenAI adapter (MODEL= overridable)
 	$(EXABENCH) run all --adapter openai:$(MODEL)
+
+MCP_SERVER ?= stdio:python mcp_server.py
+
+.PHONY: run-mcp
+run-mcp:  ## Run a task via an MCP server (TASK=, ENV=, MCP_SERVER= overridable)
+	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter "mcp:$(MCP_SERVER)"
 
 .PHONY: report
 report:  ## Generate JSON + HTML report for the latest run (RUN_DIR= overridable)

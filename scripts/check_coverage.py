@@ -13,8 +13,8 @@ from exabench.loaders.task_loader import load_tasks_from_dir
 from exabench.schemas.task import TaskSpec
 
 BENCHMARK_ROOT = Path(__file__).parent.parent / "benchmark"
-ROLES   = ["scientific_user", "sysadmin", "facility_admin"]
-QCATS   = ["JOB", "MON", "ENERGY"]
+ROLES   = ["scientific_user", "sysadmin", "facility_admin", "researcher", "system_designer"]
+QCATS   = ["JOB", "PERF", "DATA", "MON", "ENERGY", "SEC", "FAC", "ARCH", "AIOPS", "DOCS"]
 DIFFS   = ["easy", "medium", "hard", "adversarial"]
 READINESS = ["ready", "partial", "blocked"]
 

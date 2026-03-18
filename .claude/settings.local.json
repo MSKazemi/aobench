@@ -23,7 +23,9 @@
       "Edit(src/**)",
       "Edit(benchmark/**)",
       "Edit(scripts/**)",
-      "Bash(uv run:*)"
+      "Bash(uv run:*)",
+      "Bash(python:*)",
+      "Bash(uv pip:*)"
     ],
     "deny": [
       "Read(.env)",

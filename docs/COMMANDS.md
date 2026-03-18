@@ -88,6 +88,7 @@ exabench run task [OPTIONS]
 | `--adapter` | `-a` | `direct_qa` | Adapter name |
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
+| `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
 | `-h`, `--help` | — | — | Show help and exit |
 
 **Adapters:**
@@ -97,6 +98,8 @@ exabench run task [OPTIONS]
 | `direct_qa` | Direct question-answering adapter (no LLM) |
 | `openai` | OpenAI API (default model: `gpt-4o`) |
 | `openai:MODEL` | OpenAI with specific model, e.g. `openai:gpt-4o` |
+| `mcp:stdio:COMMAND` | MCP client — launch a local subprocess via stdio transport |
+| `mcp:sse:URL` | MCP client — connect to a remote MCP server via HTTP SSE |
 
 **Examples:**
 
@@ -106,8 +109,18 @@ exabench run task --task JOB_USR_001 --env env_01
 
 # Run with OpenAI
 exabench run task -t JOB_USR_001 -e env_01 -a openai:gpt-4o
+
+# Run via a local MCP server subprocess
+exabench run task -t JOB_USR_001 -e env_01 -a "mcp:stdio:python my_agent.py"
+
+# Run via a remote MCP server (SSE)
+exabench run task -t JOB_USR_001 -e env_01 -a "mcp:sse:http://localhost:8000/sse"
+
 # Custom benchmark path and output
 exabench run task -t JOB_USR_001 -e env_01 -o results/
+
+# Skip report generation
+exabench run task -t JOB_USR_001 -e env_01 --no-report
 ```
 
 #### run all
@@ -123,6 +136,7 @@ exabench run all [OPTIONS]
 | `--adapter` | `-a` | `direct_qa` | Adapter name |
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
+| `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
 | `-h`, `--help` | — | — | Show help and exit |
 
 **Output structure:** One run directory (e.g. `data/runs/run_20260318_123456_abc123/`) containing:
@@ -136,6 +150,7 @@ exabench run all [OPTIONS]
 exabench run all
 exabench run all --adapter openai:gpt-4o
 exabench run all -o my_runs/
+exabench run all --no-report   # skip report generation
 ```
 
 ---
@@ -339,6 +354,7 @@ Convenience targets that wrap CLI commands. Use `make help` to list all.
 | `make run-openai` | Run a task with OpenAI adapter (overridable: `TASK=`, `ENV=`, `MODEL=`) |
 | `make run-all` | Run all tasks (one run dir, one trace per task; ADAPTER= overridable) |
 | `make run-all-openai` | Run all tasks with OpenAI (MODEL= overridable) |
+| `make run-mcp` | Run a task via MCP server (TASK=, ENV=, MCP_SERVER= overridable) |
 | `make report` | Generate JSON + HTML report for the latest run (RUN_DIR= overridable) |
 | `make compare` | Diff last two runs (RUN_A= baseline, RUN_B= comparison) |
 | `make robustness` | Run a task N times and report variance (TASK=, ENV=, ADAPTER=, N= overridable) |

@@ -18,7 +18,29 @@ def _build_adapter(name: str):
         from exabench.adapters.openai_adapter import OpenAIAdapter
         model = name.split(":", 1)[1] if ":" in name else "gpt-4o"
         return OpenAIAdapter(model=model)
+    if name.startswith("mcp:") or name.startswith("mcp"):
+        from exabench.adapters.mcp_client_adapter import MCPClientAdapter
+        # "mcp:stdio:python server.py" → server_spec = "stdio:python server.py"
+        # "mcp:sse:http://..."         → server_spec = "sse:http://..."
+        server_spec = name[len("mcp:"):] if name.startswith("mcp:") else ""
+        return MCPClientAdapter(server=server_spec)
     raise ValueError(name)
+
+
+def _generate_reports(run_dir: Path) -> None:
+    from exabench.reports.html_report import write_html_report
+    from exabench.reports.json_report import write_run_summary
+    from exabench.reports.slices import format_table_text, role_category_table
+    from exabench.reports.json_report import build_run_summary
+
+    json_path = write_run_summary(str(run_dir))
+    typer.echo(f"  JSON report : {json_path}")
+    html_path = write_html_report(str(run_dir))
+    typer.echo(f"  HTML report : {html_path}")
+    summary = build_run_summary(str(run_dir))
+    table = role_category_table(summary)
+    typer.echo(f"\nRole × Category scores  (run: {summary['run_id']})\n")
+    typer.echo(format_table_text(table))
 
 
 @run_app.command("all")
@@ -26,6 +48,7 @@ def run_all(
     adapter: Annotated[str, typer.Option("--adapter", "-a", help="Adapter name")] = "direct_qa",
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
+    report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
 ) -> None:
     """Run all benchmark tasks. Uses each task's environment_id from its spec.
 
@@ -40,7 +63,7 @@ def run_all(
     except ValueError:
         typer.echo(
             f"Unknown adapter '{adapter}'. "
-            "Available: direct_qa, openai, openai:gpt-4o",
+            "Available: direct_qa, openai, openai:gpt-4o, mcp:stdio:CMD, mcp:sse:URL",
             err=True,
         )
         raise typer.Exit(1)
@@ -78,6 +101,11 @@ def run_all(
     succeeded = sum(1 for _, r in results if r is not None)
     typer.echo(f"Completed: {succeeded}/{len(tasks)} tasks")
 
+    if report:
+        run_dir = Path(output_root) / run_id
+        typer.echo("\nGenerating reports...")
+        _generate_reports(run_dir)
+
 
 @run_app.command("task")
 def run_task(
@@ -86,6 +114,7 @@ def run_task(
     adapter: Annotated[str, typer.Option("--adapter", "-a", help="Adapter name")] = "direct_qa",
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
+    report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
 ) -> None:
     """Run a single benchmark task."""
     from exabench.runners.runner import BenchmarkRunner
@@ -95,7 +124,7 @@ def run_task(
     except ValueError:
         typer.echo(
             f"Unknown adapter '{adapter}'. "
-            "Available: direct_qa, openai, openai:gpt-4o",
+            "Available: direct_qa, openai, openai:gpt-4o, mcp:stdio:CMD, mcp:sse:URL",
             err=True,
         )
         raise typer.Exit(1)
@@ -114,3 +143,8 @@ def run_task(
     typer.echo(f"  outcome={d.outcome}  tool_use={d.tool_use}  "
                f"governance={d.governance}  efficiency={d.efficiency}")
     typer.echo(f"\nRun ID: {result.run_id}")
+
+    if report:
+        run_dir = Path(output_root) / result.run_id
+        typer.echo("\nGenerating reports...")
+        _generate_reports(run_dir)

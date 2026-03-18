@@ -13,11 +13,11 @@ Single source of truth for project status, next steps, and backlog.
 | Tasks | 12 (JOB×4, MON×4, ENERGY×4) — 12/30 target |
 | Environments | 5 (env_01–env_05) |
 | Mock tools | `slurm`, `docs`, `rbac`, `telemetry`, `facility` |
-| Adapters | `direct_qa`, `openai` (plain + Azure) |
+| Adapters | `direct_qa`, `openai` (plain + Azure), `mcp` (stdio + SSE transports) |
 | Scorers | `outcome` (fuzzy+numeric), `tool_use`, `grounding`, `governance`, `efficiency` |
 | Robustness | `compute_robustness(results)` + `exabench robustness task` CLI |
 | Reports | JSON summary, HTML report, role×category slices, error taxonomy, compare diff |
-| Tests | 58 passing (unit + integration) |
+| Tests | 76 passing (unit + integration) |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` |
 
 ---
@@ -65,6 +65,23 @@ Minimum sections: setup, coding standards, how to add a task, how to add an adap
 
 ---
 
+## Reviewed Next Steps (2026-03-18, from roadmap review)
+
+Ordered by impact for paper prep. These consolidate and re-prioritize the backlog below.
+
+| # | Item | Blocks |
+|---|------|--------|
+| 1 | **Populate gold answers** — 10/12 tasks `partial`; `OutcomeScorer` gives 0.5 to all, making scores meaningless | Baseline comparison, paper numbers |
+| 2 | **Run baseline comparison** — `make run-all` + `make run-all-openai` + `make compare` | First real benchmark numbers |
+| 3 | **GitHub Actions CI** — `make check` on every push | Contributor safety |
+| 4 | **`utils/logging.py`** — implement structured logging; replace `typer.echo` in runner/adapters/scorers | Debuggability |
+| 5 | **Fix `06-evaluation.md` schema divergence** — rewrite §8 (trace) and §9 (result) to match actual Pydantic models | Doc consistency |
+| 6 | **Expand to 30 tasks** — currently 12/30; target 10×JOB, 10×MON, 10×ENERGY, all roles, mixed difficulty | v0.1 dataset target |
+| 7 | **`AnthropicAdapter`** — Claude with native `tool_use` blocks; `pyproject.toml[anthropic]` declared but not implemented | Baseline diversity |
+| 8 | **Parallel task execution** — `exabench run all` is serial; add `asyncio`/`concurrent.futures` for LLM runs | Performance at 30+ tasks |
+
+---
+
 ## Short-term Backlog (next 2–4 weeks)
 
 ### Bug fixes
@@ -100,6 +117,7 @@ Minimum sections: setup, coding standards, how to add a task, how to add an adap
 ### Features
 
 - [ ] **`AnthropicAdapter`** — Claude with native `tool_use` blocks; declared in `pyproject.toml[anthropic]` extra but not implemented
+- [x] **`MCPClientAdapter`** — MCP client to connect to HPC agents that expose an MCP server; ExaBench drives an OpenAI agentic loop using the server's tools; supports stdio and SSE transports; `pip install exabench[mcp]`
 - [ ] **Parallel task execution** — `exabench run all` runs tasks serially; add `asyncio` or `concurrent.futures` mode for OpenAI runs (slow with 30+ tasks)
 - [ ] **`exabench task create`** — interactive task authoring helper (currently requires manual JSON editing of ~20 fields)
 - [ ] **Structured output evaluation mode** — `eval_criteria.evaluation_mode: structured_output` is declared but no scorer handles JSON schema validation
@@ -107,11 +125,16 @@ Minimum sections: setup, coding standards, how to add a task, how to add an adap
 - [ ] **Cross-role evaluation** — run same query under different roles, verify scoped answers; operationalize as a test suite
 - [ ] **Adversarial task variants** — `difficulty: adversarial` is in the schema but no adversarial tasks exist; design tasks for jailbreak resistance, misleading evidence, social engineering
 
+### Taxonomy & Query Categories
+
+- [ ] **Improve query categories** — Align project and benchmark with full taxonomy (`docs/taxonomy/02_query_categories.md`): currently 3 QCATs (JOB, MON, ENERGY) used vs 10 defined; extend schema (`QCat` in `schemas/task.py`), task specs, scoring profiles, and reports to support PERF, DATA, SEC, FAC, ARCH, AIOPS, DOCS; add task coverage for new categories and update role×QCAT coverage matrix
+
 ### Dataset expansion
 
+- [ ] **Complete role coverage** — taxonomy defines 5 personas (`docs/taxonomy/roles/`); benchmark currently uses 3 (`scientific_user`, `sysadmin`, `facility_admin`). Add `normal_user` and `system_designer` to schema, RBAC, tool registry, and environments; create tasks for both roles per `01_roles_overview.md` and persona docs
 - [ ] Expand to 30 task records (currently 12/30 = 40%)
-  - Target distribution: 10 × JOB, 10 × MON, 10 × ENERGY
-  - All 3 roles covered: `scientific_user`, `sysadmin`, `facility_admin`
+  - Target distribution: 10 × JOB, 10 × MON, 10 × ENERGY (phase 1); expand to PERF, DATA, SEC, FAC, ARCH, AIOPS, DOCS as taxonomy improvement progresses
+  - All 5 roles covered once complete: `scientific_user`, `normal_user`, `sysadmin`, `facility_admin`, `system_designer`
   - Mix of easy/medium/hard/adversarial difficulty
 - [ ] Freeze dataset splits: `dev` (current 12), `public_test` (new 10), `hidden_test` (new 8)
 - [ ] Assign annotation ownership per task
@@ -125,6 +148,7 @@ Minimum sections: setup, coding standards, how to add a task, how to add an adap
 
 ### Documentation
 
+- [ ] **Complete roles taxonomy** — fix broken links in `docs/taxonomy/01_roles_overview.md` (point to `roles/system_administrators.md`, `roles/facility_admin.md`, etc.); align benchmark schema with taxonomy
 - [ ] Update `docs/framework/06-evaluation.md` §8 (trace schema) and §9 (result schema) to match actual Pydantic models — currently specifies 16+ fields that don't exist in code
 - [ ] Remove or mark-as-planned task fields in `06-evaluation.md` §6 (`success_criteria`, `preferred_tool_sequence`, `policy_sensitivity`, `required_scorers`) that don't exist in `TaskSpec`
 - [ ] `docs/guides/adding-tasks.md` — how to author a new task spec end-to-end
@@ -210,4 +234,4 @@ facility_admin       0      0         4        4
 TOTAL                4      4         4       12
 ```
 
-v0.1 target: 30 tasks — currently 12/30 (40%)
+v0.1 target: 30 tasks — currently 12/30 (40%). Target 5 roles once role coverage complete: `normal_user`, `system_designer` added per taxonomy.

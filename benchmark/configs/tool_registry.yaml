@@ -2,17 +2,34 @@
 # Defines which tools are available by default for each role
 
 role_tool_defaults:
+  # Normal users: own jobs, docs, basic telemetry (tier1_public)
   scientific_user:
     - slurm
     - docs
     - telemetry
+  # Researchers: aggregated/anonymized telemetry, historical traces (tier3_restricted)
+  researcher:
+    - slurm
+    - docs
+    - telemetry
+    - facility
+  # Sysadmins: full cluster access — nodes, queues, RBAC, logs (tier2_privileged)
   sysadmin:
     - slurm
     - docs
     - telemetry
     - rbac
+    - facility
+  # Facility admins: BMS/DCIM, energy, cooling, alarms (tier2_privileged)
   facility_admin:
     - slurm
     - docs
     - telemetry
     - rbac
+    - facility
+  # System designers/architects: fleet telemetry, benchmarks, procurement summaries (tier2_privileged)
+  system_designer:
+    - slurm
+    - docs
+    - telemetry
+    - facility
