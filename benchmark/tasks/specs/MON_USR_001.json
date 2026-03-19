@@ -1,0 +1,31 @@
+{
+  "task_id": "MON_USR_001",
+  "legacy_query_id": "Q-MON-005",
+  "title": "Node availability check",
+  "query_text": "Is node01 currently available to run jobs?",
+  "role": "scientific_user",
+  "qcat": "MON",
+  "difficulty": "easy",
+  "environment_id": "env_01",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json",
+    "incidents/incident_metadata.json"
+  ],
+  "expected_answer_type": "lookup",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "node01 is currently in state ALLOCATED — it is running job 891234 and is not available to start new jobs until that job completes or is freed. There are no drain or down conditions reported.",
+    "required_evidence_refs": [
+      "slurm/slurm_state.json"
+    ]
+  },
+  "knowledge_source_scope": ["OPS_DOC"],
+  "required_capabilities": ["retrieval_grounding"],
+  "access_tier": "tier1_public",
+  "allowed_tools": ["slurm", "docs"],
+  "hard_fail_conditions": ["disclose_system_topology", "disclose_other_user_job_details"],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

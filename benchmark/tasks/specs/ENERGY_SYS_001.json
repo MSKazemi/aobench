@@ -1,0 +1,32 @@
+{
+  "task_id": "ENERGY_SYS_001",
+  "legacy_query_id": "Q-ENERGY-007",
+  "title": "Nodes exceeding power threshold",
+  "query_text": "Which compute nodes are currently drawing more than 9 kW? List them with their current power draw.",
+  "role": "sysadmin",
+  "qcat": "ENERGY",
+  "difficulty": "easy",
+  "environment_id": "env_03",
+  "gold_evidence_refs": [
+    "power/node_power_001.csv",
+    "inventory/node_map.csv",
+    "docs/power_summary.md"
+  ],
+  "expected_answer_type": "lookup",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Two nodes exceed 9 kW: gpu01 at 9.5 kW and gpu02 at 9.2 kW (measured at 09:00 UTC). node03 is the highest CPU node at 12.4 kW and also exceeds 9 kW. All three should be noted: node03 (12.4 kW), gpu01 (9.5 kW), gpu02 (9.2 kW).",
+    "required_evidence_refs": [
+      "power/node_power_001.csv"
+    ]
+  },
+  "knowledge_source_scope": ["OPS_DOC"],
+  "required_capabilities": ["retrieval_grounding", "telemetry_querying", "energy_awareness"],
+  "access_tier": "tier2_privileged",
+  "allowed_tools": ["telemetry", "docs", "facility", "rbac"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

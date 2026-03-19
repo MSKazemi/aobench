@@ -1,40 +1,216 @@
-"""Tool-use scorer — evaluates tool selection, argument quality, and call sequence."""
+"""Tool-use scorer — evaluates tool selection, argument quality, and call sequence.
+
+Two scoring modes
+-----------------
+**Decomposed mode** (when ``eval_criteria.expected_tool_sequence`` is set):
+    Scores the agent's tool use against a ground-truth call sequence.
+
+    Sub-scores (each 0–1):
+
+    selection_score
+        Fraction of expected tool names that the agent actually called.
+        Measures whether the agent discovered and used the right tools.
+        Example: expected [slurm, docs], called [slurm] → 0.5
+
+    argument_score
+        For each expected call, checks whether the agent's matching call
+        contained the required argument key-value pairs (string: exact match,
+        number: ±5% relative tolerance).  Averaged across all expected calls.
+        Example: expected slurm(method="job_details", job_id="891234"),
+                 agent called slurm(method="job_details", job_id="891234") → 1.0
+                 agent called slurm(method="job_details", job_id="999999") → 0.5
+
+    sequence_score
+        How well the agent's call order matches the expected order, using
+        the longest common subsequence (LCS) of tool names divided by the
+        length of the expected sequence.  A perfect match scores 1.0; a
+        completely reversed or missing sequence scores 0.0.
+        Example: expected [slurm, docs, rbac], called [docs, slurm, rbac] → 0.67
+
+    forbidden_call_penalty
+        Starts at 1.0 and is reduced by 0.3 for each call to a tool that is
+        not in ``task.allowed_tools`` (when that list is set).  Equivalent to
+        what the legacy scorer calls "precision".
+        Example: allowed [slurm, docs], agent also called facility → 0.7
+
+    Final score = mean(selection, argument, sequence, forbidden_call_penalty)
+
+**Legacy mode** (when ``expected_tool_sequence`` is empty or not set):
+    Heuristic scoring that does not require ground-truth sequences.
+
+    coverage
+        Did the agent call at least one tool that maps to a required evidence
+        reference? (heuristic mapping from evidence-ref prefix to tool name)
+
+    precision
+        Did the agent avoid calling tools outside the allowed set?
+
+    no_redundancy
+        Did the agent avoid repeating the exact same (tool, arguments) call
+        more than twice?
+
+    Final score = mean(coverage, precision, no_redundancy)
+"""
 
 from __future__ import annotations
 
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Trace
+from exabench.schemas.task import ExpectedToolCall, TaskSpec
+from exabench.schemas.trace import ToolCall, Trace
 from exabench.scorers.base import BaseScorer, ScorerOutput
 
+# Numeric tolerance for argument matching (relative, ±5%)
+_ARG_NUMERIC_TOLERANCE = 0.05
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _args_match(actual: dict, required: dict) -> float:
+    """Return fraction of required key-value pairs satisfied by actual args.
+
+    String values: exact match (case-insensitive).
+    Numeric values: within ±5% relative tolerance.
+    Missing key in actual: counts as mismatch.
+    Empty required dict: always 1.0 (no constraints specified).
+    """
+    if not required:
+        return 1.0
+    matched = 0
+    for key, expected_val in required.items():
+        actual_val = actual.get(key)
+        if actual_val is None:
+            continue
+        if isinstance(expected_val, (int, float)) and isinstance(actual_val, (int, float)):
+            denom = abs(float(expected_val)) if expected_val != 0 else 1.0
+            if abs(float(actual_val) - float(expected_val)) / denom <= _ARG_NUMERIC_TOLERANCE:
+                matched += 1
+        else:
+            if str(actual_val).lower() == str(expected_val).lower():
+                matched += 1
+    return matched / len(required)
+
+
+def _lcs_length(a: list[str], b: list[str]) -> int:
+    """Longest common subsequence length between two lists of strings."""
+    m, n = len(a), len(b)
+    # Use two-row DP to save memory
+    prev = [0] * (n + 1)
+    for i in range(1, m + 1):
+        curr = [0] * (n + 1)
+        for j in range(1, n + 1):
+            if a[i - 1] == b[j - 1]:
+                curr[j] = prev[j - 1] + 1
+            else:
+                curr[j] = max(prev[j], curr[j - 1])
+        prev = curr
+    return prev[n]
+
+
+# ---------------------------------------------------------------------------
+# Main scorer
+# ---------------------------------------------------------------------------
 
 class ToolUseScorer(BaseScorer):
-    """Scores the agent's tool-use behaviour across three sub-dimensions:
+    """Multi-mode tool-use scorer.
 
-    1. Coverage   — did the agent call at least one tool that maps to a required evidence ref?
-    2. Precision  — did the agent avoid calling disallowed tools?
-    3. No-redundancy — did the agent avoid repeating the exact same call more than twice?
-
-    Final score = mean of the three sub-scores.
+    See module docstring for full description of decomposed vs legacy modes.
     """
 
     dimension = "tool_use"
 
     def score(self, task: TaskSpec, trace: Trace) -> ScorerOutput:
         if trace.hard_fail:
-            return ScorerOutput(dimension=self.dimension, score=0.0,
-                                hard_fail=True, hard_fail_reason=trace.hard_fail_reason)
+            return ScorerOutput(
+                dimension=self.dimension, score=0.0,
+                hard_fail=True, hard_fail_reason=trace.hard_fail_reason,
+            )
 
-        tool_calls = [
-            s.tool_call for s in trace.steps if s.tool_call is not None
-        ]
+        tool_calls = [s.tool_call for s in trace.steps if s.tool_call is not None]
 
         if not tool_calls:
-            # No tools used — check if task requires tools
             if task.allowed_tools:
-                return ScorerOutput(dimension=self.dimension, score=0.0,
-                                    notes="No tools called but task has allowed_tools defined")
-            return ScorerOutput(dimension=self.dimension, score=1.0,
-                                notes="No tools required, none called")
+                return ScorerOutput(
+                    dimension=self.dimension, score=0.0,
+                    notes="No tools called but task has allowed_tools defined",
+                )
+            return ScorerOutput(
+                dimension=self.dimension, score=1.0,
+                notes="No tools required, none called",
+            )
+
+        expected_seq = (
+            task.eval_criteria.expected_tool_sequence
+            if task.eval_criteria else []
+        )
+
+        if expected_seq:
+            return self._decomposed_score(task, tool_calls, expected_seq)
+        return self._legacy_score(task, tool_calls)
+
+    # ------------------------------------------------------------------
+    # Decomposed mode
+    # ------------------------------------------------------------------
+
+    def _decomposed_score(
+        self,
+        task: TaskSpec,
+        tool_calls: list[ToolCall],
+        expected_seq: list[ExpectedToolCall],
+    ) -> ScorerOutput:
+        """Score using ground-truth expected_tool_sequence."""
+
+        called_names = [tc.tool_name.split("__")[0] for tc in tool_calls]
+        expected_names = [e.tool_name for e in expected_seq]
+
+        # 1. selection_score — did the agent call the right tools?
+        expected_tool_set = set(expected_names)
+        called_tool_set = set(called_names)
+        selection = len(expected_tool_set & called_tool_set) / len(expected_tool_set)
+
+        # 2. argument_score — were the arguments correct?
+        argument_scores: list[float] = []
+        for exp in expected_seq:
+            # Find the first actual call matching this tool name
+            matching = next(
+                (tc for tc in tool_calls if tc.tool_name.split("__")[0] == exp.tool_name),
+                None,
+            )
+            if matching is None:
+                argument_scores.append(0.0)
+            else:
+                argument_scores.append(_args_match(matching.arguments, exp.required_args))
+        argument = sum(argument_scores) / len(argument_scores)
+
+        # 3. sequence_score — was the order correct?
+        lcs = _lcs_length(expected_names, called_names)
+        sequence = lcs / len(expected_names)
+
+        # 4. forbidden_call_penalty — were disallowed tools avoided?
+        allowed = set(task.allowed_tools) if task.allowed_tools else None
+        if allowed is not None:
+            forbidden = [n for n in called_names if n not in allowed]
+            forbidden_penalty = max(0.0, 1.0 - 0.3 * len(forbidden))
+        else:
+            forbidden_penalty = 1.0
+
+        score = round((selection + argument + sequence + forbidden_penalty) / 4, 4)
+        notes = (
+            f"decomposed: selection={selection:.2f}  argument={argument:.2f}  "
+            f"sequence={sequence:.2f}  forbidden_penalty={forbidden_penalty:.2f}"
+        )
+        return ScorerOutput(dimension=self.dimension, score=score, notes=notes)
+
+    # ------------------------------------------------------------------
+    # Legacy mode
+    # ------------------------------------------------------------------
+
+    def _legacy_score(
+        self,
+        task: TaskSpec,
+        tool_calls: list[ToolCall],
+    ) -> ScorerOutput:
+        """Heuristic scoring when no expected_tool_sequence is provided."""
 
         called_tool_names = {tc.tool_name.split("__")[0] for tc in tool_calls}
         allowed = set(task.allowed_tools) if task.allowed_tools else called_tool_names
@@ -46,7 +222,7 @@ class ToolUseScorer(BaseScorer):
         disallowed_calls = called_tool_names - allowed
         precision = 1.0 if not disallowed_calls else max(0.0, 1.0 - 0.3 * len(disallowed_calls))
 
-        # 3. No redundancy: same (tool, method, args) called more than twice
+        # 3. No redundancy: same (tool, args) called more than twice
         call_counts: dict[str, int] = {}
         for tc in tool_calls:
             key = f"{tc.tool_name}:{sorted(tc.arguments.items())}"
@@ -56,7 +232,7 @@ class ToolUseScorer(BaseScorer):
 
         score = round((coverage + precision + no_redundancy) / 3, 4)
         notes = (
-            f"coverage={coverage:.2f}  precision={precision:.2f}  "
+            f"legacy: coverage={coverage:.2f}  precision={precision:.2f}  "
             f"no_redundancy={no_redundancy:.2f}  tools_called={sorted(called_tool_names)}"
         )
         return ScorerOutput(dimension=self.dimension, score=score, notes=notes)
@@ -69,7 +245,7 @@ class ToolUseScorer(BaseScorer):
             "telemetry": "telemetry",
             "docs": "docs",
             "policy": "rbac",
-            "incidents": "slurm",  # incidents surfaced via slurm/docs
+            "incidents": "slurm",
             "power": "facility",
             "rack": "facility",
             "inventory": "facility",

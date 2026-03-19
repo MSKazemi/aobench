@@ -1,0 +1,47 @@
+{
+  "task_id": "ENERGY_SYS_002",
+  "legacy_query_id": "Q-ENERGY-008",
+  "title": "Power impact of cooling failure",
+  "query_text": "How has the cooling failure affected overall power consumption in rack-c?",
+  "role": "sysadmin",
+  "qcat": "ENERGY",
+  "difficulty": "medium",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "power/node_power_005.csv",
+    "rack/rack_telemetry_005.csv",
+    "cooling/crac_status.json",
+    "incidents/cooling_incident.json"
+  ],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The cooling failure caused a 40% reduction in CPU frequency on nodes c01\u2013c04, which reduced their per-node power draw proportionally. However, the CRAC unit itself failed, so facility cooling energy for rack-c dropped to zero from the failed unit \u2014 but residual thermal load is building. Total rack-c compute power draw is lower than normal due to throttling, but this is a symptom of the emergency, not an efficiency improvement. The rack is at risk of hardware damage if cooling is not restored.",
+    "required_evidence_refs": [
+      "power/node_power_005.csv",
+      "cooling/crac_status.json"
+    ]
+  },
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "FAC_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "energy_awareness",
+    "diagnostic_reasoning"
+  ],
+  "access_tier": "tier2_privileged",
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "telemetry",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "public_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

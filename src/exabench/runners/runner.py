@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from exabench.adapters.base import BaseAdapter
+from exabench.exporters.base_exporter import BaseExporter
 from exabench.loaders.env_loader import load_environment
 from exabench.loaders.task_loader import load_task
 from exabench.runners.context import ExecutionContext
@@ -31,10 +32,12 @@ class BenchmarkRunner:
         adapter: BaseAdapter,
         benchmark_root: str | Path,
         output_root: str | Path,
+        exporter: BaseExporter | None = None,
     ) -> None:
         self._adapter = adapter
         self._benchmark_root = Path(benchmark_root)
         self._output_root = Path(output_root)
+        self._exporter = exporter
 
     def run(
         self,
@@ -75,6 +78,13 @@ class BenchmarkRunner:
 
         # 7. Write result to disk
         writer.write_result(result)
+
+        # 8. Export to observability backend (optional)
+        if self._exporter is not None:
+            try:
+                self._exporter.export(trace, result, task)
+            except Exception:
+                logger.exception("exporter failed — continuing without export")
 
         return result
 

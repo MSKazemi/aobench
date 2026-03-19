@@ -29,7 +29,7 @@
   ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "dev",
+  "benchmark_split": "public_test",
   "validation_status": "validated",
   "scoring_readiness": "ready"
 }

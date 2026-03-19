@@ -254,6 +254,8 @@ class OpenAIAdapter(BaseAdapter):
         steps: list[TraceStep] = []
         start = datetime.now(tz=timezone.utc)
         total_tokens = 0
+        prompt_tokens = 0
+        completion_tokens = 0
         hard_fail = False
         hard_fail_reason: str | None = None
 
@@ -267,7 +269,10 @@ class OpenAIAdapter(BaseAdapter):
                 tool_choice="auto" if tool_schemas else None,
             )
             msg = response.choices[0].message
-            total_tokens += response.usage.total_tokens if response.usage else 0
+            if response.usage:
+                total_tokens += response.usage.total_tokens
+                prompt_tokens += response.usage.prompt_tokens
+                completion_tokens += response.usage.completion_tokens
 
             if not msg.tool_calls:
                 # Final answer
@@ -324,11 +329,14 @@ class OpenAIAdapter(BaseAdapter):
             role=task.role,
             environment_id=task.environment_id,
             adapter_name=self.name,
+            model_name=deployment,
             steps=steps,
             final_answer=final_answer,
             start_time=start,
             end_time=datetime.now(tz=timezone.utc),
-            total_tokens=total_tokens,
+            total_tokens=total_tokens or None,
+            prompt_tokens=prompt_tokens or None,
+            completion_tokens=completion_tokens or None,
             hard_fail=hard_fail,
             hard_fail_reason=hard_fail_reason,
         )

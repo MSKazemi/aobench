@@ -1,0 +1,275 @@
+{
+  "tasks": {
+    "ENERGY_FAC_001": {
+      "task_id": "ENERGY_FAC_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.3283,
+      "std_dev": 0.0,
+      "min_score": 0.3283,
+      "max_score": 0.3283,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.3283,
+        0.3283
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "ENERGY_FAC_002": {
+      "task_id": "ENERGY_FAC_002",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.3357,
+      "std_dev": 0.0,
+      "min_score": 0.3357,
+      "max_score": 0.3357,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.3357,
+        0.3357
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "ENERGY_SYS_001": {
+      "task_id": "ENERGY_SYS_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.3274,
+      "std_dev": 0.0,
+      "min_score": 0.3274,
+      "max_score": 0.3274,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.3274,
+        0.3274
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "ENERGY_USR_001": {
+      "task_id": "ENERGY_USR_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.341,
+      "std_dev": 0.0,
+      "min_score": 0.341,
+      "max_score": 0.341,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.341,
+        0.341
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "JOB_FAC_001": {
+      "task_id": "JOB_FAC_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.334,
+      "std_dev": 0.0,
+      "min_score": 0.334,
+      "max_score": 0.334,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.334,
+        0.334
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "JOB_SYS_001": {
+      "task_id": "JOB_SYS_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.327,
+      "std_dev": 0.0,
+      "min_score": 0.327,
+      "max_score": 0.327,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.327,
+        0.327
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "JOB_USR_001": {
+      "task_id": "JOB_USR_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.334,
+      "std_dev": 0.0,
+      "min_score": 0.334,
+      "max_score": 0.334,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.334,
+        0.334
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "JOB_USR_002": {
+      "task_id": "JOB_USR_002",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.341,
+      "std_dev": 0.0,
+      "min_score": 0.341,
+      "max_score": 0.341,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.341,
+        0.341
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "MON_FAC_001": {
+      "task_id": "MON_FAC_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.334,
+      "std_dev": 0.0,
+      "min_score": 0.334,
+      "max_score": 0.334,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.334,
+        0.334
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "MON_SYS_001": {
+      "task_id": "MON_SYS_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.334,
+      "std_dev": 0.0,
+      "min_score": 0.334,
+      "max_score": 0.334,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.334,
+        0.334
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "MON_SYS_002": {
+      "task_id": "MON_SYS_002",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.327,
+      "std_dev": 0.0,
+      "min_score": 0.327,
+      "max_score": 0.327,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.327,
+        0.327
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    },
+    "MON_USR_001": {
+      "task_id": "MON_USR_001",
+      "n_runs": 2,
+      "pass_threshold": 0.5,
+      "n_passing": 0,
+      "pass_k": {
+        "1": 0.0,
+        "2": 0.0
+      },
+      "mean_score": 0.3483,
+      "std_dev": 0.0,
+      "min_score": 0.3483,
+      "max_score": 0.3483,
+      "range": 0.0,
+      "robustness_score": 1.0,
+      "scores": [
+        0.3483,
+        0.3483
+      ],
+      "total_cost_usd": null,
+      "mean_latency_seconds": 0.0
+    }
+  },
+  "mean_robustness_score": 1.0,
+  "mean_pass_k": {
+    "1": 0.0,
+    "2": 0.0
+  },
+  "total_cost_usd": null,
+  "mean_latency_seconds": 0.0
+}

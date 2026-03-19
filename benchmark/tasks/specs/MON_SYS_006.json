@@ -1,0 +1,49 @@
+{
+  "task_id": "MON_SYS_006",
+  "legacy_query_id": "Q-MON-010",
+  "title": "Conflicting thermal alerts disambiguation",
+  "query_text": "Monitoring shows a temperature alert on rack-c, but the rack telemetry also shows power draw has decreased on those nodes. Is this a real emergency or a false positive?",
+  "role": "sysadmin",
+  "qcat": "MON",
+  "difficulty": "hard",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "rack/rack_telemetry_005.csv",
+    "power/node_power_005.csv",
+    "cooling/crac_status.json",
+    "incidents/cooling_incident.json",
+    "docs/cooling_policy.md"
+  ],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "This is a real emergency, not a false positive. The temperature rise is genuine (rack-c ambient 35.8\u00b0C, above the 30\u00b0C action threshold). The power decrease is explained by thermal throttling: nodes c01\u2013c04 reduced CPU frequency by 40%, which cuts power draw as a self-protection mechanism \u2014 consistent with elevated temperatures, not a sign of normalcy. The crac_status.json confirms CRAC crac-c1 failed. Drain the affected nodes and escalate to facilities.",
+    "required_evidence_refs": [
+      "rack/rack_telemetry_005.csv",
+      "cooling/crac_status.json",
+      "power/node_power_005.csv"
+    ]
+  },
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "FAC_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "diagnostic_reasoning",
+    "incident_handling"
+  ],
+  "access_tier": "tier2_privileged",
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "slurm",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

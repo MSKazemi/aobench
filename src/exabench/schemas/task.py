@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -51,6 +51,28 @@ ScoringReadiness = Literal["blocked", "partial", "ready"]
 BenchmarkSplit = Literal["dev", "public_test", "hidden_test"]
 
 
+class ExpectedToolCall(BaseModel):
+    """One entry in a task's ground-truth tool-call sequence.
+
+    Used by the decomposed ToolUseScorer to check:
+
+    - ``tool_name``     — which tool the agent should call at this step
+    - ``required_args`` — argument key-value pairs that must be present **and**
+                          match in the actual call (string: exact match,
+                          number: ±5% tolerance).  An empty dict means any
+                          call to the right tool name scores full argument credit.
+
+    Example::
+
+        {"tool_name": "slurm",   "required_args": {"method": "job_details", "job_id": "891234"}}
+        {"tool_name": "docs",    "required_args": {"method": "search"}}
+        {"tool_name": "telemetry", "required_args": {}}
+    """
+
+    tool_name: str
+    required_args: dict[str, Any] = Field(default_factory=dict)
+
+
 class EvalCriteria(BaseModel):
     """Correctness check criteria embedded in a task spec."""
 
@@ -61,6 +83,12 @@ class EvalCriteria(BaseModel):
     gold_answer: Optional[str] = None
     numeric_tolerance: Optional[float] = None
     required_evidence_refs: list[str] = Field(default_factory=list)
+
+    # Ordered ground-truth tool-call sequence for decomposed tool-use scoring.
+    # When non-empty, ToolUseScorer switches to decomposed mode:
+    # selection_score + argument_score + sequence_score + forbidden_call_penalty.
+    # When empty (default), the legacy heuristic mode is used instead.
+    expected_tool_sequence: list[ExpectedToolCall] = Field(default_factory=list)
 
 
 class TaskSpec(BaseModel):

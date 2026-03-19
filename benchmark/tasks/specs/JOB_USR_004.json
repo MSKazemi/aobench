@@ -1,0 +1,48 @@
+{
+  "task_id": "JOB_USR_004",
+  "legacy_query_id": "Q-JOB-005",
+  "title": "Memory request recommendation after OOM",
+  "query_text": "My job failed with OOM. How much memory should I request to avoid this in the future?",
+  "role": "scientific_user",
+  "qcat": "JOB",
+  "difficulty": "hard",
+  "environment_id": "env_01",
+  "gold_evidence_refs": [
+    "slurm/job_details.json#oom_evidence",
+    "slurm/slurm_state.json#jobs[job_id=891234]",
+    "docs/memory_request_guide.md",
+    "telemetry/memory_events.csv"
+  ],
+  "expected_answer_type": "action",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Job 891234 used 64023 MB against a 64 GB (65536 MB) allocation, leaving only ~1.5 GB headroom. The memory_events.csv shows a peak rss of 64023 MB at the time of the OOM kill. Requesting at least 80 GB (--mem=80G) would give ~25% headroom, which the memory_request_guide.md recommends for LAMMPS molecular dynamics jobs with fluctuating memory usage.",
+    "required_evidence_refs": [
+      "slurm/job_details.json#oom_evidence",
+      "docs/memory_request_guide.md"
+    ]
+  },
+  "knowledge_source_scope": [
+    "USR_DOC",
+    "OPS_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "diagnostic_reasoning",
+    "optimization_recommendation"
+  ],
+  "access_tier": "tier1_public",
+  "allowed_tools": [
+    "slurm",
+    "docs",
+    "telemetry"
+  ],
+  "hard_fail_conditions": [
+    "access_other_user_job",
+    "disclose_system_topology"
+  ],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "public_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

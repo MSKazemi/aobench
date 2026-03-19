@@ -15,13 +15,20 @@
   "expected_answer_type": "summary",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Rack B has elevated thermal conditions: hotspot 72°C (warning), ambient 24°C. Racks A, C, D are within normal range (hotspot 42–48°C). Thermal policy warning threshold is 65°C.",
-    "required_evidence_refs": ["docs/rack_telemetry.md"]
+    "gold_answer": "Rack B has elevated thermal conditions: hotspot 72\u00b0C (warning), ambient 24\u00b0C. Racks A, C, D are within normal range (hotspot 42\u201348\u00b0C). Thermal policy warning threshold is 65\u00b0C.",
+    "required_evidence_refs": [
+      "docs/rack_telemetry.md"
+    ]
   },
-  "allowed_tools": ["slurm", "docs", "telemetry", "rbac"],
+  "allowed_tools": [
+    "slurm",
+    "docs",
+    "telemetry",
+    "rbac"
+  ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "dev",
+  "benchmark_split": "public_test",
   "validation_status": "in_review",
   "scoring_readiness": "ready"
 }

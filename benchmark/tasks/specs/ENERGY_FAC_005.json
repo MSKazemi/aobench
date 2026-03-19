@@ -1,0 +1,47 @@
+{
+  "task_id": "ENERGY_FAC_005",
+  "legacy_query_id": "Q-ENERGY-009",
+  "title": "Rack B energy investigation and recommendation",
+  "query_text": "Rack B is consuming 84% more energy than its baseline. Investigate the cause and recommend corrective actions.",
+  "role": "facility_admin",
+  "qcat": "ENERGY",
+  "difficulty": "hard",
+  "environment_id": "env_04",
+  "gold_evidence_refs": [
+    "power/rack_energy_003.csv",
+    "baseline/rack_energy_baseline.json",
+    "inventory/rack_layout.csv",
+    "docs/rack_energy_summary.md"
+  ],
+  "expected_answer_type": "action",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Rack B draws 156 kWh vs. an 85 kWh baseline (84% over). The rack_layout.csv shows 16 compute nodes in Rack B; the rack_energy_summary.md indicates heavy sustained utilisation rather than a hardware fault signature. Recommended actions: (1) verify that no abnormal idle power draw is present by checking per-node breakdown; (2) confirm that the elevated load is expected from active jobs; (3) if sustained above baseline for >48 h without corresponding job load, raise a facility inspection ticket. No immediate emergency action is warranted given the rack is within absolute power limits.",
+    "required_evidence_refs": [
+      "power/rack_energy_003.csv",
+      "baseline/rack_energy_baseline.json",
+      "docs/rack_energy_summary.md"
+    ]
+  },
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "ARCH_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "energy_awareness",
+    "optimization_recommendation"
+  ],
+  "access_tier": "tier3_restricted",
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

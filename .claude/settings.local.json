@@ -25,7 +25,22 @@
       "Edit(scripts/**)",
       "Bash(uv run:*)",
       "Bash(python:*)",
-      "Bash(uv pip:*)"
+      "Bash(uv pip:*)",
+      "Bash(pip show:*)",
+      "Bash(.venv/bin/exabench validate:*)",
+      "Bash(.venv/bin/python -m pytest tests/ -q)",
+      "Bash(exabench robustness:*)",
+      "Bash(clear:*)",
+      "Bash(xargs basename:*)",
+      "Bash(curl -s --max-time 10 https://registry-1.docker.io/v2/)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(docker pull:*)",
+      "Bash(docker ps:*)",
+      "Bash(xargs grep:*)",
+      "Bash(find /home/mohsen/scratch/codes/ExaBench/ExaBench -name *scenario* -o -name *variant* -o -name *variant.json)",
+      "Bash(docker compose:*)",
+      "Bash(ip link:*)",
+      "Bash(openssl rand:*)"
     ],
     "deny": [
       "Read(.env)",

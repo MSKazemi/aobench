@@ -41,5 +41,8 @@ class Trace(BaseModel):
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     total_tokens: Optional[int] = None
+    prompt_tokens: Optional[int] = None
+    completion_tokens: Optional[int] = None
+    model_name: Optional[str] = None
     hard_fail: bool = False
     hard_fail_reason: Optional[str] = None

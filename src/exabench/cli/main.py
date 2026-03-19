@@ -1,6 +1,9 @@
 """ExaBench CLI entry point."""
 
 import typer
+from dotenv import load_dotenv
+
+load_dotenv()  # load .env from the current working directory
 
 from exabench.cli.compare_cmd import compare_app
 from exabench.cli.report_cmd import report_app

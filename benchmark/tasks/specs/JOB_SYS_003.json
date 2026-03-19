@@ -1,0 +1,41 @@
+{
+  "task_id": "JOB_SYS_003",
+  "legacy_query_id": "Q-JOB-008",
+  "title": "Failed jobs on a node",
+  "query_text": "How many jobs have failed on node01 in the last 24 hours, and what were the failure reasons?",
+  "role": "sysadmin",
+  "qcat": "JOB",
+  "difficulty": "easy",
+  "environment_id": "env_01",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#jobs",
+    "slurm/job_details.json#oom_evidence",
+    "incidents/incident_metadata.json"
+  ],
+  "expected_answer_type": "summary",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "1 job failed on node01 in the last 24 hours: job 891234 (user alice, lammps molecular_dynamics_run42), failure reason OOMKilled at 2026-02-10T01:47 UTC. No other failures are recorded in this snapshot.",
+    "required_evidence_refs": [
+      "slurm/slurm_state.json#jobs",
+      "slurm/job_details.json#oom_evidence"
+    ]
+  },
+  "knowledge_source_scope": [
+    "OPS_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "telemetry_querying"
+  ],
+  "access_tier": "tier2_privileged",
+  "allowed_tools": [
+    "slurm",
+    "docs"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

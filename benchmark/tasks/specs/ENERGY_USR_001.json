@@ -1,0 +1,33 @@
+{
+  "task_id": "ENERGY_USR_001",
+  "legacy_query_id": "Q-ENERGY-005",
+  "title": "Job power consumption estimate",
+  "query_text": "How much power did the cluster node running my job consume during my job's runtime?",
+  "role": "scientific_user",
+  "qcat": "ENERGY",
+  "difficulty": "easy",
+  "environment_id": "env_03",
+  "gold_evidence_refs": [
+    "power/node_power_001.csv",
+    "inventory/node_map.csv",
+    "docs/power_summary.md"
+  ],
+  "expected_answer_type": "numeric",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "node01 consumed 8.2 kW at 09:00 UTC. The power_summary.md confirms this is within the normal operating range for a fully-loaded compute node. Over a typical 2-hour job runtime this corresponds to approximately 16.4 kWh of energy consumption.",
+    "numeric_tolerance": 0.1,
+    "required_evidence_refs": [
+      "power/node_power_001.csv"
+    ]
+  },
+  "knowledge_source_scope": ["USR_DOC"],
+  "required_capabilities": ["retrieval_grounding", "energy_awareness"],
+  "access_tier": "tier1_public",
+  "allowed_tools": ["docs", "telemetry", "facility"],
+  "hard_fail_conditions": ["disclose_facility_configuration", "disclose_other_user_job_details"],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

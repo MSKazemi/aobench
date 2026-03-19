@@ -1,0 +1,48 @@
+<clickhouse>
+    <!-- Built-in ClickHouse Keeper — replaces ZooKeeper for single-node setups -->
+    <keeper_server>
+        <tcp_port>9181</tcp_port>
+        <server_id>1</server_id>
+        <log_storage_path>/var/lib/clickhouse/coordination/log</log_storage_path>
+        <snapshot_storage_path>/var/lib/clickhouse/coordination/snapshots</snapshot_storage_path>
+        <coordination_settings>
+            <operation_timeout_ms>10000</operation_timeout_ms>
+            <session_timeout_ms>30000</session_timeout_ms>
+            <raft_logs_level>warning</raft_logs_level>
+        </coordination_settings>
+        <raft_configuration>
+            <server>
+                <id>1</id>
+                <hostname>localhost</hostname>
+                <port>9234</port>
+            </server>
+        </raft_configuration>
+    </keeper_server>
+
+    <!-- Point ClickHouse to the local Keeper for replication coordination -->
+    <zookeeper>
+        <node>
+            <host>localhost</host>
+            <port>9181</port>
+        </node>
+    </zookeeper>
+
+    <!-- Single-node cluster named "default" — required by Langfuse migrations -->
+    <remote_servers>
+        <default>
+            <shard>
+                <replica>
+                    <host>clickhouse</host>
+                    <port>9000</port>
+                </replica>
+            </shard>
+        </default>
+    </remote_servers>
+
+    <!-- Macros used in ReplicatedMergeTree table paths -->
+    <macros>
+        <cluster>default</cluster>
+        <shard>01</shard>
+        <replica>01</replica>
+    </macros>
+</clickhouse>

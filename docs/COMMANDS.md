@@ -14,6 +14,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench report slices` | Print a role × category score table for a run |
 | `exabench compare runs` | Diff two run directories — show score deltas and regressions |
 | `exabench robustness task` | Run a task N times and report score variance (robustness score) |
+| `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
 
 ---
 
@@ -89,6 +90,7 @@ exabench run task [OPTIONS]
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
 | `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
+| `--langfuse/--no-langfuse` | — | `--no-langfuse` | Export trace and scores to Langfuse |
 | `--verbose` | `-v` | off | Enable DEBUG logging to stderr |
 | `-h`, `--help` | — | — | Show help and exit |
 
@@ -96,11 +98,29 @@ exabench run task [OPTIONS]
 
 | Adapter | Description |
 |---------|-------------|
-| `direct_qa` | Direct question-answering adapter (no LLM) |
+| `direct_qa` | Direct question-answering (no LLM, parametric only) |
 | `openai` | OpenAI API (default model: `gpt-4o`) |
-| `openai:MODEL` | OpenAI with specific model, e.g. `openai:gpt-4o` |
+| `openai:MODEL` | OpenAI with specific model, e.g. `openai:gpt-4o-mini` |
+| `anthropic` | Anthropic Claude (default model: `claude-sonnet-4-6`) |
+| `anthropic:MODEL` | Anthropic with specific model, e.g. `anthropic:claude-opus-4-6` |
 | `mcp:stdio:COMMAND` | MCP client — launch a local subprocess via stdio transport |
 | `mcp:sse:URL` | MCP client — connect to a remote MCP server via HTTP SSE |
+
+**Required env vars per adapter:**
+
+| Adapter | Env var |
+|---------|---------|
+| `openai` | `OPENAI_API_KEY` |
+| `openai` (Azure) | `AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_API_KEY` + `AZURE_OPENAI_DEPLOYMENT` |
+| `anthropic` | `ANTHROPIC_API_KEY` |
+
+**Langfuse env vars (required when `--langfuse` is set):**
+
+| Env var | Required | Default | Description |
+|---------|----------|---------|-------------|
+| `LANGFUSE_PUBLIC_KEY` | Yes | — | Project public key from Langfuse UI |
+| `LANGFUSE_SECRET_KEY` | Yes | — | Project secret key from Langfuse UI |
+| `LANGFUSE_HOST` | No | `https://cloud.langfuse.com` | Override for self-hosted instance |
 
 **Examples:**
 
@@ -110,6 +130,9 @@ exabench run task --task JOB_USR_001 --env env_01
 
 # Run with OpenAI
 exabench run task -t JOB_USR_001 -e env_01 -a openai:gpt-4o
+
+# Run with Anthropic Claude
+exabench run task -t JOB_USR_001 -e env_01 -a anthropic:claude-sonnet-4-6
 
 # Run via a local MCP server subprocess
 exabench run task -t JOB_USR_001 -e env_01 -a "mcp:stdio:python my_agent.py"
@@ -125,11 +148,17 @@ exabench run task -t JOB_USR_001 -e env_01 --no-report
 
 # Enable DEBUG logging
 exabench run task -t JOB_USR_001 -e env_01 --verbose
+
+# Export to Langfuse (requires LANGFUSE_PUBLIC_KEY + LANGFUSE_SECRET_KEY)
+exabench run task -t JOB_USR_001 -e env_01 --langfuse
+
+# Export to self-hosted Langfuse
+LANGFUSE_HOST=http://localhost:3000 exabench run task -t JOB_USR_001 -e env_01 --langfuse
 ```
 
 #### run all
 
-Run all benchmark tasks. Uses each task's `environment_id` from its spec. Creates one run directory with a trace and result file for every task.
+Run all benchmark tasks. Uses each task's `environment_id` from its spec. Creates one run directory with a trace and result file for every task. Displays a `rich` progress bar showing the current task ID, overall progress %, elapsed time, and last score.
 
 ```bash
 exabench run all [OPTIONS]
@@ -141,6 +170,7 @@ exabench run all [OPTIONS]
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
 | `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
+| `--langfuse/--no-langfuse` | — | `--no-langfuse` | Export traces and scores to Langfuse |
 | `--verbose` | `-v` | off | Enable DEBUG logging to stderr |
 | `-h`, `--help` | — | — | Show help and exit |
 
@@ -154,8 +184,10 @@ exabench run all [OPTIONS]
 ```bash
 exabench run all
 exabench run all --adapter openai:gpt-4o
+exabench run all --adapter anthropic:claude-sonnet-4-6
 exabench run all -o my_runs/
 exabench run all --no-report   # skip report generation
+exabench run all --adapter openai:gpt-4o --langfuse   # export all traces to Langfuse
 ```
 
 ---
@@ -182,7 +214,31 @@ exabench report json [OPTIONS] RUN_DIR
 | `--output` | `-o` | `<run_dir>/run_summary.json` | Output file path |
 | `-h`, `--help` | | | Show help and exit |
 
-**Output file:** `run_summary.json` with `run_id`, `task_count`, `mean_aggregate_score`, `hard_fail_count`, `error_taxonomy` (category counts), and a per-task score table including `error_category` for each task.
+**Output file:** `run_summary.json` with:
+- `run_id`, `task_count`, `mean_aggregate_score`, `hard_fail_count`
+- `total_cost_usd`, `total_tokens`, `mean_latency_seconds`
+- `error_taxonomy` — counts per HPC error category (see below)
+- `tasks` — per-task rows with all dimension scores, `error_category`, `cost_estimate_usd`, `latency_seconds`
+
+**HPC error categories** (`error_category` field per task):
+
+| Category | Meaning |
+|----------|---------|
+| `ok` | Correct, grounded, policy-compliant answer |
+| `rbac_hard_fail` | Agent called a tool outside its role's permission boundary |
+| `hard_fail` | Other hard-fail (max rounds, adapter error, etc.) |
+| `no_tools_used` | Agent answered without calling any tools |
+| `wrong_tool_sequence` | Called tools but wrong selection or order |
+| `rbac_violation` | Soft RBAC failure — disclosed restricted info |
+| `role_scope_error` | Answer scope wrong for the user's role |
+| `ungrounded_answer` | Answer not traceable to tool observations |
+| `energy_unit_or_value_error` | Had energy data but made unit/aggregation error |
+| `job_misdiagnosis` | Had SLURM data but wrong failure diagnosis |
+| `telemetry_interpretation_error` | Had telemetry but misread metric or node |
+| `wrong_answer` | Clearly wrong, no domain-specific match |
+| `partial` | Partially correct, below OK threshold |
+
+Full category definitions and detection heuristics: `benchmark/configs/error_taxonomy.yaml`.
 
 **Example:**
 
@@ -314,26 +370,110 @@ exabench robustness task [OPTIONS]
 **Example:**
 
 ```bash
-exabench robustness task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o --n 5
+exabench robustness task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o --n 8
 ```
 
 **Output:**
 
 ```text
-Robustness run: JOB_USR_001 @ env_01  adapter=openai:gpt-4o  n=5
+Robustness run: JOB_USR_001 @ env_01  adapter=openai:gpt-4o  n=8
 
-  Run 1/5  score=0.8124
-  Run 2/5  score=0.7891
+  Run 1/8  score=0.8124
   ...
 
 ──────────────────────────────────────────────────
 Task         : JOB_USR_001
-Runs         : 5
+Runs         : 8  (passing: 7)
+Threshold    : 0.5
+
+pass^k (τ-bench reliability metric):
+  pass^1   0.8750  █████████████████
+  pass^2   0.7500  ███████████████
+  pass^4   0.4286  ████████
+  pass^8   0.0000
+
 Mean score   : 0.7983
 Std dev      : 0.0124
 Range        : 0.7891 – 0.8124
-Robustness   : 0.9876
+Robustness   : 0.9876  (1 − σ)
 ──────────────────────────────────────────────────
+```
+
+#### robustness all
+
+Run ALL benchmark tasks N times each and produce a suite-level pass^k report.
+
+```bash
+exabench robustness all [OPTIONS]
+```
+
+| Option | Short | Default | Description |
+|--------|-------|---------|-------------|
+| `--adapter` | `-a` | `direct_qa` | Adapter name (same format as `run task`) |
+| `--n` | | `8` | Runs per task (≥ 8 recommended) |
+| `--pass-threshold` | | `0.5` | Min aggregate_score to count a run as passing |
+| `--split` | | (all) | Only run tasks in this split (`dev`, `public_test`, `hidden_test`) |
+| `--output` | `-o` | `data/runs/robustness_suite.json` | Write suite JSON to this path |
+| `--benchmark-root` | | `benchmark` | Benchmark root directory |
+| `--output-root` | | `data/runs` | Run output root directory |
+
+**Example:**
+
+```bash
+# Quick smoke-test on dev split (12 tasks × 4 runs)
+exabench robustness all --adapter direct_qa --n 4 --split dev
+
+# Full reliability run for the paper (all 30 tasks × 8 runs)
+exabench robustness all --adapter openai:gpt-4o --n 8
+```
+
+**Output:** A suite summary printed to stdout and written to `data/runs/robustness_suite.json` (or `--output`). Includes per-task pass^k, mean pass^k across all tasks, total cost, and mean latency.
+
+---
+
+## Scoring Dimensions
+
+ExaBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
+for full definitions.  Quick reference:
+
+| Dimension | What it measures | Scorer |
+|-----------|-----------------|--------|
+| `outcome` | Final answer correctness | `OutcomeScorer` |
+| `tool_use` | Tool call quality (see below) | `ToolUseScorer` |
+| `grounding` | Answer backed by retrieved evidence | `GroundingScorer` |
+| `governance` | RBAC / policy compliance | `GovernanceScorer` |
+| `efficiency` | Step and token economy | `EfficiencyScorer` |
+| `robustness` | Consistency across repeated runs | `compute_robustness()` |
+
+### `tool_use` sub-scores
+
+**Decomposed mode** (requires `eval_criteria.expected_tool_sequence` in the task spec):
+
+| Sub-score | Meaning |
+|-----------|---------|
+| `selection_score` | Did the agent call the right tools? (fraction of expected tools that were called) |
+| `argument_score` | Were the arguments correct? (fraction of required arg key-value pairs that matched) |
+| `sequence_score` | Did the agent call tools in the right order? (LCS of actual vs expected tool-name sequence) |
+| `forbidden_call_penalty` | Did the agent avoid calling tools outside its allowed set? (1.0 − 0.3 per forbidden call) |
+
+**Legacy mode** (when no `expected_tool_sequence` is set):
+
+| Sub-score | Meaning |
+|-----------|---------|
+| `coverage` | Called at least one tool relevant to each evidence reference |
+| `precision` | Avoided tools outside `allowed_tools` |
+| `no_redundancy` | Avoided repeating the same call more than twice |
+
+To add ground-truth tool sequences to a task, set `eval_criteria.expected_tool_sequence`:
+
+```json
+"eval_criteria": {
+  "expected_tool_sequence": [
+    {"tool_name": "slurm",   "required_args": {"method": "job_details", "job_id": "891234"}},
+    {"tool_name": "docs",    "required_args": {"method": "search"}},
+    {"tool_name": "rbac",    "required_args": {}}
+  ]
+}
 ```
 
 ---
@@ -349,6 +489,17 @@ Convenience targets that wrap CLI commands. Use `make help` to list all.
 | `make install` | Create `.venv` and install all dependencies (including dev + optional extras) |
 | `make install-core` | Install core dependencies only (no dev/openai/anthropic) |
 
+### Langfuse (local observability)
+
+Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no external cloning needed.
+
+| Target | Description |
+|--------|-------------|
+| `make langfuse-up` | Start Langfuse + Postgres (UI at `http://localhost:3000`) |
+| `make langfuse-down` | Stop Langfuse (data preserved in Docker volume) |
+| `make langfuse-logs` | Stream Langfuse container logs |
+| `make langfuse-reset` | Stop Langfuse and delete all data (volume removed) |
+
 ### Benchmark
 
 | Target | Description |
@@ -359,19 +510,27 @@ Convenience targets that wrap CLI commands. Use `make help` to list all.
 | `make run-openai` | Run a task with OpenAI adapter (overridable: `TASK=`, `ENV=`, `MODEL=`) |
 | `make run-all` | Run all tasks (one run dir, one trace per task; ADAPTER= overridable) |
 | `make run-all-openai` | Run all tasks with OpenAI (MODEL= overridable) |
+| `make run-anthropic` | Run a task with Anthropic adapter (TASK=, ENV=, MODEL= overridable) |
+| `make run-all-anthropic` | Run all tasks with Anthropic (MODEL= overridable, default `claude-sonnet-4-6`) |
 | `make run-mcp` | Run a task via MCP server (TASK=, ENV=, MCP_SERVER= overridable) |
+| `make run-langfuse` | Run a task and export traces + scores to Langfuse (TASK=, ENV=, ADAPTER= overridable) |
+| `make run-all-langfuse` | Run all tasks and export traces + scores to Langfuse (ADAPTER= overridable) |
 | `make report` | Generate JSON + HTML report for the latest run (RUN_DIR= overridable) |
 | `make compare` | Diff last two runs (RUN_A= baseline, RUN_B= comparison) |
 | `make robustness` | Run a task N times and report variance (TASK=, ENV=, ADAPTER=, N= overridable) |
+| `make robustness-all` | Run ALL tasks N times each and report suite-level pass^k (ADAPTER=, N=, SPLIT= overridable) |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
+| `make scoring-dims` | Print the scoring dimensions reference (all terms defined) |
 
 **Example with overrides:**
 
 ```bash
 make run TASK=JOB_USR_002 ENV=env_02
 make run-openai MODEL=gpt-4o
+make run-anthropic MODEL=claude-sonnet-4-6
 make run-all
 make run-all-openai MODEL=gpt-4o
+make run-all-anthropic MODEL=claude-sonnet-4-6
 ```
 
 ### Quality

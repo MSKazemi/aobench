@@ -16,7 +16,7 @@
   "expected_answer_type": "diagnosis",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "rack-c is affected. CRAC unit crac-c1 failed at 08:41 UTC due to COMPRESSOR_FAULT. Nodes node-c01, node-c02, node-c03, and node-c04 are thermal-throttling at 40% CPU frequency reduction (3200 MHz → 1920 MHz).",
+    "gold_answer": "rack-c is affected. CRAC unit crac-c1 failed at 08:41 UTC due to COMPRESSOR_FAULT. Nodes node-c01, node-c02, node-c03, and node-c04 are thermal-throttling at 40% CPU frequency reduction (3200 MHz \u2192 1920 MHz).",
     "required_evidence_refs": [
       "cooling/crac_status.json",
       "rack/rack_telemetry_005.csv"
@@ -29,7 +29,7 @@
   ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "dev",
+  "benchmark_split": "public_test",
   "validation_status": "in_review",
   "scoring_readiness": "ready"
 }

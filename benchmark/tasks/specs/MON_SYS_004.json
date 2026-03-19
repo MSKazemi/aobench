@@ -15,7 +15,7 @@
   "expected_answer_type": "diagnosis",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Root cause: CRAC unit crac-c1 failed at 08:41 UTC (COMPRESSOR_FAULT), causing rack-c ambient temperature to reach 35.8 °C. Nodes to drain: node-c01, node-c02, node-c03, node-c04.",
+    "gold_answer": "Root cause: CRAC unit crac-c1 failed at 08:41 UTC (COMPRESSOR_FAULT), causing rack-c ambient temperature to reach 35.8 \u00b0C. Nodes to drain: node-c01, node-c02, node-c03, node-c04.",
     "required_evidence_refs": [
       "rack/rack_telemetry_005.csv",
       "incidents/cooling_incident.json"
@@ -29,7 +29,7 @@
   ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "dev",
+  "benchmark_split": "public_test",
   "validation_status": "in_review",
   "scoring_readiness": "ready"
 }

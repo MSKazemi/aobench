@@ -1,0 +1,44 @@
+{
+  "task_id": "JOB_FAC_002",
+  "legacy_query_id": "Q-JOB-010",
+  "title": "Rack serving most active jobs",
+  "query_text": "Which rack in the cluster currently hosts the most active compute jobs?",
+  "role": "facility_admin",
+  "qcat": "JOB",
+  "difficulty": "easy",
+  "environment_id": "env_04",
+  "gold_evidence_refs": [
+    "inventory/rack_layout.csv",
+    "docs/rack_energy_summary.md",
+    "power/rack_energy_003.csv"
+  ],
+  "expected_answer_type": "factoid",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Rack B is currently serving the most active compute load, consuming 156 kWh \u2014 84% above its baseline \u2014 indicating heavy utilisation. The rack_layout.csv confirms Rack B hosts 16 compute nodes. The elevated energy is consistent with high job throughput.",
+    "required_evidence_refs": [
+      "docs/rack_energy_summary.md",
+      "inventory/rack_layout.csv"
+    ]
+  },
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "ARCH_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "energy_awareness"
+  ],
+  "access_tier": "tier3_restricted",
+  "allowed_tools": [
+    "docs",
+    "facility",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "public_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

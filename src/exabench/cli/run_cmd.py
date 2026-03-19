@@ -13,20 +13,54 @@ run_app = typer.Typer(help="Run benchmark tasks.")
 
 
 def _build_adapter(name: str):
-    if name == "direct_qa":
-        from exabench.adapters.direct_qa_adapter import DirectQAAdapter
+    """Instantiate an adapter by name using the prefix registry."""
+    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
+    from exabench.adapters.openai_adapter import OpenAIAdapter
+    from exabench.adapters.mcp_client_adapter import MCPClientAdapter
+
+    def _make_direct_qa(_n: str):
         return DirectQAAdapter()
-    if name.startswith("openai"):
-        from exabench.adapters.openai_adapter import OpenAIAdapter
-        model = name.split(":", 1)[1] if ":" in name else "gpt-4o"
+
+    def _make_openai(n: str):
+        model = n.split(":", 1)[1] if ":" in n else "gpt-4o"
         return OpenAIAdapter(model=model)
-    if name.startswith("mcp:") or name.startswith("mcp"):
-        from exabench.adapters.mcp_client_adapter import MCPClientAdapter
+
+    def _make_anthropic(n: str):
+        from exabench.adapters.anthropic_adapter import AnthropicAdapter
+        model = n.split(":", 1)[1] if ":" in n else "claude-sonnet-4-6"
+        return AnthropicAdapter(model=model)
+
+    def _make_mcp(n: str):
         # "mcp:stdio:python server.py" → server_spec = "stdio:python server.py"
         # "mcp:sse:http://..."         → server_spec = "sse:http://..."
-        server_spec = name[len("mcp:"):] if name.startswith("mcp:") else ""
+        server_spec = n[len("mcp:"):] if ":" in n else ""
         return MCPClientAdapter(server=server_spec)
-    raise ValueError(name)
+
+    _REGISTRY = {
+        "direct_qa": _make_direct_qa,
+        "openai": _make_openai,
+        "anthropic": _make_anthropic,
+        "mcp": _make_mcp,
+    }
+
+    prefix = name.split(":")[0]
+    factory = _REGISTRY.get(prefix)
+    if factory is None:
+        known = ", ".join(_REGISTRY)
+        raise ValueError(f"Unknown adapter {name!r}. Known prefixes: {known}")
+    return factory(name)
+
+
+def _build_exporter(langfuse: bool):
+    """Instantiate a LangfuseExporter when --langfuse is set, else return None."""
+    if not langfuse:
+        return None
+    from exabench.exporters.langfuse_exporter import LangfuseExporter
+    try:
+        return LangfuseExporter()
+    except (ImportError, ValueError) as exc:
+        typer.echo(f"Langfuse error: {exc}", err=True)
+        raise typer.Exit(1)
 
 
 def _generate_reports(run_dir: Path) -> None:
@@ -51,6 +85,7 @@ def run_all(
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
+    langfuse: Annotated[bool, typer.Option("--langfuse/--no-langfuse", help="Export traces and scores to Langfuse")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
 ) -> None:
     """Run all benchmark tasks. Uses each task's environment_id from its spec.
@@ -79,32 +114,59 @@ def run_all(
         typer.echo(f"No tasks found in {specs_dir}", err=True)
         raise typer.Exit(1)
 
+    exporter = _build_exporter(langfuse)
     run_id = make_run_id()
     runner = BenchmarkRunner(
         adapter=adapter_obj,
         benchmark_root=Path(benchmark_root),
         output_root=Path(output_root),
+        exporter=exporter,
     )
 
-    typer.echo(f"Running {len(tasks)} tasks with adapter={adapter} (run_id={run_id})\n")
+    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
+
     results = []
-    for i, task in enumerate(tasks, 1):
-        typer.echo(f"[{i}/{len(tasks)}] {task.task_id} @ {task.environment_id} ...", nl=False)
-        try:
-            result = runner.run(
-                task.task_id,
-                task.environment_id,
-                run_id=run_id,
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TextColumn("•"),
+        TimeElapsedColumn(),
+        TextColumn("{task.fields[status]}"),
+        transient=False,
+    ) as progress:
+        task_bar = progress.add_task(
+            f"run_id={run_id}  adapter={adapter}",
+            total=len(tasks),
+            status=f"0/{len(tasks)} done",
+        )
+        for bench_task in tasks:
+            progress.update(task_bar, description=f"[bold blue]{bench_task.task_id}[/bold blue]")
+            try:
+                result = runner.run(
+                    bench_task.task_id,
+                    bench_task.environment_id,
+                    run_id=run_id,
+                )
+                results.append((bench_task.task_id, result))
+                score_str = f"[green]score={result.aggregate_score:.4f}[/green]"
+            except Exception as e:
+                results.append((bench_task.task_id, None))
+                score_str = f"[red]FAILED: {e}[/red]"
+            succeeded = sum(1 for _, r in results if r is not None)
+            progress.update(
+                task_bar,
+                advance=1,
+                status=f"{succeeded}/{len(tasks)} done  last={score_str}",
             )
-            results.append((task.task_id, result))
-            typer.echo(f" score={result.aggregate_score:.4f}")
-        except Exception as e:
-            typer.echo(f" FAILED: {e}", err=True)
-            results.append((task.task_id, None))
 
     typer.echo(f"\nRun ID: {run_id}")
     succeeded = sum(1 for _, r in results if r is not None)
     typer.echo(f"Completed: {succeeded}/{len(tasks)} tasks")
+
+    if exporter:
+        exporter.flush()
 
     if report:
         run_dir = Path(output_root) / run_id
@@ -120,6 +182,7 @@ def run_task(
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
+    langfuse: Annotated[bool, typer.Option("--langfuse/--no-langfuse", help="Export traces and scores to Langfuse")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
 ) -> None:
     """Run a single benchmark task."""
@@ -137,14 +200,19 @@ def run_task(
         )
         raise typer.Exit(1)
 
+    exporter = _build_exporter(langfuse)
     runner = BenchmarkRunner(
         adapter=adapter_obj,
         benchmark_root=Path(benchmark_root),
         output_root=Path(output_root),
+        exporter=exporter,
     )
 
     typer.echo(f"Running task={task_id}  env={env_id}  adapter={adapter}")
     result = runner.run(task_id, env_id)
+
+    if exporter:
+        exporter.flush()
 
     typer.echo(f"\nResult: aggregate_score={result.aggregate_score:.4f}  hard_fail={result.hard_fail}")
     d = result.dimension_scores

@@ -17,6 +17,7 @@ from exabench.scorers.governance_scorer import GovernanceScorer
 from exabench.scorers.grounding_scorer import GroundingScorer
 from exabench.scorers.outcome_scorer import OutcomeScorer
 from exabench.scorers.tool_use_scorer import ToolUseScorer
+from exabench.utils.cost import estimate_cost
 from exabench.utils.ids import make_result_id
 from exabench.utils.logging import get_logger
 
@@ -56,6 +57,18 @@ class AggregateScorer:
         profile = self._config.get(task.aggregate_weight_profile)
         aggregate = self._compute_weighted(dim_scores, profile)
 
+        # Latency
+        latency_seconds: float | None = None
+        if trace.start_time and trace.end_time:
+            latency_seconds = round((trace.end_time - trace.start_time).total_seconds(), 3)
+
+        # Cost
+        cost_estimate_usd: float | None = None
+        if trace.model_name and trace.prompt_tokens is not None and trace.completion_tokens is not None:
+            cost_estimate_usd = estimate_cost(
+                trace.model_name, trace.prompt_tokens, trace.completion_tokens
+            )
+
         return BenchmarkResult(
             result_id=make_result_id(),
             run_id=run_id,
@@ -68,6 +81,12 @@ class AggregateScorer:
             dimension_scores=dim_scores,
             aggregate_score=0.0 if hard_fail else aggregate,
             weight_profile_name=profile.name,
+            model_name=trace.model_name,
+            prompt_tokens=trace.prompt_tokens,
+            completion_tokens=trace.completion_tokens,
+            total_tokens=trace.total_tokens,
+            cost_estimate_usd=cost_estimate_usd,
+            latency_seconds=latency_seconds,
             timestamp=datetime.now(tz=timezone.utc),
         )
 

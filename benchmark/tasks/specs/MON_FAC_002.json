@@ -1,0 +1,44 @@
+{
+  "task_id": "MON_FAC_002",
+  "legacy_query_id": "Q-MON-008",
+  "title": "Cooling incident timeline",
+  "query_text": "Reconstruct the timeline of the cooling incident: when did the failure start, when were nodes affected, and when was the incident raised?",
+  "role": "facility_admin",
+  "qcat": "MON",
+  "difficulty": "medium",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "cooling/crac_status.json",
+    "rack/rack_telemetry_005.csv",
+    "incidents/cooling_incident.json",
+    "docs/cooling_policy.md"
+  ],
+  "expected_answer_type": "summary",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "08:41 UTC \u2014 CRAC unit crac-c1 failed (COMPRESSOR_FAULT). 08:43 UTC \u2014 rack-c ambient temperature began rising (reached 35.8\u00b0C by 08:45). 08:44 UTC \u2014 nodes node-c01 through node-c04 entered thermal-throttle mode (CPU frequency reduced 40%). 08:45 UTC \u2014 incident INC-2026-042 raised automatically. Snapshot captured at 08:45 UTC.",
+    "required_evidence_refs": [
+      "cooling/crac_status.json",
+      "incidents/cooling_incident.json"
+    ]
+  },
+  "knowledge_source_scope": [
+    "FAC_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "incident_handling"
+  ],
+  "access_tier": "tier3_restricted",
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

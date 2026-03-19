@@ -31,4 +31,10 @@ class BenchmarkResult(BaseModel):
     dimension_scores: DimensionScores
     aggregate_score: Optional[float] = None
     weight_profile_name: str = "default_hpc_v01"
+    model_name: Optional[str] = None
+    prompt_tokens: Optional[int] = None
+    completion_tokens: Optional[int] = None
+    total_tokens: Optional[int] = None
+    cost_estimate_usd: Optional[float] = None
+    latency_seconds: Optional[float] = None
     timestamp: datetime

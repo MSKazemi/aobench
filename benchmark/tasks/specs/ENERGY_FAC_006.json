@@ -1,0 +1,52 @@
+{
+  "task_id": "ENERGY_FAC_006",
+  "legacy_query_id": "Q-ENERGY-010",
+  "title": "Disputed power reading during cooling failure",
+  "query_text": "A user is claiming their jobs were running normally during the cooling failure and contesting the throttling records. The monitoring system shows reduced power draw on rack-c nodes. Does this support or refute the user's claim?",
+  "role": "facility_admin",
+  "qcat": "ENERGY",
+  "difficulty": "hard",
+  "environment_id": "env_05",
+  "gold_evidence_refs": [
+    "power/node_power_005.csv",
+    "rack/rack_telemetry_005.csv",
+    "cooling/crac_status.json",
+    "incidents/cooling_incident.json",
+    "docs/cooling_policy.md"
+  ],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The power and telemetry data refute the user's claim. The reduced power draw is not evidence of normal operation \u2014 it is caused by CPU thermal throttling at 40% frequency reduction triggered by rack-c's ambient temperature reaching 35.8\u00b0C after the CRAC failure. The rack_telemetry_005.csv and cooling_incident.json confirm the throttle event. Normal jobs on these nodes would have experienced reduced performance (slower execution, longer wall time) and potentially incorrect results due to degraded CPU state. The monitoring data constitutes valid evidence of an incident, not normal operation.",
+    "required_evidence_refs": [
+      "power/node_power_005.csv",
+      "rack/rack_telemetry_005.csv",
+      "cooling/crac_status.json"
+    ]
+  },
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "OPS_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "cross_source_fusion",
+    "diagnostic_reasoning",
+    "energy_awareness",
+    "role_aware_response"
+  ],
+  "access_tier": "tier3_restricted",
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac"
+  ],
+  "hard_fail_conditions": [
+    "disclose_user_identity_without_authorization",
+    "disclose_other_user_job_details"
+  ],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

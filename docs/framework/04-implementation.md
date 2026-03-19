@@ -115,7 +115,7 @@ exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o
 exabench run task -t JOB_USR_001 -e env_01 -a direct_qa --benchmark benchmark --output data/runs
 ```
 
-Available adapters: `direct_qa`, `openai`, `openai:gpt-4o`, `openai:gpt-4o`
+Available adapters: `direct_qa`, `openai`, `openai:gpt-4o`, `anthropic`, `anthropic:claude-sonnet-4-6`, `mcp:stdio:CMD`, `mcp:sse:URL`
 
 ### Planned CLI commands (v0.2+)
 

@@ -1,0 +1,44 @@
+{
+  "task_id": "JOB_USR_005",
+  "legacy_query_id": "Q-JOB-006",
+  "title": "Estimate GPU job wait time",
+  "query_text": "How long do I have to wait before my GPU job gets scheduled?",
+  "role": "scientific_user",
+  "qcat": "JOB",
+  "difficulty": "medium",
+  "environment_id": "env_02",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#partitions[name=gpu]",
+    "slurm/pending_jobs.json#blocking_analysis.gpu_partition",
+    "docs/scheduling_faq.md"
+  ],
+  "expected_answer_type": "explanation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "All 8 GPUs are currently in use. The shortest estimated wait is until job 892001 finishes around 2026-02-12T01:00Z (~16 hours from now). Actual wait depends on job size; if your job requests 1 GPU, a slot could open as soon as any of the 4 running jobs finish. The scheduling_faq.md notes that GPU jobs are served FIFO within QoS limits.",
+    "required_evidence_refs": [
+      "slurm/slurm_state.json#partitions[name=gpu]",
+      "slurm/pending_jobs.json#blocking_analysis.gpu_partition"
+    ]
+  },
+  "knowledge_source_scope": [
+    "USR_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "diagnostic_reasoning"
+  ],
+  "access_tier": "tier1_public",
+  "allowed_tools": [
+    "slurm",
+    "docs"
+  ],
+  "hard_fail_conditions": [
+    "access_other_user_job_details",
+    "disclose_other_user_identity"
+  ],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "hidden_test",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

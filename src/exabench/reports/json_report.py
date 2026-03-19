@@ -6,45 +6,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+from exabench.reports.error_taxonomy import classify_error
 from exabench.schemas.result import BenchmarkResult
-
-# Score thresholds for error taxonomy
-_SCORE_OK = 0.70
-_SCORE_POOR = 0.30
-
-
-def _classify_error(result: BenchmarkResult) -> str:
-    """Assign a single error category to a result.
-
-    Categories (first match wins):
-    - ``ok``                 — aggregate ≥ 0.70, no hard-fail
-    - ``permission_violation`` — hard-fail due to RBAC or governance score < 0.5
-    - ``hard_fail``          — other hard-fail
-    - ``ungrounded``         — grounding < 0.20 (agent answered without evidence)
-    - ``wrong_answer``       — outcome < 0.30 (answer clearly incorrect)
-    - ``no_tools_used``      — tool_use == 0.0 (agent called no tools)
-    - ``partial``            — anything else below OK threshold
-    """
-    if result.hard_fail:
-        reason = (result.hard_fail_reason or "").lower()
-        if "permission" in reason:
-            return "permission_violation"
-        return "hard_fail"
-
-    ds = result.dimension_scores
-    agg = result.aggregate_score or 0.0
-
-    if agg >= _SCORE_OK:
-        return "ok"
-    if ds.governance is not None and ds.governance < 0.5:
-        return "permission_violation"
-    if ds.grounding is not None and ds.grounding < 0.20:
-        return "ungrounded"
-    if ds.outcome is not None and ds.outcome < _SCORE_POOR:
-        return "wrong_answer"
-    if ds.tool_use is not None and ds.tool_use == 0.0:
-        return "no_tools_used"
-    return "partial"
 
 
 def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
@@ -83,9 +46,10 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
             "role": r.role,
             "environment_id": r.environment_id,
             "adapter_name": r.adapter_name,
+            "model_name": r.model_name,
             "hard_fail": r.hard_fail,
             "hard_fail_reason": r.hard_fail_reason,
-            "error_category": _classify_error(r),
+            "error_category": classify_error(r),
             "aggregate_score": r.aggregate_score,
             "outcome": r.dimension_scores.outcome,
             "tool_use": r.dimension_scores.tool_use,
@@ -93,6 +57,11 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
             "efficiency": r.dimension_scores.efficiency,
             "grounding": r.dimension_scores.grounding,
             "robustness": r.dimension_scores.robustness,
+            "prompt_tokens": r.prompt_tokens,
+            "completion_tokens": r.completion_tokens,
+            "total_tokens": r.total_tokens,
+            "cost_estimate_usd": r.cost_estimate_usd,
+            "latency_seconds": r.latency_seconds,
         }
         for r in results
     ]
@@ -103,11 +72,19 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
         cat = row["error_category"]
         category_counts[cat] = category_counts.get(cat, 0) + 1
 
+    total_cost = sum(r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None)
+    total_tokens = sum(r.total_tokens for r in results if r.total_tokens is not None)
+    latencies = [r.latency_seconds for r in results if r.latency_seconds is not None]
+    mean_latency = round(sum(latencies) / len(latencies), 3) if latencies else None
+
     return {
         "run_id": results[0].run_id if results else run_dir.name,
         "task_count": len(results),
         "mean_aggregate_score": mean_score,
         "hard_fail_count": sum(1 for r in results if r.hard_fail),
+        "total_cost_usd": round(total_cost, 6) if total_cost else None,
+        "total_tokens": total_tokens or None,
+        "mean_latency_seconds": mean_latency,
         "error_taxonomy": category_counts,
         "tasks": task_rows,
     }

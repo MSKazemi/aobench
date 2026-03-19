@@ -1,0 +1,179 @@
+services:
+  # ── Langfuse v3 — full self-hosted stack ───────────────────────────────────
+  # Services required by Langfuse v3:
+  #   postgres   — project metadata, users, API keys
+  #   clickhouse — traces, observations, evaluations (analytics store)
+  #   redis      — task queue between web and worker
+  #   minio      — blob storage for media uploads (S3-compatible)
+  #   langfuse-web    — Next.js UI + API server
+  #   langfuse-worker — background job processor
+
+  # ── Postgres ────────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: langfuse-postgres
+    environment:
+      POSTGRES_USER: langfuse
+      POSTGRES_PASSWORD: langfuse
+      POSTGRES_DB: langfuse
+    volumes:
+      - langfuse-postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── ClickHouse ──────────────────────────────────────────────────────────────
+  clickhouse:
+    image: clickhouse/clickhouse-server:24.12
+    container_name: langfuse-clickhouse
+    environment:
+      CLICKHOUSE_DB: langfuse
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: langfuse
+    volumes:
+      - langfuse-clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/langfuse.xml:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis ───────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: langfuse-redis
+    volumes:
+      - langfuse-redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── MinIO (S3-compatible blob store) ────────────────────────────────────────
+  minio:
+    image: minio/minio:latest
+    container_name: langfuse-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: langfuse
+      MINIO_ROOT_PASSWORD: langfuse123
+      MINIO_DEFAULT_BUCKETS: langfuse   # auto-create bucket on startup
+    volumes:
+      - langfuse-minio-data:/data
+    ports:
+      - "9090:9001"   # MinIO console (optional, for debugging)
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9000/minio/health/live || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Langfuse Web (UI + API) ──────────────────────────────────────────────────
+  langfuse-web:
+    image: langfuse/langfuse:latest
+    container_name: langfuse-web
+    depends_on:
+      postgres:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse@postgres:5432/langfuse
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: exabench-nextauth-secret-change-in-production
+      SALT: exabench-salt-change-in-production
+      ENCRYPTION_KEY: 36653cf14b2bc0d0158f283af1e50c5401321ddb9850fcd7be7a3417ad950a4f
+      # ClickHouse
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: langfuse
+      CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Blob storage (MinIO)
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: langfuse123
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: us-east-1
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: langfuse123
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      # Misc
+      TELEMETRY_ENABLED: "false"
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/public/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # ── Langfuse Worker (background jobs) ───────────────────────────────────────
+  langfuse-worker:
+    image: langfuse/langfuse-worker:latest
+    container_name: langfuse-worker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://langfuse:langfuse@postgres:5432/langfuse
+      SALT: exabench-salt-change-in-production
+      ENCRYPTION_KEY: 36653cf14b2bc0d0158f283af1e50c5401321ddb9850fcd7be7a3417ad950a4f
+      # ClickHouse
+      CLICKHOUSE_URL: http://clickhouse:8123
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: langfuse
+      CLICKHOUSE_MIGRATION_URL: clickhouse://clickhouse:9000
+      # Redis
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Blob storage (MinIO)
+      LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: langfuse
+      LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: langfuse123
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_REGION: us-east-1
+      LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
+      LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse
+      LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: langfuse123
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
+      LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
+      # Misc
+      LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES: "false"
+    restart: unless-stopped
+
+volumes:
+  langfuse-postgres-data:
+  langfuse-clickhouse-data:
+  langfuse-redis-data:
+  langfuse-minio-data:

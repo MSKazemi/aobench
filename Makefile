@@ -18,6 +18,27 @@ install:  ## Create .venv and install all dependencies (including dev + optional
 install-core:  ## Install core dependencies only (no dev/openai/anthropic)
 	uv sync
 
+# ── Langfuse (local observability backend) ────────────────────────────────────
+
+LANGFUSE_DIR := docker/langfuse
+
+.PHONY: langfuse-up
+langfuse-up:  ## Start Langfuse locally (UI at http://localhost:3000)
+	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml up -d
+	@echo "Langfuse starting — UI will be ready at http://localhost:3000"
+
+.PHONY: langfuse-down
+langfuse-down:  ## Stop Langfuse (keeps data volume)
+	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml down
+
+.PHONY: langfuse-logs
+langfuse-logs:  ## Stream Langfuse container logs
+	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml logs -f
+
+.PHONY: langfuse-reset
+langfuse-reset:  ## Stop Langfuse and DELETE all data (volume removed)
+	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml down -v
+
 # ── Quality ───────────────────────────────────────────────────────────────────
 
 .PHONY: test
@@ -82,11 +103,27 @@ run-all:  ## Run all benchmark tasks and auto-generate reports (ADAPTER= overrid
 run-all-openai:  ## Run all tasks with OpenAI adapter (MODEL= overridable)
 	$(EXABENCH) run all --adapter openai:$(MODEL)
 
+.PHONY: run-anthropic
+run-anthropic:  ## Run a task with Anthropic adapter (TASK=, ENV=, MODEL= overridable)
+	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter anthropic:$(MODEL)
+
+.PHONY: run-all-anthropic
+run-all-anthropic:  ## Run all tasks with Anthropic adapter (MODEL= overridable, default claude-sonnet-4-6)
+	$(EXABENCH) run all --adapter anthropic:$(MODEL)
+
 MCP_SERVER ?= stdio:python mcp_server.py
 
 .PHONY: run-mcp
 run-mcp:  ## Run a task via an MCP server (TASK=, ENV=, MCP_SERVER= overridable)
 	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter "mcp:$(MCP_SERVER)"
+
+.PHONY: run-langfuse
+run-langfuse:  ## Run a task and export traces + scores to Langfuse (TASK=, ENV=, ADAPTER= overridable)
+	$(EXABENCH) run task --task $(TASK) --env $(ENV) --adapter $(ADAPTER) --langfuse --no-report
+
+.PHONY: run-all-langfuse
+run-all-langfuse:  ## Run all tasks and export traces + scores to Langfuse (ADAPTER= overridable)
+	$(EXABENCH) run all --adapter $(ADAPTER) --langfuse
 
 .PHONY: report
 report:  ## Generate JSON + HTML report for the latest run (RUN_DIR= overridable)
@@ -108,9 +145,17 @@ N ?= 5
 robustness:  ## Run a single task N times and report score variance (TASK=, ENV=, ADAPTER=, N= overridable)
 	$(EXABENCH) robustness task --task $(TASK) --env $(ENV) --adapter $(ADAPTER) --n $(N)
 
+.PHONY: robustness-all
+robustness-all:  ## Run ALL tasks N times each and report suite-level pass^k (ADAPTER=, N=, SPLIT= overridable)
+	$(EXABENCH) robustness all --adapter $(ADAPTER) --n $(N) $(if $(SPLIT),--split $(SPLIT),)
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py
+
+.PHONY: scoring-dims
+scoring-dims:  ## Show scoring dimensions reference (open docs/framework/scoring-dimensions.md)
+	@cat docs/framework/scoring-dimensions.md
 
 # ── Housekeeping ──────────────────────────────────────────────────────────────
 

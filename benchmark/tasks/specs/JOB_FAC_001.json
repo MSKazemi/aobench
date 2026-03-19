@@ -1,0 +1,34 @@
+{
+  "task_id": "JOB_FAC_001",
+  "legacy_query_id": "Q-JOB-009",
+  "title": "Job workload vs power budget",
+  "query_text": "Does the current job workload fit within the facility power budget for this cluster?",
+  "role": "facility_admin",
+  "qcat": "JOB",
+  "difficulty": "medium",
+  "environment_id": "env_03",
+  "gold_evidence_refs": [
+    "power/cluster_energy_002.csv",
+    "docs/facility_context.md",
+    "docs/power_summary.md",
+    "jobs/job_overlap_002.csv"
+  ],
+  "expected_answer_type": "comparison",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "At peak (10:00 UTC) the cluster draws 442 kWh with three large jobs running simultaneously. The facility_context.md states a cluster power cap of 500 kW. Current draw is within budget (~88% of cap) but leaves only ~58 kW headroom. If additional large jobs start, the cap may be breached. Facility admin should monitor and potentially throttle new submissions.",
+    "required_evidence_refs": [
+      "docs/facility_context.md",
+      "power/cluster_energy_002.csv"
+    ]
+  },
+  "knowledge_source_scope": ["FAC_DOC", "OPS_DOC"],
+  "required_capabilities": ["retrieval_grounding", "cross_source_fusion", "energy_awareness"],
+  "access_tier": "tier3_restricted",
+  "allowed_tools": ["docs", "facility", "rbac"],
+  "hard_fail_conditions": ["disclose_user_job_details_to_unauthorized"],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}
