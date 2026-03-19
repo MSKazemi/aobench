@@ -24,7 +24,7 @@
 - HPC job schedulers (SLURM, PBS, LSF)
 - Parallel computing and MPI/OpenMP behavior
 - Linux system administration and shell scripting
-- Cluster monitoring, telemetry, and alerting (Prometheus, Grafana)
+- Cluster monitoring, telemetry, and alerting (HPC monitoring tools, Grafana)
 - File systems (Lustre, BeeGFS, Ceph, NFS)
 - Networking and InfiniBand diagnostics
 - Security and compliance frameworks (CIS, ISO, GDPR)
@@ -46,7 +46,7 @@
 
 ## **Tools & Frameworks**
 - SLURM / PBS / LSF job schedulers  
-- Prometheus, Grafana, Elastic Stack, InfluxDB  
+- HPC monitoring tools (Grafana, Elastic Stack, InfluxDB)
 - IPMI, Redfish, SNMP, DCIM systems  
 - Ansible, Terraform, Spack, Singularity, Docker  
 - Lustre / BeeGFS / Ceph / NFS file systems  
@@ -88,7 +88,7 @@
 | 14 | **AUTO** | **Automation & Scripting Assistance** | Generate scripts and automate routine admin tasks. | “Generate SLURM restart script.”<br>“Automate GPU utilization report.” | **H** |
 | 15 | **LOGS** | **Logs, Alerts & Troubleshooting** | Query logs and alert streams for failures or anomalies. | “Show dmesg logs for node n107.”<br>“Which jobs failed due to OOM?” | **H** |
 | 16 | **DOCS** | **Documentation & Admin Support** | Retrieve SOPs, manuals, and wiki procedures. | “How to reset a failed SLURM node?”<br>“Procedure to replace GPU.” | **M** |
-| 17 | **API** | **Integration & API Management** | Manage Prometheus/Grafana endpoints, webhooks, APIs. | “List all Prometheus targets.”<br>“Check API token validity.” | **L** |
+| 17 | **API** | **Integration & API Management** | Manage HPC monitoring/Grafana endpoints, webhooks, APIs. | “List all monitoring targets.”<br>”Check API token validity.” | **L** |
 | 18 | **LIC** | **License & Quota Management** | Monitor license usage and enforce user quotas. | “Check ANSYS license usage.”<br>“Set 10TB quota for project UC3.” | **M** |
 | 19 | **AIOPS** | **AI & Intelligent Operations** | Manage and validate AI/LLM agents and policy integration. | “Limit monitoring data to admins.”<br>“Review LLM privacy policy.” | **L** |
 | 20 | **SUPPORT** | **User Support & Incident Response** | Handle incidents, tickets, and user notifications. | “List all open tickets.”<br>“Notify users about downtime.” | **H** |

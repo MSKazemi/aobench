@@ -39,7 +39,7 @@
 
 - ExaSage Monitoring and Facility Agents.  
 - Data Analytics and AIOps dashboards.  
-- Prometheus/Grafana for telemetry visualization.  
+- HPC monitoring/Grafana for telemetry visualization.  
 - BMS/DCIM systems with Redfish and SNMP interfaces.  
 - Python scripts for facility automation and control.  
 - Energy analytics and forecasting platforms.  

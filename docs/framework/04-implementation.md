@@ -1394,7 +1394,7 @@ Because v0.1 should optimize for:
 
 Not for distributed production deployment.
 
-So do **not** over-engineer this into Kubernetes or microservices yet.
+So do **not** over-engineer this into distributed container orchestration or microservices yet.
 
 At this stage, ExaBench should be a **well-architected local benchmark engine**, not a cloud platform.
 

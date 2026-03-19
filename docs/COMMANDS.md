@@ -15,6 +15,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench compare runs` | Diff two run directories — show score deltas and regressions |
 | `exabench robustness task` | Run a task N times and report score variance (robustness score) |
 | `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
+| `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
 
 ---
 
@@ -431,6 +432,106 @@ exabench robustness all --adapter openai:gpt-4o --n 8
 
 ---
 
+### clear
+
+Compute the CLEAR multi-dimensional scorecard (Mehta 2025, arXiv:2511.14136) across one or more run directories.
+
+CLEAR = **C**ost · **L**atency · **E**fficacy · **A**ssurance · **R**eliability
+
+```bash
+exabench clear run [OPTIONS]
+```
+
+| Option | Short | Default | Description |
+|--------|-------|---------|-------------|
+| `--run-dir` | `-d` | (required, repeatable) | Run directory containing `results/` (repeat for multiple models) |
+| `--output` | `-o` | `clear_report.json` | Write CLEAR report JSON to this file |
+| `--pass-threshold` | | `0.5` | Min `aggregate_score` to count a run as passing |
+| `--reliability-k` | | `1` | k for pass^k reliability (1, 2, 4, 8) |
+| `--robustness-json` | | | Optional: `robustness_suite.json` for pre-computed pass^k |
+
+**CLEAR dimensions:**
+
+| Symbol | Dimension | ExaBench field | Notes |
+|--------|-----------|----------------|-------|
+| C | Cost | `cost_estimate_usd` | Min-max normalised across models; lower=better |
+| L | Latency | `latency_seconds` | Min-max normalised across models; lower=better |
+| E | Efficacy | `dimension_scores.outcome` | Mean outcome score (0–1) |
+| A | Assurance | `dimension_scores.governance` | Mean RBAC governance score (0–1) |
+| R | Reliability | `pass^k` | Mean pass^k across tasks; uses `--reliability-k` |
+
+**CLEAR composite:** `CLEAR = 0.2×C + 0.2×L + 0.2×E + 0.2×A + 0.2×R`
+
+**Additional metrics per model:**
+
+| Metric | Formula | Notes |
+|--------|---------|-------|
+| CNA | `(outcome / cost_usd) × 100` | Cost-Normalised Accuracy; higher=better |
+| CPS | `total_cost / n_successful` | Cost Per Success; lower=better; None if 0 successes |
+
+**Output JSON structure:**
+
+```json
+{
+  "generated_at": "<ISO-8601>",
+  "task_count": 30,
+  "pass_threshold": 0.5,
+  "reliability_k": 1,
+  "models": {
+    "gpt-4o": {
+      "clear_score": 0.74, "C_norm": 0.82, "L_norm": 0.91,
+      "E": 0.71, "A": 0.85, "R": 0.68,
+      "mean_cost_usd": 0.0077, "mean_latency_s": 8.3,
+      "CNA": 92.2, "CPS": 0.0089,
+      "n_tasks": 30, "n_successful": 22
+    }
+  },
+  "leaderboard": [
+    {"rank": 1, "model": "gpt-4o", "clear_score": 0.74, "CNA": 92.2}
+  ]
+}
+```
+
+**Recommended workflow:**
+
+```bash
+# Step 1: single full run
+exabench run all --adapter openai:gpt-4o
+
+# Step 2: robustness run (for pass^8 reliability)
+exabench robustness all --adapter openai:gpt-4o --n 8 \
+    --output data/robustness_gpt4o.json
+
+# Step 3: CLEAR scorecard
+exabench clear run \
+    --run-dir data/runs/run_20260319_<id>/ \
+    --robustness-json data/robustness_gpt4o.json \
+    --reliability-k 8 \
+    --output data/clear_report.json
+
+# Multi-model comparison (two run dirs, no robustness — uses pass^1)
+exabench clear run \
+    --run-dir data/runs/run_gpt4o/ \
+    --run-dir data/runs/run_claude/ \
+    --output data/clear_report_comparison.json
+```
+
+**Example stdout output:**
+
+```text
+Loaded 30 result(s) across 2 model(s).
+
+Model                   CLEAR       E       A       R   C_norm   L_norm         CNA      CPS($)
+──────────────────────────────────────────────────────────────────────────────────────────────
+gpt-4o                  0.740   0.710   0.850   0.680    0.820    0.910       92.2    0.0089
+claude-sonnet           0.718   0.695   0.890   0.650    0.760    0.880       89.1    0.0104
+
+Tasks: 30  pass_threshold: 0.5  reliability_k: 1
+CLEAR report written: data/clear_report.json
+```
+
+---
+
 ## Scoring Dimensions
 
 ExaBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
@@ -519,6 +620,7 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 | `make compare` | Diff last two runs (RUN_A= baseline, RUN_B= comparison) |
 | `make robustness` | Run a task N times and report variance (TASK=, ENV=, ADAPTER=, N= overridable) |
 | `make robustness-all` | Run ALL tasks N times each and report suite-level pass^k (ADAPTER=, N=, SPLIT= overridable) |
+| `make clear` | Compute CLEAR scorecard for latest run (RUN_DIR=, CLEAR_OUTPUT=, ROBUSTNESS_JSON= overridable) |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
 | `make scoring-dims` | Print the scoring dimensions reference (all terms defined) |
 

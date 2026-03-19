@@ -34,3 +34,22 @@ profiles:
       governance: 0.20
       robustness: 0.00
       efficiency: 0.05
+
+  clear_v1:
+    version: "0.1"
+    # CLEAR-aligned weight profile (Mehta 2025, arXiv:2511.14136).
+    # Maps ExaBench dimensions to CLEAR's five axes:
+    #   E (Efficacy)   → outcome   0.20
+    #   A (Assurance)  → governance 0.20
+    #   R (Reliability)→ robustness 0.20
+    #   C+L proxy      → efficiency 0.40  (step-count proxy for cost + latency combined)
+    #   tool_use / grounding are HPC-specific; no CLEAR equivalent → 0.00
+    # Note: the real CLEAR composite (requiring cross-model normalisation of
+    # cost and latency) is computed by `exabench clear`, not this profile.
+    weights:
+      outcome: 0.20
+      tool_use: 0.00
+      grounding: 0.00
+      governance: 0.20
+      robustness: 0.20
+      efficiency: 0.40

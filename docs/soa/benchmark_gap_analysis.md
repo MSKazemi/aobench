@@ -11,13 +11,13 @@ The following gaps appear consistently across all surveyed resources:
 - **role-aware** — missing in: agentarch, bfcl, clear, cloud-opsbench, dacomp, infiagent-dabench, llm-agents-workflow-provenance, toolbench, worfbench
 - **SLURM** — missing in: agentarch, agentbench, cloud-opsbench, infiagent-dabench, scienceagentbench, tau-bench, toolbench, trail
 - **RBAC** — missing in: agentbench, clear, cloud-opsbench, dacomp, llm-agents-workflow-provenance, scienceagentbench, toolbench, trail
-- **Prometheus** — missing in: agentarch, cloud-opsbench, infiagent-dabench, scienceagentbench, tau-bench, toolbench
+- **HPC monitoring** — missing in: agentarch, cloud-opsbench, infiagent-dabench, scienceagentbench, tau-bench, toolbench
 - **telemetry** — missing in: agentbench, clear, dacomp, tau-bench, tau2-bench, trail
 - **HPC-native** — missing in: cloud-opsbench, dacomp, infiagent-dabench, tau-bench, tau2-bench, worfbench
 - **energy** — missing in: cloud-opsbench, llm-agents-workflow-provenance, tau-bench, toolbench, trail
 - **multi-role** — missing in: cloud-opsbench, scienceagentbench, tau-bench
 - **scheduler** — missing in: dacomp, llm-agents-workflow-provenance, tau2-bench
-- **Kepler** — missing in: cloud-opsbench, infiagent-dabench
+- **HPC energy monitoring** — missing in: cloud-opsbench, infiagent-dabench
 
 ---
 
@@ -25,7 +25,7 @@ The following gaps appear consistently across all surveyed resources:
 
 ### agentarch
 
-Enterprise tasks with no HPC specificity. No SLURM, Prometheus, or role-aware evaluation. Architecture findings may not transfer to HPC domain.
+Enterprise tasks with no HPC specificity. No SLURM, HPC monitoring, or role-aware evaluation. Architecture findings may not transfer to HPC domain.
 
 ### agentbench
 
@@ -45,7 +45,7 @@ No HPC-specific tool use evaluation, no role-aware assurance dimension (RBAC), n
 
 ### cloud-opsbench
 
-No HPC-native tools (SLURM, Prometheus, Kepler), no role-aware evaluation (same snapshot answered differently per role), no multi-role task variants, no energy monitoring reasoning, no policy/RBAC compliance scoring
+No HPC-native tools (SLURM, HPC monitoring, facility energy monitoring), no role-aware evaluation (same snapshot answered differently per role), no multi-role task variants, no energy monitoring reasoning, no policy/RBAC compliance scoring
 
 ### dacomp
 
@@ -57,7 +57,7 @@ Flowcept is a provenance tool, not a benchmark. It does not define tasks, ground
 
 ### infiagent-dabench
 
-No HPC-native data formats (Prometheus, Kepler, SLURM accounting), no multi-step tool orchestration beyond code execution, no role-aware task variants, no policy compliance evaluation.
+No HPC-native data formats (HPC monitoring, facility energy, SLURM accounting), no multi-step tool orchestration beyond code execution, no role-aware task variants, no policy compliance evaluation.
 
 ### langfuse
 
@@ -69,11 +69,11 @@ No role-aware evaluation (same query answered differently per role), no RBAC com
 
 ### scienceagentbench
 
-Scientific workflow context is unrelated to HPC operations. No SLURM, Prometheus, RBAC, or multi-role evaluation.
+Scientific workflow context is unrelated to HPC operations. No SLURM, HPC monitoring, RBAC, or multi-role evaluation.
 
 ### tau-bench
 
-No HPC-native tools (SLURM, Prometheus, telemetry), no role-based access control as a first-class metric, no multi-role task variants, no deterministic HPC environment snapshots, no energy/cost telemetry reasoning
+No HPC-native tools (SLURM, HPC monitoring, telemetry), no role-based access control as a first-class metric, no multi-role task variants, no deterministic HPC environment snapshots, no energy/cost telemetry reasoning
 
 ### tau2-bench
 
@@ -81,7 +81,7 @@ No HPC-native tools, no role-based access control, no telemetry or scheduler sta
 
 ### toolbench
 
-Generic REST APIs have no HPC semantics. No SLURM, Prometheus, RBAC, or energy monitoring. No role-aware access control. Breadth (16k APIs) is the opposite of ExaBench's depth-focused HPC tool evaluation.
+Generic REST APIs have no HPC semantics. No SLURM, HPC monitoring, RBAC, or energy monitoring. No role-aware access control. Breadth (16k APIs) is the opposite of ExaBench's depth-focused HPC tool evaluation.
 
 ### trail
 

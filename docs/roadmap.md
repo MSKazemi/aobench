@@ -114,7 +114,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 - [ ] **HPC workflow graph scorer** *(worfbench)* — evaluate multi-step operational tasks as DAG matching; partial-credit via subgraph matching; workflow complexity metric (depth, branching)
 - [ ] **Multi-agent execution mode** — benchmark orchestration systems (coordinator + specialist agents); architecture comparison in paper (ReAct vs function-calling vs plan-then-act)
 - [ ] **Evolving HPC scenario** *(dacomp)* — mid-task state changes (new job submitted, node fails) to test agent adaptability
-- [ ] **HPC telemetry analysis tasks** *(infiagent-dabench)* — 20+ Prometheus/Kepler snapshot CSV/parquet files; format-prompted answer schema (numeric + unit + confidence)
+- [ ] **HPC telemetry analysis tasks** *(infiagent-dabench)* — 20+ HPC monitoring/facility energy snapshot CSV/parquet files; format-prompted answer schema (numeric + unit + confidence)
 
 ### Taxonomy & Query Categories
 

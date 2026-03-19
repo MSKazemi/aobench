@@ -21,7 +21,7 @@ ExaBench has an **alpha benchmark** — enough structure to run tasks and produc
 
 1. **Missing task specs** — MON_SYS_003, ENERGY_FAC_001, ENERGY_FAC_002, ENERGY_FAC_003 have no JSON specs.
 2. **Missing environments** — env_03 (thermal/power) and env_04 (rack energy) are referenced by tasks but do not exist.
-3. **Gold evidence not anchored** — `gold_evidence_refs` point at paths (e.g. `stderr/job_001.err`, `prometheus/node_metrics_001.parquet`) that are often not present in the environment bundles.
+3. **Gold evidence not anchored** — `gold_evidence_refs` point at paths (e.g. `stderr/job_001.err`, `monitoring/node_metrics_001.parquet`) that are often not present in the environment bundles.
 4. **Validation and scoring blocked** — All tasks: `scoring_readiness: blocked`, `gold_evidence_status: missing`; environments: `validation_status: not_checked`.
 5. **Placeholder artifacts** — `incidents/incident_metadata.json` is a placeholder.
 6. **Path inconsistencies** — `bundle_root` in metadata (`data/environments/env_01`) vs actual path (`benchmark/environments/env_01`).

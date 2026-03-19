@@ -19,7 +19,7 @@ _From resources marked 'Adopt directly' or 'must adopt':_
 
 ### From cloud-opsbench — Adapt conceptually
 
-- [ ] **Feature:** HPC environment snapshot schema: environment_snapshot.json (job queue, node topology), telemetry_snapshot.parquet (Prometheus metrics), scheduler_state.json (SLURM), rbac_profile.yaml (role permissions)
+- [ ] **Feature:** HPC environment snapshot schema: environment_snapshot.json (job queue, node topology), telemetry_snapshot.parquet (HPC monitoring metrics), scheduler_state.json (SLURM), rbac_profile.yaml (role permissions)
 - [ ] **Feature:** Snapshot replay system: load identical HPC state for every benchmark run to guarantee reproducibility across models
 - [ ] **Feature:** Role-differentiated snapshot views: same underlying state presented with different tool access and information visibility per user role
 - [ ] **Task:** Define ExaBench snapshot schema covering all HPC state dimensions (jobs, nodes, energy, incidents, policy docs)
@@ -37,10 +37,10 @@ _From resources marked 'Adopt directly' or 'must adopt':_
 
 ### From llm-agents-workflow-provenance — Adapt conceptually
 
-- [ ] **Feature:** HPC observability task category in ExaBench: OLAP-style queries over Prometheus, SLURM accounting, and Kepler energy data
+- [ ] **Feature:** HPC observability task category in ExaBench: OLAP-style queries over HPC monitoring, SLURM accounting, and facility energy data
 - [ ] **Feature:** Role-differentiated query evaluation: same provenance query answered with different detail levels and scope per user role
 - [ ] **Feature:** Adaptive routing baseline: show that no single model dominates across all ExaBench HPC task categories
-- [ ] **Task:** Create ExaBench HPC observability task set: 30+ OLAP-style questions over synthetic Prometheus/SLURM/Kepler snapshots
+- [ ] **Task:** Create ExaBench HPC observability task set: 30+ OLAP-style questions over synthetic HPC monitoring/SLURM/facility energy snapshots
 - [ ] **Task:** Implement schema-driven RAG tool for ExaBench agents: structured query interface over HPC data files
 - [ ] **Task:** Build LLM-as-judge scorer for HPC observability answers with role-aware rubric
 
@@ -82,7 +82,7 @@ _From resources marked 'Adopt directly' or 'must adopt':_
 
 ### From bfcl — Adapt conceptually
 
-- [ ] **Feature:** HPC function-calling scorer: decomposed evaluation of tool selection, argument correctness, and sequence validity for SLURM/Prometheus/RBAC tools
+- [ ] **Feature:** HPC function-calling scorer: decomposed evaluation of tool selection, argument correctness, and sequence validity for SLURM/HPC monitoring/RBAC tools
 - [ ] **Feature:** Parallel tool call evaluation: some HPC tasks require simultaneous tool calls (query telemetry + check RBAC at the same time)
 - [ ] **Feature:** Forbidden call detection: score agents for not calling tools outside their role's permission profile
 - [ ] **Task:** Define ExaBench HPC tool signature library: all mock tool function signatures with parameter types and valid value ranges
@@ -100,10 +100,10 @@ _From resources marked 'Adopt directly' or 'must adopt':_
 
 ### From infiagent-dabench — Adapt conceptually
 
-- [ ] **Feature:** HPC telemetry analysis tasks: agent must query time-series Prometheus snapshots to answer questions like 'which nodes had >90% CPU utilization during job 12345?'
+- [ ] **Feature:** HPC telemetry analysis tasks: agent must query time-series HPC monitoring snapshots to answer questions like 'which nodes had >90% CPU utilization during job 12345?'
 - [ ] **Feature:** Format-prompted HPC answers: structured output format (JSON with numeric answer + unit + confidence) enables deterministic scoring
 - [ ] **Feature:** Multi-source analysis tasks: agent must correlate telemetry, scheduler logs, and energy data to diagnose operational issues
-- [ ] **Task:** Create HPC telemetry dataset: 20+ Prometheus/Kepler snapshot CSV/parquet files representing real operational scenarios
+- [ ] **Task:** Create HPC telemetry dataset: 20+ HPC monitoring/facility energy snapshot CSV/parquet files representing real operational scenarios
 - [ ] **Task:** Define format-prompted answer schema for HPC telemetry questions (numeric, categorical, time-range answers)
 - [ ] **Task:** Build code execution sandbox for HPC telemetry queries: expose pandas/polars + HPC-specific query functions
 

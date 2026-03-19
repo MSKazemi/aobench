@@ -149,6 +149,15 @@ robustness:  ## Run a single task N times and report score variance (TASK=, ENV=
 robustness-all:  ## Run ALL tasks N times each and report suite-level pass^k (ADAPTER=, N=, SPLIT= overridable)
 	$(EXABENCH) robustness all --adapter $(ADAPTER) --n $(N) $(if $(SPLIT),--split $(SPLIT),)
 
+CLEAR_OUTPUT ?= clear_report.json
+ROBUSTNESS_JSON ?=
+
+.PHONY: clear
+clear:  ## Compute CLEAR scorecard for a run directory (RUN_DIR=, CLEAR_OUTPUT=, ROBUSTNESS_JSON= overridable)
+	$(eval RUN_DIR ?= $(shell ls -td data/runs/run_* 2>/dev/null | head -1))
+	$(EXABENCH) clear run --run-dir $(RUN_DIR) --output $(CLEAR_OUTPUT) \
+		$(if $(ROBUSTNESS_JSON),--robustness-json $(ROBUSTNESS_JSON),)
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py

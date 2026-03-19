@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-03-19T12:45:17.885534+00:00",
+  "task_count": 1,
+  "pass_threshold": 0.5,
+  "reliability_k": 1,
+  "models": {
+    "gpt-4o": {
+      "E": 0.8,
+      "A": 0.9,
+      "R": 1.0,
+      "mean_cost_usd": 0.01,
+      "mean_latency_s": 5.0,
+      "CNA": 8000.0,
+      "CPS": 0.01,
+      "n_tasks": 1,
+      "n_successful": 1,
+      "C_norm": 1.0,
+      "L_norm": 1.0,
+      "clear_score": 0.94
+    }
+  },
+  "leaderboard": [
+    {
+      "rank": 1,
+      "model": "gpt-4o",
+      "clear_score": 0.94,
+      "CNA": 8000.0
+    }
+  ]
+}

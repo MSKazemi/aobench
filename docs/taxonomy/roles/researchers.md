@@ -14,8 +14,8 @@
 ## **Key Studies / Knowledge Areas**
 - HPC performance engineering (MPI, OpenMP, CUDA, SYCL)
 - Anomaly detection & time-series analysis (ML/DL for logs & telemetry)
-- Operational data analytics (Grafana/Prometheus data export, PostgreSQL, InfluxDB, parquet data)
-- Energy modeling & prediction (Kepler, RAPL, PowerAPI, pod-level prediction models)
+- Operational data analytics (Grafana/HPC monitoring data export, PostgreSQL, InfluxDB, parquet data)
+- Energy modeling & prediction (RAPL, PowerAPI, IPMI, node-level prediction models)
 - Cooling systems & facility telemetry interpretation (BMS/DCIM data integration)
 - Data wrangling and visualization (Pandas, PySpark, DVC, MLflow)
 - Scientific reproducibility (experiment tracking, model versioning, FAIR datasets)
@@ -25,7 +25,7 @@
 - Monitoring data: node-level metrics (CPU/GPU utilization, power, temperature, fan speed)
 - Logs: job scheduler logs, syslogs, application logs
 - Batch scripts: SLURM/PBS job submission scripts (for workload classification & power estimation)
-- Databases: Prometheus, PostgreSQL, InfluxDB, parquet archives
+- Databases: HPC monitoring tools, PostgreSQL, InfluxDB, parquet archives
 - Facility telemetry: PUE, cooling power, rack temperature distributions
 
 ## **Tools & Frameworks**
@@ -33,8 +33,8 @@
 - Data analytics frameworks (Pandas, Dask, PySpark, SQL)
 - Visualization (Grafana, Plotly, Matplotlib)
 - ML/DL frameworks (Scikit-Learn, PyTorch, TensorFlow)
-- Energy monitoring (Kepler, RAPL, IPMI)
-- Cluster telemetry ingestion (Prometheus, ExaData, InfluxDB)
+- Energy monitoring (RAPL, IPMI, Redfish)
+- Cluster telemetry ingestion (ExaData, InfluxDB, HPC monitoring tools)
 - Reproducibility stacks (MLflow, DVC, GitLab CI/CD)
 
 ## **Research Themes / Study Topics**
@@ -59,8 +59,8 @@
 | 6 | **FAC** | **Facility, Infrastructure & Environmental Systems** | Managing racks, CRAC units, alarms, and environmental sensors (temperature, humidity, PUE). | “Which racks show thermal anomalies?”<br>“Alarm history for CRAC unit 3.”<br>“Show cooling efficiency by zone.”<br>“Current PUE trend for datacenter.” | **L** |
 | 7 | **SEC** | **Security, Access & Policy Management** | Handling IAM, quota limits, authentication, and compliance queries. | “Why was my SSH access denied?”<br>“Show my remaining quota.”<br>“Which users can access dataset X?” | **L** |
 | 8 | **ARCH** | **System Architecture, Design & Capacity Planning** | Understanding and planning HPC system design, capacity, and scalability. | “Which nodes have A100 GPUs?”<br>“Show topology of interconnect fabric.”<br>“Forecast storage capacity for next year.”<br>“Compare rack power density trends.” | **M** |
-| 9 | **AIOPS** | **AI, Automation & Intelligent Operations** | ML/AI-driven analytics for anomaly detection, predictive maintenance, and optimization. | “Detect cooling anomalies using ML models.”<br>“Predict node failure probability.”<br>“Generate feature dataset for model training from Prometheus + SLURM logs.”<br>“Recommend energy-aware job scheduling.” | **H** |
-| 10 | **DOCS** | **Documentation, Support & Knowledge Assistance** | Providing knowledge, tutorials, troubleshooting, and HPC best practices. | “How to run TensorFlow with SLURM?”<br>“Explain difference between partitions.”<br>“Show documentation for Kepler energy plugin.” | **M** |
+| 9 | **AIOPS** | **AI, Automation & Intelligent Operations** | ML/AI-driven analytics for anomaly detection, predictive maintenance, and optimization. | “Detect cooling anomalies using ML models.”<br>“Predict node failure probability.”<br>“Generate feature dataset for model training from HPC monitoring + SLURM logs.”<br>“Recommend energy-aware job scheduling.” | **H** |
+| 10 | **DOCS** | **Documentation, Support & Knowledge Assistance** | Providing knowledge, tutorials, troubleshooting, and HPC best practices. | “How to run TensorFlow with SLURM?”<br>“Explain difference between partitions.”<br>“Show documentation for HPC energy monitoring (RAPL, Redfish).” | **M** |
 
 ## Priority Tags Summary
 

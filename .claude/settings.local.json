@@ -45,7 +45,8 @@
       "Bash(docker restart:*)",
       "Bash(curl:*)",
       "Bash(docker system:*)",
-      "Bash(docker buildx:*)"
+      "Bash(docker buildx:*)",
+      "Bash(grep -r \"prometheus\\\\|Prometheus\\\\|kepler\\\\|Kepler\\\\|kubernetes\\\\|Kubernetes\\\\|prometheus_query\\\\|kepler_query\" /home/mohsen/scratch/codes/ExaBench/ExaBench --include=*.md --include=*.py --include=*.yaml --include=*.yml --include=*.json --include=*.txt --include=*.toml)"
     ],
     "deny": [
       "Read(.env)",

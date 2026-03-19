@@ -22,13 +22,13 @@
 
 **agentops:** Same adaptation as Langfuse: add ExaBench-specific metadata (task_id, role, tier, score) to AgentOps session events. Use AgentOps as optional trace backend.
 
-**bfcl:** Replace generic APIs with HPC-native tool signatures: squeue, sbatch, scancel, prometheus_query, kepler_query, rbac_check, docs_lookup. Evaluate whether agents call the right HPC tool with the right arguments.
+**bfcl:** Replace generic APIs with HPC-native tool signatures: squeue, sbatch, scancel, monitoring_query, energy_query, rbac_check, docs_lookup. Evaluate whether agents call the right HPC tool with the right arguments.
 
-**cloud-opsbench:** Replace cloud-native environment (Kubernetes, cloud APIs) with HPC-native state: SLURM job queue snapshot, Prometheus telemetry snapshot, Kepler energy snapshot, RBAC profile, incident context. Extend snapshots to capture multi-role views of the same state.
+**cloud-opsbench:** Replace cloud-native environment (HPC scheduler, facility APIs) with HPC-native state: SLURM job queue snapshot, HPC monitoring telemetry snapshot, facility energy snapshot, RBAC profile, incident context. Extend snapshots to capture multi-role views of the same state.
 
-**infiagent-dabench:** Replace CSV data analysis with HPC telemetry analysis: Prometheus metrics, Kepler energy data, SLURM accounting logs as parquet/CSV files. Agent must query, aggregate, and reason over time-series telemetry to answer operational questions.
+**infiagent-dabench:** Replace CSV data analysis with HPC telemetry analysis: HPC monitoring metrics, facility energy data, SLURM accounting logs as parquet/CSV files. Agent must query, aggregate, and reason over time-series telemetry to answer operational questions.
 
-**llm-agents-workflow-provenance:** Extend from workflow provenance queries to full HPC operational queries: add SLURM job state queries, Prometheus telemetry queries, energy budget queries, and RBAC-filtered information access. Add role-aware task variants.
+**llm-agents-workflow-provenance:** Extend from workflow provenance queries to full HPC operational queries: add SLURM job state queries, HPC monitoring telemetry queries, energy budget queries, and RBAC-filtered information access. Add role-aware task variants.
 
 **tau2-bench:** Replace retail/airline/telecom with HPC domain. ExaBench could implement the user-agent as an HPC user persona (sysadmin, researcher, etc.) and the service agent as the HPC AI assistant being evaluated.
 
@@ -60,7 +60,7 @@
 
 ### llm-agents-workflow-provenance (must adopt)
 
-- [ ] Create ExaBench HPC observability task set: 30+ OLAP-style questions over synthetic Prometheus/SLURM/Kepler snapshots
+- [ ] Create ExaBench HPC observability task set: 30+ OLAP-style questions over synthetic HPC monitoring/SLURM/facility energy snapshots
 - [ ] Implement schema-driven RAG tool for ExaBench agents: structured query interface over HPC data files
 - [ ] Build LLM-as-judge scorer for HPC observability answers with role-aware rubric
 
@@ -102,7 +102,7 @@
 
 ### infiagent-dabench (should consider)
 
-- [ ] Create HPC telemetry dataset: 20+ Prometheus/Kepler snapshot CSV/parquet files representing real operational scenarios
+- [ ] Create HPC telemetry dataset: 20+ HPC monitoring/facility energy snapshot CSV/parquet files representing real operational scenarios
 - [ ] Define format-prompted answer schema for HPC telemetry questions (numeric, categorical, time-range answers)
 - [ ] Build code execution sandbox for HPC telemetry queries: expose pandas/polars + HPC-specific query functions
 

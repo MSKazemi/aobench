@@ -36,7 +36,7 @@
 - SLURM, PBS, or LSF job schedulers.
 - HPC module system, Conda, virtualenv.
 - JupyterHub, interactive shell tools.
-- Prometheus/Grafana dashboards.
+- HPC monitoring/Grafana dashboards.
 - File transfer tools (scp, rsync, Globus).
 - Profiling tools (nvprof, perf, gprof).
 - RAG Agent for documentation queries.
