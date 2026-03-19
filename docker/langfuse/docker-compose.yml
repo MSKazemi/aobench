@@ -64,7 +64,6 @@ services:
     environment:
       MINIO_ROOT_USER: langfuse
       MINIO_ROOT_PASSWORD: langfuse123
-      MINIO_DEFAULT_BUCKETS: langfuse   # auto-create bucket on startup
     volumes:
       - langfuse-minio-data:/data
     ports:
@@ -76,6 +75,24 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  # ── MinIO bucket init (one-shot) ─────────────────────────────────────────────
+  # Uses the minio image's bundled `mc` to create the `langfuse` bucket.
+  # Runs once at startup; exits 0 when done. restart: on-failure ensures it
+  # retries if MinIO is not ready yet, but won't restart after success.
+  minio-init:
+    image: minio/minio:latest
+    container_name: langfuse-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+        mc alias set local http://minio:9000 langfuse langfuse123 &&
+        mc mb --ignore-existing local/langfuse &&
+        echo 'MinIO bucket langfuse ready.'
+      "
+    restart: on-failure
 
   # ── Langfuse Web (UI + API) ──────────────────────────────────────────────────
   langfuse-web:

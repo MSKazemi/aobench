@@ -40,7 +40,12 @@
       "Bash(find /home/mohsen/scratch/codes/ExaBench/ExaBench -name *scenario* -o -name *variant* -o -name *variant.json)",
       "Bash(docker compose:*)",
       "Bash(ip link:*)",
-      "Bash(openssl rand:*)"
+      "Bash(openssl rand:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker restart:*)",
+      "Bash(curl:*)",
+      "Bash(docker system:*)",
+      "Bash(docker buildx:*)"
     ],
     "deny": [
       "Read(.env)",

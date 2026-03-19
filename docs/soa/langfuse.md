@@ -18,19 +18,6 @@ Website: <https://langfuse.com>
 GitHub: <https://github.com/langfuse/langfuse> (MIT License)
 Docs: <https://langfuse.com/docs>
 
----
-
-## Licensing & Pricing
-
-| Tier | Cost | Notes |
-|------|------|-------|
-| **Self-hosted (OSS)** | Free | MIT license, full features, Docker Compose |
-| **Cloud — Hobby** | Free | 50 k observations/month, 30-day retention |
-| **Cloud — Pro** | $59/month | Unlimited observations, team features |
-| **Cloud — Enterprise** | Custom | SSO, SLA, on-prem support |
-
-> **Recommended for ExaBench**: self-host with Docker Compose.
-> All benchmark data stays on your own machine; no usage limits; no subscription required.
 
 ---
 
@@ -184,6 +171,28 @@ make langfuse-up
 
 If the pull simply times out mid-download (no VPN), run `make langfuse-up` again —
 already-downloaded layers are cached and only missing layers are retried.
+
+**Troubleshooting — `XMinioStorageFull` / Internal Server Error on ingestion:** Langfuse
+writes every trace to MinIO (blob storage) before processing. If the host disk is full or
+nearly full, MinIO refuses uploads and the ingestion API returns 500. Free disk space:
+
+```bash
+docker system df              # show Docker disk usage
+docker buildx prune -f        # reclaim build cache (safe)
+docker image prune -f         # remove unused images (safe)
+df -h /                       # verify free space > ~5 GB
+```
+
+**Troubleshooting — MinIO `langfuse` bucket missing after first start:** The compose file
+includes a `minio-init` one-shot service that creates the bucket automatically. If you see
+`NoSuchBucket` errors (e.g., after a `langfuse-reset`), restart the stack:
+
+```bash
+make langfuse-down && make langfuse-up
+```
+
+The `minio-init` container runs `mc mb --ignore-existing local/langfuse` after MinIO is
+healthy, then exits. It will not restart once the bucket exists.
 
 Environment variables needed by ExaBench:
 

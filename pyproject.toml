@@ -24,7 +24,7 @@ dependencies = [
 openai = ["openai>=1.0"]
 anthropic = ["anthropic>=0.30"]
 mcp = ["mcp>=1.0", "openai>=1.0"]
-langfuse = ["langfuse>=2.0"]
+langfuse = ["langfuse>=4.0"]
 
 [dependency-groups]
 dev = [

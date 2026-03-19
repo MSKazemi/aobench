@@ -661,6 +661,33 @@ This should generate:
 - role × category slices
 - failure taxonomy
 - HTML report
+
+## I. Exporter / Observability Layer
+
+After scoring and saving, the runner calls any registered exporters.
+Exporters push completed traces and scores to external observability platforms.
+
+**Abstract base:** `src/exabench/exporters/base_exporter.py`
+
+```python
+class BaseExporter(ABC):
+    def export(self, trace: Trace, result: BenchmarkResult, task: TaskSpec) -> None: ...
+    def flush(self) -> None: ...
+```
+
+**Implementations:**
+
+| Class | Module | Backend |
+|-------|--------|---------|
+| `LangfuseExporter` | `exporters/langfuse_exporter.py` | Langfuse v3 (SDK v4 OTel API) |
+
+**Activation:** pass `--langfuse` flag to `exabench run task` or `exabench run all`.
+Credentials are read from `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`,
+and `LANGFUSE_HOST` / `LANGFUSE_BASE_URL` environment variables (or `.env`).
+
+**Self-hosted stack:** `docker/langfuse/docker-compose.yml` — full Langfuse v3
+stack (Postgres, ClickHouse, Redis, MinIO, langfuse-web, langfuse-worker).
+Start with `make langfuse-up`; UI at `http://localhost:3000`.
 - comparison across runs
 
 ## 6.8 — Repository Structure

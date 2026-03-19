@@ -181,6 +181,29 @@ Store the scored benchmark artifact, including:
 - trace reference
 - reproducibility metadata
 
+### Step 8 — Export to observability backend (optional)
+
+After the result is saved, the runner calls any registered `BaseExporter`
+implementations. Exporters push the completed trace and scores to external
+observability platforms for dashboarding, regression tracking, and cost analysis.
+
+The current implementation ships one exporter:
+
+| Exporter | Flag | Backend |
+|----------|------|---------|
+| `LangfuseExporter` | `--langfuse` | Langfuse v3 self-hosted or cloud |
+
+What is exported per run:
+
+- One root trace span (name = task_id, input = query, output = final_answer)
+- One child span per `TraceStep` (as_type = `tool` or `span`)
+- One generation span for total LLM token usage
+- Six dimension scores + aggregate score attached to the trace
+- Metadata: adapter_name, model_name, environment_id, role, run_id, cost
+
+The ExaBench `trace_id` is stored in `metadata["exabench_trace_id"]` for
+correlation. Langfuse auto-generates its own valid trace ID (32 hex chars).
+
 ---
 
 ## 4. Metric Families

@@ -535,7 +535,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.30" },
-    { name = "langfuse", marker = "extra == 'langfuse'", specifier = ">=2.0" },
+    { name = "langfuse", marker = "extra == 'langfuse'", specifier = ">=4.0" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.0" },
     { name = "openai", marker = "extra == 'mcp'", specifier = ">=1.0" },
     { name = "openai", marker = "extra == 'openai'", specifier = ">=1.0" },
