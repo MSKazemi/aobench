@@ -1,4 +1,6 @@
-# 🧩 Key–Value Schema: HPC Agent Benchmark Query Metadata
+# Benchmark Query Metadata Schema
+
+> Canonical metadata keys for ExaBench benchmark queries: identity, role, category, intent, data requirements, evaluation hooks, and maintenance fields.
 
 Owner: Mohsen
 
@@ -13,7 +15,7 @@ Owner: Mohsen
 - Dataset maintenance fields (tags, dedupe tracking, timestamps, notes)
 </aside>
 
-## 🧩 **Key–Value Use Cases in the HPC Agent Benchmark**
+## Key–Value Use Cases in the HPC Agent Benchmark
 
 | Key | Purpose / Use Case in Benchmark | Typical Example |
 | --- | --- | --- |
@@ -24,7 +26,7 @@ Owner: Mohsen
 | **`query_text`** | The actual **user-facing text** sent to the HPC agent. This is what the LLM or retrieval system will process. | `"Show total energy per rack and node for 2023–2024 with daily granularity."` |
 | **`data_sources`** | Indicates which telemetry, logs, or datasets are needed to answer the query. Used for data-access simulation, RAG grounding, and dependency coverage metrics. | `["IPMI","Prometheus"]` — benchmark whether the agent knows which APIs to call. |
 | **`difficulty`** | Qualitative measure of query complexity. Used to build tiered test sets (easy/medium/hard/edge) and to analyze model degradation with harder tasks. | `"medium"` — multi-source but simple aggregation. |
-| **`priority`** | Indicates **operational importance** or **evaluation weighting**. You can give higher weight to “critical” queries during scoring. | `"high"` — gets higher benchmark weight or QA priority. |
+| **`priority`** | Indicates **operational importance** or **evaluation weighting**. You can give higher weight to "critical" queries during scoring. | `"high"` — gets higher benchmark weight or QA priority. |
 | **`tags`** | List of **keywords** or **semantic anchors** for filtering, clustering, and tagging analytics. Enables grouping and model fine-tuning later. | `["energy","time-series","admin"]` — used in dashboard filters. |
 | **`expected_answer`** | Specifies **expected output format or type** (table, chart, fact, explanation). Used for validating output structure and UI tests. | `"table"` — correct answer should be tabular. |
 | **`evaluation_signal`** | Defines **how correctness is evaluated** (e.g., range check, trend direction, exact match, heuristic). Powers your scoring pipeline. | `"range_check(sum_kWh)"` — output must be within expected range. |
@@ -35,7 +37,7 @@ Owner: Mohsen
 
 ---
 
-## 🎯 **How These Keys Work Together**
+## How These Keys Work Together
 
 | Benchmark Function | Keys Involved | Example Use |
 | --- | --- | --- |
@@ -44,5 +46,5 @@ Owner: Mohsen
 | **RAG Data Simulation** | `data_sources`, `dependencies` | Inject only the relevant documents/metrics to test retrieval accuracy. |
 | **Deduplication & Evolution Tracking** | `query_id`, `dedupe_of`, `created_at` | Manage dataset growth and versioning. |
 | **Role-Aware Prompt Evaluation** | `user_type`, `intent`, `query_text` | Test whether the agent adjusts tone, scope, and access correctly. |
-| **Dataset Analytics / Dashboarding** | `tags`, `priority`, `difficulty` | Build dashboards: “How well do we handle Energy vs. Jobs?” |
+| **Dataset Analytics / Dashboarding** | `tags`, `priority`, `difficulty` | Build dashboards: "How well do we handle Energy vs. Jobs?" |
 | **Documentation & Review** | `notes` | Communicate manual observations or caveats to evaluators. |

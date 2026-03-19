@@ -89,6 +89,7 @@ exabench run task [OPTIONS]
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
 | `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
+| `--verbose` | `-v` | off | Enable DEBUG logging to stderr |
 | `-h`, `--help` | — | — | Show help and exit |
 
 **Adapters:**
@@ -121,6 +122,9 @@ exabench run task -t JOB_USR_001 -e env_01 -o results/
 
 # Skip report generation
 exabench run task -t JOB_USR_001 -e env_01 --no-report
+
+# Enable DEBUG logging
+exabench run task -t JOB_USR_001 -e env_01 --verbose
 ```
 
 #### run all
@@ -137,6 +141,7 @@ exabench run all [OPTIONS]
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
 | `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
+| `--verbose` | `-v` | off | Enable DEBUG logging to stderr |
 | `-h`, `--help` | — | — | Show help and exit |
 
 **Output structure:** One run directory (e.g. `data/runs/run_20260318_123456_abc123/`) containing:

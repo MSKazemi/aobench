@@ -7,6 +7,8 @@ from typing import Annotated
 
 import typer
 
+from exabench.utils.logging import configure_logging
+
 run_app = typer.Typer(help="Run benchmark tasks.")
 
 
@@ -49,11 +51,14 @@ def run_all(
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
 ) -> None:
     """Run all benchmark tasks. Uses each task's environment_id from its spec.
 
     Creates one run directory with traces and results for every task.
     """
+    configure_logging("DEBUG" if verbose else "WARNING")
+
     from exabench.loaders.task_loader import load_tasks_from_dir
     from exabench.runners.runner import BenchmarkRunner
     from exabench.utils.ids import make_run_id
@@ -115,8 +120,11 @@ def run_task(
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
+    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
 ) -> None:
     """Run a single benchmark task."""
+    configure_logging("DEBUG" if verbose else "WARNING")
+
     from exabench.runners.runner import BenchmarkRunner
 
     try:

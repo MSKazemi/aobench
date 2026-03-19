@@ -15,7 +15,7 @@
 |---------|-------|
 | **03_architecture.md** | ~2744 lines — whole sections duplicated (e.g. "Benchmark Design Principles" appears twice). Contains merged content from 07 (Software Architecture). |
 | **permissions_access_control.md** (framework) | Nearly identical to **taxonomy/04_access_control.md** — same RBAC tables and content. |
-| **hpc_multi_variant_query_usecases.md** | Overlaps with **taxonomy/key_value_schema.md** — similar key-value schema for queries. |
+| ~~hpc_multi_variant_query_usecases.md~~ | Removed — was duplicate of `taxonomy/benchmark_query_metadata_schema.md`. |
 
 ### Missing or broken
 - Index references 04, 05, 07 — 04 is in taxonomy, 05 doesn't exist, 07 content is merged into 03.
@@ -60,7 +60,7 @@ docs/
 | **04-implementation** | 07 (from 03) | Software architecture, adapters, runner, tools |
 | **05-environments** | 06 | Snapshot format, loading |
 | **06-evaluation** | 08 | Scoring, trace, pass/fail |
-| **07-taxonomy** | taxonomy/*, permissions, hpc_multi_variant | Roles, QCATs, RBAC, query schema |
+| **07-taxonomy** | taxonomy/*, permissions | Roles, QCATs, RBAC, query schema |
 
 ---
 
@@ -69,7 +69,7 @@ docs/
 ### High impact
 1. **03_architecture.md** — Remove duplicated sections (keep one copy of each). Split out 07 content into 04-implementation.md.
 2. **Access control** — Keep one file. Recommended: `framework/07-taxonomy.md` with an "Access Control" section. Delete `permissions_access_control.md` and `taxonomy/04_access_control.md`.
-3. **Query schema** — Merge `hpc_multi_variant_query_usecases.md` + `key_value_schema.md` into taxonomy section of 07-taxonomy.md.
+3. **Query schema** — `benchmark_query_metadata_schema.md` is canonical; merge into taxonomy section of 07-taxonomy.md.
 
 ### Definition freeze
 Create **one** canonical definition block in 01-overview.md:
@@ -89,7 +89,7 @@ Create **one** canonical definition block in 01-overview.md:
 | 3 | Extract 07 content from 03 → new 04-implementation.md | Medium |
 | 4 | Consolidate taxonomy: merge roles, access control, query schema → 07-taxonomy.md | Medium |
 | 5 | Merge permissions_access_control + 04_access_control → one section | Low |
-| 6 | Merge hpc_multi_variant + key_value_schema | Low |
+| 6 | Merge benchmark_query_metadata_schema into 07-taxonomy | Low |
 | 7 | Rename 06, 08 for consistency (05-environments, 06-evaluation) | Low |
 | 8 | Update index/README with correct links | Low |
 | 9 | Archive or remove superseded files | Low |
@@ -111,8 +111,8 @@ If full integration is too much for now, a **minimal** fix:
 
 - `framework/permissions_access_control.md` (→ merged into taxonomy)
 - `taxonomy/04_access_control.md` (→ merged)
-- `framework/hpc_multi_variant_query_usecases.md` (→ merged into taxonomy)
-- `taxonomy/key_value_schema.md` (→ merged)
+- ~~framework/hpc_multi_variant_query_usecases.md~~ (removed — was duplicate)
+- `taxonomy/benchmark_query_metadata_schema.md` (→ merged)
 - Original 00, 01, 02, 03, 06, 08 (after content moved to new structure)
 
 Move to `docs/archive/` rather than delete, for reference.

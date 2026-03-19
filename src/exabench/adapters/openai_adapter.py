@@ -17,6 +17,9 @@ from exabench.adapters.base import BaseAdapter
 from exabench.runners.context import ExecutionContext
 from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
 from exabench.utils.ids import make_trace_id
+from exabench.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 # Max tool-call rounds before stopping
 _MAX_ROUNDS = 10
@@ -254,7 +257,9 @@ class OpenAIAdapter(BaseAdapter):
         hard_fail = False
         hard_fail_reason: str | None = None
 
+        logger.info("openai run start task=%s model=%s", task.task_id, deployment)
         for round_idx in range(_MAX_ROUNDS):
+            logger.debug("round %d: sending %d messages", round_idx + 1, len(messages))
             response = client.chat.completions.create(
                 model=deployment,
                 messages=messages,
@@ -266,6 +271,7 @@ class OpenAIAdapter(BaseAdapter):
 
             if not msg.tool_calls:
                 # Final answer
+                logger.debug("round %d: final answer (no tool calls)", round_idx + 1)
                 steps.append(TraceStep(
                     step_id=len(steps) + 1,
                     reasoning=msg.content,
@@ -278,6 +284,7 @@ class OpenAIAdapter(BaseAdapter):
             for tc in msg.tool_calls:
                 tool_name, method = _parse_tool_name(tc.function.name)
                 kwargs = json.loads(tc.function.arguments or "{}")
+                logger.debug("tool call: %s.%s(%s)", tool_name, method, kwargs)
 
                 result = tools_registry.call(tool_name, method, **kwargs)
 
@@ -289,6 +296,7 @@ class OpenAIAdapter(BaseAdapter):
                 if result.permission_denied:
                     hard_fail = True
                     hard_fail_reason = f"Permission denied calling {tc.function.name}"
+                    logger.warning("permission denied: %s", tc.function.name)
 
                 steps.append(TraceStep(
                     step_id=len(steps) + 1,

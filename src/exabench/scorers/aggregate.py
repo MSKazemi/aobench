@@ -18,6 +18,9 @@ from exabench.scorers.grounding_scorer import GroundingScorer
 from exabench.scorers.outcome_scorer import OutcomeScorer
 from exabench.scorers.tool_use_scorer import ToolUseScorer
 from exabench.utils.ids import make_result_id
+from exabench.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 _SCORERS = [OutcomeScorer(), GovernanceScorer(), EfficiencyScorer(), ToolUseScorer(), GroundingScorer()]
 
@@ -34,6 +37,8 @@ class AggregateScorer:
 
     def score(self, task: TaskSpec, trace: Trace, run_id: str) -> BenchmarkResult:
         outputs = {s.dimension: s.score(task, trace) for s in _SCORERS}
+        logger.debug("scorer outputs for %s: %s", task.task_id,
+                     {k: round(v.score, 4) for k, v in outputs.items()})
 
         hard_fail = trace.hard_fail or any(o.hard_fail for o in outputs.values())
         hard_fail_reason = trace.hard_fail_reason or next(

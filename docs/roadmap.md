@@ -6,18 +6,20 @@ Single source of truth for project status, next steps, and backlog.
 
 ## Current State (2026-03-18)
 
-**Alpha-1 complete.** Full pipeline runs end-to-end with 12 tasks, 5 environments, 5 tools, 2 adapters, 5 scorers, and a complete CLI.
+**Alpha-1 complete.** Full pipeline runs end-to-end with 12 tasks, 5 environments, 5 tools, 3 adapters, 5 scorers, structured logging, and a complete CLI.
 
 | Area | Details |
 |------|---------|
-| Tasks | 12 (JOB×4, MON×4, ENERGY×4) — 12/30 target |
+| Tasks | 12 (JOB×4, MON×4, ENERGY×4) — 12/30 target; all have `scoring_readiness: ready` |
 | Environments | 5 (env_01–env_05) |
 | Mock tools | `slurm`, `docs`, `rbac`, `telemetry`, `facility` |
 | Adapters | `direct_qa`, `openai` (plain + Azure), `mcp` (stdio + SSE transports) |
 | Scorers | `outcome` (fuzzy+numeric), `tool_use`, `grounding`, `governance`, `efficiency` |
 | Robustness | `compute_robustness(results)` + `exabench robustness task` CLI |
 | Reports | JSON summary, HTML report, role×category slices, error taxonomy, compare diff |
-| Tests | 76 passing (unit + integration) |
+| Logging | `utils/logging.py` — `get_logger()` + `configure_logging()`; `--verbose` on run commands |
+| CI | `.github/workflows/ci.yml` — lint + typecheck + tests + validate on every push/PR |
+| Tests | 81 passing (unit + integration) |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` |
 
 ---
@@ -26,20 +28,7 @@ Single source of truth for project status, next steps, and backlog.
 
 Ordered by impact. Work from top to bottom.
 
-### 1. Fix known bugs
-
-| Bug | Location | Status |
-|-----|----------|--------|
-| ~~`list_nodes` dispatched to `_list_partitions`~~ | `tools/slurm_tool.py` | ✓ Fixed |
-| ~~Duplicate `"openai:gpt-4o"` in error message~~ | `cli/run_cmd.py` | ✓ Fixed |
-
-### 2. Populate gold answers (scoring correctness)
-
-10/12 tasks have `scoring_readiness: partial` because `gold_answer` is missing or not linked to real environment data. The `OutcomeScorer` gives 0.5 partial credit for every such task, making scores meaningless for benchmarking.
-
-Priority tasks to fix: `JOB_USR_001`, `JOB_USR_002`, `JOB_USR_003`, `JOB_SYS_001`, `MON_SYS_001`, `MON_SYS_002`, `MON_SYS_003`, `ENERGY_FAC_001`, `ENERGY_FAC_002`, `ENERGY_FAC_003`.
-
-### 3. Run baseline comparison
+### 1. Run baseline comparison
 
 ```bash
 make run-all-openai MODEL=gpt-4o
@@ -50,35 +39,15 @@ make compare RUN_A=data/runs/<direct_qa_run> RUN_B=data/runs/<openai_run>
 Requires: `OPENAI_API_KEY` or `AZURE_OPENAI_ENDPOINT` + `AZURE_OPENAI_API_KEY` in `.env`.
 This produces the first scientifically valid numbers for the benchmark.
 
-### 4. Add GitHub Actions CI
+### 2. Fix `06-evaluation.md` schema divergence
 
-No automated quality gate exists. Any commit can silently break the pipeline.
+`docs/framework/06-evaluation.md` §8 (trace) and §9 (result) specify ~16 fields that don't exist in the actual Pydantic models. Rewrite to match `schemas/trace.py` and `schemas/result.py`. Also remove §6 task fields (`success_criteria`, `preferred_tool_sequence`, `policy_sensitivity`, `required_scorers`) that don't exist in `TaskSpec`.
 
-```yaml
-# .github/workflows/ci.yml — runs: make check (lint + typecheck + tests)
-```
+### 3. Expand to 30 tasks
 
-### 5. Add CONTRIBUTING.md
-
-No contributor onboarding documentation. Needed before any external collaboration.
-Minimum sections: setup, coding standards, how to add a task, how to add an adapter, how to add a scorer.
-
----
-
-## Reviewed Next Steps (2026-03-18, from roadmap review)
-
-Ordered by impact for paper prep. These consolidate and re-prioritize the backlog below.
-
-| # | Item | Blocks |
-|---|------|--------|
-| 1 | **Populate gold answers** — 10/12 tasks `partial`; `OutcomeScorer` gives 0.5 to all, making scores meaningless | Baseline comparison, paper numbers |
-| 2 | **Run baseline comparison** — `make run-all` + `make run-all-openai` + `make compare` | First real benchmark numbers |
-| 3 | **GitHub Actions CI** — `make check` on every push | Contributor safety |
-| 4 | **`utils/logging.py`** — implement structured logging; replace `typer.echo` in runner/adapters/scorers | Debuggability |
-| 5 | **Fix `06-evaluation.md` schema divergence** — rewrite §8 (trace) and §9 (result) to match actual Pydantic models | Doc consistency |
-| 6 | **Expand to 30 tasks** — currently 12/30; target 10×JOB, 10×MON, 10×ENERGY, all roles, mixed difficulty | v0.1 dataset target |
-| 7 | **`AnthropicAdapter`** — Claude with native `tool_use` blocks; `pyproject.toml[anthropic]` declared but not implemented | Baseline diversity |
-| 8 | **Parallel task execution** — `exabench run all` is serial; add `asyncio`/`concurrent.futures` for LLM runs | Performance at 30+ tasks |
+Currently 12/30 (40%). Add 18 more task specs:
+- Target: 10×JOB, 10×MON, 10×ENERGY across all roles and difficulty levels
+- Each new task needs: gold_answer, gold_evidence_refs, environment link, allowed_tools
 
 ---
 
@@ -86,29 +55,27 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 
 ### Bug fixes
 
-- [ ] Fix `slurm_tool.py` `list_nodes` dispatch bug (1-line fix, listed above)
-- [ ] Fix duplicate help text in `run_cmd.py` error message
-- [ ] `06-evaluation.md` schema divergence — trace/result schemas in the doc don't match actual Pydantic models; rewrite §8 and §9 to match `schemas/trace.py` and `schemas/result.py`
+- [x] ~~Fix `slurm_tool.py` `list_nodes` dispatch bug~~ ✓ Fixed
+- [x] ~~Fix duplicate help text in `run_cmd.py` error message~~ ✓ Fixed
+- [ ] `06-evaluation.md` schema divergence — see Immediate Next Steps §2
 
 ### Infrastructure
 
-- [ ] GitHub Actions CI — `make check` on every push/PR
+- [x] ~~GitHub Actions CI~~ ✓ `.github/workflows/ci.yml` (lint + typecheck + tests + validate)
+- [x] ~~`CONTRIBUTING.md`~~ ✓ exists
+- [x] ~~`utils/logging.py`~~ ✓ implemented; module-level loggers in runner, aggregate scorer, OpenAI adapter; `--verbose/-v` on `run task` and `run all`
 - [ ] Dockerfile — reproducible environment for contributors and paper reviewers
-- [ ] `CONTRIBUTING.md` — setup, standards, how-to guides for tasks/adapters/scorers
-- [ ] `utils/logging.py` — implement structured Python logging; add module-level loggers to runner, adapter, scorer pipeline (currently `typer.echo` only)
 
 ### Dataset quality
 
-- [ ] Populate `gold_answer` for 10 tasks with `scoring_readiness: partial`
-- [ ] Upgrade `scoring_readiness: partial → ready` and `validation_status: in_review → validated` once gold answers are correct
-- [ ] Add `--verbose` / `--quiet` flags to CLI (pass through to logging level)
+- [x] ~~Populate `gold_answer` for 10 tasks~~ ✓ all 12 tasks have `scoring_readiness: ready`
+- [x] ~~`--verbose` / `--quiet` flags to CLI~~ ✓ `--verbose/-v` implemented on run commands
 - [ ] Add token cost estimation — `total_tokens` is captured but no cost is computed or reported
 
 ### Refactoring
 
 - [ ] Fix `FacilityTool` and `TelemetryTool` repeated `try: import pandas` in every method — replace with a single class-level `_require_pandas()` guard
 - [ ] `_build_adapter()` in `run_cmd.py` is a hand-rolled if/elif factory — replace with a registry dict as adapter count grows
-- [ ] `utils/logging.py` is empty — implement it (see Infrastructure above)
 
 ---
 
@@ -117,7 +84,7 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 ### Features
 
 - [ ] **`AnthropicAdapter`** — Claude with native `tool_use` blocks; declared in `pyproject.toml[anthropic]` extra but not implemented
-- [x] **`MCPClientAdapter`** — MCP client to connect to HPC agents that expose an MCP server; ExaBench drives an OpenAI agentic loop using the server's tools; supports stdio and SSE transports; `pip install exabench[mcp]`
+- [x] **`MCPClientAdapter`** ✓ — MCP client; supports stdio and SSE transports; `pip install exabench[mcp]`
 - [ ] **Parallel task execution** — `exabench run all` runs tasks serially; add `asyncio` or `concurrent.futures` mode for OpenAI runs (slow with 30+ tasks)
 - [ ] **`exabench task create`** — interactive task authoring helper (currently requires manual JSON editing of ~20 fields)
 - [ ] **Structured output evaluation mode** — `eval_criteria.evaluation_mode: structured_output` is declared but no scorer handles JSON schema validation
@@ -149,12 +116,10 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 ### Documentation
 
 - [ ] **Complete roles taxonomy** — fix broken links in `docs/taxonomy/01_roles_overview.md` (point to `roles/system_administrators.md`, `roles/facility_admin.md`, etc.); align benchmark schema with taxonomy
-- [ ] Update `docs/framework/06-evaluation.md` §8 (trace schema) and §9 (result schema) to match actual Pydantic models — currently specifies 16+ fields that don't exist in code
-- [ ] Remove or mark-as-planned task fields in `06-evaluation.md` §6 (`success_criteria`, `preferred_tool_sequence`, `policy_sensitivity`, `required_scorers`) that don't exist in `TaskSpec`
+- [ ] Update `docs/framework/06-evaluation.md` §8 (trace schema) and §9 (result schema) to match actual Pydantic models — see Immediate Next Steps §2
 - [ ] `docs/guides/adding-tasks.md` — how to author a new task spec end-to-end
 - [ ] `docs/guides/adding-adapters.md` — how to add a new LLM backend
 - [ ] Archive or merge redundant docs: `adapters-and-tools.md`, `architecture-clarification.md` overlap with `docs/framework/`
-- [ ] `benchmark/tasks/registry_notes.md` — populate or delete (currently empty)
 - [ ] `CHANGELOG.md` — create and maintain going forward
 
 ---
@@ -185,7 +150,7 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 
 ### Phase 2–3 — Evaluation Protocol & Dataset ✓
 - Multi-dimensional scoring defined: outcome, tool_use, grounding, governance, efficiency, robustness
-- 12 task specs created across all roles and QCATs
+- 12 task specs created across all roles and QCATs; all have `scoring_readiness: ready`
 - Dataset split strategy defined (dev / public_test / hidden_test)
 - Weighted profiles: `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01`
 
@@ -201,6 +166,7 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 - `ToolRegistry` with role-based access enforcement and `allowed_tools` filtering
 - `BenchmarkRunner` full pipeline (load → build tools → run adapter → score → write)
 - `DirectQAAdapter`, `OpenAIAdapter` (plain + Azure, function calling, all 10 tool schemas)
+- `MCPClientAdapter` (stdio + SSE transports, OpenAI agentic loop over MCP tools)
 
 ### Phase 6 — Scoring Engine ✓
 - `OutcomeScorer`: exact match, semantic match (rapidfuzz), numeric tolerance (±5%)
@@ -211,16 +177,19 @@ Ordered by impact for paper prep. These consolidate and re-prioritize the backlo
 - `compute_robustness(results)`: score variance across N repeated runs
 - `AggregateScorer`: weighted profile composition
 
-### Phase 7 — Reporting & CLI ✓
+### Phase 7 — Reporting, CLI, Infrastructure ✓
 - `exabench validate benchmark`
-- `exabench run task` / `exabench run all`
+- `exabench run task` / `exabench run all` (with `--verbose/-v` flag)
 - `exabench report json` / `exabench report html` / `exabench report slices`
 - `exabench compare runs`
 - `exabench robustness task`
 - JSON report with error taxonomy (`ok`, `ungrounded`, `wrong_answer`, `permission_violation`, etc.)
 - HTML report (self-contained, colour-coded)
 - Role × category score table
-- 58 tests passing (unit + integration)
+- `utils/logging.py` — `get_logger()` + `configure_logging()`; module-level loggers in runner, scorer, adapters
+- GitHub Actions CI (`.github/workflows/ci.yml`) — lint + typecheck + tests + validate
+- `CONTRIBUTING.md`
+- 81 tests passing (unit + integration)
 
 ---
 
