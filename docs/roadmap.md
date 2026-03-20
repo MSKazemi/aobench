@@ -6,21 +6,21 @@ Single source of truth for project status, next steps, and backlog.
 
 ## Current State (2026-03-19)
 
-**Alpha-1 complete.** Full pipeline runs end-to-end with 30 tasks, 5 environments, 5 tools, 4 adapters, 5 scorers, structured logging, progress bars, Langfuse tracing, and a complete CLI. Dataset splits frozen; cost + latency tracking in place.
+**Alpha-1 complete + HPC task set v1 implemented.** Full pipeline runs end-to-end with 30 tasks, 20 environments, 5 tools, 4 adapters, 5 scorers, structured logging, progress bars, Langfuse tracing, and a complete CLI. Dataset splits frozen; cost + latency tracking in place. HPC snapshot schema (validator, loader factory, parquet telemetry queries) fully implemented. HPC task set v1 (36 role-aware tasks, 6 data types, schema-driven RAG context builder) implemented from Souza et al. 2025.
 
 | Area | Details |
 |------|---------|
-| Tasks | 30 (JOB×10, MON×10, ENERGY×10) — 30/30 v0.1 target; all have `scoring_readiness: ready` |
-| Environments | 5 (env_01–env_05) — full snapshot bundles (SLURM state, telemetry, policy, incidents) |
-| Mock tools | `slurm`, `docs`, `rbac`, `telemetry`, `facility` |
+| Tasks | 30 original (JOB×10, MON×10, ENERGY×10) — all have `scoring_readiness: ready`; + **36 HPC task set v1** (job_ops×8, node_ops×6, telemetry×8, energy×7, dataflow×4, rbac×3) |
+| Environments | 20 (env_01–env_20) — full snapshot bundles across all 8 scenario types; all pass `validate_bundle()` |
+| Mock tools | `slurm`, `docs`, `rbac`, `telemetry` (+ `query_timeseries`, `query_node_metrics`), `facility` — all 16 methods catalogued in `benchmark/configs/hpc_tool_catalog.yaml` |
 | Adapters | `direct_qa`, `openai` (plain + Azure), `anthropic` (Claude), `mcp` (stdio + SSE transports) |
-| Scorers | `outcome` (fuzzy+numeric), `tool_use` (decomposed BFCL-style), `grounding`, `governance`, `efficiency` |
+| Scorers | `outcome` (fuzzy+numeric), `tool_use` (decomposed BFCL-style + `tool_discovery_rate`/`method_discovery_rate` coverage metrics), `grounding`, `governance`, `efficiency` |
 | Robustness | `compute_robustness` + `compute_robustness_suite`; `exabench robustness task/all` CLI |
 | Reports | JSON summary, HTML report, role×category slices, HPC error taxonomy (14 categories), compare diff |
 | Tracing | Optional Langfuse backend — `--langfuse` flag on run commands; posts scores as Langfuse score objects |
 | Logging | `utils/logging.py` — `get_logger()` + `configure_logging()`; `--verbose` on run commands |
 | CI | `.github/workflows/ci.yml` — lint + typecheck + tests + validate on every push/PR |
-| Tests | 118 passing (unit + integration) |
+| Tests | 251 passing (unit + integration) |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` |
 | Dataset splits | 12 dev / 10 public_test / 8 hidden_test — balanced by category and role |
 | Difficulty levels | 10 easy / 13 medium / 7 hard across all 30 tasks |
@@ -85,7 +85,8 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 
 ### Features — Done
 
-- [x] ~~**HPC error taxonomy**~~ ✓ 14 HPC-specific categories in `reports/error_taxonomy.py`; definitions in `benchmark/configs/error_taxonomy.yaml`; 17 unit tests
+- [x] ~~**HPC error taxonomy (score-based)**~~ ✓ 14 HPC-specific categories in `reports/error_taxonomy.py`; definitions in `benchmark/configs/error_taxonomy.yaml`; 17 unit tests
+- [x] ~~**TRAIL-adapted HPC trace annotation taxonomy**~~ ✓ 24-leaf TRAIL-adapted taxonomy in `src/exabench/taxonomy/hpc_error_taxonomy.yaml`; `ErrorAnnotation` + `TraceAnnotation` Pydantic schemas in `schemas/trace_annotation.py`; rule-based `auto_detect_errors()` (7 auto-detectable categories) + LLM-judge `annotate_trace()` + TRAIL metrics (`category_f1`, `location_accuracy`, `joint_accuracy`) in `scorers/error_annotator.py`; 23 unit tests in `tests/unit/test_error_annotator.py`
 - [x] ~~**pass^k metric**~~ ✓ `compute_pass_k` + `compute_robustness` + `compute_robustness_suite` in `scorers/robustness_scorer.py`; `exabench robustness task` + `exabench robustness all` CLI; `make robustness` + `make robustness-all` Makefile targets
 - [x] ~~**Decomposed tool-call scorer**~~ ✓ BFCL-inspired: `selection_score`, `argument_score`, `sequence_score`, `forbidden_call_penalty`; activated when `eval_criteria.expected_tool_sequence` is set; 20 unit tests
 - [x] ~~**`AnthropicAdapter`**~~ ✓ `anthropic_adapter.py`; Claude native `tool_use` blocks; token tracking; `make run-anthropic` + `make run-all-anthropic`
@@ -96,10 +97,11 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 
 ### Features — To Do
 
-- [ ] **LLM-judge rubric scorer** *(paper blocker — highest priority)* — `outcome` scorer only does fuzzy/numeric match; diagnosis and explanation tasks need an LLM judge with structured rubric; implement two-path scorer: deterministic (exact/range) + rubric (LLM judge); define rubric templates for job failure diagnosis, energy anomaly explanation, RBAC-aware response
+- [x] ~~**Hybrid scorer (deterministic + rubric)**~~ ✓ `scorers/hybrid_scorer.py` routes on `task.hybrid_scoring.scoring_mode`; deterministic path: CS/CFS/SR (DAComp three-tier); rubric path: LLM-judge with hierarchical YAML rubric + optional GSB comparative scoring; three HPC rubric templates (`hpc_job_failure_diagnosis_v1`, `hpc_energy_anomaly_v1`, `hpc_rbac_response_v1`); `ComponentSpec` + `HybridScoringConfig` embedded in `TaskSpec`; `make_openai_judge` + `make_anthropic_judge` factory helpers
 - [ ] **Structured output evaluation mode** — `eval_criteria.evaluation_mode: structured_output` declared in schema but no scorer validates JSON schema; add `jsonschema` validation path to `OutcomeScorer`
 - [ ] **Parallel task execution** — `exabench run all` runs tasks serially; add `asyncio` or `concurrent.futures` mode; required before dataset expands beyond 30 tasks
 - [ ] **`exabench task create`** — interactive task authoring helper (currently requires manual JSON editing of ~20 fields)
+- [x] ~~**RBAC policy spec (τ-bench + CLEAR + BFCL)**~~ ✓ `GovernanceScorer` upgraded: forbidden-call detection (`FORBIDDEN_CALL_PENALTY=0.50`) + severity-tiered penalties; `rbac_compliant: bool` field in `BenchmarkResult`; CLEAR Assurance (A) now uses binary compliance rate via `compute_assurance_rate()`; `MockRBACTool.get_allowed_tools()`; all 20 `rbac_policy.yaml` upgraded to v1.1 (5 roles, `allowed_tools`, `partition_access`, `access_tiers`); `docs/rbac_policy.md` created for all 20 environments
 - [ ] **Cross-role evaluation** — run same task under different roles, verify scoped answers differ correctly; CLI command + test suite; validates RBAC as a scoring dimension beyond governance penalty
 - [ ] **Adversarial task variants** — `difficulty: adversarial` in schema but no adversarial tasks; design for jailbreak resistance, misleading evidence, social engineering; most scientifically differentiating feature vs generic QA benchmarks
 - [ ] **Success-per-dollar leaderboard** — cost data exists in reports; add ranking by `success_rate / cost_per_task` across models in `exabench report json`
@@ -107,8 +109,9 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 
 ### SoA Backlog — Not Planned Yet (post-paper)
 
-- [ ] **HPC snapshot schema v2 + replay** *(cloud-opsbench)* — current snapshots are per-environment YAML bundles; full schema: `environment_snapshot.json`, `telemetry_snapshot.parquet`, `scheduler_state.json`, `rbac_profile.yaml`; snapshot replay guarantees identical state across runs and models
+- [x] ~~**HPC snapshot schema + replay** *(cloud-opsbench)*~~ ✓ `schemas/snapshot.py` (SlurmState, SlurmJob, SlurmNode, IncidentMetadata Pydantic models); `environment/snapshot_validator.py` (`validate_bundle()`); `environment/snapshot_loader.py` (`build_tool_registry()`); `MockTelemetryTool.query_timeseries()` + `query_node_metrics()` backed by parquet; `load_environment()` now calls `validate_bundle()` and raises on schema errors; 20 canonical bundles covering all 8 scenario types; `scripts/generate_bundles.py`
 - [ ] **Multi-turn HPC episode + simulated user** *(τ-bench)* — all adapters are single-turn; add episode runner where LLM-simulated HPC user asks follow-ups; directly tests agent conversational reasoning
+- [x] ~~**HPC task set v1 (Souza 2025)**~~ ✓ `benchmark/tasks/task_set_v1.json` (36 tasks); `HPCTaskSpec` + `HPCRoleVariant` + `HPCGroundTruth` Pydantic models in `schemas/task.py`; `src/exabench/tasks/task_loader.py` + `context_builder.py`; 6 domain guideline files in `benchmark/tasks/guidelines/`; `make validate-hpc-tasks`
 - [ ] **Flowcept provenance backend** *(flowcept)* — optional `pip install exabench[flowcept]`; emit events on tool call and step completion; cross-run provenance comparison
 - [ ] **Gymnasium-compatible environment interface** *(τ²-bench)* — `ExaBenchEnv(gym.Env)` with `step()`, `reset()`, `render()`; drop-in compatibility with RL frameworks
 - [ ] **HPC workflow graph scorer** *(worfbench)* — evaluate multi-step operational tasks as DAG matching; partial-credit via subgraph matching; workflow complexity metric (depth, branching)
@@ -175,26 +178,48 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 - Dataset split strategy defined (dev / public_test / hidden_test)
 - Weighted profiles: `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01`
 
-### Phase 4 — Environments ✓
-- env_01: OOM failure (JOB, scientific_user)
-- env_02: Queue congestion (JOB + MON, sysadmin)
-- env_03: Thermal and power monitoring (ENERGY, facility_admin)
-- env_04: Rack energy comparison (ENERGY, facility_admin)
-- env_05: CRAC unit failure / cooling anomaly (ENERGY + MON, facility_admin + sysadmin)
+### Phase 4 — Environments ✓ (expanded to 20)
+- env_01: OOM failure (job_failure, scientific_user)
+- env_02: Queue congestion (queue_congestion, sysadmin)
+- env_03: Thermal and power monitoring (thermal_power, facility_admin)
+- env_04: Rack energy comparison (rack_energy, facility_admin)
+- env_05: CRAC unit failure (cooling_failure, facility_admin + sysadmin)
+- env_06: GPU power spike (energy_anomaly, sysadmin + facility_admin)
+- env_07: PUE degradation / cooling issue (energy_anomaly, facility_admin)
+- env_08: Thermal throttling on node (node_degradation, sysadmin)
+- env_09: Memory ECC errors / flapping node (node_degradation, sysadmin)
+- env_10: User submits to restricted partition (policy_violation, scientific_user + sysadmin)
+- env_11: Account over allocation limit (policy_violation, sysadmin + facility_admin)
+- env_12: Fairshare starvation / priority inversion (queue_congestion, sysadmin)
+- env_13: Six-month CPU utilisation trend (capacity_planning, facility_admin + system_designer)
+- env_14: GPU demand forecast (capacity_planning, system_designer)
+- env_15: Two jobs competing for node memory (multi_job_interference, sysadmin + researcher)
+- env_16: Wrong default partition in slurm.conf (scheduler_misconfiguration, sysadmin)
+- env_17: MPI communication timeout / network fault (job_failure, sysadmin)
+- env_18: Checkpoint file missing / restart fails (job_failure, scientific_user)
+- env_19: GPU idle but not released / energy waste (energy_anomaly, facility_admin)
+- env_20: I/O contention on shared Lustre (multi_job_interference, sysadmin)
 
 ### Phase 5 — Runner, Tools, Adapters ✓
-- `MockSlurmTool`, `MockDocsTool`, `MockRBACTool`, `MockTelemetryTool`, `MockFacilityTool`
+- `MockSlurmTool`, `MockDocsTool`, `MockRBACTool`, `MockTelemetryTool` (`query_timeseries` + `query_node_metrics` + role filtering), `MockFacilityTool`
 - `ToolRegistry` with role-based access enforcement and `allowed_tools` filtering
-- `BenchmarkRunner` full pipeline (load → build tools → run adapter → score → write)
+- `benchmark/configs/hpc_tool_catalog.yaml` — canonical BFCL-style catalog: 5 tools, 16 methods, full parameter schemas, role-visibility matrix, difficulty tiers, OpenAI-compatible export
+- `src/exabench/tools/catalog_loader.py` — `ToolCatalog` / `load_catalog()` / `generate_docs_page()` — validates catalog YAML, filters by role, exports to OpenAI tool format
+- `ToolUseScorer` augmented with `tool_discovery_rate` + `method_discovery_rate` diagnostic metrics in `ScorerOutput.notes`
+- `build_tool_registry(bundle, role)` factory in `environment/snapshot_loader.py` — replaces inline tool construction in runner
+- `validate_bundle(bundle_root)` in `environment/snapshot_validator.py` — validates slurm_state.json, incident_metadata.json, rbac_policy.yaml, parquet columns
+- `schemas/snapshot.py` — `SlurmState`, `SlurmJob`, `SlurmNode`, `SlurmPartition`, `IncidentMetadata` Pydantic models
+- `BenchmarkRunner` full pipeline (load → validate → build tools → run adapter → score → write)
 - `DirectQAAdapter`, `OpenAIAdapter` (plain + Azure, function calling), `AnthropicAdapter` (Claude native tool_use blocks), `MCPClientAdapter` (stdio + SSE transports)
 
 ### Phase 6 — Scoring Engine ✓
 - `OutcomeScorer`: exact match, semantic match (rapidfuzz), numeric tolerance (±5%)
 - `ToolUseScorer`: decomposed BFCL-style (selection, argument, sequence, forbidden_call_penalty) + legacy heuristic mode
 - `GroundingScorer`: answer-to-evidence token overlap
-- `GovernanceScorer`: permission violation penalty
+- `GovernanceScorer`: forbidden-call detection (`FORBIDDEN_CALL_PENALTY=0.50`) + permission-denied penalty (`PERMISSION_DENIED_PENALTY=0.25`) + hard-fail; `rbac_compliant` boolean in `BenchmarkResult`
 - `EfficiencyScorer`: token and step count
 - `compute_robustness(results)` + `compute_robustness_suite()`: pass^k (k=1,2,4,8) + score variance
+- `HybridScorer`: routes `"deterministic"` tasks to CS/CFS/SR; routes `"rubric"` tasks to LLM-judge + optional GSB; backward-compatible (falls back to partial credit when `hybrid_scoring` is `None`)
 - `AggregateScorer`: weighted profile composition
 
 ### Phase 7 — Reporting, CLI, Infrastructure ✓

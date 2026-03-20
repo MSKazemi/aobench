@@ -1,0 +1,29 @@
+bundle_root: environments/env_13
+cluster_name: exabench-cluster-a
+description: Six-month CPU utilisation telemetry showing a steady growth trend from
+  62% average in October 2025 to 89% in March 2026. system_designer must forecast
+  when the cluster will reach saturation and recommend expansion.
+environment_id: env_13
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/capacity_planning_guide.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: capacity_planning
+snapshot_name: Six Month CPU Utilisation Trend
+snapshot_timestamp: '2026-03-19T12:00:00Z'
+supported_categories:
+- ENERGY
+- MON
+supported_roles:
+- facility_admin
+- system_designer
+validation_status: validated

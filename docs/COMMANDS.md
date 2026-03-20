@@ -16,6 +16,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench robustness task` | Run a task N times and report score variance (robustness score) |
 | `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
 | `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
+| `make generate-tool-docs` | Write `hpc_tools_guide.md` into all env `docs/` dirs from `hpc_tool_catalog.yaml` |
 
 ---
 
@@ -532,6 +533,68 @@ CLEAR report written: data/clear_report.json
 
 ---
 
+## HPC Task Set v1
+
+`benchmark/tasks/task_set_v1.json` contains 36 role-aware HPC observability tasks derived from Souza et al. (SC Workshops 2025, arXiv:2509.13978). Tasks span 6 data types, 2 workload classes, and 5 roles with per-role expected answers.
+
+### Task distribution
+
+| Data type | OLAP | OLTP | Total | Scoring |
+|-----------|------|------|-------|---------|
+| `job_ops` | 5 | 3 | 8 | 7 det / 1 rubric |
+| `node_ops` | 4 | 2 | 6 | 5 det / 1 rubric |
+| `telemetry` | 5 | 3 | 8 | 6 det / 2 rubric |
+| `energy` | 5 | 2 | 7 | 5 det / 2 rubric |
+| `dataflow` | 2 | 2 | 4 | 3 det / 1 rubric |
+| `rbac` | 1 | 2 | 3 | 1 det / 2 rubric |
+| **Total** | **22** | **14** | **36** | **27 det / 9 rubric** |
+
+### Python API
+
+```python
+from exabench.tasks.task_loader import load_hpc_task_set, load_hpc_task
+from exabench.tasks.context_builder import HPCContextBuilder
+
+# Load all 36 tasks
+tasks = load_hpc_task_set("benchmark/tasks/task_set_v1.json")
+
+# Load a single task by ID
+task = load_hpc_task("telemetry_04", "benchmark/tasks/task_set_v1.json")
+
+# Build a 5-component RAG context bundle for a specific role
+builder = HPCContextBuilder(guidelines_dir="benchmark/tasks/guidelines")
+bundle = builder.build(task, role="sysadmin", snapshot_summary={})
+# bundle keys: role_prompt, dynamic_schema, guidelines, few_shot_examples, question
+```
+
+### Validate
+
+```bash
+make validate-hpc-tasks
+# HPC task set v1: 36 tasks loaded OK
+#   dataflow: 4
+#   energy: 7
+#   job_ops: 8
+#   node_ops: 6
+#   rbac: 3
+#   telemetry: 8
+```
+
+### Guidelines
+
+Query guidelines live in `benchmark/tasks/guidelines/` — one file per data type. These give agents domain rules (job states, units, primary keys, partition names, RBAC tier definitions) and provide the largest per-token accuracy gain (see paper §6.3).
+
+| File | Data type |
+|------|-----------|
+| `job_ops_guidelines.md` | SLURM job lifecycle queries |
+| `node_ops_guidelines.md` | Node state and availability queries |
+| `telemetry_guidelines.md` | CPU/GPU/memory/network metric queries |
+| `energy_guidelines.md` | Power, energy, and efficiency queries |
+| `dataflow_guidelines.md` | Data provenance and lineage queries |
+| `rbac_guidelines.md` | Role-based access control and policy queries |
+
+---
+
 ## Scoring Dimensions
 
 ExaBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
@@ -564,6 +627,13 @@ for full definitions.  Quick reference:
 | `coverage` | Called at least one tool relevant to each evidence reference |
 | `precision` | Avoided tools outside `allowed_tools` |
 | `no_redundancy` | Avoided repeating the same call more than twice |
+
+**Diagnostic coverage metrics** (appended to `ScorerOutput.notes`, not factored into the score):
+
+| Metric | Formula | Source |
+|--------|---------|--------|
+| `tool_discovery_rate` | `\|tools called\| / \|tools available for role\|` | `hpc_tool_catalog.yaml` |
+| `method_discovery_rate` | `\|(tool,method) pairs called\| / \|(tool,method) pairs available for role\|` | `hpc_tool_catalog.yaml` |
 
 To add ground-truth tool sequences to a task, set `eval_criteria.expected_tool_sequence`:
 
@@ -621,8 +691,15 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 | `make robustness` | Run a task N times and report variance (TASK=, ENV=, ADAPTER=, N= overridable) |
 | `make robustness-all` | Run ALL tasks N times each and report suite-level pass^k (ADAPTER=, N=, SPLIT= overridable) |
 | `make clear` | Compute CLEAR scorecard for latest run (RUN_DIR=, CLEAR_OUTPUT=, ROBUSTNESS_JSON= overridable) |
+| `make generate-tool-docs` | Write `hpc_tools_guide.md` into each environment's `docs/` dir (from `hpc_tool_catalog.yaml`; role auto-detected from `metadata.yaml`) |
+| `make generate-tool-docs-role` | Same, but force a specific role (`TOOL_DOCS_ROLE=sysadmin`) |
+| `make generate-bundles` | Generate canonical snapshot bundles `env_06–env_20` under `benchmark/environments/` |
+| `make validate-bundles` | Validate all snapshot bundles against canonical schemas (exit 0 = all OK) |
+| `make validate-hpc-tasks` | Validate HPC task set v1 (`benchmark/tasks/task_set_v1.json`) — prints per-data-type counts |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
 | `make scoring-dims` | Print the scoring dimensions reference (all terms defined) |
+| `make upgrade-rbac-yaml` | Upgrade all `rbac_policy.yaml` files v1.0 → v1.1 (adds `allowed_tools`, `partition_access`, `access_tiers`, all 5 roles) |
+| `make create-rbac-policy-docs` | Create `docs/rbac_policy.md` in all environment bundles (canonical τ-bench-style policy document) |
 
 **Example with overrides:**
 

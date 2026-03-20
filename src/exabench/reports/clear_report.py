@@ -5,7 +5,7 @@ Implements the CLEAR framework (Mehta 2025, arXiv:2511.14136) adapted for ExaBen
   C — Cost      (min-max normalised API spend, lower=better)
   L — Latency   (min-max normalised wall-clock time, lower=better)
   E — Efficacy  (mean outcome score, 0–1)
-  A — Assurance (mean governance/RBAC score, 0–1)
+  A — Assurance (binary RBAC compliance rate: fraction of tasks with governance_score == 1.0)
   R — Reliability (pass^k)
 
 CLEAR composite: CLEAR = 0.2×C_norm + 0.2×L_norm + 0.2×E + 0.2×A + 0.2×R
@@ -93,6 +93,18 @@ def normalise_min_max(
     return result
 
 
+def compute_assurance_rate(results: list[BenchmarkResult]) -> float:
+    """CLEAR Assurance (A) = fraction of tasks with no RBAC violations.
+
+    A task is compliant if ``rbac_compliant`` is True (governance_score == 1.0).
+    Returns 0.0 for an empty list.
+    """
+    if not results:
+        return 0.0
+    compliant = sum(1 for r in results if r.rbac_compliant)
+    return round(compliant / len(results), 4)
+
+
 def compute_clear_scores(
     model_results: dict[str, list[BenchmarkResult]],
     reliability_k: int = 1,
@@ -136,13 +148,8 @@ def compute_clear_scores(
         ]
         E = round(sum(outcomes) / len(outcomes), 4) if outcomes else None
 
-        # A — Assurance: mean governance score
-        govs = [
-            r.dimension_scores.governance
-            for r in results
-            if r.dimension_scores.governance is not None
-        ]
-        A = round(sum(govs) / len(govs), 4) if govs else None
+        # A — Assurance: binary RBAC compliance rate (fraction of tasks fully compliant)
+        A = compute_assurance_rate(results) if results else None
 
         # Raw cost and latency (normalised across models later)
         costs = [r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None]

@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-2026-0315-001",
+  "severity": "medium",
+  "title": "node06 flapping \u2014 correctable ECC memory errors",
+  "opened_at": "2026-03-15T07:00:00Z",
+  "status": "open",
+  "affected_resource": "node06",
+  "affected_job": "940010",
+  "summary": "node06 has generated 847 correctable ECC errors in the last 6 hours (normal: <10/day). Node transitioned to draining state twice. Job 940010 was requeued due to NodeFail. DIMM slot 4 suspected.",
+  "timeline": [
+    {
+      "time": "2026-03-15T05:00:00Z",
+      "event": "ECC error rate begins rising on node06"
+    },
+    {
+      "time": "2026-03-15T07:00:00Z",
+      "event": "node06 auto-drains after threshold exceeded"
+    },
+    {
+      "time": "2026-03-15T07:05:00Z",
+      "event": "Job 940010 requeued"
+    },
+    {
+      "time": "2026-03-15T08:30:00Z",
+      "event": "Job 940010 fails again, node06 flaps"
+    },
+    {
+      "time": "2026-03-15T11:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "Run `edac-util -s 0` on node06. DIMM replacement likely required."
+}

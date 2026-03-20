@@ -1,0 +1,72 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-10T16:00:00Z",
+  "nodes": [
+    {
+      "name": "gpu01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu02",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu03",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu04",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "gpu",
+      "max_time": "72:00:00",
+      "max_mem_per_node_mb": 512000,
+      "default_mem_per_cpu_mb": 4096
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "920001",
+      "job_name": "llm_train_run7",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "gpu01",
+      "partition": "gpu",
+      "submit_time": "2026-03-10T08:00:00Z",
+      "start_time": "2026-03-10T08:05:00Z",
+      "end_time": null,
+      "elapsed": "07:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": 240000,
+      "oom_kill": false,
+      "failure_reason": null
+    }
+  ]
+}

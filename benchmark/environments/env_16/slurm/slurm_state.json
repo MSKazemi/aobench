@@ -1,0 +1,69 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-11T09:00:00Z",
+  "nodes": [
+    {
+      "name": "node01",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node02",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "gpu01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "standard",
+      "max_time": "48:00:00",
+      "max_mem_per_node_mb": 256000,
+      "default_mem_per_cpu_mb": 2048
+    },
+    {
+      "name": "gpu",
+      "max_time": "72:00:00",
+      "max_mem_per_node_mb": 512000,
+      "default_mem_per_cpu_mb": 4096
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "910500",
+      "job_name": "cpu_only_analysis",
+      "user": "carol",
+      "account": "cfd-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "gpu01",
+      "partition": "gpu",
+      "submit_time": "2026-03-11T08:00:00Z",
+      "start_time": "2026-03-11T08:05:00Z",
+      "end_time": null,
+      "elapsed": "00:55:00",
+      "num_cpus": 16,
+      "num_nodes": 1,
+      "requested_mem_mb": 32768,
+      "used_mem_mb": 28000,
+      "oom_kill": false,
+      "failure_reason": null
+    }
+  ]
+}

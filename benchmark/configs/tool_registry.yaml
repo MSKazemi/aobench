@@ -33,3 +33,22 @@ role_tool_defaults:
     - docs
     - telemetry
     - facility
+
+# Method-level visibility overrides (supplement to role_tool_defaults)
+# These entries override the tool-level default for a specific method.
+# Format: <tool>.<method>: {denied_roles: [...]}
+method_visibility:
+  slurm.list_nodes:
+    denied_roles: [scientific_user]
+  rbac.check:
+    denied_roles: [scientific_user, researcher, system_designer]
+  rbac.list_permissions:
+    denied_roles: [scientific_user, researcher, system_designer]
+  facility.query_cluster_energy:
+    denied_roles: [scientific_user, researcher, sysadmin]
+  facility.query_rack_telemetry:
+    denied_roles: [scientific_user, researcher]
+  facility.list_inventory:
+    denied_roles: [scientific_user, researcher]
+  facility.query_node_power:
+    denied_roles: [scientific_user]

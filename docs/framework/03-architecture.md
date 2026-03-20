@@ -449,22 +449,25 @@ The ExaBench repository structure (aligned with the [README](../README.md)):
 ```
 ExaBench/
 ├── src/exabench/           # Python package (pip install exabench)
-│   ├── schemas/            # Pydantic data models
+│   ├── schemas/            # Pydantic data models (environment, snapshot, task, result, trace, trace_annotation)
+│   ├── taxonomy/           # HPC error taxonomy YAML (hpc_error_taxonomy.yaml — 24 TRAIL-adapted leaf categories)
+│   ├── environment/        # Snapshot loading + validation (snapshot_loader, snapshot_validator)
 │   ├── loaders/            # Task and environment loaders
-│   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC)
-│   ├── adapters/            # Agent backend adapters
+│   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC, facility)
+│   ├── adapters/           # Agent backend adapters
 │   ├── runners/            # Execution runner and trace writer
-│   ├── scorers/            # Scoring engine (outcome, governance, efficiency)
+│   ├── scorers/            # Scoring engine (outcome, governance, efficiency, error_annotator)
 │   ├── reports/            # Report generation
 │   ├── utils/              # Shared utilities
 │   └── cli/                # exabench run / validate commands
 │
 ├── benchmark/              # Benchmark dataset (static source data)
 │   ├── tasks/specs/        # Task specification files (JSON)
-│   ├── environments/       # HPC state snapshot bundles
+│   ├── environments/       # HPC state snapshot bundles (env_01–env_20)
 │   ├── configs/            # Scoring profiles, tool registry
 │   └── qa/                 # ExaBench-QA dataset (query corpus)
 │
+├── scripts/                # Utility scripts (generate_bundles.py, check_coverage.py)
 ├── data/runs/              # Runtime artifacts (traces, results — gitignored)
 ├── tests/                  # Unit and integration tests
 └── docs/                   # Documentation

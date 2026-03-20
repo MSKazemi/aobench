@@ -1,0 +1,34 @@
+{
+  "incident_id": "INC-2026-0319-003",
+  "severity": "high",
+  "title": "Lustre I/O saturation \u2014 climate_sim stalled by checkpoint_dump",
+  "opened_at": "2026-03-19T13:30:00Z",
+  "status": "open",
+  "affected_resource": "lustre-fs",
+  "affected_job": "999002",
+  "summary": "Job 999001 (checkpoint_dump) is writing at 800 MB/s per node (3.2 GB/s total) to the shared Lustre filesystem, saturating the OST bandwidth. Job 999002 (climate_sim) on nodes 5\u20138 has stalled \u2014 CPU util <5%, read throughput near zero. climate_sim is performing at <5% normal rate.",
+  "timeline": [
+    {
+      "time": "2026-03-19T12:05:00Z",
+      "event": "Job 999002 (climate_sim) starts normally"
+    },
+    {
+      "time": "2026-03-19T13:05:00Z",
+      "event": "Job 999001 (checkpoint_dump) starts"
+    },
+    {
+      "time": "2026-03-19T13:10:00Z",
+      "event": "Lustre OST bandwidth saturated"
+    },
+    {
+      "time": "2026-03-19T13:30:00Z",
+      "event": "Alert: climate_sim CPU util drops to <5%"
+    },
+    {
+      "time": "2026-03-19T14:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "Consider cancelling checkpoint_dump or applying lctl I/O throttle."
+}

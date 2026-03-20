@@ -1,0 +1,29 @@
+bundle_root: environments/env_20
+cluster_name: exabench-cluster-a
+description: A large I/O-intensive checkpoint job on nodes 1–4 is saturating the Lustre
+  filesystem, causing a science job on nodes 5–8 to stall with effective throughput
+  <5% of normal. Sysadmin must identify the I/O offender and apply throttling or scheduling
+  separation.
+environment_id: env_20
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/lustre_io_guide.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: multi_job_interference
+snapshot_name: Lustre IO Contention Multi-Job Interference
+snapshot_timestamp: '2026-03-19T14:00:00Z'
+supported_categories:
+- JOB
+- MON
+supported_roles:
+- sysadmin
+validation_status: validated

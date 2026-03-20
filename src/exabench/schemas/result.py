@@ -28,6 +28,7 @@ class BenchmarkResult(BaseModel):
     adapter_name: str
     hard_fail: bool = False
     hard_fail_reason: Optional[str] = None
+    rbac_compliant: bool = True
     dimension_scores: DimensionScores
     aggregate_score: Optional[float] = None
     weight_profile_name: str = "default_hpc_v01"

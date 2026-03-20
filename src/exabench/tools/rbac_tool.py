@@ -29,6 +29,7 @@ class MockRBACTool(BaseTool):
         dispatch = {
             "check": self._check,
             "list_permissions": self._list_permissions,
+            "get_allowed_tools": self._get_allowed_tools,
         }
         if method not in dispatch:
             return self._error(f"Unknown rbac method: '{method}'")
@@ -49,3 +50,11 @@ class MockRBACTool(BaseTool):
     def _list_permissions(self) -> ToolResult:
         role_policy = self._policy.get("roles", {}).get(self._role, {})
         return self._ok(role_policy.get("permissions", []))
+
+    def _get_allowed_tools(self) -> ToolResult:
+        """Return the list of tool names allowed for this role."""
+        role_policy = self._policy.get("roles", {}).get(self._role, {})
+        allowed = role_policy.get("allowed_tools", [])
+        if allowed == ["*"] or "*" in allowed:
+            return self._ok({"allowed_tools": "*", "unrestricted": True})
+        return self._ok({"allowed_tools": allowed, "unrestricted": False})

@@ -929,14 +929,35 @@ Each tool must:
 - `rbac.*`
 - `facility.*` (optional where needed by ENERGY/Facility tasks)
 
-### 7.3 Example v0.1 tools
+### 7.3 Implemented tools and catalog
 
-- `slurm.query_jobs()`
-- `slurm.job_details(job_id)`
-- `telemetry.query(metric, labels, time_range)`
-- `docs.retrieve(query)`
-- `rbac.check(role, resource)`
-- `facility.get_rack_state(rack_id)`
+All 5 tool families are implemented and catalogued in `benchmark/configs/hpc_tool_catalog.yaml`
+(BFCL-style — 16 methods total, full parameter schemas, role-visibility matrix, difficulty tiers).
+
+| Tool | Methods | Catalog class |
+|------|---------|---------------|
+| `slurm` | `query_jobs`, `job_details`, `list_nodes`, `list_partitions` | `MockSlurmTool` |
+| `telemetry` | `query_timeseries`, `query_node_metrics`, `query_memory_events`, `list_metrics` | `MockTelemetryTool` |
+| `rbac` | `check`, `list_permissions` | `MockRBACTool` |
+| `facility` | `query_node_power`, `query_cluster_energy`, `query_rack_telemetry`, `list_inventory` | `MockFacilityTool` |
+| `docs` | `retrieve`, `list_docs` | `MockDocsTool` |
+
+The catalog is the authoritative source for:
+- agent tool-discovery (loaded via `docs.retrieve("available tools")` in environments)
+- `ToolUseScorer` argument validation and coverage metrics
+- adapter `to_openai_tools(role)` rendering (OpenAI / Anthropic function-calling format)
+
+Load the catalog in Python:
+```python
+from exabench.tools import load_catalog
+catalog = load_catalog()
+tools_json = catalog.to_openai_tools(role="sysadmin")
+```
+
+Generate per-environment agent docs:
+```bash
+make generate-tool-docs
+```
 
 ### 7.4 Tool base interface
 
@@ -1309,9 +1330,10 @@ For v0.1, the correct architecture is:
 
 ExaBench v0.1 implements six canonical scorer families:
 
-1. `outcome`
-    - evaluates task correctness
-    - supports exact-match, numeric-tolerance, structured-output, and semantic-match modes
+1. `outcome` — implemented by `HybridScorer` (routes) and `OutcomeScorer` (legacy fallback)
+    - **Legacy path** (no `hybrid_scoring`): exact-match, numeric-tolerance, semantic-match modes via `OutcomeScorer`
+    - **Deterministic path** (`scoring_mode: "deterministic"`): three-tier CS / CFS / SR execution metrics; `SR` used as outcome; components declared in `task.hybrid_scoring.components`
+    - **Rubric path** (`scoring_mode: "rubric"`): LLM-judge with hierarchical YAML rubric + optional Good-Same-Bad (GSB) comparative scoring; `outcome = α·score_rubric + (1−α)·score_gsb`; evidence-first policy; built-in rubric templates for HPC job failure diagnosis, energy anomaly, and RBAC response
 2. `tool_use`
     - evaluates tool selection, argument correctness, acceptable sequence, unnecessary calls, and invalid calls
 3. `grounding`

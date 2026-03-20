@@ -6,6 +6,7 @@ from pathlib import Path
 
 import yaml
 
+from exabench.environment.snapshot_validator import validate_bundle
 from exabench.schemas.environment import EnvironmentBundle, EnvironmentMetadata
 
 
@@ -29,6 +30,14 @@ def load_environment(env_dir: str | Path) -> EnvironmentBundle:
     if missing:
         raise FileNotFoundError(
             f"Environment {metadata.environment_id} is missing declared files: {missing}"
+        )
+
+    # Validate structured artifact schemas (slurm_state.json, incident_metadata.json, etc.)
+    errors = validate_bundle(env_dir)
+    if errors:
+        raise ValueError(
+            f"Bundle validation failed for {metadata.environment_id}:\n"
+            + "\n".join(f"  - {e}" for e in errors)
         )
 
     return EnvironmentBundle(metadata=metadata, root_path=str(env_dir))

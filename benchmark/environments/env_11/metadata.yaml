@@ -1,0 +1,28 @@
+bundle_root: environments/env_11
+cluster_name: exabench-cluster-a
+description: Account 'ml-lab' has consumed 98% of its monthly CPU-hour allocation.
+  Three jobs are pending due to QOS limit enforcement. facility_admin must assess
+  whether to grant an exception or enforce the limit.
+environment_id: env_11
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/allocation_policy.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: policy_violation
+snapshot_name: Account Over Allocation Limit
+snapshot_timestamp: '2026-03-17T16:00:00Z'
+supported_categories:
+- JOB
+supported_roles:
+- sysadmin
+- facility_admin
+validation_status: validated

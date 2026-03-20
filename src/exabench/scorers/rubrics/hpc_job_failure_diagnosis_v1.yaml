@@ -1,0 +1,58 @@
+rubric_id: hpc_job_failure_diagnosis_v1
+version: "1"
+description: "Evaluate agent diagnosis of an HPC job failure"
+domain: hpc_operations
+max_score: 6
+
+dimensions:
+  technical_correctness:
+    description: "Does the diagnosis identify the actual root cause?"
+    weight: 0.50
+    paths:
+      resource_exhaustion:
+        description: "Job failed due to resource limit (memory, CPU, walltime)"
+        items:
+          - id: cause_identified
+            description: "Correct resource type (memory/CPU/walltime) identified as cause"
+            points: 2
+          - id: evidence_cited
+            description: "References specific job metrics (e.g. RSS, exit code, MaxRSS)"
+            points: 1
+      dependency_failure:
+        description: "Job failed due to upstream dependency or filesystem issue"
+        items:
+          - id: cause_identified
+            description: "Correct upstream dependency or filesystem issue identified"
+            points: 2
+          - id: evidence_cited
+            description: "References specific failure signal (e.g. missing input file, node failure)"
+            points: 1
+      scheduler_issue:
+        description: "Job failed due to scheduler or queue policy"
+        items:
+          - id: cause_identified
+            description: "Correct scheduler cause (priority, preemption, QOS limit) identified"
+            points: 2
+          - id: evidence_cited
+            description: "References queue state, job accounting, or policy document"
+            points: 1
+
+  role_appropriateness:
+    description: "Is the explanation calibrated for the user's role and access tier?"
+    weight: 0.30
+    levels:
+      0: "Over-exposes privileged system detail to unprivileged role, or under-explains for the role"
+      1: "Adequate; covers expected scope for this role persona"
+      2: "Optimal detail level; explicitly acknowledges role boundaries where relevant"
+
+  actionability:
+    description: "Are remediation steps clear, safe, and feasible for this role?"
+    weight: 0.20
+    levels:
+      0: "No recommendation provided, or recommendation is harmful/unsafe"
+      1: "Vague or incomplete steps; missing key actions"
+      2: "Specific, safe, sequenced remediation steps appropriate for the role"
+
+scoring:
+  aggregate: weighted_mean
+  level_max: 2

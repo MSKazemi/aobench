@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from exabench.adapters.base import BaseAdapter
+from exabench.environment.snapshot_loader import build_tool_registry
 from exabench.exporters.base_exporter import BaseExporter
 from exabench.loaders.env_loader import load_environment
 from exabench.loaders.task_loader import load_task
@@ -13,12 +14,7 @@ from exabench.runners.trace_writer import TraceWriter
 from exabench.schemas.result import BenchmarkResult
 from exabench.schemas.trace import Trace
 from exabench.scorers.aggregate import AggregateScorer
-from exabench.tools.docs_tool import MockDocsTool
-from exabench.tools.facility_tool import MockFacilityTool
-from exabench.tools.rbac_tool import MockRBACTool
 from exabench.tools.registry import ToolRegistry
-from exabench.tools.slurm_tool import MockSlurmTool
-from exabench.tools.telemetry_tool import MockTelemetryTool
 from exabench.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -52,8 +48,8 @@ class BenchmarkRunner:
         env = load_environment(self._benchmark_root / "environments" / env_id)
         logger.debug("loaded task=%s env=%s role=%s", task.task_id, env.metadata.environment_id, task.role)
 
-        # 2. Build role-aware tool set
-        tools = self._build_tools(env.root_path, task.role, task.allowed_tools)
+        # 2. Build role-aware tool set from snapshot bundle
+        tools = build_tool_registry(env, role=task.role, allowed_tools=task.allowed_tools)
         logger.debug("tools registered: %s", tools.available_tool_names)
 
         # 3. Assemble execution context
@@ -88,17 +84,3 @@ class BenchmarkRunner:
 
         return result
 
-    def _build_tools(
-        self,
-        env_root: str,
-        role: str,
-        allowed_tools: list[str] | None = None,
-    ) -> ToolRegistry:
-        tools = [
-            MockSlurmTool(env_root, role=role),
-            MockDocsTool(env_root, role=role),
-            MockRBACTool(env_root, role=role),
-            MockTelemetryTool(env_root, role=role),
-            MockFacilityTool(env_root, role=role),
-        ]
-        return ToolRegistry(tools, allowed_tool_names=allowed_tools, role=role)

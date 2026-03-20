@@ -1,0 +1,172 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-19T12:00:00Z",
+  "nodes": [
+    {
+      "name": "gpu01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu02",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu03",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    },
+    {
+      "name": "gpu04",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 512000,
+      "partitions": [
+        "gpu"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "gpu",
+      "max_time": "72:00:00",
+      "max_mem_per_node_mb": 512000,
+      "default_mem_per_cpu_mb": 4096
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "985001",
+      "job_name": "gpu_pending_1",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-11T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "985002",
+      "job_name": "gpu_pending_2",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-12T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "985003",
+      "job_name": "gpu_pending_3",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-13T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "985004",
+      "job_name": "gpu_pending_4",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-14T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "985005",
+      "job_name": "gpu_pending_5",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "985006",
+      "job_name": "gpu_pending_6",
+      "user": "bob",
+      "account": "ml-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "gpu",
+      "submit_time": "2026-03-16T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 256000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    }
+  ]
+}

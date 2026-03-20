@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0312-001",
+  "severity": "high",
+  "title": "PUE degradation: 1.35 \u2192 1.62 over 48h",
+  "opened_at": "2026-03-11T22:00:00Z",
+  "status": "open",
+  "affected_resource": "CRAC-unit-2",
+  "affected_job": null,
+  "summary": "Cluster PUE rose from baseline 1.35 to 1.62 over 48 hours. Inlet temperatures increasing across rack rows B and C. CRAC unit 2 reported partial airflow reduction at 22:00 UTC Mar 11.",
+  "timeline": [
+    {
+      "time": "2026-03-11T22:00:00Z",
+      "event": "CRAC-2 partial airflow alarm triggered"
+    },
+    {
+      "time": "2026-03-11T22:30:00Z",
+      "event": "Inlet temp on node05-node08 starts climbing"
+    },
+    {
+      "time": "2026-03-12T06:00:00Z",
+      "event": "PUE crosses 1.5 threshold"
+    },
+    {
+      "time": "2026-03-12T10:00:00Z",
+      "event": "Snapshot captured \u2014 PUE at 1.62"
+    }
+  ],
+  "resolution": null,
+  "notes": "CRAC-2 filter may need replacement. Cooling capacity marginal at current load."
+}

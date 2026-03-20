@@ -46,6 +46,9 @@ class AggregateScorer:
             (o.hard_fail_reason for o in outputs.values() if o.hard_fail), None
         )
 
+        governance_output = outputs["governance"]
+        rbac_compliant = governance_output.score == 1.0 and not governance_output.hard_fail
+
         dim_scores = DimensionScores(
             outcome=outputs["outcome"].score,
             tool_use=outputs["tool_use"].score,
@@ -78,6 +81,7 @@ class AggregateScorer:
             adapter_name=trace.adapter_name,
             hard_fail=hard_fail,
             hard_fail_reason=hard_fail_reason,
+            rbac_compliant=rbac_compliant,
             dimension_scores=dim_scores,
             aggregate_score=0.0 if hard_fail else aggregate,
             weight_profile_name=profile.name,

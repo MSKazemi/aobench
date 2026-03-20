@@ -6,6 +6,50 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
+from exabench.schemas.workflow_graph import WorkflowGraph
+
+# ---------------------------------------------------------------------------
+# Hybrid-scorer data models (ComponentSpec + HybridScoringConfig)
+# These are embedded in TaskSpec when tasks use the hybrid scoring path.
+# ---------------------------------------------------------------------------
+
+
+class ComponentSpec(BaseModel):
+    """One scorable component of a deterministic task.
+
+    A deterministic task is decomposed into components (e.g. individual tool
+    outputs) each evaluated in isolation.  ``upstream_deps`` lists the
+    ``component_id`` values that must be correct before this component's
+    Cascading-Failure Score (CFS) propagates.
+    """
+
+    component_id: str
+    ground_truth: dict[str, Any]
+    weight: float = 1.0
+    tolerance_pct: float = 5.0
+    match_type: Literal["exact", "numeric", "set"] = "numeric"
+    upstream_deps: list[str] = Field(default_factory=list)
+
+
+class HybridScoringConfig(BaseModel):
+    """Hybrid scoring configuration embedded in a TaskSpec.
+
+    ``scoring_mode`` selects the evaluation path:
+    - ``"deterministic"`` — three-tier execution metrics (CS / CFS / SR).
+    - ``"rubric"``        — LLM-judge with hierarchical rubric (+ optional GSB).
+    """
+
+    scoring_mode: Literal["deterministic", "rubric"]
+
+    # --- Deterministic path ---
+    components: list[ComponentSpec] = Field(default_factory=list)
+
+    # --- Rubric path ---
+    rubric_id: Optional[str] = None
+    task_context: Optional[str] = None          # HPC snapshot summary injected into judge prompt
+    baseline_answers: list[str] = Field(default_factory=list)  # for GSB; empty → α=1.0
+    alpha: float = 0.6                           # rubric weight; 1-α goes to GSB
+
 Role = Literal["scientific_user", "sysadmin", "facility_admin", "researcher", "system_designer"]
 QCat = Literal["JOB", "PERF", "DATA", "MON", "ENERGY", "SEC", "FAC", "ARCH", "AIOPS", "DOCS"]
 Difficulty = Literal["easy", "medium", "hard", "adversarial"]
@@ -129,7 +173,64 @@ class TaskSpec(BaseModel):
     # Scoring configuration
     aggregate_weight_profile: str = "default_hpc_v01"
 
+    # Hybrid scoring (optional — when set, OutcomeScorer delegates to HybridScorer)
+    hybrid_scoring: Optional[HybridScoringConfig] = None
+
+    # Ground-truth workflow graph for WorfEval scoring (WorfBench §6).
+    # When present, WorkflowScorer produces a WorfEvalScore for each run.
+    # When absent, WorkflowScorer is skipped.
+    ground_truth_workflow: Optional[WorkflowGraph] = None
+
     # Lifecycle
     benchmark_split: Optional[BenchmarkSplit] = None
     validation_status: ValidationStatus = "not_started"
     scoring_readiness: ScoringReadiness = "blocked"
+
+
+# ---------------------------------------------------------------------------
+# HPC Task Set v1 schema (§8 of hpc_task_set_spec.md)
+# ---------------------------------------------------------------------------
+
+HPCDataType = Literal["job_ops", "node_ops", "telemetry", "energy", "dataflow", "rbac"]
+HPCWorkloadType = Literal["OLAP", "OLTP"]
+HPCTemporalType = Literal["retrospective", "prospective"]
+HPCScoringMode = Literal["deterministic", "rubric"]
+HPCRole = Literal["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"]
+
+
+class HPCRoleVariant(BaseModel):
+    """Expected answer and visible data scope for a specific role."""
+
+    expected_answer: str
+    visible_data: list[str] = Field(default_factory=list)
+
+
+class HPCGroundTruth(BaseModel):
+    """Ground-truth values for deterministic HPC tasks.
+
+    Uses ``extra = "allow"`` so that per-task fields (e.g. ``job_state``,
+    ``peak_mem_pct``, ``node_count``) can be declared freely without a rigid
+    schema — the data type dictates what fields appear.
+    """
+
+    model_config = {"extra": "allow"}
+
+
+class HPCTaskSpec(BaseModel):
+    """HPC task set v1 task definition (hpc_task_set_spec.md §8)."""
+
+    task_id: str
+    question: str
+    data_type: HPCDataType
+    workload_type: HPCWorkloadType
+    temporal: HPCTemporalType
+    scoring_mode: HPCScoringMode
+    rubric_id: Optional[str] = None
+    difficulty: Difficulty
+    role_variants: dict[str, HPCRoleVariant] = Field(default_factory=dict)
+    snapshot_id: str
+    required_tools: list[str] = Field(default_factory=list)
+    ground_truth: Optional[HPCGroundTruth] = None
+    tolerance_pct: float = 5.0
+    # Taxonomy labels from spec §3.2
+    visible_to_roles: list[str] = Field(default_factory=list)

@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0317-001",
+  "severity": "low",
+  "title": "Account ml-lab at 98% monthly CPU-hour allocation",
+  "opened_at": "2026-03-17T15:00:00Z",
+  "status": "open",
+  "affected_resource": "account:ml-lab",
+  "affected_job": "960001",
+  "summary": "Account ml-lab has used 490,000 of 500,000 allocated CPU-hours for March 2026. Two new jobs (960001, 960002) are blocked by QOS limit. User frank has 4 days remaining in the billing period.",
+  "timeline": [
+    {
+      "time": "2026-03-17T15:00:00Z",
+      "event": "Jobs 960001 and 960002 submitted"
+    },
+    {
+      "time": "2026-03-17T15:00:00Z",
+      "event": "Jobs blocked: QOSMaxCpuMinutesPerJobLimit"
+    },
+    {
+      "time": "2026-03-17T15:05:00Z",
+      "event": "Alert: ml-lab at 98% allocation"
+    },
+    {
+      "time": "2026-03-17T16:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "PI may request emergency allocation extension via helpdesk."
+}

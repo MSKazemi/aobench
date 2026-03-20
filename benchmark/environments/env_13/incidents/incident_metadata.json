@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0319-001",
+  "severity": "low",
+  "title": "Capacity planning: CPU utilisation approaching saturation",
+  "opened_at": "2026-03-19T00:00:00Z",
+  "status": "open",
+  "affected_resource": "cluster:exabench-cluster-a",
+  "affected_job": null,
+  "summary": "Average CPU utilisation has grown from 62% (Oct 2025) to 89% (Mar 2026), a rate of ~4.7 pp/month. At this rate, 95% saturation will be reached in approximately 6 weeks. Expansion planning lead time is 12 weeks.",
+  "timeline": [
+    {
+      "time": "2025-10-01T00:00:00Z",
+      "event": "Baseline: 62% average CPU utilisation"
+    },
+    {
+      "time": "2026-01-01T00:00:00Z",
+      "event": "Utilisation at 74% \u2014 growth trend confirmed"
+    },
+    {
+      "time": "2026-03-01T00:00:00Z",
+      "event": "Utilisation at 86% \u2014 capacity planning initiated"
+    },
+    {
+      "time": "2026-03-19T12:00:00Z",
+      "event": "Snapshot captured \u2014 89% utilisation"
+    }
+  ],
+  "resolution": null,
+  "notes": "Recommend submitting hardware order within 2 weeks to avoid saturation impact."
+}

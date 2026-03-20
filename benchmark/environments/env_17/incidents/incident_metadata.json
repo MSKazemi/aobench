@@ -1,0 +1,38 @@
+{
+  "incident_id": "INC-2026-0316-002",
+  "severity": "high",
+  "title": "MPI job failure due to network timeout on node11",
+  "opened_at": "2026-03-16T20:05:00Z",
+  "status": "open",
+  "affected_resource": "node11",
+  "affected_job": "915000",
+  "summary": "4-node MPI job 915000 failed after 6 hours with exit 137. Network telemetry shows node11 net_rx_mbps dropped to 0 at ~19:05 UTC. MPI timeout (300s) triggered SIGKILL across all ranks. node11 auto-drained after NodeFail detection.",
+  "timeline": [
+    {
+      "time": "2026-03-16T14:05:00Z",
+      "event": "Job 915000 starts on 4 nodes"
+    },
+    {
+      "time": "2026-03-16T19:05:00Z",
+      "event": "node11 network RX drops to 0"
+    },
+    {
+      "time": "2026-03-16T20:05:00Z",
+      "event": "MPI timeout \u2014 SIGKILL sent to all ranks"
+    },
+    {
+      "time": "2026-03-16T20:06:00Z",
+      "event": "Job 915000 failed (exit 137)"
+    },
+    {
+      "time": "2026-03-16T20:07:00Z",
+      "event": "node11 auto-drained (NodeFail)"
+    },
+    {
+      "time": "2026-03-16T20:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "Check switch port on node11 for link-down events. Possible NIC failure."
+}

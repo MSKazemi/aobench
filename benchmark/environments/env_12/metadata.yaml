@@ -1,0 +1,28 @@
+bundle_root: environments/env_12
+cluster_name: exabench-cluster-a
+description: Account 'ml-lab' has been monopolizing the cluster for 72 hours, consuming
+  85% of CPU-hours. Account 'bio-lab' has 12 jobs waiting over 48 hours each due to
+  fairshare starvation. Sysadmin must intervene to restore scheduling fairness.
+environment_id: env_12
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/fairshare_policy.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: queue_congestion
+snapshot_name: Fairshare Starvation Priority Inversion
+snapshot_timestamp: '2026-03-18T10:00:00Z'
+supported_categories:
+- JOB
+- MON
+supported_roles:
+- sysadmin
+validation_status: validated

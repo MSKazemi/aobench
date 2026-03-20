@@ -1,0 +1,72 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-16T20:00:00Z",
+  "nodes": [
+    {
+      "name": "node10",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node11",
+      "state": "drain",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node12",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node13",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "standard",
+      "max_time": "48:00:00",
+      "max_mem_per_node_mb": 256000,
+      "default_mem_per_cpu_mb": 2048
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "915000",
+      "job_name": "mpi_weather_sim",
+      "user": "carol",
+      "account": "cfd-lab",
+      "state": "FAILED",
+      "exit_code": "137:0",
+      "node": "node10,node11,node12,node13",
+      "partition": "standard",
+      "submit_time": "2026-03-16T14:00:00Z",
+      "start_time": "2026-03-16T14:05:00Z",
+      "end_time": "2026-03-16T20:05:00Z",
+      "elapsed": "06:00:00",
+      "num_cpus": 256,
+      "num_nodes": 4,
+      "requested_mem_mb": 65536,
+      "used_mem_mb": 55000,
+      "oom_kill": false,
+      "failure_reason": "NodeFail"
+    }
+  ]
+}

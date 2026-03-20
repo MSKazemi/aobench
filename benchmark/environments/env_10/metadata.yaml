@@ -1,0 +1,29 @@
+bundle_root: environments/env_10
+cluster_name: exabench-cluster-a
+description: User 'eve' submitted a job to the 'restricted' partition, which requires
+  explicit approval for accounts in the 'guest' group. The job was held by SLURM.
+  Sysadmin must identify the violation and advise the user on the correct partition
+  to use.
+environment_id: env_10
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/partition_access_policy.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: policy_violation
+snapshot_name: Policy Violation Restricted Partition
+snapshot_timestamp: '2026-03-16T14:00:00Z'
+supported_categories:
+- JOB
+supported_roles:
+- scientific_user
+- sysadmin
+validation_status: validated

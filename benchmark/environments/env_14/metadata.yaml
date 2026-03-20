@@ -1,0 +1,28 @@
+bundle_root: environments/env_14
+cluster_name: exabench-cluster-a
+description: GPU partition utilisation has averaged 97% for the past 30 days. Average
+  queue wait for GPU jobs is 18 hours. system_designer must quantify the demand gap
+  and produce an expansion recommendation.
+environment_id: env_14
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/gpu_expansion_proposal.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: capacity_planning
+snapshot_name: GPU Demand Forecast Expansion
+snapshot_timestamp: '2026-03-19T12:00:00Z'
+supported_categories:
+- ENERGY
+- MON
+supported_roles:
+- system_designer
+validation_status: validated

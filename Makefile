@@ -158,6 +158,44 @@ clear:  ## Compute CLEAR scorecard for a run directory (RUN_DIR=, CLEAR_OUTPUT=,
 	$(EXABENCH) clear run --run-dir $(RUN_DIR) --output $(CLEAR_OUTPUT) \
 		$(if $(ROBUSTNESS_JSON),--robustness-json $(ROBUSTNESS_JSON),)
 
+.PHONY: generate-tool-docs
+generate-tool-docs:  ## Write hpc_tools_guide.md into each environment's docs/ dir (from hpc_tool_catalog.yaml)
+	$(PYTHON) scripts/generate_tool_docs.py
+
+TOOL_DOCS_ROLE ?=
+
+.PHONY: generate-tool-docs-role
+generate-tool-docs-role:  ## Write hpc_tools_guide.md for a specific role (TOOL_DOCS_ROLE=sysadmin)
+	$(PYTHON) scripts/generate_tool_docs.py --role $(TOOL_DOCS_ROLE)
+
+.PHONY: generate-bundles
+generate-bundles:  ## Generate canonical snapshot bundles env_06–env_20 under benchmark/environments/
+	$(PYTHON) scripts/generate_bundles.py
+
+.PHONY: upgrade-rbac-yaml
+upgrade-rbac-yaml:  ## Upgrade all rbac_policy.yaml files from v1.0 → v1.1 (adds allowed_tools, partition_access, access_tiers, all 5 roles)
+	$(PYTHON) scripts/upgrade_rbac_yaml.py
+
+.PHONY: create-rbac-policy-docs
+create-rbac-policy-docs:  ## Create docs/rbac_policy.md in all environment bundles (canonical τ-bench-style policy document)
+	$(PYTHON) scripts/create_rbac_policy_docs.py
+
+.PHONY: validate-hpc-tasks
+validate-hpc-tasks:  ## Validate HPC task set v1 (benchmark/tasks/task_set_v1.json)
+	$(PYTHON) -c "from exabench.tasks.task_loader import load_hpc_task_set; \
+tasks = load_hpc_task_set('benchmark/tasks/task_set_v1.json'); \
+print(f'HPC task set v1: {len(tasks)} tasks loaded OK'); \
+from collections import Counter; \
+[print(f'  {k}: {v}') for k, v in sorted(Counter(t.data_type for t in tasks).items())]"
+
+.PHONY: validate-bundles
+validate-bundles:  ## Validate all snapshot bundles against canonical schemas
+	$(PYTHON) -c "from exabench.environment.snapshot_validator import validate_bundle; \
+from pathlib import Path; \
+errs = {e.name: validate_bundle(e) for e in sorted(Path('benchmark/environments').iterdir()) if e.is_dir()}; \
+[print(k, 'OK' if not v else v) for k, v in errs.items()]; \
+exit(0 if all(not v for v in errs.values()) else 1)"
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py

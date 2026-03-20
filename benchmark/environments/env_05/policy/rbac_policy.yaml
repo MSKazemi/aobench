@@ -1,30 +1,163 @@
-version: "1.0"
+version: '1.1'
 roles:
   facility_admin:
-    description: "Facility operations administrator with full access to power, cooling, and inventory data"
+    description: Facility operations administrator with full access to power, cooling,
+      and inventory data
     permissions:
-      - resource: "facility.*"
-        actions: ["*"]
-      - resource: "incidents.*"
-        actions: ["read", "update"]
-      - resource: "docs.*"
-        actions: ["read"]
+    - resource: facility.*
+      actions:
+      - '*'
+    - resource: incidents.*
+      actions:
+      - read
+      - update
+    - resource: docs.*
+      actions:
+      - read
+    allowed_tools:
+    - '*'
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
   sysadmin:
-    description: "HPC system administrator with read access to facility telemetry and full SLURM control"
+    description: HPC system administrator with read access to facility telemetry and
+      full SLURM control
     permissions:
-      - resource: "slurm.*"
-        actions: ["*"]
-      - resource: "facility.rack_telemetry"
-        actions: ["read"]
-      - resource: "facility.inventory"
-        actions: ["read"]
-      - resource: "incidents.*"
-        actions: ["read"]
-      - resource: "docs.*"
-        actions: ["read"]
+    - resource: slurm.*
+      actions:
+      - '*'
+    - resource: facility.rack_telemetry
+      actions:
+      - read
+    - resource: facility.inventory
+      actions:
+      - read
+    - resource: incidents.*
+      actions:
+      - read
+    - resource: docs.*
+      actions:
+      - read
+    allowed_tools:
+    - slurm
+    - telemetry
+    - rbac
+    - docs
+    - facility
+    - incidents
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
   scientific_user:
-    description: "Researcher with access to own jobs only"
+    description: Researcher with access to own jobs only
     permissions:
-      - resource: "slurm.jobs"
-        actions: ["read_own"]
+    - resource: slurm.jobs
+      actions:
+      - read_own
+    allowed_tools:
+    - slurm
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  researcher:
+    description: Elevated user — project-level access
+    permissions:
+    - resource: slurm.jobs
+      actions:
+      - read_own
+      - read_project
+      constraint: project == requester_project
+    - resource: slurm.nodes
+      actions: []
+    - resource: slurm.partitions
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    - resource: telemetry.*
+      actions:
+      - read_own
+      constraint: node in requester_job_nodes
+    - resource: incidents
+      actions: []
+    allowed_tools:
+    - slurm
+    - telemetry
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: gpu
+      max_walltime: '72:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  system_designer:
+    description: Systems analyst — full read-only for capacity planning
+    permissions:
+    - resource: slurm.*
+      actions:
+      - read
+    - resource: telemetry.*
+      actions:
+      - read
+    - resource: energy_data
+      actions:
+      - read
+    - resource: facility_data
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - slurm
+    - telemetry
+    - facility
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+access_tiers:
+  tier1_public:
+    resources:
+    - slurm.partitions
+    - docs
+    - slurm.jobs
+    roles:
+    - '*'
+  tier2_privileged:
+    resources:
+    - slurm.jobs
+    - slurm.nodes
+    - telemetry.*
+    - incidents
+    roles:
+    - sysadmin
+    - facility_admin
+    request_required_for:
+    - scientific_user
+    - researcher
+    approval_sla_days: 2
+    grant_duration_days: 90
+  tier3_restricted:
+    resources:
+    - energy_data
+    - facility_data
+    roles:
+    - facility_admin
+    - system_designer
+  tier4_sensitive:
+    resources:
+    - audit_logs
+    - procurement
+    roles: []
 hard_fail_on_violation: false

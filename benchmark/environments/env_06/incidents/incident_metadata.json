@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0310-001",
+  "severity": "high",
+  "title": "GPU power spike exceeds PDU threshold on gpu01",
+  "opened_at": "2026-03-10T14:10:00Z",
+  "status": "open",
+  "affected_resource": "gpu01",
+  "affected_job": "920001",
+  "summary": "gpu01 power draw reached 650W (~71% above baseline of ~380W) during job 920001 (llm_train_run7, bob). Facility PDU threshold is 600W per node. Sustained spike started ~14:00 UTC.",
+  "timeline": [
+    {
+      "time": "2026-03-10T08:05:00Z",
+      "event": "Job 920001 started on gpu01"
+    },
+    {
+      "time": "2026-03-10T14:00:00Z",
+      "event": "Power draw began climbing on gpu01"
+    },
+    {
+      "time": "2026-03-10T14:10:00Z",
+      "event": "Facility alert: PDU threshold breached (650W)"
+    },
+    {
+      "time": "2026-03-10T16:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "Job is still running. Sysadmin must decide whether to throttle or cancel."
+}

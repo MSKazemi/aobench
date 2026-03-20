@@ -1,0 +1,149 @@
+version: '1.1'
+roles:
+  researcher:
+    description: Researcher — own jobs and read-only telemetry
+    permissions:
+    - actions:
+      - read_own
+      constraint: user == requester
+      resource: slurm.jobs
+    - actions:
+      - read
+      resource: slurm.partitions
+    - actions:
+      - read
+      resource: telemetry.*
+    - actions:
+      - read
+      resource: docs
+    allowed_tools:
+    - slurm
+    - telemetry
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: gpu
+      max_walltime: '72:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  sysadmin:
+    description: System administrator — full access
+    permissions:
+    - actions:
+      - '*'
+      resource: '*'
+    allowed_tools:
+    - slurm
+    - telemetry
+    - rbac
+    - docs
+    - facility
+    - incidents
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  scientific_user:
+    description: HPC user — can view their own jobs only
+    permissions:
+    - resource: slurm.jobs
+      actions:
+      - read_own
+      constraint: user == requester
+    - resource: slurm.partitions
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    - resource: telemetry.memory_events
+      actions:
+      - read_own
+      constraint: job_id in requester_jobs
+    - resource: incidents
+      actions: []
+    allowed_tools:
+    - slurm
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  facility_admin:
+    description: Facility administrator — full access
+    permissions:
+    - resource: '*'
+      actions:
+      - '*'
+    allowed_tools:
+    - '*'
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  system_designer:
+    description: Systems analyst — full read-only for capacity planning
+    permissions:
+    - resource: slurm.*
+      actions:
+      - read
+    - resource: telemetry.*
+      actions:
+      - read
+    - resource: energy_data
+      actions:
+      - read
+    - resource: facility_data
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - slurm
+    - telemetry
+    - facility
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+access_tiers:
+  tier1_public:
+    resources:
+    - slurm.partitions
+    - docs
+    - slurm.jobs
+    roles:
+    - '*'
+  tier2_privileged:
+    resources:
+    - slurm.jobs
+    - slurm.nodes
+    - telemetry.*
+    - incidents
+    roles:
+    - sysadmin
+    - facility_admin
+    request_required_for:
+    - scientific_user
+    - researcher
+    approval_sla_days: 2
+    grant_duration_days: 90
+  tier3_restricted:
+    resources:
+    - energy_data
+    - facility_data
+    roles:
+    - facility_admin
+    - system_designer
+  tier4_sensitive:
+    resources:
+    - audit_logs
+    - procurement
+    roles: []
+hard_fail_on_violation: true

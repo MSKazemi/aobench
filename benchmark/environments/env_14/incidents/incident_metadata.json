@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0319-002",
+  "severity": "medium",
+  "title": "GPU partition at 97% utilisation \u2014 expansion required",
+  "opened_at": "2026-03-01T00:00:00Z",
+  "status": "open",
+  "affected_resource": "partition:gpu",
+  "affected_job": null,
+  "summary": "GPU partition (4 nodes, 16 GPUs) has run at 97%+ utilisation for 30 days. Average queue wait: 18 hours. 6 jobs currently pending. ML workload growth rate: ~15% MoM. Projected: 20+ GPUs needed by Q3 2026.",
+  "timeline": [
+    {
+      "time": "2026-02-01T00:00:00Z",
+      "event": "GPU utilisation crosses 90% sustained"
+    },
+    {
+      "time": "2026-02-15T00:00:00Z",
+      "event": "Average queue wait exceeds 12 hours"
+    },
+    {
+      "time": "2026-03-01T00:00:00Z",
+      "event": "Capacity planning triggered"
+    },
+    {
+      "time": "2026-03-19T12:00:00Z",
+      "event": "Snapshot captured \u2014 6 jobs pending"
+    }
+  ],
+  "resolution": null,
+  "notes": "H100 nodes recommended. 8-week delivery from approved vendor."
+}

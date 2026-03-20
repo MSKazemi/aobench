@@ -1,0 +1,29 @@
+bundle_root: environments/env_17
+cluster_name: exabench-cluster-a
+description: A 4-node MPI job failed after 6 hours with exit code 137 (SIGKILL). Network
+  telemetry shows node11 had zero RX traffic for 30 minutes before the failure. Sysadmin
+  must diagnose the network fault and identify whether the switch port or NIC is at
+  fault.
+environment_id: env_17
+implementation_status: bundled
+included_files:
+- slurm/slurm_state.json
+- telemetry/telemetry_timeseries.parquet
+- policy/rbac_policy.yaml
+- incidents/incident_metadata.json
+- docs/mpi_troubleshooting.md
+included_sources:
+- slurm
+- telemetry
+- docs
+- rbac
+- incidents
+scenario_type: job_failure
+snapshot_name: MPI Communication Timeout Network Fault
+snapshot_timestamp: '2026-03-16T20:00:00Z'
+supported_categories:
+- JOB
+- MON
+supported_roles:
+- sysadmin
+validation_status: validated

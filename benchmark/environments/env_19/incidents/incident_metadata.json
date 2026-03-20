@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0318-001",
+  "severity": "medium",
+  "title": "GPU idle for 6h while allocated \u2014 energy waste on gpu02/gpu03",
+  "opened_at": "2026-03-18T15:00:00Z",
+  "status": "open",
+  "affected_resource": "gpu02,gpu03",
+  "affected_job": "932000",
+  "summary": "Job 932000 has allocated gpu02 and gpu03 for 9 hours. GPU utilisation has been <2% for the past 6 hours. Each node draws ~400W idle. Estimated wasted energy: ~4.8 kWh (2 nodes \u00d7 400W \u00d7 6h). 6 pending GPU jobs are queued behind this job.",
+  "timeline": [
+    {
+      "time": "2026-03-18T09:05:00Z",
+      "event": "Job 932000 starts on gpu02, gpu03"
+    },
+    {
+      "time": "2026-03-18T12:00:00Z",
+      "event": "GPU util drops to <2% \u2014 batch complete, job hung"
+    },
+    {
+      "time": "2026-03-18T15:00:00Z",
+      "event": "Alert: GPU idle >3h on allocated nodes"
+    },
+    {
+      "time": "2026-03-18T18:00:00Z",
+      "event": "Snapshot captured \u2014 6h idle, 4.8 kWh wasted"
+    }
+  ],
+  "resolution": null,
+  "notes": "Job appears hung. Contact user bob before cancellation. GPU idle timeout policy applies."
+}

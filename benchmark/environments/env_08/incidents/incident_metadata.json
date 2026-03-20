@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0314-001",
+  "severity": "medium",
+  "title": "Thermal throttling on node03 \u2014 cooling duct blocked",
+  "opened_at": "2026-03-14T07:30:00Z",
+  "status": "open",
+  "affected_resource": "node03",
+  "affected_job": "930001",
+  "summary": "node03 CPU temperature reached 88\u201392\u00b0C (normal: 65\u201372\u00b0C). Thermal throttle engaged, reducing effective CPU frequency by ~40%. Root cause: blocked rear cooling duct (dust accumulation).",
+  "timeline": [
+    {
+      "time": "2026-03-14T06:05:00Z",
+      "event": "Job 930001 started on node03"
+    },
+    {
+      "time": "2026-03-14T07:00:00Z",
+      "event": "CPU temperature alarm on node03 (>85\u00b0C)"
+    },
+    {
+      "time": "2026-03-14T07:30:00Z",
+      "event": "Thermal throttle engaged \u2014 frequency reduced"
+    },
+    {
+      "time": "2026-03-14T09:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "node03 should be drained and taken offline for cooling maintenance."
+}

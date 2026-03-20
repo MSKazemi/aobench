@@ -1,0 +1,78 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-16T14:00:00Z",
+  "nodes": [
+    {
+      "name": "node01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node02",
+      "state": "idle",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "restricted01",
+      "state": "allocated",
+      "cpus": 128,
+      "memory_mb": 1024000,
+      "partitions": [
+        "restricted"
+      ]
+    },
+    {
+      "name": "restricted02",
+      "state": "idle",
+      "cpus": 128,
+      "memory_mb": 1024000,
+      "partitions": [
+        "restricted"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "standard",
+      "max_time": "48:00:00",
+      "max_mem_per_node_mb": 256000,
+      "default_mem_per_cpu_mb": 2048
+    },
+    {
+      "name": "restricted",
+      "max_time": "168:00:00",
+      "max_mem_per_node_mb": 1024000,
+      "default_mem_per_cpu_mb": 8192
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "950100",
+      "job_name": "protein_fold",
+      "user": "eve",
+      "account": "guest-account",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "restricted",
+      "submit_time": "2026-03-16T13:45:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 512000,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "PartitionNotAvailable"
+    }
+  ]
+}

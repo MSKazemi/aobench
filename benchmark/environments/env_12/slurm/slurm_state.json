@@ -1,0 +1,328 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-18T10:00:00Z",
+  "nodes": [
+    {
+      "name": "node01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node02",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node03",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node04",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node05",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node06",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node07",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node08",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "standard",
+      "max_time": "48:00:00",
+      "max_mem_per_node_mb": 256000,
+      "default_mem_per_cpu_mb": 2048
+    }
+  ],
+  "jobs": [
+    {
+      "job_id": "970001",
+      "job_name": "ml_job_1",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node01",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970002",
+      "job_name": "ml_job_2",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node02",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970003",
+      "job_name": "ml_job_3",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node03",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970004",
+      "job_name": "ml_job_4",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node04",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970005",
+      "job_name": "ml_job_5",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node05",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970006",
+      "job_name": "ml_job_6",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node06",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970007",
+      "job_name": "ml_job_7",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node07",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "970008",
+      "job_name": "ml_job_8",
+      "user": "frank",
+      "account": "ml-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "node08",
+      "partition": "standard",
+      "submit_time": "2026-03-15T10:00:00Z",
+      "start_time": "2026-03-15T10:05:00Z",
+      "end_time": null,
+      "elapsed": "71:55:00",
+      "num_cpus": 64,
+      "num_nodes": 1,
+      "requested_mem_mb": 128000,
+      "used_mem_mb": 100000,
+      "oom_kill": false,
+      "failure_reason": null
+    },
+    {
+      "job_id": "980001",
+      "job_name": "genome_analysis_1",
+      "user": "dave",
+      "account": "bio-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "standard",
+      "submit_time": "2026-03-16T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "requested_mem_mb": 65536,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "980002",
+      "job_name": "genome_analysis_2",
+      "user": "dave",
+      "account": "bio-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "standard",
+      "submit_time": "2026-03-16T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "requested_mem_mb": 65536,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "980003",
+      "job_name": "genome_analysis_3",
+      "user": "dave",
+      "account": "bio-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "standard",
+      "submit_time": "2026-03-16T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "requested_mem_mb": 65536,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    },
+    {
+      "job_id": "980004",
+      "job_name": "genome_analysis_4",
+      "user": "dave",
+      "account": "bio-lab",
+      "state": "PENDING",
+      "exit_code": null,
+      "node": null,
+      "partition": "standard",
+      "submit_time": "2026-03-16T10:00:00Z",
+      "start_time": null,
+      "end_time": null,
+      "elapsed": null,
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "requested_mem_mb": 65536,
+      "used_mem_mb": null,
+      "oom_kill": false,
+      "failure_reason": "Priority"
+    }
+  ]
+}

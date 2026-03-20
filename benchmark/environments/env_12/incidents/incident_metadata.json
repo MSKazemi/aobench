@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0318-001",
+  "severity": "medium",
+  "title": "Fairshare starvation: bio-lab jobs pending 48+ hours",
+  "opened_at": "2026-03-18T08:00:00Z",
+  "status": "open",
+  "affected_resource": "account:bio-lab",
+  "affected_job": "980001",
+  "summary": "Account bio-lab has 4 jobs pending for 48+ hours due to low fairshare weight. ml-lab has consumed 85% of cluster resources over the past 72 hours, depressing bio-lab's fairshare score to near zero.",
+  "timeline": [
+    {
+      "time": "2026-03-15T10:05:00Z",
+      "event": "ml-lab jobs start, consuming all 8 nodes"
+    },
+    {
+      "time": "2026-03-16T10:00:00Z",
+      "event": "bio-lab jobs submitted, enter queue"
+    },
+    {
+      "time": "2026-03-18T08:00:00Z",
+      "event": "Alert: bio-lab jobs pending >48h"
+    },
+    {
+      "time": "2026-03-18T10:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "Consider setting TopJob priority boost for bio-lab or setting ml-lab job hold."
+}

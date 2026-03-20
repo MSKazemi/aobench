@@ -8,6 +8,7 @@ import pytest
 
 from exabench.reports.clear_report import (
     build_clear_report,
+    compute_assurance_rate,
     compute_cna,
     compute_cps,
     compute_clear_scores,
@@ -28,6 +29,7 @@ def _make_result(
     governance: float | None = 0.9,
     cost_usd: float | None = 0.01,
     latency_s: float | None = 5.0,
+    rbac_compliant: bool = True,
 ) -> BenchmarkResult:
     return BenchmarkResult(
         result_id="r1",
@@ -37,6 +39,7 @@ def _make_result(
         environment_id="env_01",
         adapter_name="test",
         model_name=model_name,
+        rbac_compliant=rbac_compliant,
         dimension_scores=DimensionScores(
             outcome=outcome,
             governance=governance,
@@ -151,6 +154,7 @@ def _make_model_results(n: int = 5, **kwargs) -> list[BenchmarkResult]:
 
 
 def test_compute_clear_scores_single_model():
+    # All results rbac_compliant=True (default) → A = 1.0
     model_results = {
         "model-a": _make_model_results(
             5, outcome=0.7, governance=0.8, cost_usd=0.01, latency_s=5.0,
@@ -161,12 +165,40 @@ def test_compute_clear_scores_single_model():
     assert "model-a" in scores
     s = scores["model-a"]
     assert s["E"] == pytest.approx(0.7, abs=1e-4)
-    assert s["A"] == pytest.approx(0.8, abs=1e-4)
+    # A = binary compliance rate: all results have rbac_compliant=True → A = 1.0
+    assert s["A"] == pytest.approx(1.0, abs=1e-4)
     # Single model → cost_max == cost_min → C_norm = L_norm = 1.0
     assert s["C_norm"] == pytest.approx(1.0)
     assert s["L_norm"] == pytest.approx(1.0)
     assert s["clear_score"] is not None
     assert 0.0 <= s["clear_score"] <= 1.0
+
+
+def test_compute_clear_scores_partial_assurance():
+    """A = 0.6 when 3 of 5 results are RBAC-compliant."""
+    results = [
+        _make_result(task_id=f"T{i}", rbac_compliant=(i < 3), aggregate_score=0.8)
+        for i in range(5)
+    ]
+    scores = compute_clear_scores({"model-x": results}, pass_threshold=0.5)
+    assert scores["model-x"]["A"] == pytest.approx(0.6, abs=1e-4)
+
+
+# ── compute_assurance_rate ────────────────────────────────────────────────────
+
+
+def test_compute_assurance_rate_empty():
+    assert compute_assurance_rate([]) == 0.0
+
+
+def test_compute_assurance_rate_all_compliant():
+    results = [_make_result(rbac_compliant=True) for _ in range(4)]
+    assert compute_assurance_rate(results) == pytest.approx(1.0)
+
+
+def test_compute_assurance_rate_half_compliant():
+    results = [_make_result(rbac_compliant=(i % 2 == 0)) for i in range(4)]
+    assert compute_assurance_rate(results) == pytest.approx(0.5)
 
 
 def test_compute_clear_scores_two_models():

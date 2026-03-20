@@ -100,27 +100,27 @@ These file types are consistent with the ExaBench architecture page, which alrea
 
 ---
 
-## 5 — Recommended Directory Layout
+## 5 — Canonical Directory Layout
 
 ```
-data/environments/
-  env_01/
-    metadata.yaml
-    slurm_state.json
-    telemetry_timeseries.parquet
-    power_metrics.csv
-    topology.json
-    rbac_policy.yaml
-    docs_index/
-    incident_metadata.json
-
-  env_02/
-    metadata.yaml
-    slurm_state.json
-    telemetry_timeseries.parquet
-    rbac_policy.yaml
-    docs_index/
+benchmark/environments/
+  <env_id>/
+    metadata.yaml                        ← EnvironmentMetadata (Pydantic-validated)
+    slurm/
+      slurm_state.json                   ← nodes, partitions, jobs (validated by SlurmState)
+      job_details.json                   ← sacct-level details (optional)
+    telemetry/
+      telemetry_timeseries.parquet       ← columns: timestamp, node_id, metric_name, value, unit
+      memory_events.csv                  ← OOM/memory events (optional)
+    policy/
+      rbac_policy.yaml                   ← per-role permission definitions
+    docs/
+      *.md                               ← user-facing knowledge docs
+    incidents/
+      incident_metadata.json             ← incident timeline + affected resources
 ```
+
+Bundles are validated by `exabench.environment.snapshot_validator.validate_bundle()`.
 
 ---
 
@@ -327,281 +327,120 @@ This helps align snapshots with QCAT categories and capabilities.
 
 ---
 
-## 12 — v0.1 Environment Scope
+## 12 — Current Environment Coverage
 
-This page implements the canonical v0.1 principle that ExaBench is reproducible via deterministic environment snapshots.
+ExaBench currently ships 20 canonical snapshot bundles across all 8 scenario types.
 
-For ExaBench v0.1, the environment layer should stay intentionally small.
+| Scenario type | Count | Env IDs |
+|---------------|-------|---------|
+| `job_failure` | 4 | env_01, env_17, env_18, + env_01 (OOM) |
+| `energy_anomaly` | 4 | env_06, env_07, env_19, + env_03/env_04/env_05 legacy |
+| `node_degradation` | 2 | env_08, env_09 |
+| `policy_violation` | 2 | env_10, env_11 |
+| `queue_congestion` | 2 | env_02, env_12 |
+| `capacity_planning` | 2 | env_13, env_14 |
+| `multi_job_interference` | 2 | env_15, env_20 |
+| `scheduler_misconfiguration` | 1 | env_16 |
 
-### Recommended v0.1 target
+### Naming convention
 
-- 5 environment snapshots
-- 3 core categories: `JOB`, `MON`, `ENERGY`
-- 3 main roles: `scientific_user`, `sysadmin`, `facility_admin`
-
-### Suggested first 5 snapshots
-
-1. user job OOM failure
-2. queue congestion and long pending jobs
-3. node utilization anomaly
-4. power spike on selected nodes
-5. documentation + policy lookup scenario
-
-This matches the current minimal benchmark scope where ExaBench v0.1 targets about 5 environment snapshots.
-
-### v0.1 Naming Freeze
-
-For ExaBench v0.1, the canonical environment IDs are:
-
-- `env_01`
-- `env_02`
-- `env_03`
-- `env_04`
-- `env_05`
-
-Long-form example identifiers such as `env_cluster_snapshot_01` should not be used in v0.1 task records, metadata examples, or tracker tables.
+Canonical environment IDs use the `env_NN` scheme (zero-padded). New bundles should continue from `env_21`.
 
 ---
 
-## `12.1 — Canonical v0.1 Snapshot Tracker`
+## `12.1 — Canonical Snapshot Tracker`
 
 | environment_id | snapshot_name | scenario_type | supported_roles | supported_categories | status |
 | --- | --- | --- | --- | --- | --- |
-| `env_01` | User OOM Failure | `job_failure` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `defined` |
-| `env_02` | Queue Congestion / Long Pending Jobs | `queue_congestion` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `defined` |
-| `env_03` | Node Utilization / Health Anomaly | `node_health_alert` | `sysadmin`, `facility_admin` | `MON`, `ENERGY` | `defined` |
-| `env_04` | Power Spike on Selected Nodes | `energy_anomaly` | `sysadmin`, `facility_admin` | `ENERGY`, `MON` | `defined` |
-| `env_05` | Documentation + Policy Lookup | `policy_lookup` | `scientific_user`, `sysadmin`, `facility_admin` | `JOB`, `MON`, `ENERGY` | `defined` |
+| `env_01` | User OOM Failure | `job_failure` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `validated` |
+| `env_02` | Queue Congestion / Long Pending Jobs | `queue_congestion` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `validated` |
+| `env_03` | Thermal and Power Monitoring | `thermal_power` | `sysadmin`, `facility_admin` | `MON`, `ENERGY` | `validated` |
+| `env_04` | Rack Energy Comparison | `rack_energy` | `facility_admin` | `ENERGY` | `validated` |
+| `env_05` | Cooling Unit Failure | `cooling_failure` | `facility_admin`, `sysadmin` | `ENERGY`, `MON` | `validated` |
+| `env_06` | GPU Power Spike | `energy_anomaly` | `sysadmin`, `facility_admin` | `ENERGY`, `MON` | `validated` |
+| `env_07` | PUE Degradation Cooling Issue | `energy_anomaly` | `facility_admin` | `ENERGY` | `validated` |
+| `env_08` | Thermal Throttling on node03 | `node_degradation` | `sysadmin` | `MON` | `validated` |
+| `env_09` | Memory ECC Errors Flapping Node | `node_degradation` | `sysadmin` | `MON` | `validated` |
+| `env_10` | Policy Violation Restricted Partition | `policy_violation` | `scientific_user`, `sysadmin` | `JOB` | `validated` |
+| `env_11` | Account Over Allocation Limit | `policy_violation` | `sysadmin`, `facility_admin` | `JOB` | `validated` |
+| `env_12` | Fairshare Starvation Priority Inversion | `queue_congestion` | `sysadmin` | `JOB`, `MON` | `validated` |
+| `env_13` | Six Month CPU Utilisation Trend | `capacity_planning` | `facility_admin`, `system_designer` | `ENERGY`, `MON` | `validated` |
+| `env_14` | GPU Demand Forecast Expansion | `capacity_planning` | `system_designer` | `ENERGY`, `MON` | `validated` |
+| `env_15` | Multi-Job Memory Interference | `multi_job_interference` | `sysadmin`, `researcher` | `JOB`, `MON` | `validated` |
+| `env_16` | Wrong Default Partition Misconfiguration | `scheduler_misconfiguration` | `sysadmin` | `JOB` | `validated` |
+| `env_17` | MPI Communication Timeout Network Fault | `job_failure` | `sysadmin` | `JOB`, `MON` | `validated` |
+| `env_18` | Checkpoint File Missing Restart Fails | `job_failure` | `scientific_user` | `JOB` | `validated` |
+| `env_19` | GPU Idle Energy Waste Not Released | `energy_anomaly` | `facility_admin` | `ENERGY`, `MON` | `validated` |
+| `env_20` | Lustre IO Contention Multi-Job Interference | `multi_job_interference` | `sysadmin` | `JOB`, `MON` | `validated` |
 
-> This tracker converts the environment design into an operational registry.
-> 
-> 
-> Every task in `05 — Task Database` must reference exactly one valid `environment_id` from this table.
-> 
-> For v0.1, all five snapshots should exist at least in `defined` state before full runner integration.
-> 
+Every task must reference exactly one valid `environment_id` from this table.
 
 ---
 
-## `12.2 — Operational Bundle Tracker (Alpha-0)`
+## `12.2 — Snapshot Schema Implementation`
 
-### Paste this explanatory text
+All 20 bundles are validated by `validate_bundle()` on every `load_environment()` call.
 
-> This section operationalizes the canonical environment snapshots into real benchmark bundles.
-> 
-> 
-> The table below is not only a conceptual tracker; it is the implementation tracker for the first concrete environment packages used by ExaBench Alpha-0.
-> 
-> A snapshot is not considered implemented until it has:
-> 
-> - a canonical `environment_id`
-> - a real bundle root path in the repository
-> - a concrete `metadata.yaml`
-> - a declared source inventory
-> - a concrete file inventory
-> - implementation status
-> - validation status
-> 
-> For Alpha-0, the initial target is to implement at least 2 real snapshot bundles: `env_01` and `env_02`.
-> 
+### Key implementation files
 
-### Status definitions (Alpha-0)
+| File | Purpose |
+|------|---------|
+| `src/exabench/schemas/snapshot.py` | Pydantic models: `SlurmState`, `SlurmJob`, `SlurmNode`, `SlurmPartition`, `IncidentMetadata` |
+| `src/exabench/environment/snapshot_validator.py` | `validate_bundle(bundle_root)` — validates JSON schemas, RBAC YAML, parquet columns |
+| `src/exabench/environment/snapshot_loader.py` | `build_tool_registry(bundle, role)` — instantiates all mock tools bound to a role |
+| `src/exabench/loaders/env_loader.py` | `load_environment()` — calls `validate_bundle()` before returning bundle |
+| `scripts/generate_bundles.py` | Generates env_06–env_20 bundles programmatically (`make generate-bundles`) |
 
-**Implementation status**
+### Telemetry parquet schema (canonical)
 
-- `defined`: exists only as a row in a table
-- `scaffolded`: repo folder exists, metadata exists, inventory exists (files may be placeholders)
-- `bundled`: required files are present in the bundle structure
-- `validated`: passes structural checks
-- `runner_ready`: snapshot can be loaded by the snapshot loader / mock tools
+| Column | dtype | Description |
+|--------|-------|-------------|
+| `timestamp` | `datetime64[ns, UTC]` | Sample time (UTC) |
+| `node_id` | `string` | Node name (e.g. `node01`) |
+| `metric_name` | `string` | e.g. `cpu_util_pct`, `power_w`, `gpu_util_pct` |
+| `value` | `float64` | Metric value |
+| `unit` | `string` | `%`, `MB`, `W`, `Mbps` |
 
-**Validation status**
+### Mock tool telemetry methods
 
-- `not_checked`
-- `structure_valid`
-- `metadata_valid`
-- `file_inventory_valid`
-- `fully_validated`
+| Method | Description |
+|--------|-------------|
+| `telemetry.query_timeseries(node_id, metric_name, start, end)` | Parquet time-range query with role-based node filtering |
+| `telemetry.query_node_metrics(node_id)` | Per-node latest-value summary across all metrics |
+| `telemetry.query_memory_events(job_id)` | Memory events CSV lookup |
+| `telemetry.list_metrics()` | List available telemetry files |
 
-| Column | Purpose |
-| --- | --- |
-| `environment_id` | canonical ID |
-| `snapshot_name` | short scenario name |
-| `scenario_type` | job_failure / queue_congestion / ... |
-| `bundle_root` | repo path |
-| `included_sources` | source groups included |
-| `included_files` | concrete file list |
-| `supported_roles` | roles supported |
-| `supported_categories` | categories supported |
-| `metadata_status` | missing / draft / complete |
-| `implementation_status` | defined / scaffolded / bundled / validated / runner_ready |
-| `validation_status` | not_checked / partial / passed / failed |
-| `owner` | responsible person |
-| `notes` | implementation notes |
-| `blockers` | missing files / unclear source / etc. |
+> **Historical note:** The original Alpha-0 operational tracker has been superseded by this implementation. All bundles now have `implementation_status: bundled` and `validation_status: validated`.
 
-### Operational tracker (seed for Alpha-0)
+### Implementation status values
 
-| environment_id | snapshot_name | scenario_type | bundle_root | included_sources | included_files | supported_roles | supported_categories | metadata_status | implementation_status | validation_status | owner | notes | blockers |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `env_01` | User OOM Failure | `job_failure` | `data/environments/env_01/` | `slurm`, `telemetry`, `docs`, `rbac`, `incidents` | `metadata.yaml`
-`slurm/slurm_state.json`
-`slurm/job_details.json`
-`telemetry/telemetry_timeseries.parquet`
-`telemetry/memory_events.csv`
-`policy/rbac_policy.yaml`
-`docs/memory_request_guide.md`
-`docs/troubleshooting_oom.md`
-`incidents/incident_metadata.json` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `draft` | `scaffolded` | `not_checked` | slurm/job_details.json | telemetry/telemetry_timeseries.parquet | telemetry/memory_events.csv |
-| `env_02` | Queue Congestion / Long Pending Jobs | `queue_congestion` | `data/environments/env_02/` | `slurm`, `telemetry`, `docs`, `rbac`, `incidents` | `metadata.yaml`
-`slurm/slurm_state.json`
-`slurm/pending_jobs.json`
-`slurm/qos_limits.json`
-`telemetry/queue_pressure_metrics.csv`
-`policy/rbac_policy.yaml`
-`docs/queue_policy.md`
-`docs/scheduling_faq.md`
-`incidents/incident_metadata.json` | `scientific_user`, `sysadmin` | `JOB`, `MON` | `draft` | `scaffolded` | `not_checked` | slurm/pending_jobs.json | slurm/qos_limits.json | telemetry/queue_pressure_metrics.csv |
+| Status | Meaning |
+|--------|---------|
+| `planned` | Exists only as a row in a table |
+| `scaffolded` | Directory + metadata exist; files may be placeholders |
+| `bundled` | All required files present |
+| `validated` | Passes `validate_bundle()` — no schema errors |
 
-### Recommended repo structure (Alpha-0)
-
-```
-data/
-  environments/
-    env_01/
-      metadata.yaml
-      manifest.txt
-      slurm/
-        slurm_state.json
-        job_details.json
-      telemetry/
-        telemetry_timeseries.parquet
-        memory_events.csv
-      policy/
-        rbac_policy.yaml
-      docs/
-        memory_request_guide.md
-        troubleshooting_oom.md
-      incidents/
-        incident_metadata.json
-
-    env_02/
-      metadata.yaml
-      manifest.txt
-      slurm/
-        slurm_state.json
-        pending_jobs.json
-        qos_limits.json
-      telemetry/
-        queue_pressure_metrics.csv
-      policy/
-        rbac_policy.yaml
-      docs/
-        queue_policy.md
-        scheduling_faq.md
-      incidents/
-        incident_metadata.json
-```
-
-### Concrete `metadata.yaml` examples
-
-#### `env_01/metadata.yaml`
-
-```yaml
-environment_id: env_01
-snapshot_name: User OOM Failure
-scenario_type: job_failure
-cluster_name: exabench-cluster-a
-snapshot_timestamp: 2026-02-10T14:00:00Z
-bundle_root: data/environments/env_01
-supported_roles:
-  - scientific_user
-  - sysadmin
-supported_categories:
-  - JOB
-  - MON
-included_sources:
-  - slurm
-  - telemetry
-  - docs
-  - rbac
-  - incidents
-included_files:
-  - slurm/slurm_state.json
-  - slurm/job_details.json
-  - telemetry/telemetry_timeseries.parquet
-  - telemetry/memory_events.csv
-  - policy/rbac_policy.yaml
-  - docs/memory_request_guide.md
-  - docs/troubleshooting_oom.md
-  - incidents/incident_metadata.json
-implementation_status: scaffolded
-validation_status: not_checked
-description: >
-  Deterministic snapshot representing a user job failure caused by
-  out-of-memory pressure, with scheduler state, memory telemetry,
-  role-aware visibility, and user-facing troubleshooting documents.
-```
-
-#### `env_02/metadata.yaml`
-
-```yaml
-environment_id: env_02
-snapshot_name: Queue Congestion / Long Pending Jobs
-scenario_type: queue_congestion
-cluster_name: exabench-cluster-a
-snapshot_timestamp: 2026-02-11T09:00:00Z
-bundle_root: data/environments/env_02
-supported_roles:
-  - scientific_user
-  - sysadmin
-supported_categories:
-  - JOB
-  - MON
-included_sources:
-  - slurm
-  - telemetry
-  - docs
-  - rbac
-  - incidents
-included_files:
-  - slurm/slurm_state.json
-  - slurm/pending_jobs.json
-  - slurm/qos_limits.json
-  - telemetry/queue_pressure_metrics.csv
-  - policy/rbac_policy.yaml
-  - docs/queue_policy.md
-  - docs/scheduling_faq.md
-  - incidents/incident_metadata.json
-implementation_status: scaffolded
-validation_status: not_checked
-description: >
-  Deterministic snapshot representing queue congestion and long pending
-  jobs, including queue state, scheduler policy context, role-aware
-  access, and supporting documentation for interpretation.
-```
+All 20 current bundles are at `validated` status.
 
 ---
 
 ## 13 — Validation Rules
 
-Each environment snapshot should satisfy basic validation checks.
+`validate_bundle(bundle_root)` (in `src/exabench/environment/snapshot_validator.py`) checks:
 
-### Required
+- `slurm/slurm_state.json` — validates against `SlurmState` Pydantic model
+- `incidents/incident_metadata.json` — validates against `IncidentMetadata` Pydantic model
+- `policy/rbac_policy.yaml` — must be valid YAML with a top-level `roles` key
+- `telemetry/telemetry_timeseries.parquet` — must contain columns: `timestamp`, `node_id`, `metric_name`, `value`, `unit`
 
-- valid `environment_id`
-- metadata file exists
-- referenced files exist
-- supported roles declared
-- supported QCATs declared
+`load_environment()` calls `validate_bundle()` automatically and raises `ValueError` on any error.
 
-### Recommended
+To validate all bundles manually:
 
-- deterministic mock tool outputs
-- timestamp included
-- clear scenario description
-- known source inventory
-- no dependence on live external systems
+```bash
+make validate-bundles
+```
 
 ---
 

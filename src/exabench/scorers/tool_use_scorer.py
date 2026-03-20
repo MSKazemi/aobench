@@ -58,6 +58,14 @@ from exabench.schemas.task import ExpectedToolCall, TaskSpec
 from exabench.schemas.trace import ToolCall, Trace
 from exabench.scorers.base import BaseScorer, ScorerOutput
 
+# Lazy import to avoid hard dependency on catalog at import time
+def _try_load_catalog():
+    try:
+        from exabench.tools.catalog_loader import load_catalog
+        return load_catalog()
+    except Exception:
+        return None
+
 # Numeric tolerance for argument matching (relative, ±5%)
 _ARG_NUMERIC_TOLERANCE = 0.05
 
@@ -195,9 +203,14 @@ class ToolUseScorer(BaseScorer):
             forbidden_penalty = 1.0
 
         score = round((selection + argument + sequence + forbidden_penalty) / 4, 4)
+
+        # Coverage metrics (diagnostic, appended to notes)
+        coverage_notes = self._coverage_metric_notes(task, called_names, called_tool_set)
+
         notes = (
             f"decomposed: selection={selection:.2f}  argument={argument:.2f}  "
             f"sequence={sequence:.2f}  forbidden_penalty={forbidden_penalty:.2f}"
+            f"{coverage_notes}"
         )
         return ScorerOutput(dimension=self.dimension, score=score, notes=notes)
 
@@ -231,11 +244,78 @@ class ToolUseScorer(BaseScorer):
         no_redundancy = max(0.0, 1.0 - 0.2 * redundant)
 
         score = round((coverage + precision + no_redundancy) / 3, 4)
+
+        # Coverage metrics (diagnostic, appended to notes)
+        called_names = [tc.tool_name.split("__")[0] for tc in tool_calls]
+        coverage_notes = self._coverage_metric_notes(task, called_names, called_tool_names)
+
         notes = (
             f"legacy: coverage={coverage:.2f}  precision={precision:.2f}  "
             f"no_redundancy={no_redundancy:.2f}  tools_called={sorted(called_tool_names)}"
+            f"{coverage_notes}"
         )
         return ScorerOutput(dimension=self.dimension, score=score, notes=notes)
+
+    @staticmethod
+    def _coverage_metric_notes(
+        task: TaskSpec,
+        called_names: list[str],
+        called_tool_set: set[str],
+    ) -> str:
+        """Compute tool_discovery_rate and method_discovery_rate for the notes field.
+
+        Uses the catalog when available; falls back to allowed_tools heuristic.
+        Returns a formatted string to append to notes (empty string if metrics
+        cannot be computed).
+        """
+        role = getattr(task, "role", None)
+        if not role:
+            return ""
+
+        catalog = _try_load_catalog()
+
+        if catalog is not None:
+            available_tools = {t for t, _ in catalog.get_available_methods(role)}
+            available_method_pairs = set(catalog.get_available_methods(role))
+            called_method_pairs = set(
+                tuple(tc.split("__", 1)) for tc in
+                # Reconstruct (tool, method) pairs from raw tool_name strings
+                # tool_name may already be "<tool>__<method>" format
+                []  # populated below
+            )
+            # Build (tool, method) pairs from called names — tool_name may be
+            # "slurm__job_details" or just "slurm"; we use available catalog methods
+            # to match correctly.
+            for name in called_names:
+                parts = name.split("__", 1)
+                if len(parts) == 2:
+                    called_method_pairs.add((parts[0], parts[1]))
+                else:
+                    # bare tool name — count all methods from that tool as called
+                    for t, m in available_method_pairs:
+                        if t == parts[0]:
+                            called_method_pairs.add((t, m))
+
+            n_avail_tools = max(1, len(available_tools))
+            n_avail_methods = max(1, len(available_method_pairs))
+
+            tool_discovery = len(called_tool_set & available_tools) / n_avail_tools
+            method_discovery = len(called_method_pairs & available_method_pairs) / n_avail_methods
+        else:
+            # Fallback: use allowed_tools if set
+            if not task.allowed_tools:
+                return ""
+            available_tools = set(task.allowed_tools)
+            n_avail_tools = max(1, len(available_tools))
+            tool_discovery = len(called_tool_set & available_tools) / n_avail_tools
+            return (
+                f"  tool_discovery_rate={tool_discovery:.2f}"
+            )
+
+        return (
+            f"  tool_discovery_rate={tool_discovery:.2f}"
+            f"  method_discovery_rate={method_discovery:.2f}"
+        )
 
     @staticmethod
     def _coverage_score(task: TaskSpec, called_tools: set[str]) -> float:

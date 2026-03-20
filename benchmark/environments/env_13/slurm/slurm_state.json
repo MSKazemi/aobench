@@ -1,0 +1,159 @@
+{
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-03-19T12:00:00Z",
+  "nodes": [
+    {
+      "name": "node01",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node02",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node03",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node04",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node05",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node06",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node07",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node08",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node09",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node10",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node11",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node12",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node13",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node14",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node15",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    },
+    {
+      "name": "node16",
+      "state": "allocated",
+      "cpus": 64,
+      "memory_mb": 256000,
+      "partitions": [
+        "standard"
+      ]
+    }
+  ],
+  "partitions": [
+    {
+      "name": "standard",
+      "max_time": "48:00:00",
+      "max_mem_per_node_mb": 256000,
+      "default_mem_per_cpu_mb": 2048
+    }
+  ],
+  "jobs": []
+}

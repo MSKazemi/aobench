@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0316-001",
+  "severity": "low",
+  "title": "Policy violation: guest account submitted to restricted partition",
+  "opened_at": "2026-03-16T13:50:00Z",
+  "status": "open",
+  "affected_resource": "partition:restricted",
+  "affected_job": "950100",
+  "summary": "User 'eve' (account: guest-account) submitted job 950100 to the 'restricted' partition. guest-account does not have AllowAccounts membership for 'restricted'. Job is held in PENDING state with reason PartitionNotAvailable.",
+  "timeline": [
+    {
+      "time": "2026-03-16T13:45:00Z",
+      "event": "Job 950100 submitted to restricted partition"
+    },
+    {
+      "time": "2026-03-16T13:45:00Z",
+      "event": "Job held: PartitionNotAvailable"
+    },
+    {
+      "time": "2026-03-16T13:50:00Z",
+      "event": "Sysadmin alert: unauthorized partition access attempt"
+    },
+    {
+      "time": "2026-03-16T14:00:00Z",
+      "event": "Snapshot captured for benchmark"
+    }
+  ],
+  "resolution": null,
+  "notes": "User should be directed to submit to 'standard' partition or apply for restricted access."
+}

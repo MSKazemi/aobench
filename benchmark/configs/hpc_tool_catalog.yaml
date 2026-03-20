@@ -1,0 +1,496 @@
+catalog_version: "1.0"
+authored: "2026-03-19"
+description: >
+  Canonical HPC tool catalog for ExaBench. Defines all mock tool method
+  signatures, parameter schemas, role-visibility rules, and example calls.
+  Used for agent tool-discovery, ToolUseScorer argument validation, and
+  BFCL-style evaluation split construction.
+
+tools:
+  # ---------------------------------------------------------------------------
+  # slurm — Mock SLURM Scheduler Tool
+  # ---------------------------------------------------------------------------
+  - name: slurm
+    description: >
+      Queries the synthetic SLURM scheduler state loaded from the environment
+      bundle. Provides access to job queue, job details, node states, and
+      partition configuration.
+    class: MockSlurmTool
+    module: exabench.tools.slurm_tool
+    methods:
+
+      - name: query_jobs
+        description: >
+          List jobs in the scheduler queue. Optionally filter by submitting user
+          and/or job state. Role restriction: scientific_user sees only their own
+          jobs regardless of the user parameter.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters:
+          - name: user
+            type: STRING
+            description: "Filter jobs to this submitter username (e.g. 'jdoe')"
+            example: "jdoe"
+          - name: state
+            type: STRING
+            description: "Filter by SLURM job state"
+            valid_values: [PENDING, RUNNING, COMPLETED, FAILED, CANCELLED, TIMEOUT, CG]
+            example: "FAILED"
+        return_shape:
+          type: "list[dict]"
+          description: "List of job records from slurm_state.json"
+          key_fields: [job_id, user, partition, state, submit_time, start_time, end_time, nodes, exit_code]
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: >
+            scientific_user: filtered to requester's own jobs.
+            sysadmin/facility_admin/researcher/system_designer: full list.
+        example_calls:
+          - description: "List all FAILED jobs"
+            args: {state: "FAILED"}
+            expected_result_keys: [job_id, user, partition, state, exit_code]
+          - description: "List all running jobs by jdoe"
+            args: {user: "jdoe", state: "RUNNING"}
+            expected_result_keys: [job_id, partition, start_time]
+
+      - name: job_details
+        description: >
+          Retrieve full details for a specific job by ID, including sacct accounting
+          records, memory usage, and node allocation.
+        difficulty: simple
+        required_parameters:
+          - name: job_id
+            type: STRING
+            description: "The SLURM job ID to query (numeric string, e.g. '987654')"
+            example: "987654"
+        optional_parameters: []
+        return_shape:
+          type: "dict"
+          description: "Detailed job record from job_details.json"
+          key_fields: [job_id, sacct_record, nodes, req_mem_gb, max_rss_gb, exit_code, elapsed_seconds]
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: >
+            scientific_user: permission_denied if job belongs to a different user.
+            All other roles: full access.
+        example_calls:
+          - description: "Get full details for job 987654"
+            args: {job_id: "987654"}
+            expected_result_keys: [job_id, sacct_record, nodes, max_rss_gb]
+
+      - name: list_nodes
+        description: >
+          List all compute nodes in the cluster with their current state, partition
+          membership, and reason (if drained/down).
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[dict]"
+          description: "Node records from slurm_state.json"
+          key_fields: [name, state, partitions, reason, drain_since]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user]
+          note: "scientific_user gets permission_denied. All elevated roles: full access."
+        example_calls:
+          - description: "List all nodes"
+            args: {}
+            expected_result_keys: [name, state, partitions]
+
+      - name: list_partitions
+        description: >
+          List all SLURM partitions with their configuration (allowed users,
+          max walltime, node count, default QOS).
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[dict]"
+          description: "Partition config records from slurm_state.json"
+          key_fields: [name, state, nodes, max_time, allowed_groups, default_qos]
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: "All roles can list partitions."
+        example_calls:
+          - description: "List all partitions"
+            args: {}
+            expected_result_keys: [name, state, nodes, max_time]
+
+  # ---------------------------------------------------------------------------
+  # telemetry — Mock HPC Monitoring Tool
+  # ---------------------------------------------------------------------------
+  - name: telemetry
+    description: >
+      Queries CPU, GPU, memory, and network telemetry time series from the
+      environment bundle. Data is stored as parquet in
+      telemetry/telemetry_timeseries.parquet.
+    class: MockTelemetryTool
+    module: exabench.tools.telemetry_tool
+    methods:
+
+      - name: query_timeseries
+        description: >
+          Query the telemetry time-series parquet with optional filters. Returns
+          one record per (node_id, timestamp, metric_name) tuple. Start/end are
+          ISO8601 UTC strings.
+        difficulty: sequential
+        required_parameters: []
+        optional_parameters:
+          - name: node_id
+            type: STRING
+            description: "Filter to a specific node (e.g. 'node042')"
+            example: "node042"
+          - name: metric_name
+            type: STRING
+            description: "Filter to a specific metric"
+            valid_values: [cpu_util_pct, mem_util_pct, gpu_util_pct, net_rx_gbps, net_tx_gbps, power_kw]
+            example: "cpu_util_pct"
+          - name: start
+            type: STRING
+            description: "ISO8601 UTC lower bound (inclusive), e.g. '2026-01-15T14:00:00Z'"
+            example: "2026-01-15T14:00:00Z"
+          - name: end
+            type: STRING
+            description: "ISO8601 UTC upper bound (inclusive)"
+            example: "2026-01-15T16:00:00Z"
+        return_shape:
+          type: "list[dict]"
+          description: "Time-series records from telemetry_timeseries.parquet"
+          key_fields: [node_id, timestamp, metric_name, value, unit]
+        role_visibility:
+          default: restricted
+          denied_roles: []
+          note: >
+            sysadmin/facility_admin/system_designer: full access (any node).
+            scientific_user/researcher: restricted to nodes that ran their own jobs
+            (enforced by _get_allowed_nodes heuristic).
+        example_calls:
+          - description: "Get CPU utilization for node042 in the last 6 hours"
+            args: {node_id: "node042", metric_name: "cpu_util_pct", start: "2026-01-15T10:00:00Z", end: "2026-01-15T16:00:00Z"}
+            expected_result_keys: [node_id, timestamp, metric_name, value, unit]
+          - description: "Get all metrics for all nodes — no filter"
+            args: {}
+            expected_result_keys: [node_id, timestamp, metric_name, value, unit]
+
+      - name: query_node_metrics
+        description: >
+          Return a per-node summary of the latest value for each metric.
+          Equivalent to query_timeseries(node_id=X) grouped by metric and
+          sorted descending, taking last row.
+        difficulty: simple
+        required_parameters:
+          - name: node_id
+            type: STRING
+            description: "Node identifier (e.g. 'node042')"
+            example: "node042"
+        optional_parameters: []
+        return_shape:
+          type: "dict"
+          description: "{node_id: str, metrics: list[{metric_name, value, unit}]}"
+          key_fields: [node_id, metrics]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user]
+          note: >
+            scientific_user: permission_denied (node-level summaries require elevated
+            access; use query_timeseries for own-job nodes instead).
+            researcher/sysadmin/facility_admin/system_designer: full access.
+        example_calls:
+          - description: "Get latest metrics for node042"
+            args: {node_id: "node042"}
+            expected_result_keys: [node_id, metrics]
+
+      - name: query_memory_events
+        description: >
+          Query discrete memory events (OOM kills, high-watermark alerts) from
+          memory_events.csv. Optionally filter by job_id.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters:
+          - name: job_id
+            type: STRING
+            description: "Filter events to a specific job"
+            example: "987654"
+        return_shape:
+          type: "list[dict]"
+          description: "Memory event records from telemetry/memory_events.csv"
+          key_fields: [job_id, node_id, timestamp, event_type, rss_gb, limit_gb]
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: "No role restriction — event data is filtered by job_id which agents supply."
+        example_calls:
+          - description: "Get OOM events for job 987654"
+            args: {job_id: "987654"}
+            expected_result_keys: [job_id, node_id, timestamp, event_type, rss_gb]
+
+      - name: list_metrics
+        description: >
+          List the filenames available in the telemetry/ directory of the
+          environment bundle. Useful for tool discovery.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[str]"
+          description: "File names in the telemetry/ directory (e.g. ['telemetry_timeseries.parquet', 'memory_events.csv'])"
+          key_fields: []
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: "All roles can discover available metric files."
+        example_calls:
+          - description: "Discover available telemetry files"
+            args: {}
+            expected_result_keys: []
+
+  # ---------------------------------------------------------------------------
+  # rbac — Mock Role-Based Access Control Tool
+  # ---------------------------------------------------------------------------
+  - name: rbac
+    description: >
+      Checks and lists role permissions from the policy/rbac_policy.yaml in the
+      environment bundle. Agents use this to verify their own access rights or
+      those of other roles.
+    class: MockRBACTool
+    module: exabench.tools.rbac_tool
+    methods:
+
+      - name: check
+        description: >
+          Check whether the current role is permitted to perform `action` on
+          `resource`. Returns {allowed: true/false} plus the role, resource, and
+          action echoed back for traceability.
+        difficulty: simple
+        required_parameters:
+          - name: resource
+            type: STRING
+            description: "The resource to check (e.g. 'nodes', 'energy_data', 'job_queue', 'other_users_jobs')"
+            example: "nodes"
+          - name: action
+            type: STRING
+            description: "The action to check (e.g. 'read', 'write', 'list', 'submit')"
+            example: "read"
+        optional_parameters: []
+        return_shape:
+          type: "dict"
+          description: "{allowed: bool, role: str, resource: str, action: str}"
+          key_fields: [allowed, role, resource, action]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user, researcher, system_designer]
+          note: "Only sysadmin and facility_admin can directly query RBAC policy."
+        example_calls:
+          - description: "Check if current role can read node telemetry"
+            args: {resource: "nodes", action: "read"}
+            expected_result_keys: [allowed, role]
+          - description: "Check if current role can view other users' jobs"
+            args: {resource: "other_users_jobs", action: "read"}
+            expected_result_keys: [allowed, role]
+
+      - name: list_permissions
+        description: >
+          List all permissions granted to the current role. Returns a list of
+          {resource, actions} records from rbac_policy.yaml.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[dict]"
+          description: "Permission records: [{resource: str, actions: list[str]}]"
+          key_fields: [resource, actions]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user, researcher, system_designer]
+          note: "Only sysadmin and facility_admin can query the full permission list."
+        example_calls:
+          - description: "List all permissions for current role"
+            args: {}
+            expected_result_keys: [resource, actions]
+
+  # ---------------------------------------------------------------------------
+  # facility — Mock Facility/Power Management Tool
+  # ---------------------------------------------------------------------------
+  - name: facility
+    description: >
+      Provides access to power consumption, rack telemetry (temperature, cooling),
+      and hardware inventory data. Primarily used by facility_admin and
+      system_designer roles for energy and infrastructure questions.
+    class: MockFacilityTool
+    module: exabench.tools.facility_tool
+    methods:
+
+      - name: query_node_power
+        description: >
+          Return per-node power readings from node_power_*.csv. Optionally filter
+          to a single node. Power values are in Watts.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters:
+          - name: node
+            type: STRING
+            description: "Filter to a specific node name (e.g. 'node042')"
+            example: "node042"
+        return_shape:
+          type: "list[dict]"
+          description: "Power records from power/node_power_*.csv"
+          key_fields: [node, timestamp, power_watts, energy_kwh]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user]
+          note: "scientific_user cannot access facility power data. All elevated roles: full access."
+        example_calls:
+          - description: "Get power readings for node042"
+            args: {node: "node042"}
+            expected_result_keys: [node, timestamp, power_watts]
+          - description: "Get power readings for all nodes"
+            args: {}
+            expected_result_keys: [node, timestamp, power_watts, energy_kwh]
+
+      - name: query_cluster_energy
+        description: >
+          Return cluster-level energy time series. Source file is either
+          cluster_energy_*.csv or rack_energy_*.csv depending on environment.
+          Values represent total cluster power draw and cumulative energy.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[dict]"
+          description: "Cluster energy records from power/cluster_energy_*.csv or rack_energy_*.csv"
+          key_fields: [timestamp, total_power_kw, energy_kwh, pue]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user, researcher, sysadmin]
+          note: "Only facility_admin and system_designer should access cluster energy totals (per RBAC policy)."
+        example_calls:
+          - description: "Get cluster energy time series"
+            args: {}
+            expected_result_keys: [timestamp, total_power_kw, energy_kwh]
+
+      - name: query_rack_telemetry
+        description: >
+          Return rack telemetry (inlet temperature, cooling fan speed, humidity,
+          cooling status) from rack_telemetry_*.csv. Optionally filter by rack_id.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters:
+          - name: rack_id
+            type: STRING
+            description: "Filter to a specific rack (e.g. 'rack-A1')"
+            example: "rack-A1"
+        return_shape:
+          type: "list[dict]"
+          description: "Rack telemetry records from rack/rack_telemetry_*.csv"
+          key_fields: [rack_id, timestamp, inlet_temp_c, fan_speed_pct, cooling_status]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user, researcher]
+          note: "Only facility_admin: full rack telemetry. sysadmin: read only. system_designer: read for design analysis."
+        example_calls:
+          - description: "Get telemetry for rack-A1"
+            args: {rack_id: "rack-A1"}
+            expected_result_keys: [rack_id, timestamp, inlet_temp_c, fan_speed_pct]
+
+      - name: list_inventory
+        description: >
+          List hardware inventory. kind='nodes' (default) returns node_map.csv.
+          kind='racks' returns rack_mapping.csv or rack_layout.csv.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters:
+          - name: kind
+            type: STRING
+            description: "Inventory type to list"
+            valid_values: [nodes, racks]
+            default: "nodes"
+            example: "nodes"
+        return_shape:
+          type: "list[dict]"
+          description: >
+            Inventory records.
+            nodes: {node_name, rack_id, slot, cpu_model, gpu_model, mem_gb}.
+            racks: {rack_id, location, capacity_slots, pdu_id}.
+          key_fields: [node_name, rack_id, cpu_model, mem_gb]
+        role_visibility:
+          default: restricted
+          denied_roles: [scientific_user, researcher]
+          note: "Inventory is a facility/admin concern. Elevated roles only."
+        example_calls:
+          - description: "List all nodes"
+            args: {kind: "nodes"}
+            expected_result_keys: [node_name, rack_id, cpu_model, mem_gb]
+          - description: "List all racks"
+            args: {kind: "racks"}
+            expected_result_keys: [rack_id, location, capacity_slots]
+
+  # ---------------------------------------------------------------------------
+  # docs — Mock Documentation Retrieval Tool
+  # ---------------------------------------------------------------------------
+  - name: docs
+    description: >
+      Keyword search over environment documentation files in docs/*.md. Agents
+      use this to look up policies, operational procedures, HPC configuration,
+      and help resources.
+    class: MockDocsTool
+    module: exabench.tools.docs_tool
+    methods:
+
+      - name: retrieve
+        description: >
+          Keyword search over documentation files in docs/. Returns up to
+          max_results documents whose content contains any word from the query.
+          Each hit includes the doc_name (filename without extension) and the
+          first 500 characters as a snippet.
+        difficulty: simple
+        required_parameters:
+          - name: query
+            type: STRING
+            description: "Search query — any word match triggers inclusion"
+            example: "SLURM partition policy"
+        optional_parameters:
+          - name: max_results
+            type: NUMBER
+            description: "Maximum number of documents to return (default 3)"
+            default: 3
+            example: 5
+        return_shape:
+          type: "list[dict]"
+          description: "Matched docs: [{doc_name: str, snippet: str}]"
+          key_fields: [doc_name, snippet]
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: "All roles can search documentation."
+        example_calls:
+          - description: "Search for SLURM partition policy"
+            args: {query: "partition policy walltime"}
+            expected_result_keys: [doc_name, snippet]
+          - description: "Discover available tools via docs"
+            args: {query: "available tools slurm telemetry rbac"}
+            expected_result_keys: [doc_name, snippet]
+
+      - name: list_docs
+        description: >
+          List all documentation files available in the docs/ directory of the
+          environment bundle. Returns document names without the .md extension.
+          Useful for tool discovery.
+        difficulty: simple
+        required_parameters: []
+        optional_parameters: []
+        return_shape:
+          type: "list[str]"
+          description: "Document names, e.g. ['slurm_policy', 'energy_budget', 'rbac_guide', 'partition_config']"
+          key_fields: []
+        role_visibility:
+          default: all
+          denied_roles: []
+          note: "All roles can list available documents."
+        example_calls:
+          - description: "List all available documents"
+            args: {}
+            expected_result_keys: []

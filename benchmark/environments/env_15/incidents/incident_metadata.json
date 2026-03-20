@@ -1,0 +1,30 @@
+{
+  "incident_id": "INC-2026-0313-001",
+  "severity": "high",
+  "title": "Memory oversubscription: node01 at 145% utilisation",
+  "opened_at": "2026-03-13T12:00:00Z",
+  "status": "open",
+  "affected_resource": "node01",
+  "affected_job": "990001",
+  "summary": "Jobs 990001 and 990002 are both running on node01. Combined requested memory: 380GB on a 256GB node. node01 memory utilisation at 145%. Swap I/O causing both jobs to run 3\u20134\u00d7 slower than expected.",
+  "timeline": [
+    {
+      "time": "2026-03-13T10:05:00Z",
+      "event": "Jobs 990001 and 990002 start on node01"
+    },
+    {
+      "time": "2026-03-13T11:00:00Z",
+      "event": "Memory utilisation crosses 100%"
+    },
+    {
+      "time": "2026-03-13T12:00:00Z",
+      "event": "Alert: node01 swap I/O excessive"
+    },
+    {
+      "time": "2026-03-13T15:00:00Z",
+      "event": "Snapshot captured \u2014 145% memory util"
+    }
+  ],
+  "resolution": null,
+  "notes": "SLURM memory enforcement was bypassed \u2014 investigate MaxMemPerNode setting."
+}

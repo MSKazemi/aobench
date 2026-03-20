@@ -1,0 +1,58 @@
+rubric_id: hpc_energy_anomaly_v1
+version: "1"
+description: "Evaluate agent explanation of an HPC energy anomaly"
+domain: hpc_energy
+max_score: 6
+
+dimensions:
+  technical_correctness:
+    description: "Does the explanation identify the anomaly mechanism?"
+    weight: 0.50
+    paths:
+      power_spike:
+        description: "Anomaly is a transient power spike (load surge, thermal event)"
+        items:
+          - id: mechanism_identified
+            description: "Identifies spike mechanism (compute burst, cooling failure, PSU issue)"
+            points: 2
+          - id: evidence_cited
+            description: "References telemetry values (node power, PDU readings, timestamps)"
+            points: 1
+      sustained_overconsumption:
+        description: "Anomaly is sustained elevated energy (workload mix, inefficiency)"
+        items:
+          - id: mechanism_identified
+            description: "Identifies sustained cause (high-memory job, GPU utilisation, inefficient code)"
+            points: 2
+          - id: evidence_cited
+            description: "References energy trend data, job accounting, or PUE metrics"
+            points: 1
+      sensor_fault:
+        description: "Anomaly is a sensor or reporting artefact, not actual energy change"
+        items:
+          - id: mechanism_identified
+            description: "Correctly identifies sensor fault or reporting gap"
+            points: 2
+          - id: evidence_cited
+            description: "References cross-validation with other sensors or known maintenance window"
+            points: 1
+
+  conciseness:
+    description: "Is the explanation appropriately concise for operational use?"
+    weight: 0.20
+    levels:
+      0: "Excessive padding, irrelevant detail, or response is too brief to be useful"
+      1: "Adequate length; minor padding or missing context"
+      2: "Concise and focused; every sentence contributes to the explanation"
+
+  actionability:
+    description: "Are mitigation steps (power capping, job throttling, escalation) recommended?"
+    weight: 0.30
+    levels:
+      0: "No mitigation suggested, or suggestion is unsafe/impractical"
+      1: "Generic mitigation (e.g. 'reduce load') without specifics"
+      2: "Specific, prioritised mitigation steps (e.g. power cap threshold, which jobs to throttle)"
+
+scoring:
+  aggregate: weighted_mean
+  level_max: 2
