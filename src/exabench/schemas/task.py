@@ -245,6 +245,14 @@ class TaskSpec(BaseModel):
     validation_status: ValidationStatus = "not_started"
     scoring_readiness: ScoringReadiness = "blocked"
 
+    # Contamination tracking (task_lite_spec.md §5.2)
+    task_creation_date: Optional[str] = None          # ISO 8601
+    contamination_risk: Optional[Literal["clean", "elevated", "unknown"]] = None
+
+    # T1–T10 validity gate (task_lite_spec.md §3.1)
+    t1_t10_pass: Optional[bool] = None
+    t1_t10_audit_date: Optional[str] = None           # ISO 8601
+
     @model_validator(mode="after")
     def _check_difficulty_tier_consistency(self) -> "TaskSpec":
         if self.difficulty_tier is None:
@@ -321,6 +329,7 @@ class HPCTaskSpec(BaseModel):
     scoring_mode: HPCScoringMode
     rubric_id: Optional[str] = None
     difficulty: Difficulty
+    difficulty_tier: Optional[DifficultyTier] = None   # 1=single-lookup, 2=multi-step, 3=complex
     role_variants: dict[str, HPCRoleVariant] = Field(default_factory=dict)
     snapshot_id: str
     required_tools: list[str] = Field(default_factory=list)
@@ -336,3 +345,23 @@ class HPCTaskSpec(BaseModel):
     temporal_anchor: Optional[str] = None
     # Gold trajectory for tool-use sequence scoring (tool_use_scorer_spec.md §2).
     gold_trajectory: Optional[GoldTrajectory] = None
+
+    # Contamination tracking (task_lite_spec.md §5.2)
+    task_creation_date: Optional[str] = None          # ISO 8601
+    contamination_risk: Optional[Literal["clean", "elevated", "unknown"]] = None
+
+    # T1–T10 validity gate (task_lite_spec.md §3.1)
+    t1_t10_pass: Optional[bool] = None
+    t1_t10_audit_date: Optional[str] = None           # ISO 8601
+
+    @model_validator(mode="after")
+    def _check_hpc_difficulty_tier_consistency(self) -> "HPCTaskSpec":
+        if self.difficulty_tier is None:
+            return self
+        expected = _DIFFICULTY_TO_TIER.get(self.difficulty)
+        if expected is not None and self.difficulty_tier != expected:
+            raise ValueError(
+                f"difficulty_tier={self.difficulty_tier} is inconsistent with "
+                f"difficulty={self.difficulty!r} (expected {expected})"
+            )
+        return self

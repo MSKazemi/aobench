@@ -33,11 +33,96 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+
+# ---------------------------------------------------------------------------
+# Reliability error
+# ---------------------------------------------------------------------------
+
+class RubricReliabilityError(Exception):
+    """Raised when multi-judge ICC(A,1) falls below the reliability threshold.
+
+    The result is considered unpublishable until the inter-rater reliability
+    gate passes.
+    """
+
 # Type alias for the judge callable
 LLMJudgeClient = Callable[[str], str]
 
 # Default rubric directory (co-located with this module)
 _RUBRIC_DIR = Path(__file__).parent / "rubrics"
+
+
+# ---------------------------------------------------------------------------
+# Inter-rater reliability
+# ---------------------------------------------------------------------------
+
+def compute_icc(ratings: list[list[float]]) -> float:
+    """Compute ICC(A,1) — intraclass correlation, absolute agreement, single rater.
+
+    Args:
+        ratings: Matrix of shape (n_judges, n_dimensions).  ``ratings[i][j]``
+                 is judge *i*'s score on dimension *j*.  Requires at least
+                 2 judges and 2 dimensions.
+
+    Returns:
+        ICC(A,1) coefficient in [-1, 1].
+
+    Raises:
+        ValueError: If the matrix is too small to compute ICC.
+    """
+    try:
+        import pandas as pd
+        import pingouin as pg
+    except ImportError as exc:
+        raise ImportError(
+            "pingouin and pandas are required for ICC computation: "
+            "pip install pingouin pandas"
+        ) from exc
+
+    n_judges = len(ratings)
+    if n_judges < 2:
+        raise ValueError("compute_icc requires at least 2 judges (raters).")
+    n_dims = len(ratings[0])
+    if n_dims < 2:
+        raise ValueError("compute_icc requires at least 2 dimensions (targets).")
+
+    rows = []
+    for judge_idx, judge_scores in enumerate(ratings):
+        for dim_idx, score in enumerate(judge_scores):
+            rows.append({
+                "target": f"dim_{dim_idx}",
+                "rater": f"judge_{judge_idx}",
+                "rating": float(score),
+            })
+    df = pd.DataFrame(rows)
+    icc_table = pg.intraclass_corr(
+        data=df,
+        targets="target",
+        raters="rater",
+        ratings="rating",
+        nan_policy="raise",
+    )
+    icc_val = icc_table[icc_table["Type"] == "ICC1"]["ICC"].values[0]
+    return float(icc_val)
+
+
+def validate_rubric_reliability(
+    multi_judge_scores: list[list[float]],
+    threshold: float = 0.80,
+) -> bool:
+    """Return True if ICC(A,1) meets the reliability threshold.
+
+    Args:
+        multi_judge_scores: Matrix of shape (n_judges, n_dimensions) — same
+                            format as ``compute_icc``.
+        threshold:          Minimum acceptable ICC(A,1).  Default 0.80.
+
+    Returns:
+        True if ICC(A,1) >= threshold, False otherwise.
+    """
+    icc = compute_icc(multi_judge_scores)
+    logger.debug("ICC(A,1) = %.4f  threshold = %.2f", icc, threshold)
+    return icc >= threshold
 
 
 # ---------------------------------------------------------------------------
@@ -175,44 +260,101 @@ def rubric_score(
     rubric_dir: Path | None = None,
     max_retries: int = 3,
     retry_delay: float = 2.0,
+    n_judges: int = 1,
+    icc_threshold: float = 0.80,
 ) -> RubricResult:
     """Run the LLM judge against a hierarchical rubric.
 
+    When ``n_judges >= 2`` the judge is called independently that many times and
+    an ICC(A,1) gate is applied across the per-dimension score vectors.  If
+    ICC(A,1) falls below ``icc_threshold`` a ``RubricReliabilityError`` is
+    raised because the result is considered unpublishable.  The returned score
+    is the mean across all judge runs.
+
     Args:
-        agent_output:  The agent's free-text response.
-        rubric_id:     ID of the rubric YAML to load.
-        task_context:  HPC snapshot summary injected into the judge prompt.
-        llm_client:    Callable ``(prompt: str) -> str`` for the judge LLM.
-        rubric_dir:    Override the default rubric search directory.
-        max_retries:   Number of retry attempts on judge failure.
-        retry_delay:   Seconds between retries.
+        agent_output:   The agent's free-text response.
+        rubric_id:      ID of the rubric YAML to load.
+        task_context:   HPC snapshot summary injected into the judge prompt.
+        llm_client:     Callable ``(prompt: str) -> str`` for the judge LLM.
+        rubric_dir:     Override the default rubric search directory.
+        max_retries:    Number of retry attempts on judge failure (per run).
+        retry_delay:    Seconds between retries.
+        n_judges:       Number of independent judge calls.  When >= 2 the ICC
+                        gate is evaluated before returning.
+        icc_threshold:  Minimum ICC(A,1) required when ``n_judges >= 2``.
+                        Default 0.80.
 
     Returns:
         RubricResult with normalised score, per-dimension breakdown, and rationale.
 
     Raises:
-        RuntimeError: If judge fails after all retries.
+        RuntimeError:            If any judge run fails after all retries.
+        RubricReliabilityError:  If ``n_judges >= 2`` and ICC(A,1) < icc_threshold.
     """
     rubric = load_rubric(rubric_id, rubric_dir=rubric_dir)
     full_prompt = _SYSTEM_PROMPT + "\n\n" + _build_prompt(agent_output, rubric, task_context)
 
-    last_err: Exception | None = None
-    for attempt in range(1, max_retries + 1):
-        try:
-            raw_text = llm_client(full_prompt)
-            parsed = _extract_json(raw_text)
-            break
-        except Exception as exc:
-            last_err = exc
-            logger.warning(
-                "rubric_score judge attempt %d/%d failed: %s", attempt, max_retries, exc
-            )
-            if attempt < max_retries:
-                time.sleep(retry_delay)
-    else:
+    def _run_once() -> dict[str, Any]:
+        last_err: Exception | None = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                raw_text = llm_client(full_prompt)
+                return _extract_json(raw_text)
+            except Exception as exc:
+                last_err = exc
+                logger.warning(
+                    "rubric_score judge attempt %d/%d failed: %s", attempt, max_retries, exc
+                )
+                if attempt < max_retries:
+                    time.sleep(retry_delay)
         raise RuntimeError(
             f"LLM judge failed after {max_retries} attempts: {last_err}"
         )
+
+    n_runs = max(1, n_judges)
+    all_parsed: list[dict[str, Any]] = [_run_once() for _ in range(n_runs)]
+
+    # -----------------------------------------------------------------------
+    # ICC(A,1) gate — only when multiple judges were used
+    # -----------------------------------------------------------------------
+    if n_runs >= 2:
+        # Collect per-judge dimension score vectors (sorted by dimension name
+        # for consistency).
+        dim_names: list[str] = sorted(all_parsed[0].get("dimensions", {}).keys())
+        if len(dim_names) >= 2:
+            multi_judge_scores: list[list[float]] = [
+                [float(p.get("dimensions", {}).get(d, {}).get("score", 0.0)) for d in dim_names]
+                for p in all_parsed
+            ]
+            icc = compute_icc(multi_judge_scores)
+            logger.info(
+                "rubric_score ICC(A,1)=%.4f  threshold=%.2f  n_judges=%d",
+                icc, icc_threshold, n_runs,
+            )
+            if icc < icc_threshold:
+                raise RubricReliabilityError(
+                    f"ICC(A,1)={icc:.4f} < threshold={icc_threshold:.2f} "
+                    f"(n_judges={n_runs}).  The result is unpublishable; "
+                    "consider revising the rubric or increasing n_judges to "
+                    "diagnose the disagreement."
+                )
+        else:
+            logger.warning(
+                "ICC gate skipped: only %d dimension(s) found (need >= 2).", len(dim_names)
+            )
+
+    # -----------------------------------------------------------------------
+    # Aggregate across runs (mean scores)
+    # -----------------------------------------------------------------------
+    # Use the first run's structure as the template; average numeric fields.
+    parsed = all_parsed[0]
+    if n_runs > 1:
+        dim_names_all = list(parsed.get("dimensions", {}).keys())
+        for dim in dim_names_all:
+            scores = [p.get("dimensions", {}).get(dim, {}).get("score", 0.0) for p in all_parsed]
+            parsed["dimensions"][dim]["score"] = sum(scores) / len(scores)
+        all_norm = [float(p.get("normalized_score", 0.0)) for p in all_parsed]
+        parsed["normalized_score"] = sum(all_norm) / len(all_norm)
 
     normalized = float(parsed.get("normalized_score", 0.0))
     normalized = max(0.0, min(1.0, normalized))

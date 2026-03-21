@@ -4,9 +4,9 @@ Single source of truth for project status, next steps, and backlog.
 
 ---
 
-## Current State (2026-03-19)
+## Current State (2026-03-21)
 
-**Alpha-1 complete + HPC task set v1 implemented.** Full pipeline runs end-to-end with 30 tasks, 20 environments, 5 tools, 4 adapters, 5 scorers, structured logging, progress bars, Langfuse tracing, and a complete CLI. Dataset splits frozen; cost + latency tracking in place. HPC snapshot schema (validator, loader factory, parquet telemetry queries) fully implemented. HPC task set v1 (36 role-aware tasks, 6 data types, schema-driven RAG context builder) implemented from Souza et al. 2025.
+**Alpha-1 complete + HPC task set v1 implemented + ExaBench-Lite pipeline implemented.** Full pipeline runs end-to-end with 30 tasks, 20 environments, 5 tools, 4 adapters, 5 scorers, structured logging, progress bars, Langfuse tracing, and a complete CLI. Dataset splits frozen (70% dev / 30% test, stratified by QCAT × role); cost + latency tracking in place. HPC snapshot schema (validator, loader factory, parquet telemetry queries) fully implemented. HPC task set v1 (36 role-aware tasks, 6 data types, schema-driven RAG context builder) implemented from Souza et al. 2025. ExaBench-Lite 3-stage selection pipeline (SWE-bench Lite methodology) implemented: `dataset_splits.py`, `lite_selector.py`, `task_pipeline.py`, `--split lite` on run commands.
 
 | Area | Details |
 |------|---------|
@@ -20,10 +20,12 @@ Single source of truth for project status, next steps, and backlog.
 | Tracing | Optional Langfuse backend — `--langfuse` flag on run commands; posts scores as Langfuse score objects |
 | Logging | `utils/logging.py` — `get_logger()` + `configure_logging()`; `--verbose` on run commands |
 | CI | `.github/workflows/ci.yml` — lint + typecheck + tests + validate on every push/PR |
-| Tests | 251 passing (unit + integration) |
+| Tests | 534 passing (unit + integration) |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` |
-| Dataset splits | 12 dev / 10 public_test / 8 hidden_test — balanced by category and role |
-| Difficulty levels | 10 easy / 13 medium / 7 hard across all 30 tasks |
+| Dataset splits | 70% dev / 30% test (9 held-out tasks) — stratified by QCAT × role, frozen 2026-03-21 before first model run |
+| ExaBench-Lite | 3-stage pipeline (T1–T10 gate → attribute filter → execution filter); `dataset_splits.py` + `lite_selector.py` + `lite_manifest_v1.json`; `--split lite` on `exabench run all` |
+| Difficulty levels | 10 easy / 13 medium / 7 hard across all 30 tasks; `difficulty_tier` (1/2/3) on both `TaskSpec` and `HPCTaskSpec` |
+| Contamination tracking | `task_creation_date`, `contamination_risk` (clean/elevated/unknown) fields on all task schemas |
 
 ---
 
@@ -72,7 +74,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 - [x] ~~Populate `gold_answer` for all tasks~~ ✓ all 30 tasks have `scoring_readiness: ready`
 - [x] ~~`--verbose` / `--quiet` flags to CLI~~ ✓ `--verbose/-v` implemented on run commands
 - [x] ~~**Token cost estimation**~~ ✓ `prompt_tokens`, `completion_tokens`, `cost_estimate_usd`, `latency_seconds`, `model_name` in `BenchmarkResult` and `Trace`; pricing table in `utils/cost.py`; surfaced in JSON report
-- [x] ~~**Freeze dataset splits**~~ ✓ 12 dev / 10 public_test / 8 hidden_test assigned across all 30 tasks
+- [x] ~~**Freeze dataset splits**~~ ✓ 70% dev / 30% test (9 held-out tasks) — stratified by QCAT × role; `benchmark/tasks/dataset_splits.py` frozen 2026-03-21 before any model runs
 
 ### Refactoring
 
@@ -98,6 +100,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 ### Features — To Do
 
 - [x] ~~**Hybrid scorer (deterministic + rubric)**~~ ✓ `scorers/hybrid_scorer.py` routes on `task.hybrid_scoring.scoring_mode`; deterministic path: CS/CFS/SR (DAComp three-tier); rubric path: LLM-judge with hierarchical YAML rubric + optional GSB comparative scoring; three HPC rubric templates (`hpc_job_failure_diagnosis_v1`, `hpc_energy_anomaly_v1`, `hpc_rbac_response_v1`); `ComponentSpec` + `HybridScoringConfig` embedded in `TaskSpec`; `make_openai_judge` + `make_anthropic_judge` factory helpers
+- [x] ~~**ExaBench-Lite subset pipeline**~~ ✓ 3-stage selection (SWE-bench Lite methodology): Stage 1 T1–T10 gate (`task_pipeline.py`), Stage 2 attribute filter one-per-(QCAT×role×tier) cell (`lite_selector.py`), Stage 3 execution filter (non-degenerate pilot-score gate); `benchmark/tasks/dataset_splits.py` (70%/30% split, frozen); `lite_manifest_v1.json`; `--split lite|dev|test|all` on `exabench run all`; `exabench lite select` CLI; contamination tracking (`task_creation_date`, `contamination_risk`) on all task schemas; `difficulty_tier` on `HPCTaskSpec`
 - [ ] **Structured output evaluation mode** — `eval_criteria.evaluation_mode: structured_output` declared in schema but no scorer validates JSON schema; add `jsonschema` validation path to `OutcomeScorer`
 - [ ] **Parallel task execution** — `exabench run all` runs tasks serially; add `asyncio` or `concurrent.futures` mode; required before dataset expands beyond 30 tasks
 - [ ] **`exabench task create`** — interactive task authoring helper (currently requires manual JSON editing of ~20 fields)
@@ -130,7 +133,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
   - Next phase: expand to PERF, DATA, SEC, FAC, ARCH, AIOPS, DOCS as taxonomy improvement progresses
   - All 5 roles covered once complete
   - Mix of easy/medium/hard/adversarial difficulty
-- [x] ~~Freeze dataset splits~~ ✓ 12 dev / 10 public_test / 8 hidden_test
+- [x] ~~Freeze dataset splits~~ ✓ 70% dev / 30% test stratified by QCAT × role
 - [ ] Assign annotation ownership per task
 
 ### Refactoring
@@ -157,7 +160,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 - [ ] Define release package structure and PyPI publication (`exabench` on PyPI)
 - [ ] Public leaderboard spec — JSON format for result submission
 - [ ] Production agent integration — connect to agents with real cluster access; ExaBench never needs direct cluster access
-- [ ] Dataset split validation CLI — ensure dev/test splits are disjoint
+- [x] ~~Dataset split validation CLI~~ ✓ `dataset_splits.py` asserts `LITE ∩ TEST = ∅` in `lite_selector.py`; `--split test` raises an error with access-rules reference
 - [ ] API service — expose benchmark execution over HTTP
 - [ ] Documentation site (mkdocs or Sphinx with auto-generated API reference)
 - [ ] `SECURITY.md`, `CODE_OF_CONDUCT.md` for community infrastructure
@@ -175,7 +178,7 @@ Requires: `ANTHROPIC_API_KEY` in `.env`. First 3-way comparison (direct_qa=0.338
 ### Phase 2–3 — Evaluation Protocol & Dataset ✓
 - Multi-dimensional scoring defined: outcome, tool_use, grounding, governance, efficiency, robustness
 - 12 task specs created across all roles and QCATs; all have `scoring_readiness: ready`
-- Dataset split strategy defined (dev / public_test / hidden_test)
+- Dataset split strategy defined (dev / test, stratified by QCAT × role)
 - Weighted profiles: `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01`
 
 ### Phase 4 — Environments ✓ (expanded to 20)
@@ -250,4 +253,4 @@ facility_admin       2      2         6       10
 TOTAL               10     10        10       30
 ```
 
-v0.1 target: 30/30 tasks complete. Dataset splits frozen (12 dev / 10 public_test / 8 hidden_test). Next: add `normal_user` and `system_designer` roles per taxonomy.
+v0.1 target: 30/30 tasks complete. Dataset splits frozen (21 dev / 9 held-out test, stratified by QCAT × role; `dataset_splits.py` frozen 2026-03-21). Next: add `normal_user` and `system_designer` roles per taxonomy.

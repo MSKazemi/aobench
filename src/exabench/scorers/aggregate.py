@@ -166,6 +166,7 @@ class AggregateScorer:
             cup_score=cup_score,
             violation_vector=violation_vector,
             tool_use_detail=tool_use_detail,
+            task_category=task.qcat,
         )
 
     @staticmethod

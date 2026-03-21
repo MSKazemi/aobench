@@ -934,8 +934,11 @@ exabench robustness task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o
 # All tasks — suite-level pass^k + cost + latency
 exabench robustness all --adapter openai:gpt-4o --n 8
 
-# Quick smoke-test on dev split (12 tasks × 4 runs)
+# Quick smoke-test on dev split (4 runs each)
 exabench robustness all --adapter openai:gpt-4o --n 4 --split dev
+
+# Fast smoke-test on ExaBench-Lite (~20 tasks × 4 runs)
+exabench robustness all --adapter openai:gpt-4o --n 4 --split lite
 ```
 
 Output includes per-task `pass_k` dict (k=1,2,4,8), `mean_score`, `std_dev`, `robustness_score` (1−σ), `total_cost_usd`, and `mean_latency_seconds`. See `src/exabench/scorers/robustness_scorer.py`.

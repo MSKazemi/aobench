@@ -431,6 +431,41 @@ def build_clear_report(
     }
 
 
+def compute_pass_k_by_category(
+    results: list[BenchmarkResult],
+    pass_threshold: float = 0.5,
+) -> dict[str, float]:
+    """Compute pass rate per QCAT category for a list of results.
+
+    For each unique ``task_category`` value, the pass rate is the fraction of
+    tasks where ``cup_score >= pass_threshold`` (or ``aggregate_score >=
+    pass_threshold`` when cup_score is None).
+
+    Args:
+        results:         List of BenchmarkResult for one model.
+        pass_threshold:  Minimum score to count as a pass.
+
+    Returns:
+        dict mapping category string → pass rate float (0.0–1.0).
+        Categories with no results are omitted.
+    """
+    by_category: dict[str, list[BenchmarkResult]] = defaultdict(list)
+    for r in results:
+        category = r.task_category or "unknown"
+        by_category[category].append(r)
+
+    out: dict[str, float] = {}
+    for category, cat_results in by_category.items():
+        passing = sum(
+            1
+            for r in cat_results
+            if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
+            and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
+        )
+        out[category] = round(passing / len(cat_results), 4)
+    return out
+
+
 def write_clear_report(
     model_results: dict[str, list[BenchmarkResult]],
     output_path: str | Path,

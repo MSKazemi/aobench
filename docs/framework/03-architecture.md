@@ -453,16 +453,20 @@ ExaBench/
 │   ├── taxonomy/           # HPC error taxonomy YAML (hpc_error_taxonomy.yaml — 24 TRAIL-adapted leaf categories)
 │   ├── environment/        # Snapshot loading + validation (snapshot_loader, snapshot_validator)
 │   ├── loaders/            # Task and environment loaders
+│   ├── tasks/              # Task loading + Lite selection (task_loader, lite_selector, context_builder)
+│   ├── validation/         # T1–T10 validation pipeline orchestrator (task_pipeline)
 │   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC, facility)
 │   ├── adapters/           # Agent backend adapters
 │   ├── runners/            # Execution runner and trace writer
 │   ├── scorers/            # Scoring engine (outcome, governance, efficiency, error_annotator)
 │   ├── reports/            # Report generation
 │   ├── utils/              # Shared utilities
-│   └── cli/                # exabench run / validate commands
+│   └── cli/                # exabench run / validate / lite commands
 │
 ├── benchmark/              # Benchmark dataset (static source data)
 │   ├── tasks/specs/        # Task specification files (JSON)
+│   ├── tasks/dataset_splits.py  # TEST_TASK_IDS / DEV_TASK_IDS / LITE_TASK_IDS (frozen 2026-03-21)
+│   ├── tasks/lite_manifest_v1.json  # ExaBench-Lite selection manifest (output of lite_selector.py)
 │   ├── environments/       # HPC state snapshot bundles (env_01–env_20)
 │   ├── configs/            # Scoring profiles, tool registry
 │   └── qa/                 # ExaBench-QA dataset (query corpus)

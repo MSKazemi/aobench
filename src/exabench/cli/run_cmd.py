@@ -79,11 +79,60 @@ def _generate_reports(run_dir: Path) -> None:
     typer.echo(format_table_text(table))
 
 
+def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
+    """Return the set of task IDs for the requested split, or None (= all tasks).
+
+    Raises typer.Exit with an error message for the 'test' split (locked).
+    """
+    if split == "all":
+        return None
+
+    import sys
+    sys.path.insert(0, str(Path(benchmark_root).parent))
+    try:
+        from benchmark.tasks.dataset_splits import (
+            TEST_TASK_IDS, LITE_TASK_IDS, get_split
+        )
+        from exabench.loaders.task_loader import load_tasks_from_dir
+    except ImportError:
+        typer.echo("Could not import dataset_splits. Run from the repo root.", err=True)
+        raise typer.Exit(1)
+    finally:
+        sys.path.pop(0)
+
+    if split == "test":
+        typer.echo(
+            "Error: Test split is locked. "
+            "Inspect outputs/specs/task_lite_spec.md §4.4 for access rules.",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    if split == "lite":
+        ids = set(LITE_TASK_IDS)
+        if not ids:
+            typer.echo(
+                "Warning: LITE_TASK_IDS is empty. "
+                "Run `exabench lite select` first to populate the Lite manifest.",
+                err=True,
+            )
+        return ids
+
+    if split == "dev":
+        specs_dir = Path(benchmark_root) / "tasks" / "specs"
+        all_ids = {t.task_id for t in load_tasks_from_dir(specs_dir)}
+        return all_ids - set(TEST_TASK_IDS)
+
+    typer.echo(f"Unknown split '{split}'. Use: all | dev | lite | test", err=True)
+    raise typer.Exit(1)
+
+
 @run_app.command("all")
 def run_all(
     adapter: Annotated[str, typer.Option("--adapter", "-a", help="Adapter name")] = "direct_qa",
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
+    split: Annotated[str, typer.Option("--split", "-s", help="Task split: all | dev | lite | test")] = "all",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
     langfuse: Annotated[bool, typer.Option("--langfuse/--no-langfuse", help="Export traces and scores to Langfuse")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
@@ -91,6 +140,7 @@ def run_all(
     """Run all benchmark tasks. Uses each task's environment_id from its spec.
 
     Creates one run directory with traces and results for every task.
+    Use --split lite|dev|all to filter which tasks are run.
     """
     configure_logging("DEBUG" if verbose else "WARNING")
 
@@ -109,9 +159,19 @@ def run_all(
         raise typer.Exit(1)
 
     specs_dir = Path(benchmark_root) / "tasks" / "specs"
-    tasks = load_tasks_from_dir(specs_dir)
-    if not tasks:
+    all_tasks = load_tasks_from_dir(specs_dir)
+    if not all_tasks:
         typer.echo(f"No tasks found in {specs_dir}", err=True)
+        raise typer.Exit(1)
+
+    split_ids = _load_split_ids(split, benchmark_root)
+    if split_ids is not None:
+        tasks = [t for t in all_tasks if t.task_id in split_ids]
+        typer.echo(f"Split '{split}': {len(tasks)}/{len(all_tasks)} tasks selected.")
+    else:
+        tasks = all_tasks
+    if not tasks:
+        typer.echo(f"No tasks match split '{split}'.", err=True)
         raise typer.Exit(1)
 
     exporter = _build_exporter(langfuse)

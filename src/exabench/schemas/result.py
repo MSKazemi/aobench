@@ -64,6 +64,9 @@ class BenchmarkResult(BaseModel):
     # Difficulty tier (1, 2, or 3) copied from TaskSpec at run time.
     # Required by compute_tier_accuracy() to group results without re-loading the task set.
 
+    task_category: Optional[str] = None
+    # QCAT category string (e.g. "PERF", "DATA", "SEC") copied from TaskSpec at scoring time.
+
     cup_score: Optional[float] = None
     # CuP-gated efficacy score: equals outcome when no violations, 0.0 otherwise.
     # None if CuP scoring has not been applied (e.g. pre-CuP runs).

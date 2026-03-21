@@ -1,0 +1,15 @@
+{
+  "manifest_version": "1.0",
+  "generated_at": "2026-03-21T00:00:00Z",
+  "corpus_version": "v0.1",
+  "note": "Initial placeholder — run `exabench lite select` to populate.",
+  "stage1_candidates": 0,
+  "stage2_attribute_filtered": 0,
+  "stage3_execution_filtered": 0,
+  "lite_task_count": 0,
+  "lite_task_ids": [],
+  "lite_tasks": [],
+  "excluded_tasks": [],
+  "qcat_coverage": {},
+  "difficulty_coverage": {}
+}

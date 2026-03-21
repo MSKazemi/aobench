@@ -206,6 +206,19 @@ validity-report:  ## Run T1–T10 task validity checks and write benchmark/valid
 	  --output benchmark/validity_report_v1.json \
 	  --format json
 
+.PHONY: lite-select
+lite-select:  ## Run 3-stage ExaBench-Lite selection and write benchmark/tasks/lite_manifest_v1.json
+	$(EXABENCH) lite select \
+	  --task-dir benchmark/tasks/specs \
+	  --output benchmark/tasks/lite_manifest_v1.json
+
+.PHONY: lite-select-with-scores
+lite-select-with-scores:  ## Run Lite selection with pilot scores (PILOT_SCORES= path to JSON)
+	$(EXABENCH) lite select \
+	  --task-dir benchmark/tasks/specs \
+	  --pilot-scores $(PILOT_SCORES) \
+	  --output benchmark/tasks/lite_manifest_v1.json
+
 .PHONY: audit-scorers
 audit-scorers:  ## Run O.a–O.c scorer validity audit and write benchmark/scorer_audit_v1.json
 	$(PYTHON) -m exabench.cli.audit_scorers \
@@ -263,6 +276,34 @@ rubric-cross-judge:  ## Score all 50 responses with two judges and report Kendal
 
 .PHONY: rubric-validate-all
 rubric-validate-all: rubric-compute-icc rubric-compute-krippendorff rubric-stochastic-stability rubric-cross-judge  ## Run all 4 rubric validation gates (R1–R4)
+
+# ── Paper artifact scripts ────────────────────────────────────────────────────
+
+PAPER_TABLE1_OUTPUT ?= -
+PAPER_TABLE4_OUTPUT ?= -
+VALIDITY_GATE_OUTPUT ?= data/reports/validity_gates.json
+
+.PHONY: paper-table1
+paper-table1:  ## Generate Table 1 (main results) from v01_dev_* run summaries
+	$(PYTHON) scripts/make_paper_table1.py \
+	  data/runs/v01_dev_claude_sonnet \
+	  data/runs/v01_dev_gpt4o \
+	  data/runs/v01_dev_gpt4o_mini \
+	  $(if $(filter-out -,$(PAPER_TABLE1_OUTPUT)),--output $(PAPER_TABLE1_OUTPUT),)
+
+.PHONY: paper-table4
+paper-table4:  ## Generate Table 4 (pass^k reliability) from data/robustness/v01_*.json
+	$(PYTHON) scripts/make_paper_table4.py \
+	  $(if $(filter-out -,$(PAPER_TABLE4_OUTPUT)),--output $(PAPER_TABLE4_OUTPUT),)
+
+.PHONY: check-validity-gates
+check-validity-gates:  ## Run V1–V6 validity gates and write JSON report (VALIDITY_GATE_OUTPUT= overridable)
+	$(PYTHON) scripts/check_validity_gates.py \
+	  data/runs/v01_dev_claude_sonnet \
+	  data/runs/v01_dev_gpt4o \
+	  data/runs/v01_dev_gpt4o_mini \
+	  --rob-dir data/robustness \
+	  --output $(VALIDITY_GATE_OUTPUT)
 
 .PHONY: clean
 clean:  ## Remove build artifacts, caches, and coverage reports

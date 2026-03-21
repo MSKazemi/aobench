@@ -16,6 +16,9 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench robustness task` | Run a task N times and report score variance (robustness score) |
 | `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
 | `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
+| `exabench lite select` | Run 3-stage ExaBench-Lite selection and write `benchmark/tasks/lite_manifest_v1.json` |
+| `exabench validate tasks` | Run T1–T10 validity checks with a human-readable pass/fail summary table |
+| `make lite-select` | Run Lite selection pipeline (Stages 1–3) and write the Lite manifest |
 | `make generate-tool-docs` | Write `hpc_tools_guide.md` into all env `docs/` dirs from `hpc_tool_catalog.yaml` |
 | `make validate-tasks` | Run T1–T10 task validity checks on `benchmark/tasks/task_set_v1.json` |
 | `make validity-report` | Run T1–T10 task validity checks and write `benchmark/validity_report_v1.json` |
@@ -28,6 +31,9 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `make rubric-stochastic-stability` | Run judge 8× on 10 responses, report stochastic std (Gate R3) |
 | `make rubric-cross-judge` | Score 50 responses with two judges, report Kendall τ_b (Gate R4) |
 | `make rubric-validate-all` | Run all 4 rubric validation gates (R1–R4) in sequence |
+| `make paper-table1` | Generate Table 1 (main results) from `data/runs/v01_dev_*` summaries |
+| `make paper-table4` | Generate Table 4 (pass^k reliability) from `data/robustness/v01_*.json` |
+| `make check-validity-gates` | Run V1–V6 pre-publication validity gates and write `data/reports/validity_gates.json` |
 
 ---
 
@@ -260,10 +266,20 @@ exabench run all [OPTIONS]
 | `--adapter` | `-a` | `direct_qa` | Adapter name |
 | `--benchmark` | — | `benchmark` | Path to benchmark root |
 | `--output` | `-o` | `data/runs` | Output directory for runs |
+| `--split` | `-s` | `all` | Task split to run: `all` \| `dev` \| `lite` \| `test` |
 | `--report/--no-report` | — | `--report` | Auto-generate JSON + HTML reports after run |
 | `--langfuse/--no-langfuse` | — | `--no-langfuse` | Export traces and scores to Langfuse |
 | `--verbose` | `-v` | off | Enable DEBUG logging to stderr |
 | `-h`, `--help` | — | — | Show help and exit |
+
+**Split values:**
+
+| Split | Description |
+|-------|-------------|
+| `all` | All tasks in `benchmark/tasks/specs/` (default) |
+| `dev` | All tasks except `TEST_TASK_IDS` (70% dev split) |
+| `lite` | Tasks in `LITE_TASK_IDS` from `lite_manifest_v1.json` |
+| `test` | **Locked** — raises an error (held-out split, see `task_lite_spec.md §4.4`) |
 
 **Output structure:** One run directory (e.g. `data/runs/run_20260318_123456_abc123/`) containing:
 
@@ -275,7 +291,8 @@ exabench run all [OPTIONS]
 ```bash
 exabench run all
 exabench run all --adapter openai:gpt-4o
-exabench run all --adapter anthropic:claude-sonnet-4-6
+exabench run all --adapter anthropic:claude-sonnet-4-6 --split lite
+exabench run all --adapter openai:gpt-4o --split dev
 exabench run all -o my_runs/
 exabench run all --no-report   # skip report generation
 exabench run all --adapter openai:gpt-4o --langfuse   # export all traces to Langfuse
@@ -503,7 +520,7 @@ exabench robustness all [OPTIONS]
 | `--adapter` | `-a` | `direct_qa` | Adapter name (same format as `run task`) |
 | `--n` | | `8` | Runs per task (≥ 8 recommended) |
 | `--pass-threshold` | | `0.5` | Min aggregate_score to count a run as passing |
-| `--split` | | (all) | Only run tasks in this split (`dev`, `public_test`, `hidden_test`) |
+| `--split` | | (all) | Only run tasks in this split (`all`, `dev`, `lite`, `test`) |
 | `--output` | `-o` | `data/runs/robustness_suite.json` | Write suite JSON to this path |
 | `--benchmark-root` | | `benchmark` | Benchmark root directory |
 | `--output-root` | | `data/runs` | Run output root directory |
@@ -511,7 +528,7 @@ exabench robustness all [OPTIONS]
 **Example:**
 
 ```bash
-# Quick smoke-test on dev split (12 tasks × 4 runs)
+# Quick smoke-test on dev split (4 runs each)
 exabench robustness all --adapter direct_qa --n 4 --split dev
 
 # Full reliability run for the paper (all 30 tasks × 8 runs)
@@ -519,6 +536,58 @@ exabench robustness all --adapter openai:gpt-4o --n 8
 ```
 
 **Output:** A suite summary printed to stdout and written to `data/runs/robustness_suite.json` (or `--output`). Includes per-task pass^k, mean pass^k across all tasks, total cost, and mean latency.
+
+---
+
+### lite
+
+ExaBench-Lite subset selection commands. Implements the 3-stage pipeline from `task_lite_spec.md`:
+Stage 1 (T1–T10 gate + split exclusion) → Stage 2 (attribute filter) → Stage 3 (execution filter).
+
+```bash
+exabench lite [OPTIONS] COMMAND [ARGS]...
+```
+
+#### lite select
+
+Run the full 3-stage Lite selection pipeline and write `benchmark/tasks/lite_manifest_v1.json`.
+
+```bash
+exabench lite select [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--task-dir` | `benchmark/tasks/specs` | Task specs directory |
+| `--pilot-scores` | — | JSON file with pilot scores `{task_id: {model: score}}` |
+| `--output` | `benchmark/tasks/lite_manifest_v1.json` | Output manifest path |
+| `--task-file` | `benchmark/tasks/task_set_v1.json` | Task corpus for T1–T10 validation |
+| `--snapshot-dir` | `benchmark/environments/` | Environments directory |
+| `--catalog` | `benchmark/configs/hpc_tool_catalog.yaml` | Tool catalog YAML |
+| `--skip-validation` | off | Skip T1–T10 checks (use `task.t1_t10_pass` field) |
+
+**Examples:**
+
+```bash
+# Stage 1+2 only (Stage 3 pending — no pilot scores yet)
+exabench lite select
+
+# Full 3-stage with pilot scores
+exabench lite select --pilot-scores data/runs/v01_dev_gpt4o_mini/run_summary.json
+
+# Custom paths
+exabench lite select \
+  --task-dir benchmark/tasks/specs \
+  --pilot-scores data/pilot_scores.json \
+  --output benchmark/tasks/lite_manifest_v2.json
+```
+
+**Makefile shortcut:**
+
+```bash
+make lite-select
+make lite-select-with-scores PILOT_SCORES=data/runs/v01/run_summary.json
+```
 
 ---
 
