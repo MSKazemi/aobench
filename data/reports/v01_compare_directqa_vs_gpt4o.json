@@ -1,0 +1,486 @@
+{
+  "run_a": "direct_qa",
+  "run_b": "GPT-4o",
+  "mean_score_a": 0.3368,
+  "mean_score_b": 0.5165,
+  "mean_delta": 0.1797,
+  "filter_qcat": null,
+  "filter_role": null,
+  "delta_threshold": 0.005,
+  "task_count_a": 21,
+  "task_count_b": 21,
+  "tasks": [
+    {
+      "task_id": "ENERGY_FAC_001",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.3283,
+      "score_b": 0.6372,
+      "delta": 0.3089,
+      "dim_deltas": {
+        "outcome": 0.1206,
+        "tool_use": 0.8333,
+        "grounding": 1.0,
+        "governance": -0.5,
+        "efficiency": 0.0,
+        "aggregate_score": 0.3089
+      }
+    },
+    {
+      "task_id": "ENERGY_FAC_002",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.3357,
+      "score_b": 0.5376,
+      "delta": 0.2019,
+      "dim_deltas": {
+        "outcome": 0.2173,
+        "tool_use": 0.8333,
+        "grounding": 0.8125,
+        "governance": -1.0,
+        "efficiency": -0.0667,
+        "aggregate_score": 0.2019
+      }
+    },
+    {
+      "task_id": "ENERGY_FAC_003",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.7073,
+      "delta": 0.3733,
+      "dim_deltas": {
+        "outcome": 0.4189,
+        "tool_use": 0.8333,
+        "grounding": 0.8,
+        "governance": -0.5,
+        "efficiency": 0.0,
+        "aggregate_score": 0.3733
+      }
+    },
+    {
+      "task_id": "ENERGY_FAC_005",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.348,
+      "score_b": 0.521,
+      "delta": 0.173,
+      "dim_deltas": {
+        "outcome": 0.2751,
+        "tool_use": 1.0,
+        "grounding": 0.4,
+        "governance": -1.0,
+        "efficiency": -0.0667,
+        "aggregate_score": 0.173
+      }
+    },
+    {
+      "task_id": "ENERGY_FAC_006",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.348,
+      "score_b": 0.5265,
+      "delta": 0.1785,
+      "dim_deltas": {
+        "outcome": 0.256,
+        "tool_use": 0.7778,
+        "grounding": 0.6667,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.1785
+      }
+    },
+    {
+      "task_id": "ENERGY_SYS_001",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.3274,
+      "score_b": 0.6248,
+      "delta": 0.2974,
+      "dim_deltas": {
+        "outcome": 0.4837,
+        "tool_use": 0.8333,
+        "grounding": 0.8571,
+        "governance": -1.0,
+        "efficiency": -0.2,
+        "aggregate_score": 0.2974
+      }
+    },
+    {
+      "task_id": "ENERGY_USR_001",
+      "role": "scientific_user",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.341,
+      "score_b": 0.3832,
+      "delta": 0.0422,
+      "dim_deltas": {
+        "outcome": 0.1397,
+        "tool_use": 1.0,
+        "grounding": 0.0,
+        "governance": -1.0,
+        "efficiency": -0.1333,
+        "aggregate_score": 0.0422
+      }
+    },
+    {
+      "task_id": "JOB_FAC_001",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.5485,
+      "delta": 0.2145,
+      "dim_deltas": {
+        "outcome": 0.2162,
+        "tool_use": 1.0,
+        "grounding": 0.7273,
+        "governance": -1.0,
+        "efficiency": -0.1333,
+        "aggregate_score": 0.2145
+      }
+    },
+    {
+      "task_id": "JOB_FAC_002",
+      "role": "facility_admin",
+      "status": "regressed",
+      "hard_fail_changed": null,
+      "score_a": 0.327,
+      "score_b": 0.2333,
+      "delta": -0.0937,
+      "dim_deltas": {
+        "outcome": -0.22,
+        "tool_use": 1.0,
+        "grounding": 0.0,
+        "governance": -1.0,
+        "efficiency": -0.3333,
+        "aggregate_score": -0.0937
+      }
+    },
+    {
+      "task_id": "JOB_SYS_001",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.327,
+      "score_b": 0.6079,
+      "delta": 0.2809,
+      "dim_deltas": {
+        "outcome": 0.3489,
+        "tool_use": 1.0,
+        "grounding": 0.7941,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.2809
+      }
+    },
+    {
+      "task_id": "JOB_SYS_003",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.6193,
+      "delta": 0.2853,
+      "dim_deltas": {
+        "outcome": 0.4555,
+        "tool_use": 1.0,
+        "grounding": 0.6296,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.2853
+      }
+    },
+    {
+      "task_id": "JOB_USR_001",
+      "role": "scientific_user",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.4213,
+      "delta": 0.0873,
+      "dim_deltas": {
+        "outcome": 0.0019,
+        "tool_use": 0.8333,
+        "grounding": 0.1,
+        "governance": -0.5,
+        "efficiency": 0.0,
+        "aggregate_score": 0.0873
+      }
+    },
+    {
+      "task_id": "JOB_USR_003",
+      "role": "scientific_user",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.341,
+      "score_b": 0.4582,
+      "delta": 0.1172,
+      "dim_deltas": {
+        "outcome": -0.0081,
+        "tool_use": 1.0,
+        "grounding": 0.1,
+        "governance": -0.5,
+        "efficiency": 0.0,
+        "aggregate_score": 0.1172
+      }
+    },
+    {
+      "task_id": "JOB_USR_005",
+      "role": "scientific_user",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.341,
+      "score_b": 0.4254,
+      "delta": 0.0844,
+      "dim_deltas": {
+        "outcome": 0.0507,
+        "tool_use": 0.8333,
+        "grounding": 0.5,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.0844
+      }
+    },
+    {
+      "task_id": "MON_FAC_001",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.5362,
+      "delta": 0.2022,
+      "dim_deltas": {
+        "outcome": 0.1333,
+        "tool_use": 0.7778,
+        "grounding": 1.0,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.2022
+      }
+    },
+    {
+      "task_id": "MON_FAC_002",
+      "role": "facility_admin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.6323,
+      "delta": 0.2983,
+      "dim_deltas": {
+        "outcome": 0.3743,
+        "tool_use": 0.8889,
+        "grounding": 0.9474,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.2983
+      }
+    },
+    {
+      "task_id": "MON_SYS_001",
+      "role": "sysadmin",
+      "status": "unchanged",
+      "hard_fail_changed": null,
+      "score_a": 0.334,
+      "score_b": 0.3319,
+      "delta": -0.0021,
+      "dim_deltas": {
+        "outcome": -0.0059,
+        "tool_use": 1.0,
+        "grounding": 0.0,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": -0.0021
+      }
+    },
+    {
+      "task_id": "MON_SYS_002",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.327,
+      "score_b": 0.491,
+      "delta": 0.164,
+      "dim_deltas": {
+        "outcome": 0.0399,
+        "tool_use": 1.0,
+        "grounding": 0.75,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.164
+      }
+    },
+    {
+      "task_id": "MON_SYS_004",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.341,
+      "score_b": 0.6132,
+      "delta": 0.2722,
+      "dim_deltas": {
+        "outcome": 0.3967,
+        "tool_use": 0.7778,
+        "grounding": 0.8889,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.2722
+      }
+    },
+    {
+      "task_id": "MON_SYS_006",
+      "role": "sysadmin",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.355,
+      "score_b": 0.5746,
+      "delta": 0.2196,
+      "dim_deltas": {
+        "outcome": 0.3163,
+        "tool_use": 0.7778,
+        "grounding": 0.8,
+        "governance": -1.0,
+        "efficiency": -0.1333,
+        "aggregate_score": 0.2196
+      }
+    },
+    {
+      "task_id": "MON_USR_001",
+      "role": "scientific_user",
+      "status": "improved",
+      "hard_fail_changed": null,
+      "score_a": 0.3483,
+      "score_b": 0.4159,
+      "delta": 0.0676,
+      "dim_deltas": {
+        "outcome": 0.193,
+        "tool_use": 1.0,
+        "grounding": 0.0,
+        "governance": -1.0,
+        "efficiency": 0.0,
+        "aggregate_score": 0.0676
+      }
+    }
+  ],
+  "summary": {
+    "improved": 19,
+    "regressed": 1,
+    "unchanged": 1,
+    "new": 0,
+    "removed": 0,
+    "new_hard_fails": 0,
+    "resolved_hard_fails": 0
+  },
+  "slices_a": {
+    "facility_admin": {
+      "ENERGY": {
+        "mean_score": 0.3388,
+        "count": 5,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.3305,
+        "count": 2,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.334,
+        "count": 2,
+        "hard_fails": 0
+      }
+    },
+    "scientific_user": {
+      "ENERGY": {
+        "mean_score": 0.341,
+        "count": 1,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.3387,
+        "count": 3,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.3483,
+        "count": 1,
+        "hard_fails": 0
+      }
+    },
+    "sysadmin": {
+      "ENERGY": {
+        "mean_score": 0.3274,
+        "count": 1,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.3305,
+        "count": 2,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.3392,
+        "count": 4,
+        "hard_fails": 0
+      }
+    }
+  },
+  "slices_b": {
+    "facility_admin": {
+      "ENERGY": {
+        "mean_score": 0.5859,
+        "count": 5,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.3909,
+        "count": 2,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.5842,
+        "count": 2,
+        "hard_fails": 0
+      }
+    },
+    "scientific_user": {
+      "ENERGY": {
+        "mean_score": 0.3832,
+        "count": 1,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.435,
+        "count": 3,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.4159,
+        "count": 1,
+        "hard_fails": 0
+      }
+    },
+    "sysadmin": {
+      "ENERGY": {
+        "mean_score": 0.6248,
+        "count": 1,
+        "hard_fails": 0
+      },
+      "JOB": {
+        "mean_score": 0.6136,
+        "count": 2,
+        "hard_fails": 0
+      },
+      "MON": {
+        "mean_score": 0.5027,
+        "count": 4,
+        "hard_fails": 0
+      }
+    }
+  }
+}

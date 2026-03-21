@@ -1,0 +1,32 @@
+{
+  "task_id": "ENERGY_FAC_003",
+  "n_runs": 10,
+  "pass_threshold": 0.5,
+  "n_passing": 10,
+  "pass_k": {
+    "1": 1.0,
+    "2": 1.0,
+    "4": 1.0,
+    "8": 1.0
+  },
+  "mean_score": 0.7162,
+  "std_dev": 0.0075,
+  "min_score": 0.703,
+  "max_score": 0.7257,
+  "range": 0.0227,
+  "robustness_score": 0.9925,
+  "scores": [
+    0.7174,
+    0.7223,
+    0.703,
+    0.7257,
+    0.7073,
+    0.7103,
+    0.7237,
+    0.7222,
+    0.7202,
+    0.7102
+  ],
+  "total_cost_usd": 0.04155,
+  "mean_latency_seconds": 2.192
+}

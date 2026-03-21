@@ -1,0 +1,32 @@
+{
+  "task_id": "JOB_SYS_002",
+  "n_runs": 10,
+  "pass_threshold": 0.5,
+  "n_passing": 1,
+  "pass_k": {
+    "1": 0.1,
+    "2": 0.0,
+    "4": 0.0,
+    "8": 0.0
+  },
+  "mean_score": 0.4395,
+  "std_dev": 0.0405,
+  "min_score": 0.3759,
+  "max_score": 0.5181,
+  "range": 0.1422,
+  "robustness_score": 0.9595,
+  "scores": [
+    0.3893,
+    0.4691,
+    0.4238,
+    0.3759,
+    0.442,
+    0.4441,
+    0.4703,
+    0.4576,
+    0.4049,
+    0.5181
+  ],
+  "total_cost_usd": 0.124142,
+  "mean_latency_seconds": 5.886
+}
