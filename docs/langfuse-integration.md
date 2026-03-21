@@ -3,7 +3,7 @@
 Step-by-step plan for adding Langfuse observability to ExaBench.
 Follow the phases in order; each phase is independently testable.
 
-Reference doc: [docs/soa/langfuse.md](langfuse.md)
+Reference doc: [docs/langfuse.md](langfuse.md)
 
 ---
 
@@ -425,6 +425,6 @@ Files created or modified by this integration:
 | `Makefile` | Modify | `langfuse-up/down/logs/reset` + `run-langfuse` + `run-all-langfuse` targets |
 | `.env.example` | Modify | Added Langfuse env var template |
 | `docs/COMMANDS.md` | Modify | `--langfuse` flag + Langfuse Makefile targets documented |
-| `docs/soa/langfuse.md` | Create | Reference doc: what Langfuse is, architecture, SDK, self-hosting |
-| `docs/soa/langfuse-integration.md` | Create | This guide |
+| `docs/langfuse.md` | Create | Reference doc: what Langfuse is, architecture, SDK, self-hosting |
+| `docs/langfuse-integration.md` | Create | This guide |
 | `tests/unit/test_langfuse_exporter.py` | Create | 10 unit tests (all passing) |
