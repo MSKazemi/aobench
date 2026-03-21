@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_016",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050100 failed on node cn051 at 08:55 UTC. sacct output: JobID=1050100 State=FAILED ExitCode=1:0 MaxRSS=0.8GB ReqMem=4GB AllocCPUS=2 Elapsed=00:00:08. Dependency: afterok:1050099 (State=FAILED ExitCode=137:0). User role: standard_user.",
+  "task_question": "Why did job 1050100 fail and what should a standard user do?",
+  "agent_response": "**Root Cause: Upstream Dependency Failure (dependency_failure)**\n\nJob 1050100 failed because its dependency, job 1050099, failed with an OOM kill (ExitCode=137). SLURM's afterok trigger requires the upstream job to complete successfully (exit code 0); since 1050099 was OOM-killed, the afterok condition was never satisfied and 1050100 was marked FAILED without executing.\n\nEvidence:\n- Elapsed=00:00:08 \u2014 job barely started, consistent with immediate SLURM dependency rejection.\n- MaxRSS=0.8GB \u2014 no meaningful work was performed.\n- 1050099 State=FAILED ExitCode=137 \u2014 upstream OOM kill confirmed.\n\n**Action for standard_user:**\n1. Fix job 1050099 first: increase its --mem allocation (137 exit code indicates memory exhaustion \u2014 check sacct MaxRSS for 1050099 to size the new request).\n2. Resubmit 1050099 and update the dependency for 1050100 to reference the new job ID:\n   sbatch --dependency=afterok:<new_1050099_id> job1050100.slurm\nNo action on 1050100's own resource requests is needed \u2014 it never ran."
+}

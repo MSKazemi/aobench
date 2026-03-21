@@ -32,6 +32,9 @@ dev = [
     "pytest-cov>=5.0",
     "ruff>=0.4",
     "mypy>=1.10",
+    "pingouin>=0.5",
+    "krippendorff>=0.6",
+    "scipy>=1.12",
 ]
 
 [project.scripts]

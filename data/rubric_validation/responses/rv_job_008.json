@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_008",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049100 failed on node cn071 at 13:45 UTC. sacct output: JobID=1049100 State=TIMEOUT ExitCode=0:15 MaxRSS=22.1GB ReqMem=32GB AllocCPUS=16 Elapsed=48:00:00 Timelimit=48:00:00. Job type: MPI simulation, 16 nodes.",
+  "task_question": "Explain the failure of job 1049100.",
+  "agent_response": "Job 1049100 hit the walltime limit of 48 hours (Elapsed equals Timelimit). The TIMEOUT state and ExitCode 0:15 (SIGTERM from SLURM) confirm this. The simulation did not complete within the allocated time. The user should either increase the walltime limit or checkpoint/restart the job. The memory usage (22.1GB vs 32GB requested) seems fine, so the issue is purely computational time."
+}

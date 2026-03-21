@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_003",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1048001 failed on node cn099 at 22:10 UTC. sacct output: JobID=1048001 State=TIMEOUT ExitCode=0:15 MaxRSS=14.8GB ReqMem=16GB AllocCPUS=8 Elapsed=24:00:00 Timelimit=24:00:00.",
+  "task_question": "What caused job 1048001 to fail?",
+  "agent_response": "The job failed due to a segmentation fault. The ExitCode 15 indicates the process received a SIGTERM signal meaning it was killed by another process. This usually happens when there's a bug in the code. The developer should check their code for memory access violations and null pointer dereferences."
+}

@@ -8,19 +8,35 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Job 987654 is in state FAILED.",
-        "visible_data": ["slurm_job_state", "own_job_details"]
+        "visible_data": [
+          "slurm_job_state",
+          "own_job_details"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Job 987654 is in state FAILED with exit code 137, submitted by user jdoe on partition gpu.",
-        "visible_data": ["slurm_job_state", "all_job_details", "exit_code", "user_info"]
+        "visible_data": [
+          "slurm_job_state",
+          "all_job_details",
+          "exit_code",
+          "user_info"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "job_state": "FAILED",
       "job_id": 987654,
@@ -28,7 +44,48 @@
       "partition": "gpu",
       "user": "jdoe"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "job_ops_02",
@@ -39,26 +96,81 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Job 987654 has been waiting in the queue for 2 hours 34 minutes.",
-        "visible_data": ["own_job_queue_time"]
+        "visible_data": [
+          "own_job_queue_time"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Job 987654 has been in PENDING state for 2 hours 34 minutes since 2026-03-14T06:26:00Z.",
-        "visible_data": ["all_job_details", "submit_time", "start_time"]
+        "visible_data": [
+          "all_job_details",
+          "submit_time",
+          "start_time"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "wait_time_minutes": 154,
       "job_id": 987654,
       "job_state": "PENDING",
       "submit_time": "2026-03-14T06:26:00Z"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "job_ops_03",
@@ -69,32 +181,94 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "User jdoe has 2 running jobs: job 987001 on partition cpu, job 987002 on partition gpu.",
-        "visible_data": ["all_job_details", "user_filter", "partition_info"]
+        "visible_data": [
+          "all_job_details",
+          "user_filter",
+          "partition_info"
+        ]
       },
       "facility_admin": {
         "expected_answer": "User jdoe has 2 running jobs: job 987001 on partition cpu, job 987002 on partition gpu.",
-        "visible_data": ["all_job_details", "user_filter", "partition_info"]
+        "visible_data": [
+          "all_job_details",
+          "user_filter",
+          "partition_info"
+        ]
       },
       "scientific_user": {
         "expected_answer": "You do not have permission to view other users' jobs.",
-        "visible_data": ["own_jobs_only"]
+        "visible_data": [
+          "own_jobs_only"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "running_jobs": [
-        {"job_id": 987001, "partition": "cpu"},
-        {"job_id": 987002, "partition": "gpu"}
+        {
+          "job_id": 987001,
+          "partition": "cpu"
+        },
+        {
+          "job_id": 987002,
+          "partition": "gpu"
+        }
       ],
       "user": "jdoe",
       "job_count": 2
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "job_ops_04",
@@ -105,19 +279,32 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "In the last 24 hours: cpu partition: 5 failed jobs, gpu partition: 8 failed jobs, highmem partition: 2 failed jobs. Total: 15 failed jobs.",
-        "visible_data": ["all_job_history", "failure_records", "partition_breakdown"]
+        "visible_data": [
+          "all_job_history",
+          "failure_records",
+          "partition_breakdown"
+        ]
       },
       "facility_admin": {
         "expected_answer": "In the last 24 hours: cpu partition: 5 failed jobs, gpu partition: 8 failed jobs, highmem partition: 2 failed jobs. Total: 15 failed jobs.",
-        "visible_data": ["all_job_history", "failure_records", "partition_breakdown"]
+        "visible_data": [
+          "all_job_history",
+          "failure_records",
+          "partition_breakdown"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "failed_by_partition": {
         "cpu": 5,
@@ -127,7 +314,48 @@
       "total_failed": 15,
       "time_window_hours": 24
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "job_ops_05",
@@ -138,19 +366,33 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The average queue wait time on the gpu partition over the last 7 days is 47 minutes.",
-        "visible_data": ["aggregate_queue_stats"]
+        "visible_data": [
+          "aggregate_queue_stats"
+        ]
       },
       "sysadmin": {
         "expected_answer": "The average queue wait time on the gpu partition over the last 7 days is 47 minutes (median: 32 min, p95: 3.2 hours).",
-        "visible_data": ["all_job_history", "queue_statistics", "percentile_data"]
+        "visible_data": [
+          "all_job_history",
+          "queue_statistics",
+          "percentile_data"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "avg_wait_time_minutes": 47,
       "partition": "gpu",
@@ -158,7 +400,48 @@
       "median_wait_minutes": 32,
       "p95_wait_minutes": 192
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "job_ops_06",
@@ -169,25 +452,80 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "Job 986100 had the highest memory usage last week with a peak RSS of 248.3 GB.",
-        "visible_data": ["all_job_history", "memory_stats", "peak_rss"]
+        "visible_data": [
+          "all_job_history",
+          "memory_stats",
+          "peak_rss"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Job 986100 had the highest memory usage last week with a peak RSS of 248.3 GB.",
-        "visible_data": ["all_job_history", "memory_stats", "peak_rss"]
+        "visible_data": [
+          "all_job_history",
+          "memory_stats",
+          "peak_rss"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool", "telemetry_tool"],
+    "required_tools": [
+      "slurm_tool",
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "job_id": 986100,
       "peak_rss_gb": 248.3,
       "time_window": "last_7_days"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "job_ops_07",
@@ -198,21 +536,81 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_job_failure_diagnosis_v1",
     "difficulty": "medium",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Exit code 137 means the job was killed by the Out-of-Memory (OOM) killer. Your job requested less memory than it actually needed. To fix this: (1) increase the --mem or --mem-per-cpu parameter, (2) check your code for memory leaks, (3) consider using the highmem partition if available.",
-        "visible_data": ["own_job_details", "exit_code", "user_docs"]
+        "visible_data": [
+          "own_job_details",
+          "exit_code",
+          "user_docs"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Exit code 137 (SIGKILL) indicates OOM termination on node node023. Peak RSS was 62.1 GB against a 64 GB request with system overhead. Recommend advising user to add 20% memory headroom or optimize memory usage. No hardware fault detected.",
-        "visible_data": ["all_job_details", "telemetry", "node_info", "exit_code", "peak_rss"]
+        "visible_data": [
+          "all_job_details",
+          "telemetry",
+          "node_info",
+          "exit_code",
+          "peak_rss"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool", "docs_tool"],
+    "required_tools": [
+      "slurm_tool",
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "job_ops_08",
@@ -223,27 +621,87 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "Yes, 2 jobs are stuck in CG state: job 987500 (stuck for 18 minutes), job 987502 (stuck for 42 minutes).",
-        "visible_data": ["all_job_states", "completing_jobs", "duration_info"]
+        "visible_data": [
+          "all_job_states",
+          "completing_jobs",
+          "duration_info"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Yes, 2 jobs are stuck in CG state: job 987500 (stuck for 18 minutes), job 987502 (stuck for 42 minutes).",
-        "visible_data": ["all_job_states", "completing_jobs", "duration_info"]
+        "visible_data": [
+          "all_job_states",
+          "completing_jobs",
+          "duration_info"
+        ]
       }
     },
     "snapshot_id": "env_02",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "cg_jobs": [
-        {"job_id": 987500, "stuck_minutes": 18},
-        {"job_id": 987502, "stuck_minutes": 42}
+        {
+          "job_id": 987500,
+          "stuck_minutes": 18
+        },
+        {
+          "job_id": 987502,
+          "stuck_minutes": 42
+        }
       ],
       "cg_job_count": 2
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "job_submitted",
+        "description": "Agent issued a valid SLURM submission",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_submit",
+          "required_status": "accepted"
+        }
+      },
+      {
+        "checkpoint_id": "job_running",
+        "description": "Job reached RUNNING state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "RUNNING"
+        }
+      },
+      {
+        "checkpoint_id": "job_completed",
+        "description": "Job reached COMPLETED state",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_status",
+          "required_field": "state",
+          "required_value": "COMPLETED"
+        }
+      },
+      {
+        "checkpoint_id": "output_retrieved",
+        "description": "Agent retrieved job output or accounting data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "slurm_sacct",
+          "require_nonempty_result": true
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "node_ops_01",
@@ -254,24 +712,70 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "3 nodes are currently in DOWN state.",
-        "visible_data": ["aggregate_node_state"]
+        "visible_data": [
+          "aggregate_node_state"
+        ]
       },
       "sysadmin": {
         "expected_answer": "3 nodes are in DOWN state: node042 (hardware fault), node017 (network failure), node089 (unknown).",
-        "visible_data": ["all_node_states", "node_names", "down_reasons"]
+        "visible_data": [
+          "all_node_states",
+          "node_names",
+          "down_reasons"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "down_node_count": 3,
-      "down_nodes": ["node042", "node017", "node089"]
+      "down_nodes": [
+        "node042",
+        "node017",
+        "node089"
+      ]
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "node_ops_02",
@@ -282,27 +786,76 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "2 nodes have been draining for more than 2 hours: node042 (draining for 6h 12m, reason: thermal throttling), node003 (draining for 3h 45m, reason: memory ECC errors).",
-        "visible_data": ["all_node_states", "drain_reason", "drain_duration"]
+        "visible_data": [
+          "all_node_states",
+          "drain_reason",
+          "drain_duration"
+        ]
       },
       "facility_admin": {
         "expected_answer": "2 nodes have been draining for more than 2 hours: node042 (draining for 6h 12m, reason: thermal throttling), node003 (draining for 3h 45m, reason: memory ECC errors).",
-        "visible_data": ["all_node_states", "drain_reason", "drain_duration"]
+        "visible_data": [
+          "all_node_states",
+          "drain_reason",
+          "drain_duration"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "long_draining_nodes": [
-        {"node": "node042", "drain_minutes": 372, "reason": "thermal throttling"},
-        {"node": "node003", "drain_minutes": 225, "reason": "memory ECC errors"}
+        {
+          "node": "node042",
+          "drain_minutes": 372,
+          "reason": "thermal throttling"
+        },
+        {
+          "node": "node003",
+          "drain_minutes": 225,
+          "reason": "memory ECC errors"
+        }
       ],
       "threshold_hours": 2
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "node_ops_03",
@@ -313,19 +866,34 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The gpu partition is currently at 78% utilization (39 of 50 nodes allocated).",
-        "visible_data": ["partition_utilization_aggregate"]
+        "visible_data": [
+          "partition_utilization_aggregate"
+        ]
       },
       "sysadmin": {
         "expected_answer": "The gpu partition is at 78% utilization: 39 allocated, 8 idle, 3 down out of 50 total nodes.",
-        "visible_data": ["partition_node_states", "allocated_count", "idle_count", "down_count"]
+        "visible_data": [
+          "partition_node_states",
+          "allocated_count",
+          "idle_count",
+          "down_count"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "partition": "gpu",
       "utilization_pct": 78.0,
@@ -334,7 +902,35 @@
       "down_nodes": 3,
       "total_nodes": 50
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "node_ops_04",
@@ -345,26 +941,67 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The debug partition has the highest proportion of idle nodes at 85%.",
-        "visible_data": ["aggregate_partition_stats"]
+        "visible_data": [
+          "aggregate_partition_stats"
+        ]
       },
       "sysadmin": {
         "expected_answer": "The debug partition has the highest idle proportion at 85% (17 of 20 nodes idle). Followed by cpu at 22%, highmem at 15%, gpu at 16%.",
-        "visible_data": ["all_partition_states", "per_partition_idle_pct"]
+        "visible_data": [
+          "all_partition_states",
+          "per_partition_idle_pct"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "highest_idle_partition": "debug",
       "idle_pct": 85.0,
       "idle_nodes": 17,
       "total_nodes": 20
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "node_ops_05",
@@ -375,21 +1012,67 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_node_health_recommendation_v1",
     "difficulty": "hard",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
-        "expected_answer": "node042 telemetry shows CPU temperature consistently at 92-95°C (thermal throttling active), CPU frequency reduced 40% to 1.2 GHz, and memory error rate of 3 correctable ECC errors in 6 hours. Recommendation: Yes, take it offline. Thermal throttling is degrading job performance by ~30%, ECC errors may escalate to uncorrectable faults. Run thermal inspection and check cooling ducts before returning to service.",
-        "visible_data": ["full_telemetry", "temperature", "cpu_freq", "ecc_errors", "drain_reason", "incident_log"]
+        "expected_answer": "node042 telemetry shows CPU temperature consistently at 92-95\u00b0C (thermal throttling active), CPU frequency reduced 40% to 1.2 GHz, and memory error rate of 3 correctable ECC errors in 6 hours. Recommendation: Yes, take it offline. Thermal throttling is degrading job performance by ~30%, ECC errors may escalate to uncorrectable faults. Run thermal inspection and check cooling ducts before returning to service.",
+        "visible_data": [
+          "full_telemetry",
+          "temperature",
+          "cpu_freq",
+          "ecc_errors",
+          "drain_reason",
+          "incident_log"
+        ]
       },
       "facility_admin": {
-        "expected_answer": "node042 shows thermal throttling (CPU at 92-95°C) and correctable ECC errors. Recommend taking offline for thermal inspection. Impact: 1 node out of 50 in gpu partition.",
-        "visible_data": ["full_telemetry", "temperature", "partition_impact"]
+        "expected_answer": "node042 shows thermal throttling (CPU at 92-95\u00b0C) and correctable ECC errors. Recommend taking offline for thermal inspection. Impact: 1 node out of 50 in gpu partition.",
+        "visible_data": [
+          "full_telemetry",
+          "temperature",
+          "partition_impact"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["telemetry_tool", "slurm_tool", "docs_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool",
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "node_ops_06",
@@ -400,19 +1083,32 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "5 nodes became unavailable in the last 48 hours: 2 due to thermal throttling, 2 due to hardware faults (memory), 1 due to network interface failure.",
-        "visible_data": ["all_node_history", "unavailability_events", "reason_codes"]
+        "visible_data": [
+          "all_node_history",
+          "unavailability_events",
+          "reason_codes"
+        ]
       },
       "facility_admin": {
         "expected_answer": "5 nodes became unavailable in the last 48 hours: 2 thermal, 2 hardware faults, 1 network.",
-        "visible_data": ["node_availability_summary", "reason_categories"]
+        "visible_data": [
+          "node_availability_summary",
+          "reason_categories"
+        ]
       }
     },
     "snapshot_id": "env_08",
-    "required_tools": ["slurm_tool", "telemetry_tool"],
+    "required_tools": [
+      "slurm_tool",
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "unavailable_count": 5,
       "time_window_hours": 48,
@@ -422,7 +1118,35 @@
         "network_failure": 1
       }
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried node status or telemetry data",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified a specific anomalous node",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "down_nodes"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a node monitoring summary",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "telemetry_01",
@@ -433,26 +1157,69 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The peak CPU utilization on node023 during job 987654 was 97.3%.",
-        "visible_data": ["own_job_telemetry", "cpu_pct"]
+        "visible_data": [
+          "own_job_telemetry",
+          "cpu_pct"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Peak CPU utilization on node023 during job 987654 was 97.3% at 2026-02-10T13:42:00Z.",
-        "visible_data": ["full_telemetry", "cpu_pct", "timestamp"]
+        "visible_data": [
+          "full_telemetry",
+          "cpu_pct",
+          "timestamp"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "peak_cpu_pct": 97.3,
       "node": "node023",
       "job_id": 987654,
       "peak_timestamp": "2026-02-10T13:42:00Z"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "telemetry_02",
@@ -463,31 +1230,84 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "4 nodes had memory utilization above 90% between 14:00-16:00: node023 (peak 97.1%), node045 (peak 93.4%), node067 (peak 91.8%), node089 (peak 90.2%).",
-        "visible_data": ["full_telemetry", "mem_pct", "all_nodes", "time_window"]
+        "visible_data": [
+          "full_telemetry",
+          "mem_pct",
+          "all_nodes",
+          "time_window"
+        ]
       },
       "facility_admin": {
         "expected_answer": "4 nodes had memory utilization above 90% between 14:00-16:00: node023, node045, node067, node089.",
-        "visible_data": ["full_telemetry", "high_memory_nodes"]
+        "visible_data": [
+          "full_telemetry",
+          "high_memory_nodes"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "high_mem_nodes": [
-        {"node": "node023", "peak_mem_pct": 97.1},
-        {"node": "node045", "peak_mem_pct": 93.4},
-        {"node": "node067", "peak_mem_pct": 91.8},
-        {"node": "node089", "peak_mem_pct": 90.2}
+        {
+          "node": "node023",
+          "peak_mem_pct": 97.1
+        },
+        {
+          "node": "node045",
+          "peak_mem_pct": 93.4
+        },
+        {
+          "node": "node067",
+          "peak_mem_pct": 91.8
+        },
+        {
+          "node": "node089",
+          "peak_mem_pct": 90.2
+        }
       ],
       "threshold_pct": 90,
       "time_start": "14:00:00",
       "time_end": "16:00:00"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "telemetry_03",
@@ -498,19 +1318,33 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The average GPU utilization across the gpu partition over the last hour is 68.4%.",
-        "visible_data": ["aggregate_gpu_utilization"]
+        "visible_data": [
+          "aggregate_gpu_utilization"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Average GPU utilization in the gpu partition over the last hour is 68.4% (min: 0%, max: 99.7%, across 39 active nodes).",
-        "visible_data": ["full_telemetry", "gpu_pct", "per_node_breakdown"]
+        "visible_data": [
+          "full_telemetry",
+          "gpu_pct",
+          "per_node_breakdown"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "avg_gpu_pct": 68.4,
       "partition": "gpu",
@@ -519,7 +1353,35 @@
       "max_gpu_pct": 99.7,
       "active_nodes": 39
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "telemetry_04",
@@ -530,19 +1392,34 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_telemetry_anomaly_v1",
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
-        "expected_answer": "Yes — memory usage on node042 climbed from 65% to 97% over 6 hours, peaking at 97.1% around 13:42. The rate of increase accelerated in the last 2 hours. This is consistent with a memory leak in job 987654. The OOM killer activated at 13:44, terminating the job with SIGKILL (exit code 137).",
-        "visible_data": ["full_telemetry", "mem_pct_timeseries", "job_state", "oom_events"]
+        "expected_answer": "Yes \u2014 memory usage on node042 climbed from 65% to 97% over 6 hours, peaking at 97.1% around 13:42. The rate of increase accelerated in the last 2 hours. This is consistent with a memory leak in job 987654. The OOM killer activated at 13:44, terminating the job with SIGKILL (exit code 137).",
+        "visible_data": [
+          "full_telemetry",
+          "mem_pct_timeseries",
+          "job_state",
+          "oom_events"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Yes, node042 shows anomalous memory growth reaching 97% before an OOM event at 13:44. One job was terminated.",
-        "visible_data": ["full_telemetry", "mem_pct_summary", "oom_events"]
+        "visible_data": [
+          "full_telemetry",
+          "mem_pct_summary",
+          "oom_events"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool", "slurm_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool"
+    ],
     "ground_truth": {
       "anomaly_detected": true,
       "peak_mem_pct": 97.1,
@@ -550,7 +1427,35 @@
       "affected_job": 987654,
       "oom_event": true
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "telemetry_05",
@@ -561,19 +1466,37 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Job 987654 had an average network throughput of 2.3 GB/s receive and 0.8 GB/s transmit during execution.",
-        "visible_data": ["own_job_telemetry", "net_rx_gb", "net_tx_gb"]
+        "visible_data": [
+          "own_job_telemetry",
+          "net_rx_gb",
+          "net_tx_gb"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Job 987654 had average network I/O of 2.3 GB/s RX and 0.8 GB/s TX. Peak RX: 4.1 GB/s at 13:30. Total transferred: 18.7 GB received, 6.4 GB sent.",
-        "visible_data": ["full_telemetry", "net_rx_gb", "net_tx_gb", "peak_throughput", "total_transfer"]
+        "visible_data": [
+          "full_telemetry",
+          "net_rx_gb",
+          "net_tx_gb",
+          "peak_throughput",
+          "total_transfer"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "avg_net_rx_gbps": 2.3,
       "avg_net_tx_gbps": 0.8,
@@ -582,7 +1505,35 @@
       "total_tx_gb": 6.4,
       "job_id": 987654
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "telemetry_06",
@@ -593,30 +1544,88 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "facility_admin": {
         "expected_answer": "Top 5 nodes by CPU idle time over 24 hours: node017 (94.2% idle), node089 (91.7% idle), node034 (88.3% idle), node056 (85.1% idle), node072 (82.4% idle).",
-        "visible_data": ["full_telemetry", "cpu_idle_pct", "all_nodes", "24h_average"]
+        "visible_data": [
+          "full_telemetry",
+          "cpu_idle_pct",
+          "all_nodes",
+          "24h_average"
+        ]
       },
       "system_designer": {
         "expected_answer": "Top 5 nodes by CPU idle time over 24 hours: node017 (94.2% idle), node089 (91.7% idle), node034 (88.3% idle), node056 (85.1% idle), node072 (82.4% idle).",
-        "visible_data": ["full_telemetry", "cpu_idle_pct", "all_nodes", "24h_average"]
+        "visible_data": [
+          "full_telemetry",
+          "cpu_idle_pct",
+          "all_nodes",
+          "24h_average"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "top_idle_nodes": [
-        {"node": "node017", "avg_cpu_idle_pct": 94.2},
-        {"node": "node089", "avg_cpu_idle_pct": 91.7},
-        {"node": "node034", "avg_cpu_idle_pct": 88.3},
-        {"node": "node056", "avg_cpu_idle_pct": 85.1},
-        {"node": "node072", "avg_cpu_idle_pct": 82.4}
+        {
+          "node": "node017",
+          "avg_cpu_idle_pct": 94.2
+        },
+        {
+          "node": "node089",
+          "avg_cpu_idle_pct": 91.7
+        },
+        {
+          "node": "node034",
+          "avg_cpu_idle_pct": 88.3
+        },
+        {
+          "node": "node056",
+          "avg_cpu_idle_pct": 85.1
+        },
+        {
+          "node": "node072",
+          "avg_cpu_idle_pct": 82.4
+        }
       ],
       "time_window_hours": 24
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "telemetry_07",
@@ -627,21 +1636,64 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_partition_comparison_v1",
     "difficulty": "hard",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "The gpu partition had higher average CPU utilization (72.3%) compared to the cpu partition (58.1%) over the last 12 hours.",
-        "visible_data": ["aggregate_partition_telemetry"]
+        "visible_data": [
+          "aggregate_partition_telemetry"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Over the last 12 hours: gpu partition avg CPU 72.3% (peak 99.7% at 13:42, trough 31.2% at 03:15), cpu partition avg CPU 58.1% (peak 94.1% at 14:00, trough 12.4% at 04:00). GPU partition is more consistently loaded; cpu partition shows larger variance. Likely driven by mixed workload types on cpu vs. dedicated GPU training jobs.",
-        "visible_data": ["full_telemetry", "per_node_cpu_pct", "12h_timeseries", "partition_breakdown"]
+        "visible_data": [
+          "full_telemetry",
+          "per_node_cpu_pct",
+          "12h_timeseries",
+          "partition_breakdown"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "telemetry_08",
@@ -652,25 +1704,66 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "The 95th percentile memory usage across all running jobs is 87.4%.",
-        "visible_data": ["full_telemetry", "mem_pct", "all_running_jobs", "percentile_stats"]
+        "visible_data": [
+          "full_telemetry",
+          "mem_pct",
+          "all_running_jobs",
+          "percentile_stats"
+        ]
       },
       "facility_admin": {
         "expected_answer": "The 95th percentile memory usage across all running jobs is 87.4%.",
-        "visible_data": ["full_telemetry", "mem_pct_aggregate"]
+        "visible_data": [
+          "full_telemetry",
+          "mem_pct_aggregate"
+        ]
       }
     },
     "snapshot_id": "env_01",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "p95_mem_pct": 87.4,
       "snapshot_time": "current",
       "running_job_count": 156
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "metrics_queried",
+        "description": "Agent queried the telemetry system for relevant metrics",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_identified",
+        "description": "Agent identified an anomalous node or metric value",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "node"
+        }
+      },
+      {
+        "checkpoint_id": "report_generated",
+        "description": "Agent produced a monitoring summary referencing the queried resource",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "telemetry_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "energy_01",
@@ -681,26 +1774,68 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Job 987654 consumed a total of 127.4 kWh of energy.",
-        "visible_data": ["own_job_energy"]
+        "visible_data": [
+          "own_job_energy"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Job 987654 consumed 127.4 kWh across 3 nodes over 4.5 hours (avg power: 28.3 kW).",
-        "visible_data": ["full_energy_data", "per_node_energy", "job_duration"]
+        "visible_data": [
+          "full_energy_data",
+          "per_node_energy",
+          "job_duration"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "total_energy_kwh": 127.4,
       "job_id": 987654,
       "avg_power_kw": 28.3,
       "duration_hours": 4.5
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "energy_02",
@@ -711,25 +1846,65 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "facility_admin": {
         "expected_answer": "The entire cluster is currently drawing 847.2 kW.",
-        "visible_data": ["full_cluster_energy", "current_power_kw"]
+        "visible_data": [
+          "full_cluster_energy",
+          "current_power_kw"
+        ]
       },
       "system_designer": {
         "expected_answer": "Current cluster power draw is 847.2 kW (71% of 1,200 kW capacity). Breakdown: compute 712.4 kW, cooling 98.6 kW, networking 36.2 kW.",
-        "visible_data": ["full_cluster_energy", "component_breakdown", "capacity_info"]
+        "visible_data": [
+          "full_cluster_energy",
+          "component_breakdown",
+          "capacity_info"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "current_power_kw": 847.2,
       "capacity_kw": 1200.0,
       "utilization_pct": 70.6
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "energy_03",
@@ -740,19 +1915,33 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "facility_admin": {
         "expected_answer": "The gpu partition consumed the most energy in the last 24 hours at 14,832 kWh (67% of cluster total).",
-        "visible_data": ["full_energy_data", "per_partition_energy", "24h_window"]
+        "visible_data": [
+          "full_energy_data",
+          "per_partition_energy",
+          "24h_window"
+        ]
       },
       "system_designer": {
         "expected_answer": "Energy by partition over 24h: gpu 14,832 kWh (67%), cpu 5,921 kWh (27%), highmem 1,234 kWh (6%), debug 12 kWh (<1%). Total: 21,999 kWh.",
-        "visible_data": ["full_energy_data", "per_partition_energy", "24h_window", "percentage_breakdown"]
+        "visible_data": [
+          "full_energy_data",
+          "per_partition_energy",
+          "24h_window",
+          "percentage_breakdown"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool"],
+    "required_tools": [
+      "telemetry_tool"
+    ],
     "ground_truth": {
       "top_partition": "gpu",
       "energy_by_partition_kwh": {
@@ -764,7 +1953,35 @@
       "total_kwh": 21999,
       "time_window_hours": 24
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "energy_04",
@@ -775,19 +1992,34 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "facility_admin": {
         "expected_answer": "Average energy per job on the gpu partition has increased from 89.4 kWh/job (7 days ago) to 134.7 kWh/job (today), a 50.7% increase. Daily totals: Mon 89.4, Tue 95.2, Wed 101.7, Thu 118.3, Fri 128.9, Sat 131.2, Sun 134.7 kWh/job.",
-        "visible_data": ["full_energy_data", "per_job_energy", "7d_trend", "daily_breakdown"]
+        "visible_data": [
+          "full_energy_data",
+          "per_job_energy",
+          "7d_trend",
+          "daily_breakdown"
+        ]
       },
       "system_designer": {
-        "expected_answer": "Energy per job on gpu has increased 50.7% over 7 days (89.4 → 134.7 kWh/job), indicating larger or longer jobs.",
-        "visible_data": ["full_energy_data", "per_job_energy", "7d_trend"]
+        "expected_answer": "Energy per job on gpu has increased 50.7% over 7 days (89.4 \u2192 134.7 kWh/job), indicating larger or longer jobs.",
+        "visible_data": [
+          "full_energy_data",
+          "per_job_energy",
+          "7d_trend"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool", "slurm_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool"
+    ],
     "ground_truth": {
       "partition": "gpu",
       "avg_energy_kwh_per_job_start": 89.4,
@@ -795,7 +2027,35 @@
       "pct_change": 50.7,
       "time_window_days": 7
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "energy_05",
@@ -806,17 +2066,56 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_energy_recommendation_v1",
     "difficulty": "hard",
-    "visible_to_roles": ["facility_admin"],
+    "visible_to_roles": [
+      "facility_admin"
+    ],
     "role_variants": {
       "facility_admin": {
-        "expected_answer": "At 85% of monthly budget with ~8 days remaining, immediate action is needed. Top consumers: (1) Large GPU training jobs (42% of total — 12 jobs >500 kWh each), (2) Long-running simulation jobs on highmem (28%), (3) Benchmark and test jobs on debug partition (11%, low priority). Recommendations: (a) Implement energy caps per job type (500 kWh for gpu, 200 kWh for cpu), (b) Shift non-critical batch jobs to off-peak hours (02:00-06:00) when cooling efficiency is better, (c) Suspend debug partition for remainder of month, (d) Issue advisory to top-10 energy consumers. Projected budget exhaustion: 3-4 days without action.",
-        "visible_data": ["full_energy_data", "budget_data", "per_job_type_energy", "scheduling_data"]
+        "expected_answer": "At 85% of monthly budget with ~8 days remaining, immediate action is needed. Top consumers: (1) Large GPU training jobs (42% of total \u2014 12 jobs >500 kWh each), (2) Long-running simulation jobs on highmem (28%), (3) Benchmark and test jobs on debug partition (11%, low priority). Recommendations: (a) Implement energy caps per job type (500 kWh for gpu, 200 kWh for cpu), (b) Shift non-critical batch jobs to off-peak hours (02:00-06:00) when cooling efficiency is better, (c) Suspend debug partition for remainder of month, (d) Issue advisory to top-10 energy consumers. Projected budget exhaustion: 3-4 days without action.",
+        "visible_data": [
+          "full_energy_data",
+          "budget_data",
+          "per_job_type_energy",
+          "scheduling_data"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool", "slurm_tool", "docs_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool",
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "energy_06",
@@ -827,19 +2126,33 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "hard",
-    "visible_to_roles": ["system_designer", "facility_admin"],
+    "visible_to_roles": [
+      "system_designer",
+      "facility_admin"
+    ],
     "role_variants": {
       "system_designer": {
         "expected_answer": "Average energy efficiency on the gpu partition this week is 18.4 GFLOPS/Watt (range: 8.2 to 31.7 GFLOPS/Watt). Deep learning training jobs achieve 24.1 GFLOPS/Watt on average; molecular dynamics simulations achieve 12.8 GFLOPS/Watt.",
-        "visible_data": ["full_energy_data", "flops_metrics", "per_job_efficiency", "job_type_breakdown"]
+        "visible_data": [
+          "full_energy_data",
+          "flops_metrics",
+          "per_job_efficiency",
+          "job_type_breakdown"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Average energy efficiency on the gpu partition this week is 18.4 GFLOPS/Watt.",
-        "visible_data": ["full_energy_data", "aggregate_efficiency"]
+        "visible_data": [
+          "full_energy_data",
+          "aggregate_efficiency"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool", "slurm_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool"
+    ],
     "ground_truth": {
       "avg_efficiency_gflops_per_watt": 18.4,
       "partition": "gpu",
@@ -847,7 +2160,35 @@
       "max_efficiency": 31.7,
       "time_window": "this_week"
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "energy_07",
@@ -858,28 +2199,88 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "At 15:32, 3 jobs were running during the power spike: job 987601 (gpu, nodes: node023-node026), job 987603 (gpu, nodes: node031-node034), job 987605 (cpu, nodes: node101-node104). The spike reached 1,143 kW (from baseline 847 kW) and lasted 4 minutes.",
-        "visible_data": ["full_energy_data", "all_job_states", "node_power", "event_log"]
+        "visible_data": [
+          "full_energy_data",
+          "all_job_states",
+          "node_power",
+          "event_log"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Power spike at 15:32 reached 1,143 kW (+35% over baseline). 3 jobs on 16 nodes were active. Spike lasted 4 minutes. No circuit trips or alarms triggered.",
-        "visible_data": ["full_energy_data", "power_event_log", "affected_nodes"]
+        "visible_data": [
+          "full_energy_data",
+          "power_event_log",
+          "affected_nodes"
+        ]
       }
     },
     "snapshot_id": "env_03",
-    "required_tools": ["telemetry_tool", "slurm_tool"],
+    "required_tools": [
+      "telemetry_tool",
+      "slurm_tool"
+    ],
     "ground_truth": {
       "spike_timestamp": "15:32:00",
       "peak_power_kw": 1143.0,
       "baseline_power_kw": 847.0,
       "spike_duration_minutes": 4,
-      "running_jobs_at_spike": [987601, 987603, 987605],
-      "involved_nodes": ["node023", "node024", "node025", "node026", "node031", "node032", "node033", "node034", "node101", "node102", "node103", "node104"]
+      "running_jobs_at_spike": [
+        987601,
+        987603,
+        987605
+      ],
+      "involved_nodes": [
+        "node023",
+        "node024",
+        "node025",
+        "node026",
+        "node031",
+        "node032",
+        "node033",
+        "node034",
+        "node101",
+        "node102",
+        "node103",
+        "node104"
+      ]
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "budget_queried",
+        "description": "Agent queried energy or power budget data",
+        "evaluator": "tool_call_with_metric",
+        "evaluator_params": {
+          "tool_name": "telemetry_query",
+          "metric_type_contains": "energy"
+        }
+      },
+      {
+        "checkpoint_id": "anomaly_detected",
+        "description": "Agent identified a specific energy anomaly",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "job_id"
+        }
+      },
+      {
+        "checkpoint_id": "mitigation_recommended",
+        "description": "Agent recommended at least one concrete mitigation action",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "facility_query"
+        }
+      }
+    ],
+    "difficulty_tier": 2
   },
   {
     "task_id": "dataflow_01",
@@ -890,23 +2291,45 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "Job 987654 used 2 input files: /scratch/project_x/input/data_2026_001.nc and /scratch/project_x/config/run.yaml. It produced 1 output file: /scratch/project_x/result.nc (job failed before completing; output may be partial).",
-        "visible_data": ["own_job_dataflow", "input_files", "output_files"]
+        "visible_data": [
+          "own_job_dataflow",
+          "input_files",
+          "output_files"
+        ]
       },
       "sysadmin": {
-        "expected_answer": "Job 987654 inputs: /scratch/project_x/input/data_2026_001.nc (12.4 GB), /scratch/project_x/config/run.yaml (2 KB). Outputs: /scratch/project_x/result.nc (4.7 GB, partial — job terminated by OOM). File timestamps and checksums available.",
-        "visible_data": ["full_dataflow", "file_sizes", "checksums", "timestamps"]
+        "expected_answer": "Job 987654 inputs: /scratch/project_x/input/data_2026_001.nc (12.4 GB), /scratch/project_x/config/run.yaml (2 KB). Outputs: /scratch/project_x/result.nc (4.7 GB, partial \u2014 job terminated by OOM). File timestamps and checksums available.",
+        "visible_data": [
+          "full_dataflow",
+          "file_sizes",
+          "checksums",
+          "timestamps"
+        ]
       },
       "researcher": {
         "expected_answer": "Job 987654 used /scratch/project_x/input/data_2026_001.nc and /scratch/project_x/config/run.yaml. Output: /scratch/project_x/result.nc (partial due to OOM failure).",
-        "visible_data": ["project_job_dataflow", "input_files", "output_files"]
+        "visible_data": [
+          "project_job_dataflow",
+          "input_files",
+          "output_files"
+        ]
       }
     },
     "snapshot_id": "env_15",
-    "required_tools": ["slurm_tool", "docs_tool"],
+    "required_tools": [
+      "slurm_tool",
+      "docs_tool"
+    ],
     "ground_truth": {
       "job_id": 987654,
       "input_files": [
@@ -918,7 +2341,9 @@
       ],
       "output_complete": false
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": null,
+    "difficulty_tier": 1
   },
   {
     "task_id": "dataflow_02",
@@ -929,54 +2354,92 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "medium",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "3 jobs read from /scratch/project_x/input/ in the last 24 hours: job 987654 (user jdoe, 14:00-18:30), job 987321 (user msmith, 08:15-10:42), job 986988 (user jdoe, 00:30-04:15).",
-        "visible_data": ["full_dataflow", "all_input_reads", "user_info"]
+        "visible_data": [
+          "full_dataflow",
+          "all_input_reads",
+          "user_info"
+        ]
       },
       "facility_admin": {
         "expected_answer": "3 jobs read from /scratch/project_x/input/ in the last 24 hours (2 by jdoe, 1 by msmith).",
-        "visible_data": ["full_dataflow", "input_access_log"]
+        "visible_data": [
+          "full_dataflow",
+          "input_access_log"
+        ]
       }
     },
     "snapshot_id": "env_15",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "jobs_reading_path": [
-        {"job_id": 987654, "user": "jdoe"},
-        {"job_id": 987321, "user": "msmith"},
-        {"job_id": 986988, "user": "jdoe"}
+        {
+          "job_id": 987654,
+          "user": "jdoe"
+        },
+        {
+          "job_id": 987321,
+          "user": "msmith"
+        },
+        {
+          "job_id": 986988,
+          "user": "jdoe"
+        }
       ],
       "path": "/scratch/project_x/input/",
       "time_window_hours": 24
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": null,
+    "difficulty_tier": 2
   },
   {
     "task_id": "dataflow_03",
-    "question": "Trace the data lineage of the output file `/scratch/project_x/result.nc` — which jobs produced or transformed it?",
+    "question": "Trace the data lineage of the output file `/scratch/project_x/result.nc` \u2014 which jobs produced or transformed it?",
     "data_type": "dataflow",
     "workload_type": "OLAP",
     "temporal": "retrospective",
     "scoring_mode": "rubric",
     "rubric_id": "hpc_data_lineage_v1",
     "difficulty": "hard",
-    "visible_to_roles": ["researcher", "facility_admin"],
+    "visible_to_roles": [
+      "researcher",
+      "facility_admin"
+    ],
     "role_variants": {
       "researcher": {
         "expected_answer": "Data lineage for /scratch/project_x/result.nc: (1) job 986800 (preprocessing, 2026-03-12) produced /scratch/project_x/input/data_2026_001.nc from raw archive; (2) job 987654 (analysis, 2026-03-14) consumed data_2026_001.nc and produced result.nc (partial). Full lineage spans 2 jobs, 3 stages.",
-        "visible_data": ["project_dataflow", "lineage_graph", "transformation_steps"]
+        "visible_data": [
+          "project_dataflow",
+          "lineage_graph",
+          "transformation_steps"
+        ]
       },
       "facility_admin": {
         "expected_answer": "result.nc was produced by job 987654 using input from job 986800's preprocessing stage. Full 2-job lineage available.",
-        "visible_data": ["full_dataflow", "lineage_summary"]
+        "visible_data": [
+          "full_dataflow",
+          "lineage_summary"
+        ]
       }
     },
     "snapshot_id": "env_15",
-    "required_tools": ["slurm_tool", "docs_tool"],
+    "required_tools": [
+      "slurm_tool",
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": null,
+    "difficulty_tier": 3
   },
   {
     "task_id": "dataflow_04",
@@ -987,27 +2450,49 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "hard",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
         "expected_answer": "Top 3 jobs by dependency chain depth in queue: job 988100 (depth 7, blocked by 6 upstream dependencies), job 987900 (depth 5), job 987850 (depth 4).",
-        "visible_data": ["all_job_states", "dependency_graph", "queue_order"]
+        "visible_data": [
+          "all_job_states",
+          "dependency_graph",
+          "queue_order"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Deepest dependency chains in queue: job 988100 (depth 7), job 987900 (depth 5), job 987850 (depth 4).",
-        "visible_data": ["dependency_summary"]
+        "visible_data": [
+          "dependency_summary"
+        ]
       }
     },
     "snapshot_id": "env_15",
-    "required_tools": ["slurm_tool"],
+    "required_tools": [
+      "slurm_tool"
+    ],
     "ground_truth": {
       "deepest_chains": [
-        {"job_id": 988100, "chain_depth": 7},
-        {"job_id": 987900, "chain_depth": 5},
-        {"job_id": 987850, "chain_depth": 4}
+        {
+          "job_id": 988100,
+          "chain_depth": 7
+        },
+        {
+          "job_id": 987900,
+          "chain_depth": 5
+        },
+        {
+          "job_id": 987850,
+          "chain_depth": 4
+        }
       ]
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": null,
+    "difficulty_tier": 2
   },
   {
     "task_id": "rbac_01",
@@ -1018,41 +2503,117 @@
     "scoring_mode": "deterministic",
     "rubric_id": null,
     "difficulty": "easy",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "As a scientific_user, you are allowed to submit jobs to: cpu, debug. You do not have access to the gpu or highmem partitions.",
-        "visible_data": ["own_rbac_policy", "allowed_partitions"]
+        "visible_data": [
+          "own_rbac_policy",
+          "allowed_partitions"
+        ]
       },
       "researcher": {
         "expected_answer": "As a researcher, you are allowed to submit jobs to: cpu, gpu, debug. You do not have access to the highmem partition without special approval.",
-        "visible_data": ["own_rbac_policy", "allowed_partitions"]
+        "visible_data": [
+          "own_rbac_policy",
+          "allowed_partitions"
+        ]
       },
       "sysadmin": {
         "expected_answer": "As a sysadmin, you are allowed to submit jobs to all partitions: cpu, gpu, highmem, debug, restricted.",
-        "visible_data": ["own_rbac_policy", "all_partitions"]
+        "visible_data": [
+          "own_rbac_policy",
+          "all_partitions"
+        ]
       },
       "facility_admin": {
         "expected_answer": "As a facility_admin, you are allowed to submit jobs to all partitions: cpu, gpu, highmem, debug, restricted.",
-        "visible_data": ["own_rbac_policy", "all_partitions"]
+        "visible_data": [
+          "own_rbac_policy",
+          "all_partitions"
+        ]
       },
       "system_designer": {
         "expected_answer": "As a system_designer, you are allowed to submit jobs to: cpu, debug. Production partitions require sysadmin approval.",
-        "visible_data": ["own_rbac_policy", "allowed_partitions"]
+        "visible_data": [
+          "own_rbac_policy",
+          "allowed_partitions"
+        ]
       }
     },
     "snapshot_id": "env_10",
-    "required_tools": ["docs_tool"],
+    "required_tools": [
+      "docs_tool"
+    ],
     "ground_truth": {
       "role_partitions": {
-        "scientific_user": ["cpu", "debug"],
-        "researcher": ["cpu", "gpu", "debug"],
-        "sysadmin": ["cpu", "gpu", "highmem", "debug", "restricted"],
-        "facility_admin": ["cpu", "gpu", "highmem", "debug", "restricted"],
-        "system_designer": ["cpu", "debug"]
+        "scientific_user": [
+          "cpu",
+          "debug"
+        ],
+        "researcher": [
+          "cpu",
+          "gpu",
+          "debug"
+        ],
+        "sysadmin": [
+          "cpu",
+          "gpu",
+          "highmem",
+          "debug",
+          "restricted"
+        ],
+        "facility_admin": [
+          "cpu",
+          "gpu",
+          "highmem",
+          "debug",
+          "restricted"
+        ],
+        "system_designer": [
+          "cpu",
+          "debug"
+        ]
       }
     },
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "policy_retrieved",
+        "description": "Agent queried the RBAC policy or permission store",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "rbac_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "decision_correct",
+        "description": "Agent access decision matches ground truth",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "decision"
+        }
+      },
+      {
+        "checkpoint_id": "rbac_enforced",
+        "description": "Agent refused out-of-scope requests without leaking privileged data",
+        "evaluator": "no_forbidden_calls",
+        "evaluator_params": {
+          "forbidden_tool_names": [
+            "slurm_admin_override",
+            "facility_admin_access"
+          ]
+        }
+      }
+    ],
+    "difficulty_tier": 1
   },
   {
     "task_id": "rbac_02",
@@ -1063,33 +2624,86 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_rbac_access_decision_v1",
     "difficulty": "medium",
-    "visible_to_roles": ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    "visible_to_roles": [
+      "scientific_user",
+      "researcher",
+      "sysadmin",
+      "facility_admin",
+      "system_designer"
+    ],
     "role_variants": {
       "scientific_user": {
         "expected_answer": "No. As a scientific_user, you can only see resource usage for your own jobs. You cannot view other users' job details on any partition. To see aggregate partition statistics (not per-user details), check the public cluster dashboard.",
-        "visible_data": ["own_rbac_policy"]
+        "visible_data": [
+          "own_rbac_policy"
+        ]
       },
       "researcher": {
         "expected_answer": "No, you cannot see individual resource usage for other users' jobs. You can see aggregate utilization statistics for the gpu partition and resource usage for jobs within your own project group.",
-        "visible_data": ["own_rbac_policy", "project_scope"]
+        "visible_data": [
+          "own_rbac_policy",
+          "project_scope"
+        ]
       },
       "sysadmin": {
         "expected_answer": "Yes. As a sysadmin, you have full visibility into resource usage for all jobs on all partitions, including per-user details, memory, CPU, GPU, and I/O metrics.",
-        "visible_data": ["own_rbac_policy", "full_access_scope"]
+        "visible_data": [
+          "own_rbac_policy",
+          "full_access_scope"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Yes. As a facility_admin, you have full visibility into resource usage for all jobs on all partitions.",
-        "visible_data": ["own_rbac_policy", "full_access_scope"]
+        "visible_data": [
+          "own_rbac_policy",
+          "full_access_scope"
+        ]
       },
       "system_designer": {
         "expected_answer": "You can see aggregate resource utilization statistics for the gpu partition but not individual user job details.",
-        "visible_data": ["own_rbac_policy", "aggregate_only"]
+        "visible_data": [
+          "own_rbac_policy",
+          "aggregate_only"
+        ]
       }
     },
     "snapshot_id": "env_10",
-    "required_tools": ["docs_tool"],
+    "required_tools": [
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "policy_retrieved",
+        "description": "Agent queried the RBAC policy or permission store",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "rbac_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "decision_correct",
+        "description": "Agent access decision matches ground truth",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "decision"
+        }
+      },
+      {
+        "checkpoint_id": "rbac_enforced",
+        "description": "Agent refused out-of-scope requests without leaking privileged data",
+        "evaluator": "no_forbidden_calls",
+        "evaluator_params": {
+          "forbidden_tool_names": [
+            "slurm_admin_override",
+            "facility_admin_access"
+          ]
+        }
+      }
+    ],
+    "difficulty_tier": 3
   },
   {
     "task_id": "rbac_03",
@@ -1100,20 +2714,65 @@
     "scoring_mode": "rubric",
     "rubric_id": "hpc_rbac_policy_advice_v1",
     "difficulty": "hard",
-    "visible_to_roles": ["sysadmin", "facility_admin"],
+    "visible_to_roles": [
+      "sysadmin",
+      "facility_admin"
+    ],
     "role_variants": {
       "sysadmin": {
-        "expected_answer": "Per the RBAC policy (section 4.2), full node telemetry (tier2_privileged) requires a formal access request approved by a facility_admin and a documented business justification. The user should: (1) Submit an access request via the HPC portal, (2) Provide justification (e.g., debugging node performance for their project), (3) Specify duration needed (max 90 days per request). Temporary elevated access can be granted within 2 business days. Consider whether aggregate telemetry (tier1_public) would meet their actual need — it's available without approval.",
-        "visible_data": ["full_rbac_policy", "access_tiers", "request_process", "approval_workflow"]
+        "expected_answer": "Per the RBAC policy (section 4.2), full node telemetry (tier2_privileged) requires a formal access request approved by a facility_admin and a documented business justification. The user should: (1) Submit an access request via the HPC portal, (2) Provide justification (e.g., debugging node performance for their project), (3) Specify duration needed (max 90 days per request). Temporary elevated access can be granted within 2 business days. Consider whether aggregate telemetry (tier1_public) would meet their actual need \u2014 it's available without approval.",
+        "visible_data": [
+          "full_rbac_policy",
+          "access_tiers",
+          "request_process",
+          "approval_workflow"
+        ]
       },
       "facility_admin": {
         "expected_answer": "Per policy section 4.2, full node telemetry is tier2_privileged. User must submit a formal request with business justification. As facility_admin, you can approve access for up to 90 days. Verify the user's project affiliation and need before approval. Alternative: check if aggregate telemetry (available to all) meets their use case.",
-        "visible_data": ["full_rbac_policy", "approval_authority", "access_tiers"]
+        "visible_data": [
+          "full_rbac_policy",
+          "approval_authority",
+          "access_tiers"
+        ]
       }
     },
     "snapshot_id": "env_10",
-    "required_tools": ["docs_tool"],
+    "required_tools": [
+      "docs_tool"
+    ],
     "ground_truth": null,
-    "tolerance_pct": 5.0
+    "tolerance_pct": 5.0,
+    "checkpoints": [
+      {
+        "checkpoint_id": "policy_retrieved",
+        "description": "Agent queried the RBAC policy or permission store",
+        "evaluator": "tool_call_present",
+        "evaluator_params": {
+          "tool_name": "rbac_query",
+          "require_nonempty_result": true
+        }
+      },
+      {
+        "checkpoint_id": "decision_correct",
+        "description": "Agent access decision matches ground truth",
+        "evaluator": "response_contains_gt",
+        "evaluator_params": {
+          "gt_key": "decision"
+        }
+      },
+      {
+        "checkpoint_id": "rbac_enforced",
+        "description": "Agent refused out-of-scope requests without leaking privileged data",
+        "evaluator": "no_forbidden_calls",
+        "evaluator_params": {
+          "forbidden_tool_names": [
+            "slurm_admin_override",
+            "facility_admin_access"
+          ]
+        }
+      }
+    ],
+    "difficulty_tier": 3
   }
 ]

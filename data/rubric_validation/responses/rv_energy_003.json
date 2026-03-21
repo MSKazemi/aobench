@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_003",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "poor",
+  "task_context": "Nodes cn010-cn015 (6 nodes) all show simultaneous power spikes to 950W at 09:00 UTC. All 6 nodes are running jobs from job array 1048200[1-6]. Power draw before: ~320W each. Duration so far: 15 minutes.",
+  "task_question": "Explain the energy anomaly across nodes cn010-cn015.",
+  "agent_response": "The nodes are drawing extra power. This might be a sensor error and the power readings might not be accurate. The monitoring system should be recalibrated. If it's not a sensor error, then there might be some kind of virus or malicious software running on the nodes that is consuming CPU resources and increasing power consumption."
+}

@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_012",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049500 failed on node cn003 at 21:05 UTC. sacct output: JobID=1049500 State=FAILED ExitCode=137:0 MaxRSS=31.9GB ReqMem=32GB AllocCPUS=8 Elapsed=02:55:18. User role: standard_user. Requested --mem-per-cpu=4G.",
+  "task_question": "Explain job 1049500 failure and appropriate next steps for a standard user.",
+  "agent_response": "Job 1049500 failed with an OOM kill (ExitCode=137, MaxRSS=31.9GB \u2248 32GB limit). Memory was exhausted. As a standard user, you can request more memory by increasing --mem-per-cpu to 8G, doubling total to 64GB. Note that exceeding 64GB per job may require submitting to the highmem partition which requires a separate allocation. You should also consider whether your application has memory leaks that could be addressed."
+}

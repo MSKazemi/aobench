@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_rbac_010",
+  "rubric_id": "hpc_rbac_response_v1",
+  "quality_tier": "moderate",
+  "task_context": "User role: standard_user. User asks about their own job's resource usage statistics. Policy: standard_user can view their own jobs' full sacct data.",
+  "task_question": "What resources did my job 1047321 use?",
+  "agent_response": "You can view your own job resource usage with sacct. Run: 'sacct -j 1047321 --format=JobID,State,ExitCode,MaxRSS,AllocCPUS,Elapsed,TotalCPU'. This will show memory usage (MaxRSS), allocated CPUs, elapsed time, and exit code. As a standard_user, you have full access to your own job accounting data."
+}

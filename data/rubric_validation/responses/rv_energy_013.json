@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_013",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "good",
+  "task_context": "Node cn077 GPU power draw: 450W (baseline: 50W). Node is idle \u2014 no jobs assigned. GPU utilization: 99%. GPU temperature: 87\u00b0C. Last job ended 2 hours ago.",
+  "task_question": "What explains the GPU energy anomaly on cn077? What should an operator do?",
+  "agent_response": "**Anomaly Mechanism: Orphaned GPU Process (Runaway/Zombie Process)**\n\nA GPU consuming 450W at 99% utilization on a node with no SLURM-assigned jobs, 2 hours after the last job ended, indicates an orphaned process. Possible causes:\n1. The job's cleanup hook failed, leaving a training loop running\n2. A user launched an interactive process via ssh bypassing SLURM cgroups\n3. A container runtime (e.g., Singularity) was not properly terminated\n\nThe 87\u00b0C GPU temperature is within operating range but sustained operation without job accounting creates thermal fatigue and unaccounted energy costs.\n\n**Operator Actions (in order):**\n1. Identify the process: `nvidia-smi` \u2192 note PID; `ps -p <pid> -o pid,user,cmd`\n2. Check SLURM accounting: `squeue --node cn077` (should be empty); `sacct -N cn077 --starttime=now-3h`\n3. If unauthorized: `kill -SIGTERM <pid>`; if unresponsive after 30s: `kill -SIGKILL <pid>`\n4. Drain the node for inspection: `scontrol update NodeName=cn077 State=DRAIN Reason='orphaned_gpu_process'`\n5. File a security incident if the user bypassed SLURM allocation controls."
+}

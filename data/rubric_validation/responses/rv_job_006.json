@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_006",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1048700 failed on node cn088 at 03:15 UTC. sacct output: JobID=1048700 State=FAILED ExitCode=2:0 MaxRSS=0.1GB ReqMem=4GB AllocCPUS=2 Elapsed=00:00:45. stderr: 'Error: input file /scratch/user1/data/input.dat not found'.",
+  "task_question": "Diagnose job 1048700's failure.",
+  "agent_response": "The job ran out of memory very quickly since the MaxRSS shows only 0.1GB was used out of 4GB requested. This seems like the job was killed before it could use more memory. The exit code 2 means there was a memory error. Requesting more memory (8GB) should resolve the issue."
+}

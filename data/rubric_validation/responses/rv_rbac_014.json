@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_rbac_014",
+  "rubric_id": "hpc_rbac_response_v1",
+  "quality_tier": "good",
+  "task_context": "User role: standard_user. User asks about submitting to the restricted gpu_priority partition. Policy: gpu_priority requires PI authorization and allocation voucher; standard_user must go through PI to request access.",
+  "task_question": "How do I submit jobs to the gpu_priority partition?",
+  "agent_response": "The **gpu_priority** partition is access-restricted and requires authorization before you can submit jobs to it.\n\n**Your role (standard_user) cannot directly request gpu_priority access.** The access path requires your PI:\n\n1. **PI submits an allocation request** via the facility portal, specifying the number of GPU-hours and justification.\n2. **After approval**, your PI receives an allocation voucher ID.\n3. **PI adds you to the gpu_priority account**: `sacctmgr add user $USER account=<voucher_account>`\n   (This step requires your PI or a facility_operator.)\n4. **Once added**, you submit with: `#SBATCH --partition=gpu_priority --account=<voucher_account>`\n\nWhile waiting for authorization, you can use the **gpu_normal** partition (no voucher required for standard_user) \u2014 lower priority but no access barrier. Use `sinfo -p gpu_normal` to check current availability."
+}

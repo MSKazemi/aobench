@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_011",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049400 failed on node cn066 at 15:20 UTC. sacct output: JobID=1049400 State=FAILED ExitCode=2:0 MaxRSS=0.05GB ReqMem=2GB AllocCPUS=1 Elapsed=00:00:12. stderr: 'FileNotFoundError: /lustre/project/user2/config/params.yaml'.",
+  "task_question": "Why did job 1049400 fail?",
+  "agent_response": "Job 1049400 failed almost immediately (12 seconds) with exit code 2, which aligns with a Python FileNotFoundError shown in stderr. The config file /lustre/project/user2/config/params.yaml was not found. This is a missing input file issue rather than a resource problem (MaxRSS is minimal). The user should verify the config file path is correct and that the Lustre filesystem mount is accessible from compute nodes."
+}

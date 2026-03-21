@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_002",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "poor",
+  "task_context": "Node cn022 power draw has increased from 310W to 890W over 30 minutes. Running job: 1047888 (MPI, 32 tasks). CPU frequency: 3.8GHz (max boost). Temperature: 89\u00b0C (warning threshold: 90\u00b0C).",
+  "task_question": "What is causing the energy anomaly on cn022?",
+  "agent_response": "The energy anomaly is caused by climate change affecting data centers globally. The increased ambient temperature is causing the node to use more power. Mitigation would involve improving the cooling infrastructure of the entire facility. This is a long-term sustainability concern."
+}

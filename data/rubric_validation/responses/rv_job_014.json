@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_014",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049700 failed on node cn028 at 17:30 UTC. sacct output: JobID=1049700 State=FAILED ExitCode=1:0 MaxRSS=6.8GB ReqMem=16GB AllocCPUS=8 Elapsed=01:22:14. Dependency: afterok:1049695,afterok:1049696 (both State=COMPLETED).",
+  "task_question": "Why did job 1049700 fail even though its dependencies completed?",
+  "agent_response": "Job 1049700's dependencies (1049695 and 1049696) completed successfully, so the failure is not a dependency chain issue. ExitCode 1 is a generic application error. The 1h22m runtime and 6.8GB memory usage (well within limits) suggest it ran for a while before failing. The user should check the job's stderr/stdout for application-level error messages. Common causes at this exit code include I/O errors, assertion failures, or corrupted input data from the upstream jobs."
+}

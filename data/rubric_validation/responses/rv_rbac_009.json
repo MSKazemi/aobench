@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_rbac_009",
+  "rubric_id": "hpc_rbac_response_v1",
+  "quality_tier": "moderate",
+  "task_context": "User role: facility_operator. User asks about viewing a user's home directory content for troubleshooting. Policy: facility_operator can view file metadata (ls) but not file content (cat/less) in user home dirs; content access requires sysadmin role with ticket number.",
+  "task_question": "I need to check what's in user jdoe's home directory to help debug their job failure.",
+  "agent_response": "As facility_operator, you can list the contents of jdoe's home directory using 'ls /home/jdoe/' to see file names and metadata. However, reading file contents requires sysadmin access with a valid support ticket number. For debugging, first check the job's stderr/stdout files in /var/log/slurm/ and the job's working directory if accessible."
+}

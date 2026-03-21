@@ -89,6 +89,11 @@ class MockTelemetryTool(BaseTool):
         if self._role not in _FULL_ACCESS_ROLES:
             allowed_nodes = self._get_allowed_nodes()
             if allowed_nodes is not None:
+                if node_id is not None and node_id not in allowed_nodes:
+                    return self._permission_denied(
+                        "Node not in own job allocation",
+                        metadata={"node_not_in_own_jobs": True},
+                    )
                 df = df[df["node_id"].isin(allowed_nodes)]
 
         if node_id:

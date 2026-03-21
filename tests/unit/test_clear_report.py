@@ -100,10 +100,10 @@ def test_compute_cps_no_successes():
 
 
 def test_compute_cps_missing_cost():
-    # cost=None results still count towards n_successful; total_cost=0
+    # When all results have no cost data, CPS is None (spec §5.1: no cost → CPS=None)
     results = [_make_result(aggregate_score=0.9, cost_usd=None) for _ in range(3)]
     cps = compute_cps(results, pass_threshold=0.5)
-    assert cps == pytest.approx(0.0, abs=1e-9)
+    assert cps is None
 
 
 # ── normalise_min_max ─────────────────────────────────────────────────────────

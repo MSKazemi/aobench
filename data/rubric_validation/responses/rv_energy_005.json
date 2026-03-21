@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_005",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "poor",
+  "task_context": "Node cn033 shows periodic power spikes every 60 seconds: alternating between 280W and 760W. CPU utilization oscillates between 5% and 95%. Job 1049050 running: described as 'iterative solver with periodic sync'.",
+  "task_question": "Explain the periodic energy anomaly on cn033.",
+  "agent_response": "The node has an electrical problem causing periodic power surges. The 60-second cycle suggests the node's power supply unit (PSU) is malfunctioning and should be replaced. The oscillating CPU utilization is a symptom of the faulty PSU causing instability. Immediate hardware maintenance is required."
+}

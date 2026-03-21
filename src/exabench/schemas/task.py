@@ -4,9 +4,44 @@ from __future__ import annotations
 
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from exabench.schemas.workflow_graph import WorkflowGraph
+
+
+# ---------------------------------------------------------------------------
+# Gold Trajectory schema (tool_use_scorer_spec.md §2)
+# ---------------------------------------------------------------------------
+
+
+class GoldStep(BaseModel):
+    """One expected tool call in a canonical solution trajectory."""
+
+    step: int
+    tool: str
+    method: str
+    required_args: dict[str, Any] = Field(default_factory=dict)
+    optional_args: dict[str, Any] = Field(default_factory=dict)
+    rationale: str = ""
+
+
+class OrderedPair(BaseModel):
+    """A pairwise safety-critical ordering constraint for sequence_penalty scoring."""
+
+    before: str
+    after: str
+    operation: str
+    severity: Literal["hard_fail", "penalty"]
+    rationale: str = ""
+
+
+class GoldTrajectory(BaseModel):
+    """Canonical expected tool-call sequence for a task (used by ToolUseScorer)."""
+
+    description: str = ""
+    steps: list[GoldStep]
+    ordered_required_pairs: list[OrderedPair] = Field(default_factory=list)
+
 
 # ---------------------------------------------------------------------------
 # Hybrid-scorer data models (ComponentSpec + HybridScoringConfig)
@@ -53,6 +88,15 @@ class HybridScoringConfig(BaseModel):
 Role = Literal["scientific_user", "sysadmin", "facility_admin", "researcher", "system_designer"]
 QCat = Literal["JOB", "PERF", "DATA", "MON", "ENERGY", "SEC", "FAC", "ARCH", "AIOPS", "DOCS"]
 Difficulty = Literal["easy", "medium", "hard", "adversarial"]
+DifficultyTier = Literal[1, 2, 3]
+
+# Mapping from Difficulty label to expected DifficultyTier integer
+_DIFFICULTY_TO_TIER: dict[str, int] = {
+    "easy": 1,
+    "medium": 2,
+    "hard": 3,
+    "adversarial": 3,
+}
 
 # Knowledge source codes — aligned with docs/taxonomy/05_knowledge_sources.md
 KnowledgeSourceCode = Literal[
@@ -89,7 +133,12 @@ AccessTier = Literal[
     "tier4_sensitive",   # Confidential; approval + isolation (procurement, cybersecurity)
 ]
 
-AnswerType = Literal["diagnosis", "comparison", "lookup", "action", "explanation", "numeric", "summary", "factoid"]
+AnswerType = Literal[
+    "diagnosis", "comparison", "lookup", "action", "explanation",
+    "numeric", "summary", "factoid",
+    "job_id",    # N1: integer job ID (strip leading zeros)
+    "node_list", # N2: SLURM bracket notation or comma-separated node names
+]
 ValidationStatus = Literal["not_started", "in_review", "validated", "rejected"]
 ScoringReadiness = Literal["blocked", "partial", "ready"]
 BenchmarkSplit = Literal["dev", "public_test", "hidden_test"]
@@ -148,6 +197,7 @@ class TaskSpec(BaseModel):
     role: Role
     qcat: QCat
     difficulty: Difficulty
+    difficulty_tier: Optional[DifficultyTier] = None   # 1=single-lookup, 2=multi-step, 3=complex
 
     # Environment linkage
     environment_id: str
@@ -166,6 +216,10 @@ class TaskSpec(BaseModel):
     # Minimum access tier the agent must hold to answer this task
     access_tier: AccessTier = "tier1_public"
 
+    # Agent persona username (e.g. "alice") — used by GovernanceScorer for
+    # cross_user_reference dangerous_arg checks.
+    agent_user: Optional[str] = None
+
     # Tool and access constraints
     allowed_tools: Optional[list[str]] = None
     hard_fail_conditions: list[str] = Field(default_factory=list)
@@ -181,10 +235,27 @@ class TaskSpec(BaseModel):
     # When absent, WorkflowScorer is skipped.
     ground_truth_workflow: Optional[WorkflowGraph] = None
 
+    # Gold trajectory for tool-use sequence scoring (tool_use_scorer_spec.md §2).
+    # When present, ToolUseScorer computes node_f1, ned, step_accuracy, sequence_penalty.
+    # When absent, all four new metrics are None.
+    gold_trajectory: Optional[GoldTrajectory] = None
+
     # Lifecycle
     benchmark_split: Optional[BenchmarkSplit] = None
     validation_status: ValidationStatus = "not_started"
     scoring_readiness: ScoringReadiness = "blocked"
+
+    @model_validator(mode="after")
+    def _check_difficulty_tier_consistency(self) -> "TaskSpec":
+        if self.difficulty_tier is None:
+            return self
+        expected = _DIFFICULTY_TO_TIER.get(self.difficulty)
+        if expected is not None and self.difficulty_tier != expected:
+            raise ValueError(
+                f"difficulty_tier={self.difficulty_tier} is inconsistent with "
+                f"difficulty={self.difficulty!r} (expected {expected})"
+            )
+        return self
 
 
 # ---------------------------------------------------------------------------
@@ -215,6 +286,29 @@ class HPCGroundTruth(BaseModel):
 
     model_config = {"extra": "allow"}
 
+    # T8: comparison mode for ambiguity check
+    comparison_mode: Optional[Literal["exact", "set_equal", "numeric_tolerance", "regex"]] = None
+    # T3: machine-executable derivation query against snapshot
+    derivation_query: Optional[str] = None
+
+
+class HPCCheckpointDef(BaseModel):
+    """Checkpoint definition embedded in an HPC task spec.
+
+    Each checkpoint has a unique ID, a natural-language description, one of
+    four deterministic evaluator types, and evaluator-specific parameters.
+    """
+
+    checkpoint_id: str
+    description: str
+    evaluator: Literal[
+        "tool_call_present",       # trace contains named tool call + optional conditions
+        "response_contains_gt",    # agent response references a ground-truth value
+        "no_forbidden_calls",      # no forbidden tool names appear in trace
+        "tool_call_with_metric",   # tool call includes a specific metric_type keyword
+    ]
+    evaluator_params: dict[str, Any] = Field(default_factory=dict)
+
 
 class HPCTaskSpec(BaseModel):
     """HPC task set v1 task definition (hpc_task_set_spec.md §8)."""
@@ -234,3 +328,11 @@ class HPCTaskSpec(BaseModel):
     tolerance_pct: float = 5.0
     # Taxonomy labels from spec §3.2
     visible_to_roles: list[str] = Field(default_factory=list)
+    # Checkpoint definitions for partial-completion scoring (checkpoint_scorer_spec.md)
+    checkpoints: Optional[list[HPCCheckpointDef]] = None
+    # T5: ground-truth files excluded from agent context (diagnostic tasks)
+    ground_truth_files_excluded: list[str] = Field(default_factory=list)
+    # T8: temporal anchor — must be "snapshot_timestamp" for relative-time tasks
+    temporal_anchor: Optional[str] = None
+    # Gold trajectory for tool-use sequence scoring (tool_use_scorer_spec.md §2).
+    gold_trajectory: Optional[GoldTrajectory] = None

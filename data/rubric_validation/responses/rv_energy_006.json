@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_006",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "moderate",
+  "task_context": "Node cn045 shows power draw of 820W at 14:32 UTC, which is 2.4\u00d7 its 7-day rolling baseline of 341W. No new jobs started in the past 5 minutes. CPU utilization: 98%. Memory bandwidth: 94% of peak.",
+  "task_question": "Explain the energy anomaly on node cn045 and recommend mitigation.",
+  "agent_response": "The 2.4\u00d7 power spike on cn045 is likely caused by a workload change that is now saturating both CPU and memory bandwidth. The 98% CPU utilization combined with 94% memory bandwidth suggests the running job entered a compute-intensive phase. The user should check if this is expected behavior for the current workload. If unexpected, the job may have encountered a different execution path. Monitor for continued high power draw."
+}

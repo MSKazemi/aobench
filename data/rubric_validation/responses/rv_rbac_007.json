@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_rbac_007",
+  "rubric_id": "hpc_rbac_response_v1",
+  "quality_tier": "moderate",
+  "task_context": "User role: power_user. User asks about modifying scheduler priority settings for their project. Policy: power_user can view but not modify scheduler parameters; modifications require facility_operator role.",
+  "task_question": "Can I increase the priority of my project's jobs in SLURM?",
+  "agent_response": "As a power_user, you can view your project's current priority settings using 'sprio' or 'squeue --format'. However, modifying SLURM priority settings (fair-share weights, partition priorities) requires facility_operator access. You can submit a request to have your priority temporarily adjusted by contacting HPC support."
+}

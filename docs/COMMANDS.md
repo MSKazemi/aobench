@@ -17,6 +17,17 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
 | `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
 | `make generate-tool-docs` | Write `hpc_tools_guide.md` into all env `docs/` dirs from `hpc_tool_catalog.yaml` |
+| `make validate-tasks` | Run T1–T10 task validity checks on `benchmark/tasks/task_set_v1.json` |
+| `make validity-report` | Run T1–T10 task validity checks and write `benchmark/validity_report_v1.json` |
+| `make audit-scorers` | Run O.a–O.c scorer validity audit and write `benchmark/scorer_audit_v1.json` |
+| `python -m exabench.cli.validate_tasks` | Run T1–T10 ABC validity checklist against the task corpus |
+| `python -m exabench.cli.audit_scorers` | Run O.a–O.c outcome validity audit against the scorer |
+| `make rubric-generate-responses` | Generate 50 synthetic HPC validation responses in `data/rubric_validation/responses/` |
+| `make rubric-compute-icc` | Compute ICC(A,1) from annotation CSV (Gate R1) |
+| `make rubric-compute-krippendorff` | Compute Krippendorff α per rubric dimension (Gate R2) |
+| `make rubric-stochastic-stability` | Run judge 8× on 10 responses, report stochastic std (Gate R3) |
+| `make rubric-cross-judge` | Score 50 responses with two judges, report Kendall τ_b (Gate R4) |
+| `make rubric-validate-all` | Run all 4 rubric validation gates (R1–R4) in sequence |
 
 ---
 
@@ -64,6 +75,84 @@ exabench validate benchmark [OPTIONS]
 ```bash
 exabench validate benchmark
 exabench validate benchmark --benchmark /path/to/my-benchmark
+```
+
+---
+
+### validate_tasks (standalone script)
+
+Run the full T1–T10 ABC validity checklist against the HPC task corpus.
+
+```bash
+python -m exabench.cli.validate_tasks [OPTIONS] [TASK_IDS...]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `TASK_IDS` | all | Optional task IDs to validate |
+| `--task-file` | `benchmark/tasks/task_set_v1.json` | Task corpus JSON |
+| `--snapshot-dir` | `benchmark/environments/` | Environments root directory |
+| `--catalog` | `benchmark/configs/hpc_tool_catalog.yaml` | Tool catalog YAML |
+| `--checks` | `all` | Comma-separated checks to run: `t1,t2,...,t9` |
+| `--output` | stdout | Output report path |
+| `--format` | `json` | Output format: `json` \| `text` \| `csv` |
+| `--fail-fast` | false | Stop after first task failure |
+| `--oracle-judge` | false | Run LLM oracle judge for rubric tasks |
+| `--strict` | false | Treat WARN as FAIL |
+
+**Examples:**
+
+```bash
+# Validate all tasks, all checks
+python -m exabench.cli.validate_tasks
+
+# Only run version and setup checks
+python -m exabench.cli.validate_tasks --checks t1,t2
+
+# Validate specific tasks, human-readable output
+python -m exabench.cli.validate_tasks job_ops_01 job_ops_02 --format text
+
+# Write validity report for release gate
+make validity-report
+# → benchmark/validity_report_v1.json
+```
+
+---
+
+### audit_scorers (standalone script)
+
+Run O.a–O.c outcome validity checks against the ExaBench scorer.
+
+```bash
+python -m exabench.cli.audit_scorers [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--check` | `all` | Which check(s) to run: `oa` \| `ob` \| `oc` \| `all` |
+| `--task-file` | `benchmark/tasks/task_set_v1.json` | Task corpus JSON |
+| `--snapshot-dir` | `benchmark/environments/` | Environments root directory |
+| `--judge-model` | `claude-sonnet-4-6` | LLM judge model for O.c |
+| `--n-repeats` | `5` | Repeats per response for O.c stochastic test |
+| `--output` | stdout | Output report path |
+| `--format` | `json` | Output format: `json` \| `text` |
+| `--string-equiv-file` | `benchmark/scorer_audit/string_equiv_classes.yaml` | Equivalence class YAML for O.a |
+
+**Examples:**
+
+```bash
+# Run all checks
+python -m exabench.cli.audit_scorers
+
+# String-matching audit only
+python -m exabench.cli.audit_scorers --check oa
+
+# Rigorous self-consistency test
+python -m exabench.cli.audit_scorers --check oc --n-repeats 10
+
+# Write scorer audit report for release gate
+make audit-scorers
+# → benchmark/scorer_audit_v1.json
 ```
 
 ---
@@ -695,6 +784,7 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 | `make generate-tool-docs-role` | Same, but force a specific role (`TOOL_DOCS_ROLE=sysadmin`) |
 | `make generate-bundles` | Generate canonical snapshot bundles `env_06–env_20` under `benchmark/environments/` |
 | `make validate-bundles` | Validate all snapshot bundles against canonical schemas (exit 0 = all OK) |
+| `make validate-tasks` | Run T1–T10 task validity checks on the task corpus (outputs JSON report to stdout) |
 | `make validate-hpc-tasks` | Validate HPC task set v1 (`benchmark/tasks/task_set_v1.json`) — prints per-data-type counts |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
 | `make scoring-dims` | Print the scoring dimensions reference (all terms defined) |

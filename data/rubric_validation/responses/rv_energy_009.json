@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_009",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "moderate",
+  "task_context": "Node cn077 GPU power draw: 450W (baseline: 50W). Node is idle \u2014 no jobs assigned. GPU utilization: 99%. GPU temperature: 87\u00b0C. Last job ended 2 hours ago.",
+  "task_question": "What explains the GPU energy anomaly on cn077?",
+  "agent_response": "A GPU drawing 450W at 99% utilization on an idle node 2 hours after the last assigned job is concerning. This likely indicates a runaway process that survived job termination or an unauthorized process consuming GPU resources. The operator should run 'nvidia-smi' to identify what process is using the GPU and terminate it if it's not authorized. The node should be checked for any lingering processes with 'ps aux'."
+}

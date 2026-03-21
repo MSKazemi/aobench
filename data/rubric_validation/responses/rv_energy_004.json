@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_004",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "poor",
+  "task_context": "Node cn077 GPU power draw: 450W (baseline: 50W). Node is idle \u2014 no jobs assigned. GPU utilization: 99%. GPU temperature: 87\u00b0C. Last job ended 2 hours ago.",
+  "task_question": "What explains the GPU energy anomaly on cn077?",
+  "agent_response": "The GPU is working very hard. This is normal for GPU nodes which consume a lot of power during computation. The 450W reading is within normal GPU operating parameters for high-performance cards. The system administrator does not need to take any action as this is expected behavior."
+}

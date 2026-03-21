@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_004",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1048222 failed on node cn055 at 11:30 UTC. sacct output: JobID=1048222 State=FAILED ExitCode=137:0 MaxRSS=31.9GB ReqMem=32GB AllocCPUS=4 Elapsed=01:47:22. stderr: 'slurmstepd: error: Exceeded job memory limit at step 0'.",
+  "task_question": "Explain why job 1048222 failed and what the user should do.",
+  "agent_response": "I cannot determine the exact cause of the failure without more information. The job may have encountered various issues including hardware problems, software bugs, or configuration errors. Please check the full log files and consider running a diagnostic on the node. Contact your system administrator for assistance in resolving this issue."
+}

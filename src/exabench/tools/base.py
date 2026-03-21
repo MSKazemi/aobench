@@ -5,7 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ToolResult(BaseModel):
@@ -16,6 +16,7 @@ class ToolResult(BaseModel):
     data: Any = None
     error: Optional[str] = None
     permission_denied: bool = False
+    metadata: dict = Field(default_factory=dict)
 
 
 class BaseTool(ABC):
@@ -37,6 +38,8 @@ class BaseTool(ABC):
     def _ok(self, data: Any) -> ToolResult:
         return ToolResult(tool_name=self.name, success=True, data=data)
 
-    def _permission_denied(self, msg: str = "Permission denied") -> ToolResult:
+    def _permission_denied(self, msg: str = "Permission denied",
+                           metadata: Optional[dict] = None) -> ToolResult:
         return ToolResult(tool_name=self.name, success=False,
-                          error=msg, permission_denied=True)
+                          error=msg, permission_denied=True,
+                          metadata=metadata or {})

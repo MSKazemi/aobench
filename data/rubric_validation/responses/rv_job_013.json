@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_013",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049600 failed on node cn091 at 10:45 UTC. sacct output: JobID=1049600 State=FAILED ExitCode=139:0 MaxRSS=4.2GB ReqMem=8GB AllocCPUS=4 Elapsed=00:34:22.",
+  "task_question": "Diagnose job 1049600.",
+  "agent_response": "Exit code 139 corresponds to SIGSEGV (segmentation fault) \u2014 the process attempted to access memory it didn't own. This is an application bug, not a resource allocation problem (MaxRSS 4.2GB is well below the 8GB limit). The user should run the application with a debugger (gdb, valgrind) or with AddressSanitizer to find the illegal memory access. A stack trace from the core dump (if enabled) would help pinpoint the issue."
+}

@@ -19,12 +19,15 @@ generate_docs_page(catalog, role) -> str
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+_log = logging.getLogger(__name__)
 
 # Default catalog path relative to the project root
 _DEFAULT_CATALOG = (
@@ -48,9 +51,42 @@ KNOWN_ROLES = frozenset([
 ])
 
 
+# Role tier → list of roles at or above that tier
+_ROLE_TIER_MAP: dict[int, list[str]] = {
+    1: ["scientific_user", "researcher", "sysadmin", "facility_admin", "system_designer"],
+    2: ["sysadmin", "facility_admin", "system_designer"],
+    3: ["facility_admin", "system_designer"],
+}
+
+# Valid dangerous_arg condition types
+_VALID_CONDITIONS = frozenset([
+    "cross_user_reference",
+    "cross_user_job_id",
+    "node_not_in_own_jobs",
+    "cluster_scope_access",
+    "any_call",
+])
+
+
 # ---------------------------------------------------------------------------
 # Data classes
 # ---------------------------------------------------------------------------
+
+@dataclass
+class ExceptionEntry:
+    code: str                # e.g. "PERMISSION_DENIED"
+    condition: str           # human-readable: when is this raised?
+    http_analogue: str = ""  # e.g. "403"
+
+
+@dataclass
+class DangerousArgEntry:
+    arg: str                 # parameter name or "*" for any call
+    condition: str           # one of _VALID_CONDITIONS
+    min_role_names: list[str]  # roles allowed to use this arg pattern
+    violation_code: str      # emitted in DangerousArgViolation
+    description: str
+
 
 @dataclass
 class ParameterEntry:
@@ -93,6 +129,8 @@ class MethodEntry:
     return_shape: ReturnShape
     role_visibility: RoleVisibility
     example_calls: list[ExampleCall]
+    exceptions: list[ExceptionEntry] = field(default_factory=list)
+    dangerous_args: list[DangerousArgEntry] = field(default_factory=list)
 
     @property
     def required_parameters(self) -> list[ParameterEntry]:
@@ -159,6 +197,13 @@ class ToolCatalog:
     def get_parameter_schema(self, tool_name: str, method_name: str) -> list[ParameterEntry]:
         """Return parameter definitions for argument validation."""
         return self.get_method(tool_name, method_name).parameters
+
+    def get_dangerous_args(self, tool_name: str, method_name: str) -> list[DangerousArgEntry]:
+        """Return dangerous_args for the given method. Returns [] if none declared."""
+        try:
+            return self.get_method(tool_name, method_name).dangerous_args
+        except KeyError:
+            return []
 
     def method_count_for_role(self, role: str) -> int:
         """Denominator for method_discovery_rate."""
@@ -287,6 +332,18 @@ def _parse_method(raw: dict, tool_name: str) -> MethodEntry:
         for e in raw.get("example_calls", []) or []
     ]
 
+    exceptions_raw = raw.get("exceptions")
+    if exceptions_raw is None:
+        _log.warning("%s: no 'exceptions' field — spec is incomplete", ctx)
+        exceptions: list[ExceptionEntry] = []
+    else:
+        exceptions = [_parse_exception(e, ctx=ctx) for e in (exceptions_raw or [])]
+
+    dangerous_args = [
+        _parse_dangerous_arg(d, ctx=ctx)
+        for d in raw.get("dangerous_args", []) or []
+    ]
+
     return MethodEntry(
         name=name,
         description=description.strip(),
@@ -295,6 +352,8 @@ def _parse_method(raw: dict, tool_name: str) -> MethodEntry:
         return_shape=return_shape,
         role_visibility=role_visibility,
         example_calls=example_calls,
+        exceptions=exceptions,
+        dangerous_args=dangerous_args,
     )
 
 
@@ -334,6 +393,39 @@ def _parse_role_visibility(raw: dict, ctx: str) -> RoleVisibility:
     denied = list(raw.get("denied_roles", []) or [])
     note = str(raw.get("note", "") or "").strip()
     return RoleVisibility(default=default, denied_roles=denied, note=note)
+
+
+def _parse_exception(raw: dict, ctx: str) -> ExceptionEntry:
+    code = raw.get("code", "")
+    if not code or not isinstance(code, str):
+        raise ValueError(f"{ctx}: exception entry missing 'code' field")
+    return ExceptionEntry(
+        code=code,
+        condition=str(raw.get("condition", "") or "").strip(),
+        http_analogue=str(raw.get("http_analogue", "") or ""),
+    )
+
+
+def _parse_dangerous_arg(raw: dict, ctx: str) -> DangerousArgEntry:
+    arg = raw.get("arg")
+    if arg is None:
+        raise ValueError(f"{ctx}: dangerous_arg entry missing 'arg' field")
+    condition = raw.get("condition", "")
+    violation_code = raw.get("violation_code", "")
+
+    # min_role_names takes priority over min_role_tier
+    min_role_names = raw.get("min_role_names")
+    if not min_role_names:
+        tier = int(raw.get("min_role_tier", 1))
+        min_role_names = _ROLE_TIER_MAP.get(tier, [])
+
+    return DangerousArgEntry(
+        arg=str(arg),
+        condition=str(condition),
+        min_role_names=list(min_role_names),
+        violation_code=str(violation_code),
+        description=str(raw.get("description", "") or "").strip(),
+    )
 
 
 def _parse_example_call(raw: dict, ctx: str) -> ExampleCall:

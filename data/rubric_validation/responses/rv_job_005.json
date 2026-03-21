@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_005",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1048500 failed on node cn012 at 16:55 UTC. sacct output: JobID=1048500 State=FAILED ExitCode=1:0 MaxRSS=8.4GB ReqMem=16GB AllocCPUS=16 Elapsed=00:45:10. Dependency: afterok:1048499 (State=CANCELLED).",
+  "task_question": "Why did job 1048500 fail?",
+  "agent_response": "The job failed because there was an error in the SLURM scheduler. ExitCode 1 means there was a generic error. The user should check if SLURM is running correctly and if the cluster is in a healthy state. Sometimes SLURM has bugs that cause jobs to fail unexpectedly. Try submitting to a different partition."
+}

@@ -1,10 +1,16 @@
-"""Unit tests for ToolUseScorer — legacy mode and decomposed mode."""
+"""Unit tests for ToolUseScorer — legacy mode, decomposed mode, and gold-trajectory metrics."""
 
 from __future__ import annotations
 
-from exabench.schemas.task import EvalCriteria, ExpectedToolCall, TaskSpec
+from exabench.schemas.task import (
+    EvalCriteria, ExpectedToolCall, GoldStep, GoldTrajectory, OrderedPair, TaskSpec,
+)
 from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
-from exabench.scorers.tool_use_scorer import ToolUseScorer, _args_match, _lcs_length
+from exabench.scorers.tool_use_scorer import (
+    ToolUseScorer, _args_match, _lcs_length,
+    score_node_f1, score_ned, score_step_accuracy, score_sequence_violations,
+    _compute_clear_T,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -273,3 +279,146 @@ def test_decomposed_missing_expected_tool_argument_zero():
     result = scorer.score(task, trace)
     # argument_score = mean(1.0, 0.0) = 0.5
     assert result.score < 1.0
+
+
+# ---------------------------------------------------------------------------
+# Gold-trajectory metric helpers
+# ---------------------------------------------------------------------------
+
+def _make_gold_trajectory(tools: list[str], pairs: list[dict] | None = None) -> GoldTrajectory:
+    steps = [
+        GoldStep(step=i + 1, tool=t, method="query", required_args={})
+        for i, t in enumerate(tools)
+    ]
+    ordered_pairs = [
+        OrderedPair(
+            before=p["before"], after=p["after"],
+            operation=p.get("operation", "op"),
+            severity=p.get("severity", "hard_fail"),
+        )
+        for p in (pairs or [])
+    ]
+    return GoldTrajectory(steps=steps, ordered_required_pairs=ordered_pairs)
+
+
+def _make_tool_calls(names: list[str]) -> list[ToolCall]:
+    return [ToolCall(tool_name=n, arguments={}) for n in names]
+
+
+def _task_with_trajectory(gold_tools: list[str], pairs: list[dict] | None = None) -> TaskSpec:
+    gt = _make_gold_trajectory(gold_tools, pairs)
+    return TaskSpec(
+        task_id="TST_GT_001", title="GT", query_text="Q",
+        role="scientific_user", qcat="JOB", difficulty="easy",
+        environment_id="env_01", expected_answer_type="diagnosis",
+        gold_trajectory=gt,
+    )
+
+
+# ---------------------------------------------------------------------------
+# Gold-trajectory metric tests (spec §7.4)
+# ---------------------------------------------------------------------------
+
+def test_node_f1_exact_match():
+    """Returns 1.0 for identical gold/pred tool sets."""
+    gt = _make_gold_trajectory(["slurm", "telemetry"])
+    calls = _make_tool_calls(["slurm", "telemetry"])
+    assert score_node_f1(gt, calls) == 1.0
+
+
+def test_node_f1_partial():
+    """Returns < 1.0 for partial overlap."""
+    gt = _make_gold_trajectory(["slurm", "telemetry"])
+    calls = _make_tool_calls(["slurm"])
+    f1 = score_node_f1(gt, calls)
+    assert f1 is not None
+    assert 0.0 < f1 < 1.0
+    # precision=1.0 (slurm∈gold), recall=0.5 → F1 = 2/3 ≈ 0.667
+    assert abs(f1 - 2 / 3) < 0.01
+
+
+def test_ned_correct_order():
+    """Returns 1.0 for matching sequence."""
+    gt = _make_gold_trajectory(["slurm", "telemetry", "docs"])
+    calls = _make_tool_calls(["slurm", "telemetry", "docs"])
+    assert score_ned(gt, calls) == 1.0
+
+
+def test_ned_reversed():
+    """Penalizes reversed sequence (NED < 1.0)."""
+    gt = _make_gold_trajectory(["slurm", "telemetry", "docs"])
+    calls = _make_tool_calls(["docs", "telemetry", "slurm"])
+    ned = score_ned(gt, calls)
+    assert ned is not None
+    assert ned < 1.0
+
+
+def test_step_accuracy_partial():
+    """Returns hit rate for partially correct positional sequence."""
+    gt = _make_gold_trajectory(["slurm", "telemetry", "docs"])
+    # slurm correct at pos 0, wrong at pos 1 (rbac≠telemetry), docs correct at pos 2
+    calls = _make_tool_calls(["slurm", "rbac", "docs"])
+    acc = score_step_accuracy(gt, calls)
+    assert acc is not None
+    assert abs(acc - 2 / 3) < 0.01
+
+
+def test_sequence_violation_hard_fail():
+    """hard_fail_triggered=True when 'after' tool called before 'before' tool."""
+    pairs = [{"before": "rbac_tool", "after": "slurm_tool",
+               "operation": "job_cancel_privileged", "severity": "hard_fail"}]
+    gt = _make_gold_trajectory(["rbac_tool", "slurm_tool"], pairs)
+    # slurm_tool (index 0) called before rbac_tool (index 1) → violation
+    calls = _make_tool_calls(["slurm_tool", "rbac_tool"])
+    violations = score_sequence_violations(gt, calls)
+    assert len(violations) == 1
+    assert violations[0]["severity"] == "hard_fail"
+    _, _, hard_fail = _compute_clear_T(0.8, 0.7, 0.6, violations)
+    assert hard_fail is True
+
+
+def test_sequence_penalty_applied():
+    """CLEAR T reduced by 0.20 for a severity='penalty' violation."""
+    pairs = [{"before": "docs_tool", "after": "slurm_tool",
+               "operation": "policy_lookup", "severity": "penalty"}]
+    gt = _make_gold_trajectory(["docs_tool", "slurm_tool"], pairs)
+    # slurm_tool called first → violation
+    calls = _make_tool_calls(["slurm_tool", "docs_tool"])
+    violations = score_sequence_violations(gt, calls)
+    assert len(violations) == 1
+    assert violations[0]["severity"] == "penalty"
+    base = 0.8
+    ned_val = 0.5
+    nf1_val = 0.9
+    T, penalty, hf = _compute_clear_T(base, nf1_val, ned_val, violations)
+    expected_base = 0.5 * base + 0.3 * ned_val + 0.2 * nf1_val
+    assert abs(T - max(0.0, expected_base - 0.20)) < 0.001
+    assert abs(penalty - 0.20) < 0.001
+    assert hf is False
+
+
+def test_no_gold_trajectory_returns_none():
+    """All new fields are None when task has no gold_trajectory."""
+    task = _task(allowed_tools=["slurm"])
+    trace = _trace_with_calls(["slurm"])
+    result = scorer.score(task, trace)
+    detail = result.tool_use_detail
+    assert detail is not None
+    assert detail.node_f1 is None
+    assert detail.ned is None
+    assert detail.step_accuracy is None
+    assert detail.sequence_violations is None
+    assert detail.sequence_penalty_applied is None
+    assert detail.hard_fail_triggered is None
+
+
+def test_composite_clear_T_formula():
+    """Weighted composite matches spec §4.3: T = 0.5*tus + 0.3*ned + 0.2*nf1."""
+    tus = 0.8
+    ned_val = 0.6
+    nf1_val = 0.9
+    expected_T = 0.5 * tus + 0.3 * ned_val + 0.2 * nf1_val
+    T, penalty, hf = _compute_clear_T(tus, nf1_val, ned_val, [])
+    assert abs(T - expected_T) < 0.001
+    assert penalty == 0.0
+    assert hf is False

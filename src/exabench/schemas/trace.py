@@ -23,8 +23,13 @@ class Observation(BaseModel):
     content: Any
     error: Optional[str] = None
     permission_denied: bool = False
+    denial_reason: Optional[str] = None
+    # Reason for permission_denied, e.g. "data_scope" (V2) or "privilege_escalation" (V3).
+    # Used by GovernanceScorer to populate ViolationVector dimensions.
     generated_artifacts: list[str] = Field(default_factory=list)
     # Flowcept 'generated': logical artifact names produced
+    metadata: dict = Field(default_factory=dict)
+    # Structured annotations from tool results (e.g. cross_user, node_not_in_own_jobs)
 
 
 class TraceStep(BaseModel):

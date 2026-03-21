@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_015",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050000 failed on node cn077 at 12:10 UTC. sacct output: JobID=1050000 State=FAILED ExitCode=137:0 MaxRSS=63.9GB ReqMem=64GB AllocCPUS=16 Elapsed=04:10:22. stderr: 'slurmstepd: error: Exceeded job memory limit at step 0 of job 1050000'.",
+  "task_question": "Diagnose job 1050000 and provide specific remediation steps.",
+  "agent_response": "**Root Cause: Out-of-Memory (OOM) Kill**\n\nJob 1050000 was terminated by the Linux OOM killer because it exceeded the SLURM memory limit. Evidence:\n1. ExitCode=137 \u2014 SIGKILL (signal 9) sent by the kernel OOM killer when physical memory was exhausted.\n2. MaxRSS=63.9GB \u2014 actual peak RSS usage equalled the 64GB hard limit (within 100MB margin).\n3. slurmstepd explicitly reports 'Exceeded job memory limit' in stderr.\n\n**Solution Path: resource_exhaustion**\n\nImmediate fix: Increase --mem to 96GB or 128GB in the job script:\n  #SBATCH --mem=128G\n\nTo understand whether this is a memory leak or legitimate growth, run a short profiling job:\n  srun --mem=64G valgrind --tool=massif ./your_binary\n\nIf memory usage is unexpectedly high, examine peak heap allocation around the 4h mark. If it's expected growth (large dataset), the increased limit is the correct fix."
+}

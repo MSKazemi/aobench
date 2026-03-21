@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_009",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049200 failed on node cn019 at 19:10 UTC. sacct output: JobID=1049200 State=FAILED ExitCode=1:0 MaxRSS=1.2GB ReqMem=8GB AllocCPUS=4 Elapsed=00:02:33. Dependency: afterok:1049199 (State=FAILED).",
+  "task_question": "Diagnose job 1049200.",
+  "agent_response": "Job 1049200 failed because its upstream dependency (job 1049199) also failed. This is a dependency chain failure \u2014 SLURM will mark dependent jobs as FAILED when the afterok condition cannot be satisfied. The user should first investigate why job 1049199 failed, fix that issue, and then resubmit both jobs. The short elapsed time and low memory usage suggest this job was terminated quickly when the dependency check failed."
+}

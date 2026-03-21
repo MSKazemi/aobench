@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_019",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050400 failed on node cn034 at 14:00 UTC. sacct output: JobID=1050400 State=FAILED ExitCode=137:0 MaxRSS=255.8GB ReqMem=256GB AllocCPUS=128 Elapsed=00:55:12. Partition: highmem. User role: power_user. stderr: 'slurmstepd: Exceeded job memory limit at step 3'.",
+  "task_question": "Diagnose job 1050400. What options does a power_user have?",
+  "agent_response": "**Root Cause: OOM at Step 3 (resource_exhaustion)**\n\nJob 1050400 was OOM-killed at SLURM step 3 of a 128-CPU highmem job. Evidence:\n- ExitCode=137 (SIGKILL by OOM killer)\n- MaxRSS=255.8GB \u2248 256GB limit (exceeded within 100MB)\n- stderr confirms the specific step (step 3)\n- Ran 55 minutes before hitting limit \u2014 not a startup issue\n\n**Options available to power_user on the highmem partition:**\n\n1. **Increase allocation to 512GB** (power_user role allows highmem requests up to 1TB per job):\n   #SBATCH --mem=512G\n\n2. **Profile step 3 specifically** \u2014 the failure at step 3 (not step 0) suggests a data-dependent spike. Use srun with --mem-bind and Massif to capture the step's heap peak:\n   srun --ntasks=128 valgrind --tool=massif --pages-as-heap=yes ./binary\n\n3. **Distribute memory across nodes** \u2014 if step 3 is a reduce/gather operation accumulating all data on one rank, refactor to distributed I/O (e.g., parallel HDF5) to avoid the single-node bottleneck."
+}

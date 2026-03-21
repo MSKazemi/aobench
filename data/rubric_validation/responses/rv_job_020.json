@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_020",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050500 failed on node cn088 at 19:30 UTC. sacct output: JobID=1050500 State=FAILED ExitCode=1:0 MaxRSS=3.4GB ReqMem=8GB AllocCPUS=4 Elapsed=00:18:44. Dependency: afterok:1050498,afterok:1050499 (1050498=COMPLETED, 1050499=FAILED ExitCode=139:0). User role: standard_user.",
+  "task_question": "Why did job 1050500 fail and what should the user do next?",
+  "agent_response": "**Root Cause: Partial Dependency Chain Failure (dependency_failure)**\n\nJob 1050500 required both upstream jobs to complete successfully (afterok). While 1050498 completed (exit 0), 1050499 was killed by SIGSEGV (ExitCode=139), causing 1050500 to be marked FAILED by SLURM before it could execute.\n\nEvidence:\n- Elapsed=00:18:44 \u2014 this is suspiciously long for a dependency check. Actually this suggests 1050500 DID start and encountered an application error. The dependency check would have prevented it if 1050499 failed BEFORE 1050500 started. Checking: if 1050499 failed AFTER 1050500 started, 1050500 would run but may process corrupted output from 1050499, explaining ExitCode=1.\n- MaxRSS=3.4GB (within 8GB limit) \u2014 resource usage normal\n\n**Action for standard_user:**\n1. Investigate 1050499's segfault \u2014 run it standalone with core dumps enabled ('ulimit -c unlimited') to get a stack trace.\n2. Once 1050499 is fixed and completed, resubmit 1050500 referencing fresh dependency IDs:\n   sbatch --dependency=afterok:<new_499_id> job1050500.slurm\n3. Validate the output from 1050498 before relying on it \u2014 the 1050499 segfault may indicate a data corruption issue affecting both downstream jobs."
+}

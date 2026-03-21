@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_002",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1047400 failed on node cn017 at 09:45 UTC. sacct output: JobID=1047400 State=FAILED ExitCode=1:0 MaxRSS=2.1GB ReqMem=64GB AllocCPUS=32 Elapsed=00:03:12. Dependency: afterok:1047398 (State=FAILED).",
+  "task_question": "Diagnose the failure of job 1047400 and recommend corrective action.",
+  "agent_response": "Job 1047400 failed because of a memory issue. The node cn017 probably ran out of memory. The user should increase the memory allocation to 128GB and resubmit. Memory errors are very common in HPC environments. Make sure to always request more memory than you think you need."
+}

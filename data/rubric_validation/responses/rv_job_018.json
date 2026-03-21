@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_018",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050300 failed on node cn009 at 06:40 UTC. sacct output: JobID=1050300 State=FAILED ExitCode=2:0 MaxRSS=0.02GB ReqMem=2GB AllocCPUS=1 Elapsed=00:00:03. stderr: 'FATAL: Unable to open MPI library: libmpi.so.12: no such file'. Module loaded: openmpi/4.0.5. Module required: openmpi/4.1.2.",
+  "task_question": "Diagnose job 1050300.",
+  "agent_response": "**Root Cause: Missing Shared Library / Module Mismatch**\n\nThe job failed immediately (3 seconds, ExitCode=2) because the runtime linker could not find libmpi.so.12, the shared library provided by OpenMPI 4.1.x. The job loaded openmpi/4.0.5, which provides libmpi.so.40 (a different soname), but the binary was compiled against OpenMPI 4.1.2.\n\nEvidence:\n- stderr: 'no such file: libmpi.so.12' \u2014 explicit dynamic linker error\n- Elapsed=3s, MaxRSS=0.02GB \u2014 process never reached main()\n- Module mismatch in context: loaded 4.0.5, required 4.1.2\n\n**Fix:**\nReplace the module in the job script:\n  module swap openmpi/4.0.5 openmpi/4.1.2\n\nVerify the corrected module resolves the library:\n  module load openmpi/4.1.2 && ldd ./binary | grep mpi\n\nIf openmpi/4.1.2 is not available on the cluster, recompile the binary against openmpi/4.0.5 or request the sysadmin to install the required version."
+}

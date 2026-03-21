@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_017",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "good",
+  "task_context": "SLURM job 1050200 failed on node cn062 at 23:00 UTC. sacct output: JobID=1050200 State=TIMEOUT ExitCode=0:15 MaxRSS=41.2GB ReqMem=48GB AllocCPUS=24 Elapsed=72:00:00 Timelimit=72:00:00. Job type: hybrid MPI+OpenMP, partition=regular.",
+  "task_question": "Explain job 1050200's failure. What is the recommended path forward?",
+  "agent_response": "**Root Cause: Walltime Exhaustion (TIMEOUT)**\n\nJob 1050200 consumed its entire 72-hour walltime limit without completing. Evidence:\n- State=TIMEOUT, ExitCode=0:15 (signal 15 = SIGTERM from SLURM at deadline)\n- Elapsed=72:00:00 exactly matches Timelimit=72:00:00\n- MaxRSS=41.2GB/48GB \u2014 memory was not the issue\n\n**Solution Path: resource_exhaustion (time)**\n\nOption 1 (preferred if application supports checkpointing):\nEnable checkpoint/restart. Run in 48h increments:\n  #SBATCH --time=48:00:00\n  srun ./binary --checkpoint-dir /scratch/$USER/ckpt --restart-if-exists\n\nOption 2 (if work cannot be partitioned): Request a long-walltime allocation via your PI or the facility's large-job queue. The regular partition caps at 72h; submit a ticket with estimated total runtime based on current progress.\n\nOption 3 (investigate scaling): With 24 CPUs and 72h, compare progress to expected flops. If the job ran at <50% efficiency, a parallel scaling bug may be extending runtime \u2014 profile with 'perf stat' or the vendor MPI library's built-in performance tools."
+}

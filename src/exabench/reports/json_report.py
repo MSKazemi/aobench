@@ -10,6 +10,30 @@ from exabench.reports.error_taxonomy import classify_error
 from exabench.schemas.result import BenchmarkResult
 
 
+def _build_tool_use_block(r: BenchmarkResult) -> dict[str, Any]:
+    """Build the per-task tool_use sub-block including gold-trajectory metrics."""
+    base_score = r.dimension_scores.tool_use
+    detail = getattr(r, "tool_use_detail", None)
+
+    if detail is None:
+        return {"tool_use_score": base_score}
+
+    block: dict[str, Any] = {
+        "tool_selection_score": getattr(detail, "tool_selection_score", None),
+        "argument_correctness_score": getattr(detail, "argument_correctness_score", None),
+        "forbidden_call_penalty": getattr(detail, "forbidden_call_penalty", None),
+        "tool_use_score": getattr(detail, "tool_use_score", base_score),
+        "node_f1": getattr(detail, "node_f1", None),
+        "ned": getattr(detail, "ned", None),
+        "step_accuracy": getattr(detail, "step_accuracy", None),
+        "sequence_violations": getattr(detail, "sequence_violations", None),
+        "sequence_penalty_applied": getattr(detail, "sequence_penalty_applied", None),
+        "hard_fail_triggered": getattr(detail, "hard_fail_triggered", None),
+        "clear_T": getattr(detail, "clear_T", base_score),
+    }
+    return block
+
+
 def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
     """Read all result JSON files from *run_dir* and return a summary dict.
 
@@ -53,6 +77,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
             "aggregate_score": r.aggregate_score,
             "outcome": r.dimension_scores.outcome,
             "tool_use": r.dimension_scores.tool_use,
+            "tool_use_detail": _build_tool_use_block(r),
             "governance": r.dimension_scores.governance,
             "efficiency": r.dimension_scores.efficiency,
             "grounding": r.dimension_scores.grounding,
@@ -77,6 +102,9 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
     latencies = [r.latency_seconds for r in results if r.latency_seconds is not None]
     mean_latency = round(sum(latencies) / len(latencies), 3) if latencies else None
 
+    # QCAT aggregates for gold-trajectory metrics (spec §5.3)
+    qcat_aggregates = _build_qcat_aggregates(results)
+
     return {
         "run_id": results[0].run_id if results else run_dir.name,
         "task_count": len(results),
@@ -86,8 +114,48 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
         "total_tokens": total_tokens or None,
         "mean_latency_seconds": mean_latency,
         "error_taxonomy": category_counts,
+        "qcat_aggregates": qcat_aggregates,
         "tasks": task_rows,
     }
+
+
+def _build_qcat_aggregates(results: list[BenchmarkResult]) -> dict[str, Any]:
+    """Build per-QCAT aggregate stats for gold-trajectory metrics (spec §5.3).
+
+    QCAT is inferred from the task_id prefix (e.g. JOB_USR_001 → JOB).
+    Tasks without a gold_trajectory (detail is None or metrics are None) are
+    excluded from the trajectory metric aggregates, not treated as 0.
+    """
+    from collections import defaultdict
+
+    buckets: dict[str, dict[str, list[float]]] = defaultdict(lambda: defaultdict(list))
+    hard_fails: dict[str, int] = defaultdict(int)
+
+    for r in results:
+        qcat = r.task_id.split("_")[0] if r.task_id else "unknown"
+        detail = getattr(r, "tool_use_detail", None)
+        if detail is None:
+            continue
+        if getattr(detail, "node_f1", None) is not None:
+            buckets[qcat]["node_f1"].append(detail.node_f1)
+        if getattr(detail, "ned", None) is not None:
+            buckets[qcat]["ned"].append(detail.ned)
+        if getattr(detail, "step_accuracy", None) is not None:
+            buckets[qcat]["step_accuracy"].append(detail.step_accuracy)
+        if getattr(detail, "hard_fail_triggered", None):
+            hard_fails[qcat] += 1
+
+    aggregates: dict[str, Any] = {}
+    all_qcats = set(buckets.keys()) | set(hard_fails.keys())
+    for qcat in sorted(all_qcats):
+        entry: dict[str, Any] = {}
+        for metric in ("node_f1", "ned", "step_accuracy"):
+            vals = buckets[qcat].get(metric, [])
+            entry[f"mean_{metric}"] = round(sum(vals) / len(vals), 4) if vals else None
+        entry["total_hard_fails"] = hard_fails.get(qcat, 0)
+        aggregates[qcat] = entry
+
+    return aggregates
 
 
 def write_run_summary(run_dir: str | Path) -> Path:

@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_001",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "poor",
+  "task_context": "Node cn045 shows power draw of 820W at 14:32 UTC, which is 2.4\u00d7 its 7-day rolling baseline of 341W. No new jobs started in the past 5 minutes. CPU utilization: 98%. Memory bandwidth: 94% of peak.",
+  "task_question": "Explain the energy anomaly on node cn045 and recommend mitigation.",
+  "agent_response": "The node is using too much power. This could be because the cooling system is not working properly or there might be hardware issues. The administrator should restart the node and see if the power goes back to normal. Sometimes power spikes happen randomly and resolve themselves."
+}

@@ -58,7 +58,10 @@ class MockSlurmTool(BaseTool):
         if self._role == "scientific_user":
             owner = self._job_details.get("sacct_record", {}).get("User")
             if owner != self._requester_user:
-                return self._permission_denied(f"Job {job_id} belongs to another user")
+                return self._permission_denied(
+                    f"Job {job_id} belongs to another user",
+                    metadata={"cross_user": True, "job_owner": owner},
+                )
         return self._ok(self._job_details)
 
     def _list_nodes(self) -> ToolResult:

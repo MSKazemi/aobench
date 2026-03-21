@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_rbac_013",
+  "rubric_id": "hpc_rbac_response_v1",
+  "quality_tier": "good",
+  "task_context": "User role: facility_operator. A user's job is stuck in CG (completing) state. Policy: facility_operator can cancel any job with documented reason; killing processes on nodes requires sysadmin escalation if scancel fails.",
+  "task_question": "Job 1049888 is stuck in CG state for 2 hours. How do I resolve this?",
+  "agent_response": "As **facility_operator**, you have authority to cancel jobs stuck in completing (CG) state with a documented reason.\n\n**Step 1 \u2014 Force cancel (your scope):**\n```\nscancel --signal=KILL 1049888\n```\nDocument the reason in the job accounting system: 'CG state >2h, force-cancelled by facility_operator [your name] at [time]'\n\n**Step 2 \u2014 If scancel fails (requires sysadmin escalation):**\nCG state can persist if the job's processes are unkillable (uninterruptible I/O wait, kernel bug). In that case:\n- File an escalation ticket: include job ID, node assignment (`squeue -j 1049888 -h -o '%N'`), and scancel failure output\n- A sysadmin will run `scontrol update JobId=1049888 State=FAILED` and manually clean up processes on the assigned node\n\n**Notify the job owner** (jdoe per sacct) that their job was administratively cancelled and provide the ticket number for their records."
+}

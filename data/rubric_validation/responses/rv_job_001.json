@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_001",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "poor",
+  "task_context": "SLURM job 1047321 failed on node cn042 at 14:23 UTC. sacct output: JobID=1047321 State=FAILED ExitCode=137:0 MaxRSS=48.2GB ReqMem=32GB AllocCPUS=16 Elapsed=02:14:33.",
+  "task_question": "Why did job 1047321 fail? What should the user do next?",
+  "agent_response": "The job failed. This might be because the cluster was busy or there was some kind of error. The user should try resubmitting the job and it might work next time. Sometimes jobs fail due to network issues or the node being unavailable. I recommend contacting the HPC support team for further help."
+}

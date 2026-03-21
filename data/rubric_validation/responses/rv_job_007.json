@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_job_007",
+  "rubric_id": "hpc_job_failure_diagnosis_v1",
+  "quality_tier": "moderate",
+  "task_context": "SLURM job 1049000 failed on node cn033 at 08:20 UTC. sacct output: JobID=1049000 State=FAILED ExitCode=137:0 MaxRSS=63.8GB ReqMem=64GB AllocCPUS=32 Elapsed=03:22:11. stderr: 'slurmstepd: error: Exceeded job memory limit'.",
+  "task_question": "Why did job 1049000 fail? What corrective action is needed?",
+  "agent_response": "Job 1049000 appears to have failed due to exceeding its memory limit. The MaxRSS of 63.8GB is very close to the 64GB requested, and the exit code 137 indicates an out-of-memory kill. The user should increase the memory request, perhaps to 96GB or 128GB. However, it might also be worth profiling the application to see if memory usage can be optimized."
+}

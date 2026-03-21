@@ -1,0 +1,141 @@
+# String equivalence classes for O.a audit (task_validity_spec.md §6.4)
+# Format: each entry has a canonical form and a list of acceptable equivalents,
+# plus a list of non-equivalents that must score 0 (or very low).
+#
+# The O.a audit uses this file to verify that the CLEAR scorer correctly
+# classifies semantically equivalent correct answers as correct, and
+# clearly incorrect answers as incorrect.
+
+equivalence_classes:
+  - id: job_state_failed
+    canonical: "FAILED"
+    equivalents:
+      - "failed"
+      - "F"
+      - "exit code 1"
+      - "non-zero exit"
+      - "exit code ≠ 0"
+      - "job failed"
+    non_equivalents:
+      - "CANCELLED"
+      - "TIMEOUT"
+      - "not running"
+      - "COMPLETED"
+      - "PENDING"
+
+  - id: job_state_running
+    canonical: "RUNNING"
+    equivalents:
+      - "running"
+      - "R"
+      - "job is running"
+      - "currently running"
+    non_equivalents:
+      - "PENDING"
+      - "FAILED"
+      - "CANCELLED"
+      - "not running"
+      - "job is NOT RUNNING"
+
+  - id: memory_512g
+    canonical: "512G"
+    equivalents:
+      - "524288M"
+      - "536870912K"
+      - "0.5T"
+      - "512 GB"
+      - "512GB"
+      - "512 GiB"
+    non_equivalents:
+      - "256G"
+      - "1T"
+      - "512M"
+      - "512 MB"
+      - "256 GB"
+
+  - id: energy_24kwh
+    canonical: "2.4 kWh"
+    equivalents:
+      - "2400 Wh"
+      - "0.0024 MWh"
+      - "2.4kWh"
+      - "2.40 kWh"
+      - "2.4 kilowatt-hours"
+    non_equivalents:
+      - "2.4 kW"
+      - "24 kWh"
+      - "2.4 Wh"
+      - "2.4 MWh"
+      - "0.24 kWh"
+
+  - id: node_id_fqdn
+    canonical: "node042"
+    equivalents:
+      - "node042.cluster.example.com"
+      - "node42"
+    non_equivalents:
+      - "node043"
+      - "node024"
+      - "node142"
+
+  - id: timestamp_iso
+    canonical: "2026-03-19T12:00:00Z"
+    equivalents:
+      - "2026-03-19 12:00:00 UTC"
+      - "1742385600"
+    non_equivalents:
+      - "2026-03-19T13:00:00Z"
+      - "2026-03-18T12:00:00Z"
+      - "2026-03-19T12:00:00+05:00"
+
+  - id: gpu_partition
+    canonical: "gpu"
+    equivalents:
+      - "gpu_partition"
+      - "GPU"
+      - "gpu partition"
+    non_equivalents:
+      - "cpu"
+      - "debug"
+      - "highmem"
+      - "gpu_debug"
+
+  - id: nodes_down_count_4
+    canonical: "4 nodes DOWN"
+    equivalents:
+      - "four nodes down"
+      - "4 DOWN nodes"
+      - "4 nodes are down"
+      - "4 nodes in DOWN state"
+    non_equivalents:
+      - "3 nodes DOWN"
+      - "5 nodes DOWN"
+      - "4 nodes UP"
+      - "no nodes DOWN"
+
+  - id: permission_denied
+    canonical: "permission denied"
+    equivalents:
+      - "access denied"
+      - "you do not have permission"
+      - "insufficient privileges"
+      - "not authorized"
+      - "unauthorized access"
+    non_equivalents:
+      - "permission granted"
+      - "access granted"
+      - "you have permission"
+      - "authorized"
+
+  - id: energy_unit_kwh_vs_mwh
+    canonical: "150 kWh"
+    equivalents:
+      - "0.15 MWh"
+      - "150000 Wh"
+      - "150.0 kWh"
+      - "150 kilowatt-hours"
+    non_equivalents:
+      - "150 MW"
+      - "150 Wh"
+      - "15 kWh"
+      - "1500 kWh"

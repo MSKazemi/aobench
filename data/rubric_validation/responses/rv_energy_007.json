@@ -1,0 +1,8 @@
+{
+  "response_id": "rv_energy_007",
+  "rubric_id": "hpc_energy_anomaly_v1",
+  "quality_tier": "moderate",
+  "task_context": "Node cn022 power draw has increased from 310W to 890W over 30 minutes. Running job: 1047888 (MPI, 32 tasks). CPU frequency: 3.8GHz (max boost). Temperature: 89\u00b0C (warning threshold: 90\u00b0C).",
+  "task_question": "What is causing the energy anomaly on cn022?",
+  "agent_response": "The power spike from 310W to 890W on cn022 is caused by the MPI job 1047888 driving CPUs to maximum boost frequency (3.8GHz). At full frequency, modern CPUs consume significantly more power. The temperature of 89\u00b0C is approaching the warning threshold. The operator should monitor the temperature closely and consider throttling the CPU frequency to avoid thermal issues. If temperature exceeds 90\u00b0C, the job should be migrated or paused."
+}

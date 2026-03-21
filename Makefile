@@ -196,6 +196,22 @@ errs = {e.name: validate_bundle(e) for e in sorted(Path('benchmark/environments'
 [print(k, 'OK' if not v else v) for k, v in errs.items()]; \
 exit(0 if all(not v for v in errs.values()) else 1)"
 
+.PHONY: validate-tasks
+validate-tasks:  ## Run T1–T10 task validity checks on the task corpus
+	$(PYTHON) -m exabench.cli.validate_tasks --task-file benchmark/tasks/task_set_v1.json
+
+.PHONY: validity-report
+validity-report:  ## Run T1–T10 task validity checks and write benchmark/validity_report_v1.json
+	$(PYTHON) -m exabench.cli.validate_tasks \
+	  --output benchmark/validity_report_v1.json \
+	  --format json
+
+.PHONY: audit-scorers
+audit-scorers:  ## Run O.a–O.c scorer validity audit and write benchmark/scorer_audit_v1.json
+	$(PYTHON) -m exabench.cli.audit_scorers \
+	  --output benchmark/scorer_audit_v1.json \
+	  --format json
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py
@@ -205,6 +221,48 @@ scoring-dims:  ## Show scoring dimensions reference (open docs/framework/scoring
 	@cat docs/framework/scoring-dimensions.md
 
 # ── Housekeeping ──────────────────────────────────────────────────────────────
+
+# ── Rubric Validation ─────────────────────────────────────────────────────────
+
+RUBRIC_ANNOTATIONS ?= data/rubric_validation/annotations.csv
+RUBRIC_DIM_ANNOTATIONS ?= data/rubric_validation/dim_annotations.csv
+
+.PHONY: rubric-generate-responses
+rubric-generate-responses:  ## Generate 50 synthetic validation response files in data/rubric_validation/responses/
+	$(PYTHON) scripts/generate_rubric_validation_responses.py
+
+.PHONY: rubric-compute-icc
+rubric-compute-icc:  ## Compute ICC(A,1) from annotation CSV (RUBRIC_ANNOTATIONS= overridable)
+	$(PYTHON) scripts/compute_icc.py --annotations $(RUBRIC_ANNOTATIONS)
+
+.PHONY: rubric-compute-krippendorff
+rubric-compute-krippendorff:  ## Compute Krippendorff alpha per dimension (RUBRIC_DIM_ANNOTATIONS= overridable)
+	$(PYTHON) scripts/compute_krippendorff.py --annotations $(RUBRIC_DIM_ANNOTATIONS)
+
+RUBRIC_SAMPLE ?= rv_job_015,rv_job_007,rv_job_001,rv_energy_012,rv_energy_006,rv_energy_001,rv_rbac_011,rv_rbac_005,rv_rbac_001,rv_job_016
+RUBRIC_JUDGE_MODEL ?= gemini-2.5-flash
+RUBRIC_RUNS ?= 8
+
+.PHONY: rubric-stochastic-stability
+rubric-stochastic-stability:  ## Run judge 8× on 10 responses and report stochastic std (RUBRIC_JUDGE_MODEL=, RUBRIC_SAMPLE= overridable)
+	$(PYTHON) scripts/stochastic_stability.py \
+		--responses data/rubric_validation/responses/ \
+		--sample $(RUBRIC_SAMPLE) \
+		--judge-model $(RUBRIC_JUDGE_MODEL) \
+		--runs $(RUBRIC_RUNS)
+
+RUBRIC_PRIMARY_JUDGE ?= gemini-2.5-flash
+RUBRIC_SECONDARY_JUDGE ?= gpt-4.1
+
+.PHONY: rubric-cross-judge
+rubric-cross-judge:  ## Score all 50 responses with two judges and report Kendall τ_b (RUBRIC_PRIMARY_JUDGE=, RUBRIC_SECONDARY_JUDGE= overridable)
+	$(PYTHON) scripts/cross_judge_ranking.py \
+		--responses data/rubric_validation/responses/ \
+		--primary-judge $(RUBRIC_PRIMARY_JUDGE) \
+		--secondary-judge $(RUBRIC_SECONDARY_JUDGE)
+
+.PHONY: rubric-validate-all
+rubric-validate-all: rubric-compute-icc rubric-compute-krippendorff rubric-stochastic-stability rubric-cross-judge  ## Run all 4 rubric validation gates (R1–R4)
 
 .PHONY: clean
 clean:  ## Remove build artifacts, caches, and coverage reports
