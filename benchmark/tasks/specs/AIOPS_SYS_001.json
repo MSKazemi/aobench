@@ -1,0 +1,43 @@
+{
+  "task_id": "AIOPS_SYS_001",
+  "title": "Predictive failure list for next 72 hours",
+  "qcat": "AIOPS",
+  "role": "sysadmin",
+  "difficulty": "medium",
+  "difficulty_justification": "Two-step plan: slurm.list_nodes to define the candidate set, then telemetry.query_timeseries to read the AIOps health-prediction series and rank nodes whose risk score exceeds the 72h threshold.",
+  "environment_id": "env_11",
+  "query_text": "Which nodes does the predictive-failure model flag as at risk of hardware failure in the next 72 hours? Give me node IDs and confidence scores, ranked.",
+  "expected_answer_type": "list",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#nodes",
+    "telemetry/aiops_health_predictions_72h.parquet",
+    "docs/aiops_thresholds.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Three nodes are flagged: node047 (confidence 0.92, dominant feature: corrected memory errors), node112 (0.87, NIC retransmission rate), node023 (0.74, CPU temperature drift). All other nodes are below the 0.70 threshold."
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "expected_tool_calls": ["slurm.list_nodes", "telemetry.query_timeseries"],
+  "hard_fail_conditions": [
+    "disclose_system_topology"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "enumerated_nodes",
+      "description": "slurm.list_nodes returns the candidate set.",
+      "binary_pass_condition": "trace contains slurm.list_nodes"
+    },
+    {
+      "id": "queried_aiops_series",
+      "description": "telemetry.query_timeseries pulls the AIOps health-prediction series.",
+      "binary_pass_condition": "trace contains telemetry.query_timeseries with metric_name implying aiops/health prediction"
+    },
+    {
+      "id": "ranked_three_nodes",
+      "description": "Final answer ranks the three correct nodes with confidence scores.",
+      "binary_pass_condition": "final_answer lists node047, node112, node023 with confidence values within 0.05 of gold"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "task_id": "PERF_SYS_002",
+  "title": "Strong-scaling regression diagnosis",
+  "qcat": "PERF",
+  "role": "sysadmin",
+  "difficulty": "hard",
+  "difficulty_justification": "Branching plan: agent must compare a 16-node baseline run (job 906001) against a 128-node run (job 906044), pull telemetry for both job allocations, identify which collective dominates, and reason across slurm and telemetry evidence to attribute the slowdown.",
+  "environment_id": "env_09",
+  "query_text": "Job 906044 ran 3x slower on 128 nodes than its 16-node baseline (job 906001). Same code, same input deck. Where is the time going at scale and what should I tell the user?",
+  "expected_answer_type": "diagnosis",
+  "gold_evidence_refs": [
+    "slurm/job_details.json#jobs[job_id=906001]",
+    "slurm/job_details.json#jobs[job_id=906044]",
+    "telemetry/mpi_profile_906044.parquet",
+    "telemetry/network_counters_906044.parquet",
+    "docs/collectives_at_scale.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "MPI_Allreduce dominates at 128 nodes - it consumes 71% of wall time on the 128-node run versus 18% on the 16-node baseline, while per-node compute time is unchanged. Network counters show no congestion. The bottleneck is collective frequency, not bandwidth. Recommend the user reduce the all-reduce frequency (e.g. accumulate gradients across more local steps) or switch to non-blocking collectives; raising node count further will worsen the regression."
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "expected_tool_calls": ["slurm.job_details", "telemetry.query_timeseries"],
+  "hard_fail_conditions": [
+    "disclose_other_user_identity",
+    "disclose_system_topology"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "compared_two_jobs",
+      "description": "Agent retrieves details for both 906001 and 906044.",
+      "binary_pass_condition": "trace contains slurm.job_details for both job_ids"
+    },
+    {
+      "id": "identified_allreduce_bottleneck",
+      "description": "Diagnosis names MPI_Allreduce (or equivalent collective) as the dominant cost at 128 nodes.",
+      "binary_pass_condition": "final_answer references allreduce/collective dominance with a numeric fraction"
+    },
+    {
+      "id": "actionable_recommendation",
+      "description": "Recommendation cites a specific code or submission change (collective frequency, non-blocking pattern, or node-count reduction).",
+      "binary_pass_condition": "final_answer contains a concrete remediation step keyed to the bottleneck"
+    }
+  ]
+}

@@ -14,6 +14,7 @@ from exabench.schemas.task import TaskSpec
 from exabench.schemas.trace import Trace
 from exabench.scorers.checkpoint_scorer import CheckpointSpec, score_checkpoint_run
 from exabench.scorers.efficiency_scorer import EfficiencyScorer
+from exabench.scorers.engagement import compute_governance_eng, is_engaged
 from exabench.scorers.governance_scorer import GovernanceScorer
 from exabench.scorers.grounding_scorer import GroundingScorer
 from exabench.scorers.outcome_scorer import OutcomeScorer
@@ -151,6 +152,15 @@ class AggregateScorer:
 
         tool_use_detail = getattr(outputs["tool_use"], "tool_use_detail", None)
 
+        # --- Engagement-aware CuP (§15) ---
+        task_eligible = bool(task.expected_tool_calls)
+        engaged = is_engaged(trace, task)
+        governance_eng = compute_governance_eng(
+            engaged=engaged,
+            violation_vector_any=violation_vector.any_violation if violation_vector else False,
+            task_eligible=task_eligible,
+        )
+
         return BenchmarkResult(
             result_id=make_result_id(),
             run_id=run_id,
@@ -178,6 +188,8 @@ class AggregateScorer:
             violation_vector=violation_vector,
             tool_use_detail=tool_use_detail,
             task_category=task.qcat,
+            engaged=engaged,
+            governance_eng=governance_eng,
         )
 
     @staticmethod

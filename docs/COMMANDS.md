@@ -18,11 +18,16 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
 | `exabench lite select` | Run 3-stage ExaBench-Lite selection and write `benchmark/tasks/lite_manifest_v1.json` |
 | `exabench validate tasks` | Run T1–T10 validity checks with a human-readable pass/fail summary table |
+| `exabench validate snapshots` | Run F1–F7 fidelity validators on all `env_*/` bundles; write `data/fidelity/` |
 | `make lite-select` | Run Lite selection pipeline (Stages 1–3) and write the Lite manifest |
 | `make generate-tool-docs` | Write `hpc_tools_guide.md` into all env `docs/` dirs from `hpc_tool_catalog.yaml` |
 | `make validate-tasks` | Run T1–T10 task validity checks on `benchmark/tasks/task_set_v1.json` |
+| `make validate-snapshots` | Run F1–F7 fidelity validators on all `env_*/` snapshot bundles |
 | `make validity-report` | Run T1–T10 task validity checks and write `benchmark/validity_report_v1.json` |
 | `make audit-scorers` | Run O.a–O.c scorer validity audit and write `benchmark/scorer_audit_v1.json` |
+| `make oracle-check` | Check that each task's gold answer is derivable from snapshot data |
+| `make independence-check` | Detect near-duplicate tasks by cosine similarity of feature vectors |
+| `exabench validate authoring` | Run oracle_check and independence_check on all tasks |
 | `python -m exabench.cli.validate_tasks` | Run T1–T10 ABC validity checklist against the task corpus |
 | `python -m exabench.cli.audit_scorers` | Run O.a–O.c outcome validity audit against the scorer |
 | `make rubric-generate-responses` | Generate 50 synthetic HPC validation responses in `data/rubric_validation/responses/` |
@@ -82,6 +87,50 @@ exabench validate benchmark [OPTIONS]
 exabench validate benchmark
 exabench validate benchmark --benchmark /path/to/my-benchmark
 ```
+
+#### validate snapshots
+
+Run F1–F7 fidelity validators on all `env_*/` snapshot bundles under
+`benchmark/environments/`. Writes per-environment Markdown reports and an
+aggregate `REPORT.md` + `index.json` to the output directory.
+
+```bash
+exabench validate snapshots [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--environments` | `benchmark/environments` | Root directory containing `env_*/` bundles |
+| `--output` / `-o` | `data/fidelity` | Output directory for Markdown reports and index |
+| `-h`, `--help` | — | Show help and exit |
+
+**Output files:**
+
+| File | Description |
+|------|-------------|
+| `data/fidelity/<env_id>.md` | Per-environment F1–F7 report |
+| `data/fidelity/REPORT.md` | Aggregate report across all environments |
+| `data/fidelity/index.json` | JSON index: `[{env_id, passed, generated_at}]` |
+
+**Example:**
+
+```bash
+exabench validate snapshots
+exabench validate snapshots --environments benchmark/environments --output data/fidelity
+make validate-snapshots
+```
+
+**Fidelity validators:**
+
+| ID | Name | What it checks |
+|----|------|----------------|
+| F1 | Job-duration log-normal fit | `log(elapsed)` μ∈[6.3,9.3], σ∈[1.4,2.4] |
+| F2 | Job-size power-law | CPU count power-law α∈[1.4,2.0] |
+| F3 | Job-state mix | COMPLETED∈[68%,88%], FAILED∈[0%,19%] |
+| F4 | Node power per class | CPU nodes 297–402 W; GPU nodes 1572–2128 W |
+| F5 | Telemetry cadence | power CSVs 48–72s; state/energy 240–360s |
+| F6 | RBAC completeness | Roles include `scientific_user` and `sysadmin` |
+| F7 | Tool catalog coverage | All catalog methods have non-empty descriptions |
 
 ---
 
@@ -853,8 +902,11 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 | `make generate-tool-docs-role` | Same, but force a specific role (`TOOL_DOCS_ROLE=sysadmin`) |
 | `make generate-bundles` | Generate canonical snapshot bundles `env_06–env_20` under `benchmark/environments/` |
 | `make validate-bundles` | Validate all snapshot bundles against canonical schemas (exit 0 = all OK) |
+| `make validate-snapshots` | Run F1–F7 fidelity validators on all `env_*/` bundles; write `data/fidelity/` |
 | `make validate-tasks` | Run T1–T10 task validity checks on the task corpus (outputs JSON report to stdout) |
 | `make validate-hpc-tasks` | Validate HPC task set v1 (`benchmark/tasks/task_set_v1.json`) — prints per-data-type counts |
+| `make oracle-check` | Check that each task's gold answer is derivable from snapshot data |
+| `make independence-check` | Detect near-duplicate tasks by cosine similarity of feature vectors |
 | `make coverage-matrix` | Print task coverage matrix (role × category) |
 | `make scoring-dims` | Print the scoring dimensions reference (all terms defined) |
 | `make upgrade-rbac-yaml` | Upgrade all `rbac_policy.yaml` files v1.0 → v1.1 (adds `allowed_tools`, `partition_access`, `access_tiers`, all 5 roles) |
@@ -883,6 +935,37 @@ make run-all-anthropic MODEL=claude-sonnet-4-6
 | `make format` | Auto-format code with ruff |
 | `make typecheck` | Run mypy type checker |
 | `make check` | Run lint + typecheck + tests (full CI check) |
+
+### Leaderboard
+
+| Target | Description |
+|--------|-------------|
+| `make leaderboard-serve` | Start the leaderboard HTTP API (requires `fastapi` + `uvicorn`: `uv add fastapi uvicorn`) |
+
+**Environment variables:**
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `LEADERBOARD_ADMIN_PASSWORD` | `changeme` | Password for `POST /admin/rebuild` (HTTP Basic, username `admin`) |
+
+**Endpoints (when FastAPI is installed):**
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/leaderboard` | All CLEAR rows sorted by `clear_score` descending |
+| `POST` | `/submit` | Submit a new model with result rows |
+| `GET` | `/model/{model_id}` | ModelEntry + CLEARRow for one model |
+| `GET` | `/verify/{model_id}` | VerificationResult for one model |
+| `GET` | `/health` | Health check (`{"status": "ok"}`) |
+| `POST` | `/admin/rebuild` | Recompute all CLEAR scores (admin auth required) |
+
+**Install optional deps and serve:**
+
+```bash
+uv add fastapi uvicorn
+make leaderboard-serve
+# API running at http://127.0.0.1:8000
+```
 
 ### Housekeeping
 

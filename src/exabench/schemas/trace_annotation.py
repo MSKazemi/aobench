@@ -96,3 +96,10 @@ class TraceAnnotation(BaseModel):
     # Mirror of the hybrid scorer outcome for correlation analysis
     outcome: Optional[float] = None
     path: Optional[str] = None  # "deterministic" | "rubric"
+
+    # ── LLM-judge fields (E0.2) ───────────────────────────────────────────────
+    judge_config_id: Optional[str] = None
+    # sha-256 prefix (16 hex chars) identifying the judge model + prompt + params.
+
+    judge_quality: Optional[str] = None
+    # "cloud" | "local" | "fallback" — which judge backend produced the annotation.

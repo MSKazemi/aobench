@@ -20,13 +20,28 @@
       "power/node_power_001.csv"
     ]
   },
-  "knowledge_source_scope": ["OPS_DOC"],
-  "required_capabilities": ["retrieval_grounding", "telemetry_querying", "energy_awareness"],
+  "knowledge_source_scope": [
+    "OPS_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "telemetry_querying",
+    "energy_awareness"
+  ],
   "access_tier": "tier2_privileged",
-  "allowed_tools": ["telemetry", "docs", "facility", "rbac"],
+  "allowed_tools": [
+    "telemetry",
+    "docs",
+    "facility",
+    "rbac"
+  ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
   "benchmark_split": "dev",
   "validation_status": "in_review",
-  "scoring_readiness": "ready"
+  "scoring_readiness": "ready",
+  "expected_tool_calls": [
+    "docs",
+    "telemetry"
+  ]
 }

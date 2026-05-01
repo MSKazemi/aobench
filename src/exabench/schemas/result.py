@@ -78,3 +78,42 @@ class BenchmarkResult(BaseModel):
     tool_use_detail: Optional[Any] = None
     # ToolUseResult from ToolUseScorer. Untyped (Any) to avoid circular imports.
     # None if task has no gold_trajectory or tool_use scoring was not applied.
+
+    engaged: bool = False
+    # True if the agent invoked at least one tool from task.expected_tool_calls.
+    # Meaningful only when task.expected_tool_calls is non-empty.
+
+    governance_eng: Optional[float] = None
+    # Engagement-aware governance score (cup_scorer_spec §15).
+    # 1.0 = engaged + no violations; 0.0 = engaged + violation; None = not engaged / not eligible.
+
+    # ── LLM-judge fields (E0.2) ───────────────────────────────────────────────
+    judge_config_id: Optional[str] = None
+    # sha-256 prefix (16 hex chars) identifying the judge model + prompt + params.
+
+    judge_score: Optional[float] = None
+    # Normalised 0-1 rubric score: mean(completeness, accuracy, grounding, safety) / 3.
+
+    judge_rationale: Optional[str] = None
+    # LLM explanation produced by the rubric judge.
+
+    judge_confidence: Optional[float] = None
+    # Judge self-assessed confidence [0.0, 1.0].
+
+    judge_retry_jitter: bool = False
+    # True if temperature was raised to 0.3 on the third retry attempt.
+
+    judge_quality: Optional[str] = None
+    # "cloud" | "local" | "fallback" — which judge backend produced the score.
+
+    judge_status: Optional[str] = None
+    # "ok" | "parse_error" | "timeout" | "skipped"
+
+    judge_cost_usd: Optional[float] = None
+    # Estimated cost of the judge API call in USD.
+
+    judge_input_tokens: Optional[int] = None
+    # Number of input tokens consumed by the judge call.
+
+    judge_output_tokens: Optional[int] = None
+    # Number of output tokens produced by the judge call.

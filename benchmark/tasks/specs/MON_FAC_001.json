@@ -15,19 +15,33 @@
   "expected_answer_type": "summary",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Yes. Rack B has an active thermal warning: hotspot temperature 72°C, which exceeds the 65°C warning threshold defined in thermal_policy.md. Racks A, C, and D are within normal range (42–48°C hotspot). One incident record (INC-2026-038) is open for Rack B thermal monitoring. No critical threshold (85°C) has been breached.",
+    "gold_answer": "Yes. Rack B has an active thermal warning: hotspot temperature 72\u00b0C, which exceeds the 65\u00b0C warning threshold defined in thermal_policy.md. Racks A, C, and D are within normal range (42\u201348\u00b0C hotspot). One incident record (INC-2026-038) is open for Rack B thermal monitoring. No critical threshold (85\u00b0C) has been breached.",
     "required_evidence_refs": [
       "rack/rack_telemetry_010.csv",
       "docs/thermal_policy.md"
     ]
   },
-  "knowledge_source_scope": ["FAC_DOC", "OPS_DOC"],
-  "required_capabilities": ["retrieval_grounding", "incident_handling", "energy_awareness"],
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "OPS_DOC"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "incident_handling",
+    "energy_awareness"
+  ],
   "access_tier": "tier3_restricted",
-  "allowed_tools": ["facility", "docs", "rbac"],
+  "allowed_tools": [
+    "facility",
+    "docs",
+    "rbac"
+  ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
   "benchmark_split": "dev",
   "validation_status": "in_review",
-  "scoring_readiness": "ready"
+  "scoring_readiness": "ready",
+  "expected_tool_calls": [
+    "docs"
+  ]
 }

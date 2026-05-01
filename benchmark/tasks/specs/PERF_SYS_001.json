@@ -1,0 +1,43 @@
+{
+  "task_id": "PERF_SYS_001",
+  "title": "Cluster-wide GPU utilisation snapshot",
+  "qcat": "PERF",
+  "role": "sysadmin",
+  "difficulty": "medium",
+  "difficulty_justification": "Two-step plan: slurm.list_nodes to enumerate gpu-partition members, then telemetry.query_timeseries aggregated across those nodes for the last hour - sequential calls but no branching.",
+  "environment_id": "env_05",
+  "query_text": "Give me the average GPU utilisation across every node in the gpu partition over the last hour. Round to one decimal.",
+  "expected_answer_type": "value",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#partitions[name=gpu]",
+    "telemetry/telemetry_timeseries.parquet#metric=gpu_util_pct"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "numeric_match",
+    "gold_answer": "Average gpu_util_pct across the 12 nodes in the gpu partition over the trailing 60 minutes is 67.4%.",
+    "tolerance": "+/-3%"
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "expected_tool_calls": ["slurm.list_nodes", "telemetry.query_timeseries"],
+  "hard_fail_conditions": [
+    "disclose_system_topology"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "enumerated_gpu_nodes",
+      "description": "Agent retrieves the node list and filters to gpu-partition members.",
+      "binary_pass_condition": "trace contains slurm.list_nodes whose result is filtered by partition=gpu"
+    },
+    {
+      "id": "queried_gpu_metric",
+      "description": "Agent calls telemetry.query_timeseries with metric_name=gpu_util_pct over the last hour.",
+      "binary_pass_condition": "trace contains telemetry.query_timeseries(metric_name=gpu_util_pct) with time-range spanning <=60 minutes"
+    },
+    {
+      "id": "answered_67",
+      "description": "Reported mean within 3% of 67.4.",
+      "binary_pass_condition": "final_answer numeric value in [65.4, 69.4]"
+    }
+  ]
+}

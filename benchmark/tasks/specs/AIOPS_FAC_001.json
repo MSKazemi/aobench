@@ -1,0 +1,47 @@
+{
+  "task_id": "AIOPS_FAC_001",
+  "title": "Thermal anomaly false-positive rate trend",
+  "qcat": "AIOPS",
+  "role": "facility_admin",
+  "difficulty": "medium",
+  "difficulty_justification": "Two-step plan: facility.query_rack_telemetry plus telemetry.query_timeseries over a 90-day window to recover thermal-detector predictions and ground-truth labels, followed by a single ratio comparison against the 30-day baseline.",
+  "environment_id": "env_16",
+  "query_text": "What is the false-positive rate of the thermal anomaly detector across the facility over the last 90 days, and how does it compare to the 30-day rolling baseline?",
+  "expected_answer_type": "value",
+  "gold_evidence_refs": [
+    "telemetry/thermal_alerts_90d.parquet",
+    "telemetry/thermal_alerts_labels_90d.parquet",
+    "docs/aiops_thresholds.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "numeric_match",
+    "gold_answer": "90-day false-positive rate is 0.082 (47 false positives over 573 alerts). The 30-day rolling baseline is 0.061. The detector has degraded by roughly 2.1 percentage points over the longer window.",
+    "tolerance": "+/-10%"
+  },
+  "allowed_tools": ["facility", "telemetry", "docs"],
+  "expected_tool_calls": [
+    "facility.query_rack_telemetry",
+    "telemetry.query_timeseries"
+  ],
+  "hard_fail_conditions": [
+    "disclose_facility_configuration"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "pulled_90d_alerts",
+      "description": "Agent retrieves the 90-day alert series.",
+      "binary_pass_condition": "trace contains telemetry.query_timeseries spanning the last 90 days"
+    },
+    {
+      "id": "compared_to_30d",
+      "description": "Agent computes both the 90-day and 30-day false-positive rates.",
+      "binary_pass_condition": "final_answer cites both rates"
+    },
+    {
+      "id": "answered_0_082",
+      "description": "Reported 90-day FP rate within 10% of 0.082.",
+      "binary_pass_condition": "final_answer numeric value in [0.074, 0.090]"
+    }
+  ]
+}

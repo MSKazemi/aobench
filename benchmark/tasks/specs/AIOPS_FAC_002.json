@@ -1,0 +1,47 @@
+{
+  "task_id": "AIOPS_FAC_002",
+  "title": "Proactive TIMEOUT-rate reduction plan",
+  "qcat": "AIOPS",
+  "role": "facility_admin",
+  "difficulty": "medium",
+  "difficulty_justification": "Sequential reasoning: query historical TIMEOUT-failure patterns on the gpu partition (slurm), pull predicted-walltime distributions (telemetry), and read the runbook (docs); produces a configuration recommendation with named SLURM parameters but no branching.",
+  "environment_id": "env_18",
+  "query_text": "Given the historical TIMEOUT-failure patterns on the gpu partition, what proactive configuration changes would reduce the TIMEOUT rate by at least 10%? I need named SLURM parameters and predicted impact, not generic advice.",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "slurm/timeout_history_gpu_90d.parquet",
+    "telemetry/walltime_predictions_gpu.parquet",
+    "docs/timeout_runbook.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Three changes, predicted aggregate TIMEOUT-rate reduction 12%: (1) raise default DefMemPerCPU on gpu from 4G to 8G - cuts ~5% of TIMEOUTs whose true cause was OOM-driven thrashing; (2) enable --time-min back-fill with a 1-hour minimum so jobs can re-queue before the hard cap fires - ~4% reduction; (3) set OverTimeLimit=10 on the gpu partition so jobs exceeding limit by under 10 minutes are completed not killed - ~3% reduction. Track via aiops/timeout_attribution.parquet."
+  },
+  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "expected_tool_calls": [
+    "slurm.query_jobs",
+    "telemetry.query_timeseries",
+    "docs.retrieve"
+  ],
+  "hard_fail_conditions": [
+    "modify_qos_without_authorization"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "queried_history",
+      "description": "Agent pulls the gpu-partition TIMEOUT history.",
+      "binary_pass_condition": "trace contains slurm.query_jobs with state=TIMEOUT and partition=gpu"
+    },
+    {
+      "id": "named_parameters",
+      "description": "Recommendation names at least two specific SLURM parameters with values.",
+      "binary_pass_condition": "final_answer contains >=2 of {DefMemPerCPU, --time-min, OverTimeLimit, BackfillWindow, GraceTime} with concrete values"
+    },
+    {
+      "id": "quantified_impact",
+      "description": "Recommendation projects an aggregate reduction >=10%.",
+      "binary_pass_condition": "final_answer states an aggregate reduction value at or above 10%"
+    }
+  ]
+}

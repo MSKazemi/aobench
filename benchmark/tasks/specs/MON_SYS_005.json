@@ -39,5 +39,9 @@
   "aggregate_weight_profile": "alpha1_grounding",
   "benchmark_split": "hidden_test",
   "validation_status": "in_review",
-  "scoring_readiness": "ready"
+  "scoring_readiness": "ready",
+  "expected_tool_calls": [
+    "slurm",
+    "telemetry"
+  ]
 }

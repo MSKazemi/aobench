@@ -180,6 +180,10 @@ upgrade-rbac-yaml:  ## Upgrade all rbac_policy.yaml files from v1.0 → v1.1 (ad
 create-rbac-policy-docs:  ## Create docs/rbac_policy.md in all environment bundles (canonical τ-bench-style policy document)
 	$(PYTHON) scripts/create_rbac_policy_docs.py
 
+.PHONY: validate-snapshots
+validate-snapshots:  ## Run F1–F7 fidelity validators on all env_*/ snapshot bundles; write data/fidelity/
+	$(EXABENCH) validate snapshots
+
 .PHONY: validate-hpc-tasks
 validate-hpc-tasks:  ## Validate HPC task set v1 (benchmark/tasks/task_set_v1.json)
 	$(PYTHON) -c "from exabench.tasks.task_loader import load_hpc_task_set; \
@@ -224,6 +228,14 @@ audit-scorers:  ## Run O.a–O.c scorer validity audit and write benchmark/score
 	$(PYTHON) -m exabench.cli.audit_scorers \
 	  --output benchmark/scorer_audit_v1.json \
 	  --format json
+
+.PHONY: oracle-check
+oracle-check:  ## Check that each task's gold answer is derivable from snapshot data
+	$(PYTHON) scripts/oracle_check.py
+
+.PHONY: independence-check
+independence-check:  ## Detect near-duplicate tasks by cosine similarity of feature vectors
+	$(PYTHON) scripts/independence_check.py
 
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
@@ -305,6 +317,12 @@ check-validity-gates:  ## Run V1–V6 validity gates and write JSON report (VALI
 	  --rob-dir data/robustness \
 	  --output $(VALIDITY_GATE_OUTPUT)
 
+# ── Leaderboard ───────────────────────────────────────────────────────────────
+
+.PHONY: leaderboard-serve
+leaderboard-serve:  ## Start the leaderboard HTTP API (requires: uv add fastapi uvicorn)
+	PYTHONPATH=src $(PYTHON) -m uvicorn exabench.leaderboard.api:app --reload
+
 .PHONY: clean
 clean:  ## Remove build artifacts, caches, and coverage reports
 	rm -rf dist/ build/ .eggs/ *.egg-info/ src/*.egg-info/
@@ -320,6 +338,24 @@ build:  ## Build distributable package (uv build)
 clean-runs:  ## Remove all benchmark run artifacts from data/runs/
 	rm -rf data/runs/*/
 	@echo "Run artifacts cleared."
+
+# ── Reproducibility ───────────────────────────────────────────────────────────
+
+.PHONY: repro-table-1
+repro-table-1:  ## Reproduce Table 1 (main results) from locked run artifacts
+	PYTHONPATH=src $(PYTHON) -m exabench.reproducibility.targets table-1
+
+.PHONY: repro-table-2
+repro-table-2:  ## Reproduce Table 2 from locked run artifacts
+	PYTHONPATH=src $(PYTHON) -m exabench.reproducibility.targets table-2
+
+.PHONY: repro-determinism
+repro-determinism:  ## Verify deterministic score reproducibility across two independent runs
+	PYTHONPATH=src $(PYTHON) -m exabench.reproducibility.targets determinism
+
+.PHONY: fetch-snapshots
+fetch-snapshots:  ## Download canonical snapshot bundles from the remote artifact store
+	PYTHONPATH=src $(PYTHON) -m exabench.reproducibility.targets fetch-snapshots
 
 .PHONY: help
 help:  ## Show this help

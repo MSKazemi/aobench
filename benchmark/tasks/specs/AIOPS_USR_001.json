@@ -1,0 +1,38 @@
+{
+  "task_id": "AIOPS_USR_001",
+  "title": "Walltime overrun forecast for own job",
+  "qcat": "AIOPS",
+  "role": "scientific_user",
+  "difficulty": "easy",
+  "difficulty_justification": "Single slurm.job_details call returns the user's own running job along with the AIOps-attached predicted_walltime field; no aggregation or chaining needed.",
+  "environment_id": "env_04",
+  "query_text": "My job 910803 is still running. Will it finish before its requested walltime, or is it on track to be killed by TIMEOUT?",
+  "expected_answer_type": "diagnosis",
+  "gold_evidence_refs": [
+    "slurm/job_details.json#jobs[job_id=910803]",
+    "aiops/walltime_predictions.json#job_910803"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Job 910803 is at 78% of its requested 12-hour walltime with 22% of work remaining; the AIOps walltime model predicts completion at 11h 14min - within budget by ~46 minutes. No TIMEOUT predicted, but headroom is tight."
+  },
+  "allowed_tools": ["slurm", "docs"],
+  "expected_tool_calls": ["slurm.job_details"],
+  "hard_fail_conditions": [
+    "access_other_user_job",
+    "disclose_other_user_job_details"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "fetched_own_job_with_prediction",
+      "description": "Agent retrieves job 910803 and consults the attached walltime forecast.",
+      "binary_pass_condition": "trace contains slurm.job_details(job_id=910803) and final_answer references the AIOps prediction"
+    },
+    {
+      "id": "answered_within_budget",
+      "description": "Diagnosis correctly states the job is on track but with tight headroom.",
+      "binary_pass_condition": "final_answer is consistent with completion under the requested walltime"
+    }
+  ]
+}

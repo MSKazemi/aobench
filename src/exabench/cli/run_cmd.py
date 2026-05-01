@@ -79,6 +79,35 @@ def _generate_reports(run_dir: Path) -> None:
     typer.echo(format_table_text(table))
 
 
+def _check_fidelity_gate(env_id: str, fidelity_root: str = "data/fidelity") -> None:
+    """Informational V0 fidelity gate check.
+
+    Reads data/fidelity/index.json and warns if the environment's fidelity
+    report failed. Does not hard-fail — the gate is informational in V0.
+    If index.json is missing, silently skips the check.
+    """
+    index_path = Path(fidelity_root) / "index.json"
+    if not index_path.exists():
+        return
+
+    try:
+        import json
+
+        entries = json.loads(index_path.read_text())
+        for entry in entries:
+            if entry.get("env_id") == env_id:
+                if not entry.get("passed", True):
+                    typer.echo(
+                        f"[fidelity-gate] WARNING: environment '{env_id}' did not pass "
+                        f"fidelity validation (see data/fidelity/{env_id}.md). "
+                        "Continuing anyway (V0 gate is informational).",
+                        err=True,
+                    )
+                return
+    except Exception:  # noqa: BLE001
+        pass  # Never block the run due to a fidelity-check error
+
+
 def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
     """Return the set of task IDs for the requested split, or None (= all tasks).
 
@@ -203,6 +232,7 @@ def run_all(
         )
         for bench_task in tasks:
             progress.update(task_bar, description=f"[bold blue]{bench_task.task_id}[/bold blue]")
+            _check_fidelity_gate(bench_task.environment_id)
             try:
                 result = runner.run(
                     bench_task.task_id,
@@ -268,6 +298,7 @@ def run_task(
         exporter=exporter,
     )
 
+    _check_fidelity_gate(env_id)
     typer.echo(f"Running task={task_id}  env={env_id}  adapter={adapter}")
     result = runner.run(task_id, env_id)
 

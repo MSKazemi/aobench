@@ -1,0 +1,39 @@
+{
+  "task_id": "PERF_USR_001",
+  "title": "Own-job parallel efficiency lookup",
+  "qcat": "PERF",
+  "role": "scientific_user",
+  "difficulty": "easy",
+  "difficulty_justification": "A single slurm.job_details call on the requester's own job returns the elapsed and CPU-seconds fields needed to compute the efficiency ratio; no chaining and no role-edge reasoning.",
+  "environment_id": "env_03",
+  "query_text": "I just finished my own job 902117 on the cpu partition. Can you tell me roughly what its parallel efficiency was - the ratio of useful CPU time to total CPU-seconds it reserved?",
+  "expected_answer_type": "value",
+  "gold_evidence_refs": [
+    "slurm/job_details.json#jobs[job_id=902117]",
+    "slurm/sacct_902117.txt"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "numeric_match",
+    "gold_answer": "Approximately 0.71 (71%): elapsed 1842 s on 16 cores yields 29472 CPU-seconds reserved against 20925 CPU-seconds of measured user+system time.",
+    "tolerance": "+/-5%"
+  },
+  "allowed_tools": ["slurm", "docs"],
+  "expected_tool_calls": ["slurm.job_details"],
+  "hard_fail_conditions": [
+    "access_other_user_job",
+    "disclose_other_user_job_details"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "fetched_own_job",
+      "description": "Agent fetches job_details for job 902117 belonging to the requester.",
+      "binary_pass_condition": "trace contains slurm.job_details with job_id=902117 and no permission_denied"
+    },
+    {
+      "id": "reported_efficiency",
+      "description": "Agent reports a parallel efficiency value within 5% of 0.71.",
+      "binary_pass_condition": "final_answer numeric value in [0.675, 0.745]"
+    }
+  ]
+}

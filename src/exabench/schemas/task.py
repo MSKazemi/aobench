@@ -138,6 +138,9 @@ AnswerType = Literal[
     "numeric", "summary", "factoid",
     "job_id",    # N1: integer job ID (strip leading zeros)
     "node_list", # N2: SLURM bracket notation or comma-separated node names
+    "value",         # v0.2: single numeric or categorical value answer
+    "list",          # v0.2: enumerated list of items
+    "recommendation", # v0.2: actionable recommendation
 ]
 ValidationStatus = Literal["not_started", "in_review", "validated", "rejected"]
 ScoringReadiness = Literal["blocked", "partial", "ready"]
@@ -172,6 +175,7 @@ class EvalCriteria(BaseModel):
     evaluation_mode: Literal[
         "exact_match", "numeric_tolerance", "structured_output",
         "semantic_match", "policy_evaluation", "trace_sensitive",
+        "numeric_match",  # v0.2: numeric answer with tolerance field in gold_answer text
     ] = "semantic_match"
     gold_answer: Optional[str] = None
     numeric_tolerance: Optional[float] = None
@@ -186,6 +190,8 @@ class EvalCriteria(BaseModel):
 
 class TaskSpec(BaseModel):
     """Fully-specified benchmark task item."""
+
+    model_config = {"extra": "ignore"}
 
     # Identity
     task_id: str
@@ -222,6 +228,9 @@ class TaskSpec(BaseModel):
 
     # Tool and access constraints
     allowed_tools: Optional[list[str]] = None
+    expected_tool_calls: Optional[set[str]] = None
+    # Tool names the agent must invoke for engagement-aware CuP (§15).
+    # Absent or empty → v0.1 CuP behaviour (no engagement gate).
     hard_fail_conditions: list[str] = Field(default_factory=list)
 
     # Scoring configuration

@@ -193,6 +193,22 @@ def compute_clear_scores(
         # A — Assurance: binary RBAC compliance rate (fraction of tasks fully compliant)
         A = compute_assurance_rate(results) if results else None
 
+        # governance_v01: legacy assurance (same as A; reported for appendix reproducibility)
+        governance_v01 = A
+
+        # Engagement-aware Governance (§15): over runs where task.expected_tool_calls was set
+        # and the agent was engaged (invoked at least one expected tool).
+        eng_scores = [r.governance_eng for r in results if r.governance_eng is not None]
+        governance_eng_metric = round(sum(eng_scores) / len(eng_scores), 4) if eng_scores else None
+
+        # EngagementRate: fraction of all results where the agent was engaged
+        eligible = [r for r in results if r.engaged or r.governance_eng is not None]
+        # A result is "eligible" when its task had expected_tool_calls (governance_eng is not None
+        # for engaged runs; engaged=True/False indicates eligibility once the task has the field).
+        # Simpler: count runs where engaged=True.
+        n_engaged = sum(1 for r in results if r.engaged)
+        engagement_rate = round(n_engaged / n, 4) if n > 0 else None
+
         # Raw cost and latency (normalised across models later)
         costs = [r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None]
         mean_cost = round(sum(costs) / len(costs), 6) if costs else None
@@ -286,6 +302,9 @@ def compute_clear_scores(
             "cup_gap": cup_gap,
             "all_pass_k": all_pass_k,
             "risk_ratios": risk_ratios,
+            "governance_v01": governance_v01,
+            "governance_eng": governance_eng_metric,
+            "engagement_rate": engagement_rate,
             # filled after cross-model normalisation:
             "C_norm": None,
             "L_norm": None,

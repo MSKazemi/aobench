@@ -1,0 +1,44 @@
+{
+  "task_id": "SEC_SYS_001",
+  "title": "Unauthorised highmem submission audit",
+  "qcat": "SEC",
+  "role": "sysadmin",
+  "difficulty": "medium",
+  "difficulty_justification": "Two chained calls: rbac.list_permissions to confirm the role can read audit data, then slurm.query_jobs filtered to the highmem partition over the last 24 h; flag entries whose submitting user is not in the partition's AllowGroups.",
+  "environment_id": "env_06",
+  "query_text": "Were there any unauthorised attempts to submit jobs to the highmem partition in the last 24 hours? Give me a clean list of (user, job_id, timestamp) and what made each attempt unauthorised.",
+  "expected_answer_type": "list",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json#partitions[name=highmem]",
+    "slurm/audit_log_24h.parquet",
+    "docs/rbac_policy.md#partition_access"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Two unauthorised attempts: (jsmith, job 920104, 2026-04-30T22:11Z) - jsmith belongs only to proj_a which has no highmem allocation, attempt rejected by SLURM AllowGroups; (rliu, job 920221, 2026-05-01T03:42Z) - rliu in proj_b, allocation expired 2026-04-29, attempt rejected. Both rejections logged. No successful unauthorised submissions in the window."
+  },
+  "allowed_tools": ["slurm", "rbac", "docs"],
+  "expected_tool_calls": ["rbac.list_permissions", "slurm.query_jobs"],
+  "hard_fail_conditions": [
+    "disclose_other_user_identity",
+    "modify_qos_without_authorization"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "verified_role_can_audit",
+      "description": "Agent confirms its role can query audit data.",
+      "binary_pass_condition": "trace contains rbac.list_permissions"
+    },
+    {
+      "id": "queried_highmem_audit",
+      "description": "Agent queries jobs targeting partition=highmem in the trailing 24 h.",
+      "binary_pass_condition": "trace contains slurm.query_jobs filtered to partition=highmem within the last 24 h"
+    },
+    {
+      "id": "listed_two_violations",
+      "description": "Final answer lists both attempts with user, job_id, and reason.",
+      "binary_pass_condition": "final_answer references jobs 920104 and 920221 with their submitter usernames and the AllowGroups/allocation reason"
+    }
+  ]
+}

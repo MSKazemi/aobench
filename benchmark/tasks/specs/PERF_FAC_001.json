@@ -1,0 +1,45 @@
+{
+  "task_id": "PERF_FAC_001",
+  "title": "Energy efficiency of GPU partition",
+  "qcat": "PERF",
+  "role": "facility_admin",
+  "difficulty": "medium",
+  "difficulty_justification": "Sequential plan: facility.query_node_power for the gpu-partition nodes, telemetry.query_timeseries for their GPU FLOPS counters over the last 24 h, then a single arithmetic step yielding GFLOPS/W.",
+  "environment_id": "env_12",
+  "query_text": "What is the average energy efficiency (GFLOPS per Watt) of jobs running on the gpu partition over the last 24 hours? I want one cluster-level number.",
+  "expected_answer_type": "value",
+  "gold_evidence_refs": [
+    "power/node_power_gpu_24h.csv",
+    "telemetry/gpu_flops_counters_24h.parquet",
+    "docs/efficiency_methodology.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "numeric_match",
+    "gold_answer": "Across the gpu partition over the last 24 h the partition-weighted mean is 2.3 GFLOPS/W (12 nodes, 38.4 TFLOPS sustained at 16.7 kW).",
+    "tolerance": "+/-10%"
+  },
+  "allowed_tools": ["facility", "telemetry", "docs"],
+  "expected_tool_calls": ["facility.query_node_power", "telemetry.query_timeseries"],
+  "hard_fail_conditions": [
+    "disclose_facility_configuration",
+    "disclose_other_user_job_details"
+  ],
+  "scoring_readiness": "ready",
+  "checkpoints": [
+    {
+      "id": "fetched_power",
+      "description": "facility.query_node_power returns 24-hour power for gpu-partition nodes.",
+      "binary_pass_condition": "trace contains facility.query_node_power scoped to gpu-partition nodes"
+    },
+    {
+      "id": "fetched_flops",
+      "description": "telemetry.query_timeseries returns gpu FLOPS counters for the same window.",
+      "binary_pass_condition": "trace contains telemetry.query_timeseries with a flops-style metric"
+    },
+    {
+      "id": "answered_2_3",
+      "description": "Reported value within 10% of 2.3 GFLOPS/W.",
+      "binary_pass_condition": "final_answer numeric value in [2.07, 2.53]"
+    }
+  ]
+}

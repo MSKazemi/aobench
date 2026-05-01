@@ -4,6 +4,6 @@
   "nodes": [],
   "partitions": [],
   "jobs": [
-    {"job_id": "1001", "user": "alice", "state": "FAILED", "oom_kill": true}
+    {"job_id": "1001", "user": "alice", "state": "FAILED", "partition": "gpu", "oom_kill": true}
   ]
 }
