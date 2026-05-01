@@ -1,7 +1,7 @@
-# 08 — System Architecture (Current State)
+# System Architecture (Current State)
 
 > **Authoritative reference.** This document describes the system as
-> implemented. Pages 01–07 describe the same system at higher levels of
+> implemented. the other framework pages describe the same system at higher levels of
 > abstraction (principles, design, developer guide, taxonomy, evaluation
 > protocol) and are kept in sync with this page.
 >
@@ -399,7 +399,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 ## 10. Document hierarchy
 
 This document is the authoritative current-state reference. The framework
-documentation cleanup of 2026-05-02 rewrote pages 01–07 (and
+documentation cleanup of 2026-05-02 rewrote the other framework pages (and
 `scoring-dimensions.md`) so they all describe the system as implemented; if
 any of those pages diverges from this one in the future, the divergence is
 a bug to be fixed in the older page, not in this one.

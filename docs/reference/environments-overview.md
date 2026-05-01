@@ -10,7 +10,7 @@ This page is the cross-reference index: scenario type, scored roles, scored
 QCATs, and the human description for each bundle. For the snapshot file
 format (`slurm_state.json`, `telemetry/*.parquet`, `rbac_policy.yaml`,
 `docs/*.md`, `incident_metadata.json`), see
-[`05-environments.md`](../framework/05-environments.md). For the
+[`environments.md`](../framework/environments.md). For the
 authoritative `metadata.yaml` of each bundle, read the file directly.
 
 ---
@@ -61,7 +61,7 @@ authoritative `metadata.yaml` of each bundle, read the file directly.
 (`researcher` and `system_designer` appear above as *supported* roles for
 some bundles; v0.1 scoring covers `scientific_user`, `sysadmin`, and
 `facility_admin` only — see
-[`07-taxonomy.md §1`](../framework/07-taxonomy.md).)
+[`taxonomy.md §1`](../framework/taxonomy.md).)
 
 ---
 

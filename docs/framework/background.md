@@ -1,4 +1,4 @@
-# 02 — Background: Motivation & Related Work
+# Background — Motivation & Related Work
 
 **Owner:** Mohsen
 

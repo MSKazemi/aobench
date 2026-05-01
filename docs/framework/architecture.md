@@ -1,4 +1,4 @@
-# 03 — Benchmark Architecture (Design)
+# Benchmark Architecture (Design)
 
 This page defines the **conceptual architecture** of ExaBench: the design
 principles, the layers a benchmark item traverses, the entities that compose
@@ -11,10 +11,10 @@ It answers the question:
 
 For the **current implementation** of these concepts — the file layout under
 `src/exabench/`, the executable scoring pipeline, and the actual dataset scope
-— see [08 — System Architecture](08-system-architecture.md).
+— see [System Architecture](system-architecture.md).
 
 For the canonical evaluation protocol, trace schema, and result schema, see
-[06 — Evaluation](06-evaluation.md).
+[Evaluation](evaluation.md).
 
 ---
 
@@ -107,7 +107,7 @@ A deterministic HPC world-state composed of scheduler state (`SlurmState`),
 telemetry (`telemetry/*.parquet`, `*.csv`), policy (`rbac_policy.yaml`),
 documentation (`docs/*.md`), and incident metadata (`incident_metadata.json`).
 Every task references exactly one `environment_id`. See
-[05 — Environments](05-environments.md) and
+[Environments](environments.md) and
 [environments-overview.md](../reference/environments-overview.md) for the format and the
 inventory of all 20 bundles.
 
@@ -130,7 +130,7 @@ latency estimate, and pointers to the trace and run manifest.
 
 A standard ExaBench run, abstracted from the implementation, follows seven
 steps. The implemented version of this workflow with method names is in
-[08 — System Architecture §4](08-system-architecture.md).
+[System Architecture §4](system-architecture.md).
 
 1. **Load task** — read the benchmark item with all role and execution
    constraints.
@@ -200,7 +200,7 @@ Reports surface these as columns alongside Role × QCAT × Difficulty.
 | **03 — Architecture** (this page) | Conceptual structure of the benchmark |
 | **04 — Implementation** | How the architecture is realised in `src/exabench/` |
 | **05 — Environments** | Snapshot bundle format |
-| **06 — Evaluation** | Scoring protocol, trace schema, result schema |
+| **Evaluation** | Scoring protocol, trace schema, result schema |
 | **07 — Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
 | **08 — System Architecture** | Authoritative current-state reference |
 
@@ -220,4 +220,4 @@ are:
 - a six-dimension multi-scorer pipeline with hard-fail semantics
 - a reproducible execution architecture
 
-The detailed evaluation protocol is defined in [06 — Evaluation](06-evaluation.md).
+The detailed evaluation protocol is defined in [Evaluation](evaluation.md).

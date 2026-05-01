@@ -1,4 +1,4 @@
-# 06 — Evaluation Protocol, Metrics & Trace Schema
+# Evaluation Protocol, Metrics & Trace Schema
 
 This page is the canonical specification of **how ExaBench judges a run**. It
 covers the evaluation workflow, the twelve scorers and six dimensions, the
@@ -7,7 +7,7 @@ and the reproducibility metadata required of every run.
 
 For detailed scorer formulas and weight profiles, see
 [scoring-dimensions.md](scoring-dimensions.md). For the implementation file
-layout, see [08 — System Architecture §5](08-system-architecture.md).
+layout, see [System Architecture §5](system-architecture.md).
 
 ---
 
@@ -42,7 +42,7 @@ The smallest evaluable instance is:
 - **Trace** — the observable record of the run.
 - **Result** — the scored artifact.
 
-The full data model is defined in [03 — Architecture §4](03-architecture.md)
+The full data model is defined in [Architecture §4](architecture.md)
 and the implemented Pydantic schemas live in `src/exabench/schemas/`.
 
 ---
@@ -294,9 +294,9 @@ required.
 
 ## 12. See also
 
-- [01 — Overview](01-overview.md) — principles and v0.1 scope
-- [03 — Architecture](03-architecture.md) — benchmark layers and entities
-- [05 — Environments](05-environments.md) — snapshot bundle format
-- [07 — Taxonomy](07-taxonomy.md) — roles, QCATs, RBAC tiers
+- [Overview](overview.md) — principles and v0.1 scope
+- [Architecture](architecture.md) — benchmark layers and entities
+- [Environments](environments.md) — snapshot bundle format
+- [Taxonomy](taxonomy.md) — roles, QCATs, RBAC tiers
 - [scoring-dimensions.md](scoring-dimensions.md) — per-scorer formulas
-- [08 — System Architecture](08-system-architecture.md) — implemented system
+- [System Architecture](system-architecture.md) — implemented system

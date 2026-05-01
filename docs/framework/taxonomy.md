@@ -1,4 +1,4 @@
-# 07 — Taxonomy
+# Taxonomy
 
 This page consolidates the four taxonomic dimensions used to organise
 ExaBench tasks: **roles**, **query categories (QCAT)**, **knowledge source
@@ -124,7 +124,7 @@ The catalog of every tool method, its `role_visibility`, and its
 `dangerous_args` conditions is in `benchmark/configs/hpc_tool_catalog.yaml`
 (16 methods across the 5 tool families). Forbidden tool calls and
 permission-denied propagation are absorbing hard-fails — see
-[06 — Evaluation §6](06-evaluation.md).
+[Evaluation §6](evaluation.md).
 
 ---
 
@@ -166,6 +166,6 @@ following fields are required on every task spec; the validator
 - Trace & result schema: `src/exabench/schemas/trace.py`
 - Tool catalog: `benchmark/configs/hpc_tool_catalog.yaml`
 - RBAC policies: `benchmark/environments/env_NN/rbac_policy.yaml`
-- Evaluation protocol: [06 — Evaluation](06-evaluation.md)
-- Architecture: [03 — Architecture §4](03-architecture.md)
-- Implemented system: [08 — System Architecture](08-system-architecture.md)
+- Evaluation protocol: [Evaluation](evaluation.md)
+- Architecture: [Architecture §4](architecture.md)
+- Implemented system: [System Architecture](system-architecture.md)

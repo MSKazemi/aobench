@@ -14,21 +14,22 @@ moved unimplemented ideas to `.claude/plans/2026-05-02-future-work.md`.
 
 ## Document map
 
-| # | Document | Purpose |
-|---|----------|---------|
-| 01 | [Overview](01-overview.md) | Five principles, v0.1 implemented scope, long-term goal |
-| 02 | [Background](02-background.md) | Motivation, the gap, related work |
-| 03 | [Architecture](03-architecture.md) | Conceptual benchmark architecture: layers, entities, workflow |
-| 04 | [Implementation](04-implementation.md) | Developer guide: how to extend adapters, tools, scorers, tasks |
-| 05 | [Environments](05-environments.md) | Snapshot bundle format and core design |
-| 06 | [Evaluation](06-evaluation.md) | Evaluation protocol, twelve scorers, hard-fail rules, trace and result schemas |
-| 07 | [Taxonomy](07-taxonomy.md) | Roles, QCATs, knowledge sources, RBAC tiers, task metadata schema |
-| 08 | [System Architecture](08-system-architecture.md) | **Authoritative current-state reference** — three-repo ecosystem, component map, end-to-end data flow, scoring pipeline, CLEAR scorecard |
-| — | [Scoring Dimensions](scoring-dimensions.md) | Per-scorer formulas and weight profiles |
+| Document | Purpose |
+|----------|---------|
+| [Overview](overview.md) | Five principles, v0.1 implemented scope, long-term goal |
+| [Background](background.md) | Motivation, the gap, related work |
+| [Architecture](architecture.md) | Conceptual benchmark architecture: layers, entities, workflow |
+| [Implementation](implementation.md) | Developer guide: how to extend adapters, tools, scorers, tasks |
+| [Environments](environments.md) | Snapshot bundle format and core design |
+| [Evaluation](evaluation.md) | Evaluation protocol, twelve scorers, hard-fail rules, trace and result schemas |
+| [Taxonomy](taxonomy.md) | Roles, QCATs, knowledge sources, RBAC tiers, task metadata schema |
+| [System Architecture](system-architecture.md) | **Authoritative current-state reference** — three-repo ecosystem, component map, end-to-end data flow, scoring pipeline, CLEAR scorecard |
+| [Scoring Dimensions](scoring-dimensions.md) | Per-scorer formulas and weight profiles |
 
-When in doubt about scope numbers or component names, **08 is ground
-truth**. Pages 01–07 stay aligned with 08 as a matter of policy; if you spot
-a divergence, the divergence is a bug.
+When in doubt about scope numbers or component names,
+**[`system-architecture.md`](system-architecture.md) is ground truth**. The
+other framework pages stay aligned with it as a matter of policy; if you
+spot a divergence, the divergence is a bug.
 
 ---
 
@@ -53,9 +54,9 @@ a divergence, the divergence is a bug.
 ## Quick links
 
 - Run the benchmark: [`COMMANDS.md`](../reference/commands.md)
-- All component responsibilities: [08 §2](08-system-architecture.md)
-- End-to-end data flow: [08 §4](08-system-architecture.md)
-- Scoring pipeline: [08 §5](08-system-architecture.md)
-- CLEAR scorecard formula: [08 §6](08-system-architecture.md)
-- Implemented dataset scope: [01 §3](01-overview.md)
+- All component responsibilities: [system-architecture §2](system-architecture.md)
+- End-to-end data flow: [system-architecture §4](system-architecture.md)
+- Scoring pipeline: [system-architecture §5](system-architecture.md)
+- CLEAR scorecard formula: [system-architecture §6](system-architecture.md)
+- Implemented dataset scope: [overview §3](overview.md)
 - Environment inventory: [`environments-overview.md`](../reference/environments-overview.md)

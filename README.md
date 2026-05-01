@@ -95,7 +95,7 @@ exabench clear run data/runs/<run_id>
 | Roles (scored) | 3 — `scientific_user`, `sysadmin`, `facility_admin` | `benchmark/configs/scoring_profiles.yaml` |
 | Roles (schema) | 2 more — `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
 | QCATs (scored) | 3 — `JOB`, `MON`, `ENERGY` | `benchmark/tasks/specs/` |
-| QCATs (schema) | 7 more — `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `docs/framework/07-taxonomy.md` |
+| QCATs (schema) | 7 more — `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `docs/framework/taxonomy.md` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
 | Mock tool families | 5 — slurm, docs, rbac, telemetry, facility | `src/exabench/tools/` |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
@@ -121,14 +121,14 @@ Reliability, Cost, and Latency into a single comparable score per model.
 | Document | Purpose |
 |----------|---------|
 | [docs/framework/index.md](docs/framework/index.md) | Documentation map |
-| [docs/framework/08-system-architecture.md](docs/framework/08-system-architecture.md) | **Authoritative system architecture** — components, data flow, scoring pipeline, CLEAR scorecard |
-| [docs/framework/01-overview.md](docs/framework/01-overview.md) | Principles and v0.1 scope |
-| [docs/framework/02-background.md](docs/framework/02-background.md) | Motivation and related work |
-| [docs/framework/03-architecture.md](docs/framework/03-architecture.md) | Benchmark design (layers, entities, workflow) |
-| [docs/framework/04-implementation.md](docs/framework/04-implementation.md) | Developer guide to the codebase |
-| [docs/framework/05-environments.md](docs/framework/05-environments.md) | Snapshot format |
-| [docs/framework/06-evaluation.md](docs/framework/06-evaluation.md) | Evaluation protocol, trace and result schemas |
-| [docs/framework/07-taxonomy.md](docs/framework/07-taxonomy.md) | Roles, QCATs, knowledge sources, RBAC |
+| [docs/framework/system-architecture.md](docs/framework/system-architecture.md) | **Authoritative system architecture** — components, data flow, scoring pipeline, CLEAR scorecard |
+| [docs/framework/overview.md](docs/framework/overview.md) | Principles and v0.1 scope |
+| [docs/framework/background.md](docs/framework/background.md) | Motivation and related work |
+| [docs/framework/architecture.md](docs/framework/architecture.md) | Benchmark design (layers, entities, workflow) |
+| [docs/framework/implementation.md](docs/framework/implementation.md) | Developer guide to the codebase |
+| [docs/framework/environments.md](docs/framework/environments.md) | Snapshot format |
+| [docs/framework/evaluation.md](docs/framework/evaluation.md) | Evaluation protocol, trace and result schemas |
+| [docs/framework/taxonomy.md](docs/framework/taxonomy.md) | Roles, QCATs, knowledge sources, RBAC |
 | [docs/framework/scoring-dimensions.md](docs/framework/scoring-dimensions.md) | Per-scorer reference |
 | [docs/COMMANDS.md](docs/reference/commands.md) | CLI command reference |
 | [docs/environments-overview.md](docs/reference/environments-overview.md) | Inventory of all 20 environment bundles |

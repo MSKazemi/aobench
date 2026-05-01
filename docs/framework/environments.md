@@ -1,4 +1,4 @@
-# 05 — Environment Snapshots
+# Environment Snapshots
 
 **Owner:** Mohsen
 
