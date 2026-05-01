@@ -42,10 +42,10 @@ spot a divergence, the divergence is a bug.
 | [`docs/reference/architecture-flowchart.md`](../reference/architecture-flowchart.md) | Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |
 | [`docs/guides/paper-reproduction.md`](../guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
-| [`README.md`](../../README.md) | Repository entry point and quick start |
-| [`CHANGELOG.md`](../../CHANGELOG.md) | Release notes |
-| [`CONTRIBUTING.md`](../../CONTRIBUTING.md) | Contribution guide |
-| [`SECURITY.md`](../../SECURITY.md) | Vulnerability reporting and threat model |
+| [GitHub README](https://github.com/MSKazemi/ExaBench#readme) | Repository entry point and quick start |
+| [`CHANGELOG.md`](../about/changelog.md) | Release notes |
+| [`CONTRIBUTING.md`](../about/contributing.md) | Contribution guide |
+| [`SECURITY.md`](../about/security.md) | Vulnerability reporting and threat model |
 
 ---
 
