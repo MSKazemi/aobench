@@ -212,8 +212,8 @@ Per-dimension scores are preserved in the result for diagnostics, but
 
 `WorfEvalScorer` (`workflow_scorer.py`) compares the executed workflow DAG
 against the gold workflow and emits a sub-graph match score. It is
-**implemented but not yet wired** into `AggregateScorer`. Wiring is tracked
-in `.claude/plans/2026-05-02-future-work.md` §A3.
+**implemented but not yet wired** into `AggregateScorer`. Wiring is planned
+for a future release.
 
 ---
 

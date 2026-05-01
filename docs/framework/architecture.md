@@ -159,8 +159,7 @@ ExaBench v0.1 uses **deterministic mock tools** rather than live SLURM,
 Grafana, InfluxDB, BMS/DCIM, or production documentation systems. This is a
 benchmarking choice, not a limitation of ambition: mock tools make
 benchmarking reproducible, debuggable, publishable, and independent of
-site-specific infrastructure. The connect-to-agent mode tracked in
-`.claude/plans/2026-05-02-future-work.md` §C9 will additionally allow scoring
+site-specific infrastructure. A planned connect-to-agent mode (post-v0.1) will additionally allow scoring
 production agents that have their own cluster access.
 
 The tool families implemented today are:

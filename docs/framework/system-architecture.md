@@ -408,8 +408,7 @@ Six early-version documents were removed in the same cleanup
 (`docs-integration-plan.md`, `benchmark-status-and-design.md`,
 `chat-outcomes.md`, `architecture-clarification.md`, `docs/langfuse.md`,
 `docs/taxonomy/README.md`); their content was either folded into the
-authoritative pages or moved to
-`.claude/plans/2026-05-02-future-work.md`.
+authoritative pages or deferred to future work.
 
 ---
 

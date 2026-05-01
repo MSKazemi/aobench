@@ -136,7 +136,6 @@ Reliability, Cost, and Latency into a single comparable score per model.
 | [docs/architecture-flowchart.md](docs/reference/architecture-flowchart.md) | System diagrams |
 | [docs/langfuse-integration.md](docs/guides/langfuse-integration.md) | Observability backend |
 | [docs/paper_reproduction_guide.md](docs/guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
-| [docs/roadmap.md](.claude/plans/2026-05-02-roadmap.md) | Open backlog and next milestones |
 | [CHANGELOG.md](CHANGELOG.md) | Release notes |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guide |
 | [SECURITY.md](SECURITY.md) | Vulnerability reporting and threat model |

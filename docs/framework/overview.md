@@ -72,9 +72,9 @@ to authoritative artifacts.
 | CLI commands | 9 sub-trees (run, validate, lite, report, compare, robustness, clear, leaderboard) | [`COMMANDS.md`](../reference/commands.md) |
 
 Anything described in the documentation but not present in this table is
-either future work — see `.claude/plans/2026-05-02-future-work.md` — or a
-historical artifact left over from earlier drafts that has been removed during
-the 2026-05-02 documentation cleanup.
+either planned for a future release or a historical artifact left over from
+earlier drafts that has been removed during the 2026-05-02 documentation
+cleanup.
 
 ---
 
@@ -84,8 +84,8 @@ ExaBench aims to be a **citable, reproducible, and extensible benchmark
 standard** for comparing HPC-focused agentic systems before they are deployed
 in real supercomputing or data-centre operations.
 
-Beyond the offline mock-tool mode shipped in v0.1, the project tracks two
-extensions in `.claude/plans/2026-05-02-future-work.md`:
+Beyond the offline mock-tool mode shipped in v0.1, the project plans two
+extensions for future releases:
 
 - **Connect-to-agent mode (§C9)** — adapters that drive HPC agents already
   deployed on or near clusters via HTTP / MCP / FastAPI. ExaBench still never

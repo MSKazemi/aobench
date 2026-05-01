@@ -32,7 +32,7 @@ A quick guide to how adapters and tools work in ExaBench.
 
 **Flow:** Receive task + context → send to agent → when agent wants tools, call tools and feed results back → repeat until agent stops with a final answer → return trace.
 
-**Connect-to-agent mode (planned post-v0.1):** New adapters will invoke external HPC agents (ODA, ExaSage, …) deployed on or near clusters via HTTP / MCP / FastAPI. ExaBench connects to the agent's API and scores its trace; ExaBench never needs direct access to real SLURM or the cluster. See `.claude/plans/2026-05-02-future-work.md` §C9.
+**Connect-to-agent mode (planned post-v0.1):** New adapters will invoke external HPC agents (ODA, ExaSage, …) deployed on or near clusters via HTTP / MCP / FastAPI. ExaBench connects to the agent's API and scores its trace; ExaBench never needs direct access to real SLURM or the cluster.
 
 ---
 

@@ -7,8 +7,7 @@ dimensions.
 
 This index is the entry point to the framework documentation. Every page
 here describes the system **as implemented**; the documentation cleanup of
-2026-05-02 removed early-draft material that no longer matched the code, and
-moved unimplemented ideas to `.claude/plans/2026-05-02-future-work.md`.
+2026-05-02 removed early-draft material that no longer matched the code.
 
 ---
 
@@ -43,7 +42,6 @@ spot a divergence, the divergence is a bug.
 | [`docs/reference/architecture-flowchart.md`](../reference/architecture-flowchart.md) | Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |
 | [`docs/guides/paper-reproduction.md`](../guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
-| [`.claude/plans/2026-05-02-roadmap.md`](../../.claude/plans/2026-05-02-roadmap.md) | Open backlog and next milestones |
 | [`README.md`](../../README.md) | Repository entry point and quick start |
 | [`CHANGELOG.md`](../../CHANGELOG.md) | Release notes |
 | [`CONTRIBUTING.md`](../../CONTRIBUTING.md) | Contribution guide |

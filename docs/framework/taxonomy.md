@@ -24,8 +24,8 @@ values; v0.1 scores three.
 
 The two unscored roles are present in `task.py` and in
 `benchmark/configs/hpc_tool_catalog.yaml` so that tasks can be authored for
-them, but no task currently uses them. Promotion to scored status is tracked
-in `.claude/plans/2026-05-02-future-work.md` §B8.
+them, but no task currently uses them. Promotion to scored status is planned
+for a future release.
 
 ---
 
@@ -48,8 +48,8 @@ defined in the taxonomy; v0.1 scores three.
 | DOCS | Documentation & Support | taxonomy only | FAQs, tutorials, troubleshooting |
 
 The seven taxonomy-only QCATs are accepted by the schema and the validator,
-but no scored tasks exist for them. Expansion to PERF, AIOPS, and SEC is part
-of the v0.2 evaluation matrix (`.claude/plans/2026-05-02-future-work.md` §B2).
+but no scored tasks exist for them. Expansion to PERF, AIOPS, and SEC is
+planned for the v0.2 evaluation matrix.
 
 ---
 
