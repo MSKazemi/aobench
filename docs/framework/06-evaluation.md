@@ -7,7 +7,7 @@ and the reproducibility metadata required of every run.
 
 For detailed scorer formulas and weight profiles, see
 [scoring-dimensions.md](scoring-dimensions.md). For the implementation file
-layout, see [09 — System Architecture §5](09-system-architecture.md).
+layout, see [08 — System Architecture §5](08-system-architecture.md).
 
 ---
 
@@ -299,4 +299,4 @@ required.
 - [05 — Environments](05-environments.md) — snapshot bundle format
 - [07 — Taxonomy](07-taxonomy.md) — roles, QCATs, RBAC tiers
 - [scoring-dimensions.md](scoring-dimensions.md) — per-scorer formulas
-- [09 — System Architecture](09-system-architecture.md) — implemented system
+- [08 — System Architecture](08-system-architecture.md) — implemented system

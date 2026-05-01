@@ -11,7 +11,7 @@ It answers the question:
 
 For the **current implementation** of these concepts — the file layout under
 `src/exabench/`, the executable scoring pipeline, and the actual dataset scope
-— see [09 — System Architecture](09-system-architecture.md).
+— see [08 — System Architecture](08-system-architecture.md).
 
 For the canonical evaluation protocol, trace schema, and result schema, see
 [06 — Evaluation](06-evaluation.md).
@@ -130,7 +130,7 @@ latency estimate, and pointers to the trace and run manifest.
 
 A standard ExaBench run, abstracted from the implementation, follows seven
 steps. The implemented version of this workflow with method names is in
-[09 — System Architecture §4](09-system-architecture.md).
+[08 — System Architecture §4](08-system-architecture.md).
 
 1. **Load task** — read the benchmark item with all role and execution
    constraints.
@@ -202,7 +202,7 @@ Reports surface these as columns alongside Role × QCAT × Difficulty.
 | **05 — Environments** | Snapshot bundle format |
 | **06 — Evaluation** | Scoring protocol, trace schema, result schema |
 | **07 — Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
-| **09 — System Architecture** | Authoritative current-state reference |
+| **08 — System Architecture** | Authoritative current-state reference |
 
 ---
 

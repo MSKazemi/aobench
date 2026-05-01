@@ -1,4 +1,4 @@
-# 09 — System Architecture (Current State)
+# 08 — System Architecture (Current State)
 
 > **Authoritative reference.** This document describes the system as
 > implemented. Pages 01–07 describe the same system at higher levels of

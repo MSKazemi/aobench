@@ -168,4 +168,4 @@ following fields are required on every task spec; the validator
 - RBAC policies: `benchmark/environments/env_NN/rbac_policy.yaml`
 - Evaluation protocol: [06 — Evaluation](06-evaluation.md)
 - Architecture: [03 — Architecture §4](03-architecture.md)
-- Implemented system: [09 — System Architecture](09-system-architecture.md)
+- Implemented system: [08 — System Architecture](08-system-architecture.md)

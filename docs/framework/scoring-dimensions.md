@@ -239,4 +239,4 @@ in `.claude/plans/2026-05-02-future-work.md` §A3.
 
 For the workflow that produces these scores, see
 [06 — Evaluation](06-evaluation.md). For the implementation map, see
-[09 — System Architecture §5–7](09-system-architecture.md).
+[08 — System Architecture §5–7](08-system-architecture.md).

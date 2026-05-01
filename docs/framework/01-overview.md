@@ -7,7 +7,7 @@ redefine the fundamentals collected here.
 
 For an authoritative end-to-end description of the implemented system,
 including the component map and the scoring pipeline, see
-[09 — System Architecture](09-system-architecture.md).
+[08 — System Architecture](08-system-architecture.md).
 
 ---
 
@@ -100,7 +100,7 @@ extensions in `.claude/plans/2026-05-02-future-work.md`:
 
 | If you want to… | Read |
 |-----------------|------|
-| Understand the implemented system end-to-end | [09 — System Architecture](09-system-architecture.md) |
+| Understand the implemented system end-to-end | [08 — System Architecture](08-system-architecture.md) |
 | Run the benchmark | [COMMANDS.md](../reference/commands.md) |
 | Author a new task | [04 — Implementation](04-implementation.md) and [07 — Taxonomy](07-taxonomy.md) |
 | Understand scoring | [06 — Evaluation](06-evaluation.md) and [scoring-dimensions.md](scoring-dimensions.md) |

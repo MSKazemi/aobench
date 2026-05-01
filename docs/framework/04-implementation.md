@@ -6,7 +6,7 @@ system, and where to look for examples.
 
 The authoritative current-state component diagram, including line-by-line
 descriptions of every module under `src/exabench/`, is in
-[09 — System Architecture](09-system-architecture.md). When that document and
+[08 — System Architecture](08-system-architecture.md). When that document and
 this one diverge, treat 09 as ground truth and update this page.
 
 ---
@@ -37,7 +37,7 @@ src/exabench/
 └── utils/           Logging, ID generation, cost estimation
 ```
 
-For each module, [09 — System Architecture §2](09-system-architecture.md)
+For each module, [08 — System Architecture §2](08-system-architecture.md)
 lists the public classes and functions. Use that as a quick reference.
 
 ---
@@ -116,7 +116,7 @@ business logic in the tool, permission logic in `tools/registry.py`.
    `tests/integration/test_aggregate_scorer.py` (end-to-end).
 
 The 12 implemented scorers and their wiring status are listed in
-[09 — System Architecture §7](09-system-architecture.md). Notes:
+[08 — System Architecture §7](08-system-architecture.md). Notes:
 
 - `WorfEvalScorer` (`workflow_scorer.py`) is implemented but **not yet
   wired** into `AggregateScorer`. Wiring is tracked in the future-work plan
@@ -202,7 +202,7 @@ CI in `.github/workflows/ci.yml` runs `lint`, `typecheck`, `test`, and
 
 | Topic | Page |
 |-------|------|
-| Implemented architecture | [09-system-architecture.md](09-system-architecture.md) |
+| Implemented architecture | [08-system-architecture.md](08-system-architecture.md) |
 | CLI reference | [`COMMANDS.md`](../reference/commands.md) |
 | Evaluation protocol | [06-evaluation.md](06-evaluation.md) |
 | Scorer reference | [scoring-dimensions.md](scoring-dimensions.md) |

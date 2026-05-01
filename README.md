@@ -121,7 +121,7 @@ Reliability, Cost, and Latency into a single comparable score per model.
 | Document | Purpose |
 |----------|---------|
 | [docs/framework/index.md](docs/framework/index.md) | Documentation map |
-| [docs/framework/09-system-architecture.md](docs/framework/09-system-architecture.md) | **Authoritative system architecture** — components, data flow, scoring pipeline, CLEAR scorecard |
+| [docs/framework/08-system-architecture.md](docs/framework/08-system-architecture.md) | **Authoritative system architecture** — components, data flow, scoring pipeline, CLEAR scorecard |
 | [docs/framework/01-overview.md](docs/framework/01-overview.md) | Principles and v0.1 scope |
 | [docs/framework/02-background.md](docs/framework/02-background.md) | Motivation and related work |
 | [docs/framework/03-architecture.md](docs/framework/03-architecture.md) | Benchmark design (layers, entities, workflow) |
