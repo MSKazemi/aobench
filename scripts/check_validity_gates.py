@@ -1,14 +1,20 @@
-"""check_validity_gates.py — Run validity gates V1–V6 before committing paper results.
+"""check_validity_gates.py — Run validity gates V0–V6 before committing paper results.
 
 Input:
-  - data/runs/v01_dev_*/    (3 model run directories)
-  - data/robustness/v01_*.json  (15 robustness files)
+  - data/fidelity/index.json     (written by 'exabench validate snapshots')
+  - data/runs/v01_dev_*/         (3 model run directories)
+  - data/robustness/v01_*.json   (15 robustness files)
 
-Output: Pass/fail report for V1–V6 gates (stdout or --output file)
+Output: Pass/fail report for V0–V6 gates (stdout or --output file)
 
 Usage:
     python3 scripts/check_validity_gates.py
     python3 scripts/check_validity_gates.py --output data/reports/validity_gates.json
+
+Notes:
+    V0 is a fidelity precondition — its failure emits a warning but does not
+    block V1–V6 in v0.2.  Run 'exabench validate snapshots' first to populate
+    data/fidelity/index.json.
 """
 
 from __future__ import annotations
@@ -18,6 +24,8 @@ import json
 import sys
 from pathlib import Path
 
+
+DEFAULT_FIDELITY_INDEX = "data/fidelity/index.json"
 
 DEFAULT_RUN_DIRS = [
     "data/runs/v01_dev_claude_sonnet",
@@ -104,6 +112,50 @@ def load_robustness(rob_dir: str) -> dict[str, dict[str, dict]]:
 
 
 # ── Gates ──────────────────────────────────────────────────────────────────────
+
+def gate_v0(fidelity_index_path: Path) -> dict:
+    """V0: All referenced environment snapshots must have a passing fidelity report.
+
+    This is a precondition gate.  Failure emits a warning but does not block
+    V1–V6 in v0.2.  Run 'exabench validate snapshots' to populate the index.
+    """
+    if not fidelity_index_path.exists():
+        return {
+            "gate": "V0",
+            "name": "Fidelity precondition",
+            "passed": True,
+            "warning_only": True,
+            "issues": [
+                f"index not found at {fidelity_index_path} — skipped "
+                "(run 'exabench validate snapshots' first)"
+            ],
+        }
+
+    try:
+        index = json.loads(fidelity_index_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return {
+            "gate": "V0",
+            "name": "Fidelity precondition",
+            "passed": False,
+            "warning_only": True,
+            "issues": [f"could not read fidelity index: {exc}"],
+        }
+
+    failed = [e["env_id"] for e in index if not e.get("passed", True)]
+    details = [
+        f"{e['env_id']}: {'PASS' if e.get('passed', True) else 'FAIL'}"
+        for e in index
+    ]
+    return {
+        "gate": "V0",
+        "name": "Fidelity precondition",
+        "passed": len(failed) == 0,
+        "warning_only": True,
+        "details": details,
+        "issues": [f"env {e} failed fidelity check" for e in failed],
+    }
+
 
 def gate_v1(models: list[dict]) -> dict:
     """V1: All tasks execute without crash (no framework_error, no missing results)."""
@@ -301,23 +353,31 @@ def gate_v6(models: list[dict]) -> dict:
 
 def print_report(gates: list[dict]) -> None:
     print("\n" + "=" * 60)
-    print("ExaBench v0.1 — Validity Gate Report")
+    print("ExaBench — Validity Gate Report (V0–V6)")
     print("=" * 60)
     for g in gates:
-        status = "✅ PASS" if g["passed"] else "❌ FAIL"
-        print(f"\n{g['gate']}: {g['name']}")
+        warn_only = g.get("warning_only", False)
+        if warn_only:
+            status = "⚠️  WARN" if not g["passed"] else "✅ PASS"
+        else:
+            status = "✅ PASS" if g["passed"] else "❌ FAIL"
+        label = f"{g['gate']}: {g['name']}"
+        if warn_only:
+            label += "  [warning-only in v0.2]"
+        print(f"\n{label}")
         print(f"  Status: {status}")
         for d in g.get("details", []):
             print(f"  ·  {d}")
         for iss in g.get("issues", []):
             print(f"  ⚠  {iss}")
 
-    all_pass = all(g["passed"] for g in gates)
+    blocking_gates = [g for g in gates if not g.get("warning_only", False)]
+    all_pass = all(g["passed"] for g in blocking_gates)
     print("\n" + "─" * 60)
     if all_pass:
         print("✅ ALL GATES PASS — results may enter the paper.")
     else:
-        failed = [g["gate"] for g in gates if not g["passed"]]
+        failed = [g["gate"] for g in blocking_gates if not g["passed"]]
         print(f"❌ GATES FAILED: {', '.join(failed)}")
         print("   Investigate failures before publishing results.")
     print("=" * 60 + "\n")
@@ -334,8 +394,20 @@ def main(argv: list[str] | None = None) -> int:
         help="Run directories (default: v01_dev_*)",
     )
     parser.add_argument("--rob-dir", default=DEFAULT_ROB_DIR)
+    parser.add_argument(
+        "--fidelity-index",
+        default=DEFAULT_FIDELITY_INDEX,
+        help="Path to data/fidelity/index.json (written by 'exabench validate snapshots')",
+    )
     parser.add_argument("--output", "-o", default=None, help="Write JSON report here")
     args = parser.parse_args(argv)
+
+    print("Checking fidelity precondition (V0)...")
+    v0 = gate_v0(Path(args.fidelity_index))
+    if not v0["passed"]:
+        print(f"  WARNING: V0 fidelity precondition failed — {v0['issues']}", file=sys.stderr)
+    else:
+        print("  V0 OK.")
 
     print("Loading model run data...")
     models = load_model_data(args.run_dirs)
@@ -347,6 +419,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Loaded {n_rob} robustness entries.")
 
     gates = [
+        v0,
         gate_v1(models),
         gate_v2(models),
         gate_v3(models),
@@ -362,7 +435,8 @@ def main(argv: list[str] | None = None) -> int:
         Path(args.output).write_text(json.dumps(gates, indent=2), encoding="utf-8")
         print(f"JSON report written: {args.output}")
 
-    all_pass = all(g["passed"] for g in gates)
+    blocking_gates = [g for g in gates if not g.get("warning_only", False)]
+    all_pass = all(g["passed"] for g in blocking_gates)
     return 0 if all_pass else 1
 
 

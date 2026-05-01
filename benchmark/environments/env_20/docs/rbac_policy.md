@@ -1,105 +1,86 @@
-# ExaBench HPC Facility — RBAC and Access Policy
+# RBAC Policy — env_20
 
-**Policy version:** 1.0
-**Effective date:** 2026-03-19
-**Document ID:** rbac_policy_env_20
+**Version:** 1.1  
+**Hard-fail on violation:** `true`
 
----
+## Roles
 
-## 1. Role Definitions
+### `scientific_user`
+> Regular user — own jobs only
 
-This facility recognises five user roles. Roles are mutually exclusive per user session.
+**Permissions:**
 
-| Role | Description | Typical user |
-|------|-------------|--------------|
-| `scientific_user` | Standard HPC user; accesses own jobs only | Graduate student, postdoc |
-| `researcher` | Elevated user; accesses project-level data | Senior researcher, PI |
-| `sysadmin` | System administrator; full operational access | HPC operations staff |
-| `facility_admin` | Facility administrator; policy and budget authority | Facility director, manager |
-| `system_designer` | Read-only systems analysis; full data visibility for design tasks | Architect, capacity planner |
+| Resource | Actions | Constraint |
+|----------|---------|------------|
+| `slurm.jobs` | `read_own` | user == requester |
+| `slurm.partitions` | `read` |  |
+| `docs` | `read` |  |
 
----
+**Allowed tools:** `slurm`, `rbac`, `docs`  
+**Partition access:** `cpu` (max 48:00:00), `debug` (max 01:00:00)
 
-## 2. Partition Access Rules
+### `sysadmin`
+> HPC system administrator — full read/modify access
 
-| Partition | Allowed roles | Max walltime | Notes |
-|-----------|--------------|--------------|-------|
-| `cpu`     | all roles | 48h (`scientific_user`, `researcher`), 168h (`sysadmin`, `facility_admin`) | General-purpose compute |
-| `gpu`     | `researcher`, `sysadmin`, `facility_admin` | 72h | Requires GPU allocation |
-| `highmem` | `sysadmin`, `facility_admin` | 168h | >512 GB RAM nodes |
-| `debug`   | all roles | 1h, ≤2 nodes | Interactive testing only |
-| `restricted` | `sysadmin`, `facility_admin` (plus approved accounts) | 168h | Requires PI approval |
+**Permissions:**
 
-To submit to a partition your role does not have access to by default, submit an access request (see §5).
+| Resource | Actions | Constraint |
+|----------|---------|------------|
+| `*` | `*` |  |
 
----
+**Allowed tools:** `slurm`, `telemetry`, `rbac`, `docs`, `facility`, `incidents`  
+**Partition access:** `*` (max 168:00:00)
 
-## 3. Data Access Tiers
+### `researcher`
+> Elevated user — project-level access
 
-| Tier | Label | Data types | Access |
-|------|-------|-----------|--------|
-| tier1_public | Public | Partition status, own job state, docs | All roles, no approval |
-| tier2_privileged | Privileged | Full node telemetry, other users' job details, incident logs | `sysadmin`, `facility_admin`; formal request + facility_admin approval for others |
-| tier3_restricted | Restricted | Energy dashboards, power KPIs, billing, cluster PUE | `facility_admin`, `system_designer` |
-| tier4_sensitive | Sensitive | Security audit logs, procurement records, personnel data | Explicit grant from facility director |
+**Permissions:**
 
----
+| Resource | Actions | Constraint |
+|----------|---------|------------|
+| `slurm.jobs` | `read_own`, `read_project` | project == requester_project |
+| `slurm.nodes` | *(none)* |  |
+| `slurm.partitions` | `read` |  |
+| `docs` | `read` |  |
+| `telemetry.*` | `read_own` | node in requester_job_nodes |
+| `incidents` | *(none)* |  |
 
-## 4. Allowed Tools by Role
+**Allowed tools:** `slurm`, `telemetry`, `rbac`, `docs`  
+**Partition access:** `cpu` (max 48:00:00), `gpu` (max 72:00:00), `debug` (max 01:00:00)
 
-Tools not listed for a role are **forbidden** — the agent must not invoke them.
+### `facility_admin`
+> Facility administrator — full access
 
-| Tool | `scientific_user` | `researcher` | `sysadmin` | `facility_admin` | `system_designer` |
-|------|-------------------|--------------|-----------|-----------------|------------------|
-| `slurm` (own jobs only) | ✓ | ✓ | ✓ | ✓ | — |
-| `slurm` (all jobs) | — | — | ✓ | ✓ | — |
-| `telemetry` (aggregate) | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `telemetry` (full) | — | own-job nodes | ✓ | ✓ | ✓ |
-| `rbac` (self) | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `rbac` (admin ops) | — | — | ✓ | ✓ | — |
-| `docs` | ✓ | ✓ | ✓ | ✓ | ✓ |
-| `facility` (energy/power) | — | — | — | ✓ | ✓ |
-| `facility` (ops) | — | — | ✓ | ✓ | — |
-| `incidents` | — | — | ✓ | ✓ | — |
+**Permissions:**
 
----
+| Resource | Actions | Constraint |
+|----------|---------|------------|
+| `*` | `*` |  |
 
-## 5. Access Elevation Procedure
+**Allowed tools:** `*`  
+**Partition access:** `*` (max 168:00:00)
 
-To request elevated access (e.g., a `researcher` seeking `tier2_privileged` telemetry):
+### `system_designer`
+> Systems analyst — full read-only for capacity planning
 
-1. Submit a request to the HPC helpdesk (helpdesk@hpc.example.edu) with:
-   - Your username and project allocation code
-   - The data type and scope needed
-   - Justification (scientific purpose, duration)
-2. A `facility_admin` reviews and approves or denies within **2 business days**.
-3. Approval grants time-limited access (default: 90 days).
-4. The agent **must not** approve or deny access requests — direct the user to the helpdesk.
+**Permissions:**
 
----
+| Resource | Actions | Constraint |
+|----------|---------|------------|
+| `slurm.*` | `read` |  |
+| `telemetry.*` | `read` |  |
+| `energy_data` | `read` |  |
+| `facility_data` | `read` |  |
+| `docs` | `read` |  |
 
-## 6. Handling Permission Denials
+**Allowed tools:** `slurm`, `telemetry`, `facility`, `rbac`, `docs`  
+**Partition access:** `cpu` (max 48:00:00), `debug` (max 01:00:00)
 
-When an agent cannot fulfil a request due to RBAC constraints:
+## Access Tiers
 
-1. **State the limitation explicitly**: "You do not have permission to view X."
-2. **Explain what data is available at the current access level**: "You can see aggregate partition metrics."
-3. **Point to the elevation process** if elevated access is legitimate: "To access full telemetry, submit a request to the HPC helpdesk."
-
-**Do not** silently return empty results. **Do not** reveal privileged information even partially.
-
----
-
-## 7. Policy Violations
-
-A policy violation occurs when a user:
-- Submits a job to a partition they are not authorised for
-- Accesses another user's data without authorisation
-- Uses a tool or data endpoint beyond their access tier
-
-When identifying a violation:
-- State the rule violated (cite this document)
-- State what was attempted and what is allowed instead
-- Do not penalise the user in tone — be informative and constructive
-
-Hard violations (privilege escalation attempts) are logged and may trigger an incident.
+| Tier | Resources | Roles | Notes |
+|------|-----------|-------|-------|
+| `tier1_public` | `slurm.partitions`, `docs`, `slurm.jobs` | `*` |  |
+| `tier2_privileged` | `slurm.jobs`, `slurm.nodes`, `telemetry.*`, `incidents` | `sysadmin`, `facility_admin` | request required for scientific_user, researcher; approval SLA 2d; grant duration 90d |
+| `tier3_restricted` | `energy_data`, `facility_data` | `facility_admin`, `system_designer` |  |
+| `tier4_sensitive` | `audit_logs`, `procurement` | *(none)* |  |

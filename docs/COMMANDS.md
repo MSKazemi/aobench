@@ -27,6 +27,10 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `make audit-scorers` | Run O.a–O.c scorer validity audit and write `benchmark/scorer_audit_v1.json` |
 | `make oracle-check` | Check that each task's gold answer is derivable from snapshot data |
 | `make independence-check` | Detect near-duplicate tasks by cosine similarity of feature vectors |
+| `make generate-rbac-docs` | Generate `docs/rbac_policy.md` for all 20 environment bundles |
+| `make create-task-stubs` | Create minimal stub evidence files for oracle-check failures |
+| `make leaderboard LEADERBOARD_RESULTS=<dir>` | Build CLEAR leaderboard from `<dir>/<model>/*.json` result files |
+| `make check-validity-gates` | Run V0–V6 pre-publication validity gates and write `data/reports/validity_gates.json` (V0 = fidelity precondition, warning-only in v0.2) |
 | `exabench validate authoring` | Run oracle_check and independence_check on all tasks |
 | `python -m exabench.cli.validate_tasks` | Run T1–T10 ABC validity checklist against the task corpus |
 | `python -m exabench.cli.audit_scorers` | Run O.a–O.c outcome validity audit against the scorer |
@@ -938,9 +942,30 @@ make run-all-anthropic MODEL=claude-sonnet-4-6
 
 ### Leaderboard
 
-| Target | Description |
-|--------|-------------|
+| Target / Command | Description |
+|------------------|-------------|
+| `make leaderboard LEADERBOARD_RESULTS=<dir>` | Build CLEAR leaderboard from per-model result folders |
 | `make leaderboard-serve` | Start the leaderboard HTTP API (requires `fastapi` + `uvicorn`: `uv add fastapi uvicorn`) |
+| `exabench leaderboard build RESULTS_DIR` | Build and export leaderboard tables (JSON + CSV + heatmap) |
+
+**`exabench leaderboard build` options:**
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--output-dir PATH` | `RESULTS_DIR/leaderboard/` | Output directory |
+| `--reliability-k INT` | `8` | k for pass^k reliability column |
+| `--pass-threshold FLOAT` | `0.5` | Minimum score counted as a pass |
+| `--no-heatmap` | — | Skip writing `heatmap.csv` |
+| `--format [json\|csv\|all]` | `all` | Which output files to write |
+| `--append PATH` | — | Merge with an existing leaderboard JSON |
+
+**Output files:**
+
+| File | Description |
+|------|-------------|
+| `leaderboard.json` | Full CLEAR report with all model scores |
+| `leaderboard.csv` | Flat CSV with per-model CLEAR scores and category pass rates |
+| `heatmap.csv` | Per-task × model reliability table with pass@k columns |
 
 **Environment variables:**
 

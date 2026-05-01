@@ -1,0 +1,21 @@
+{
+  "__stub__": true,
+  "jobs": [
+    {
+      "job_id": "000000",
+      "user": "testuser",
+      "state": "COMPLETED",
+      "partition": "cpu",
+      "account": "testproject",
+      "num_cpus": 4,
+      "num_nodes": 1,
+      "elapsed": "01:00:00",
+      "submit_time": "2024-01-01T00:00:00",
+      "start_time": "2024-01-01T00:01:00",
+      "end_time": "2024-01-01T01:01:00",
+      "exit_code": "0:0",
+      "nodelist": "node001",
+      "timelimit": "02:00:00"
+    }
+  ]
+}

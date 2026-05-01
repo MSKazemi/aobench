@@ -237,6 +237,19 @@ oracle-check:  ## Check that each task's gold answer is derivable from snapshot 
 independence-check:  ## Detect near-duplicate tasks by cosine similarity of feature vectors
 	$(PYTHON) scripts/independence_check.py
 
+.PHONY: generate-rbac-docs
+generate-rbac-docs:  ## Generate docs/rbac_policy.md for all environment bundles
+	$(PYTHON) scripts/generate_rbac_docs.py
+
+.PHONY: create-task-stubs
+create-task-stubs:  ## Create minimal stub evidence files for oracle-check failures
+	$(PYTHON) scripts/create_task_stubs.py
+
+LEADERBOARD_RESULTS ?= data/runs
+.PHONY: leaderboard
+leaderboard:  ## Build leaderboard from benchmark results (set LEADERBOARD_RESULTS=path)
+	$(EXABENCH) leaderboard build $(LEADERBOARD_RESULTS)
+
 .PHONY: coverage-matrix
 coverage-matrix:  ## Print task coverage matrix (role × category)
 	$(PYTHON) scripts/check_coverage.py
