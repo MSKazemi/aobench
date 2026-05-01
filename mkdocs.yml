@@ -1,0 +1,76 @@
+site_name: ExaBench
+site_description: Benchmark framework for evaluating AI agents in HPC environments
+site_url: https://mskazemi.github.io/ExaBench/
+repo_url: https://github.com/MSKazemi/ExaBench
+repo_name: MSKazemi/ExaBench
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.instant
+    - search.highlight
+    - content.tabs.link
+    - navigation.top
+    - content.action.edit
+
+plugins:
+  - search
+  - include-markdown
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - toc:
+      permalink: true
+
+extra:
+  version:
+    provider: mike
+
+nav:
+  - Home: index.md
+  - Concepts:
+    - Overview: framework/overview.md
+    - Background: framework/background.md
+    - Architecture: framework/architecture.md
+    - System Architecture: framework/system-architecture.md
+    - Environments: framework/environments.md
+    - Evaluation: framework/evaluation.md
+    - Scoring Dimensions: framework/scoring-dimensions.md
+    - Taxonomy: framework/taxonomy.md
+    - Implementation: framework/implementation.md
+  - Usage:
+    - Adapters & Tools: guides/adapters-and-tools.md
+    - Langfuse Integration: guides/langfuse-integration.md
+    - Paper Reproduction: guides/paper-reproduction.md
+    - CLI Commands: reference/commands.md
+    - Environments Overview: reference/environments-overview.md
+    - Architecture Flowchart: reference/architecture-flowchart.md
+  - About:
+    - Changelog: about/changelog.md
+    - Contributing: about/contributing.md
+    - Security: about/security.md
