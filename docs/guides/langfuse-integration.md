@@ -3,7 +3,7 @@
 Step-by-step plan for adding Langfuse observability to ExaBench.
 Follow the phases in order; each phase is independently testable.
 
-Reference doc: [docs/langfuse.md](langfuse.md)
+This page is the single Langfuse reference for ExaBench. It covers what Langfuse is, the local docker-compose stack under `docker/langfuse/`, and the runtime exporter wired through the `--langfuse` flag.
 
 ---
 
@@ -424,7 +424,6 @@ Files created or modified by this integration:
 | `pyproject.toml` | Modify | `langfuse = ["langfuse>=2.0"]` optional dep |
 | `Makefile` | Modify | `langfuse-up/down/logs/reset` + `run-langfuse` + `run-all-langfuse` targets |
 | `.env.example` | Modify | Added Langfuse env var template |
-| `docs/COMMANDS.md` | Modify | `--langfuse` flag + Langfuse Makefile targets documented |
-| `docs/langfuse.md` | Create | Reference doc: what Langfuse is, architecture, SDK, self-hosting |
-| `docs/langfuse-integration.md` | Create | This guide |
+| `docs/reference/commands.md` | Modify | `--langfuse` flag + Langfuse Makefile targets documented |
+| `docs/guides/langfuse-integration.md` | Create | This guide (also serves as the Langfuse reference) |
 | `tests/unit/test_langfuse_exporter.py` | Create | 10 unit tests (all passing) |

@@ -2,105 +2,151 @@
 
 **Benchmark framework for evaluating AI agent systems in High-Performance Computing (HPC) environments.**
 
-ExaBench measures how well AI agents can complete HPC operational tasks using the right tools, roles, and permissions. Instead of testing on live clusters, it uses deterministic environment snapshots and mock HPC tools (SLURM, telemetry, RBAC, docs) so evaluation is reproducible and safe.
+ExaBench measures how well AI agents complete HPC operational tasks — job
+scheduling, telemetry interpretation, energy reasoning, policy enforcement —
+using the right tools, the right roles, and the right permissions. Instead of
+running on live clusters, every task is evaluated against a deterministic
+environment snapshot with mock HPC tools (SLURM, telemetry, RBAC, docs,
+facility), so results are reproducible, portable, and safe to publish.
+
+
 
 ## Requirements
 
-- **Python** 3.10+
-- Optional: `openai` or `anthropic` for LLM-based adapters
+- **Python** ≥ 3.12
+- Optional: `openai`, `anthropic`, or `mcp` Python clients to drive the
+  corresponding adapters.
 
-## Five Benchmark Principles
+## Five benchmark principles
 
-| Principle | Description |
-|---|---|
-| **Role-Aware** | The same question yields different answers and tool access depending on requester role |
-| **Tool-Using** | Agents are evaluated as systems using HPC-native tools (SLURM, telemetry, docs, RBAC) |
-| **Permission-Aware** | Success requires respecting RBAC boundaries and refusing out-of-scope requests |
-| **Trace-Based** | Evaluation considers the full execution trace, not just the final answer |
-| **Reproducible** | Evaluation runs against deterministic environment snapshots, not live infrastructure |
+| Principle | Meaning |
+|-----------|---------|
+| **Role-aware** | The same question yields different answers and tool access depending on the requester role. |
+| **Tool-using** | Agents are evaluated as systems that call HPC-native tools (SLURM, telemetry, docs, RBAC, facility). |
+| **Permission-aware** | Success requires respecting RBAC and refusing out-of-scope requests. Permission violations hard-fail the task. |
+| **Trace-based** | Evaluation considers the full execution trace — tool selection, arguments, sequence, and grounding — not just the final answer. |
+| **Reproducible** | Runs target deterministic snapshot bundles, never live infrastructure. |
 
-## Repository Structure
+## Repository layout
 
 ```
 ExaBench/
-├── src/exabench/           # Python package (pip install exabench)
-│   ├── schemas/            # Pydantic data models
-│   ├── loaders/            # Task and environment loaders
-│   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC)
-│   ├── adapters/           # Agent backend adapters
-│   ├── runners/            # Execution runner and trace writer
-│   ├── scorers/            # Scoring engine (outcome, governance, efficiency)
-│   └── cli/                # exabench run / validate commands
+├── src/exabench/           # Python package (installed by `pip install -e .`)
+│   ├── cli/                # `exabench` typer app — 9 sub-commands
+│   ├── schemas/            # Pydantic data models (task, trace, snapshot, …)
+│   ├── loaders/, tasks/    # Task discovery, loading, dataset splits, RAG context
+│   ├── environment/        # Snapshot validator, snapshot loader factory
+│   ├── tools/              # Mock SLURM, telemetry, docs, RBAC, facility tools
+│   ├── adapters/           # direct_qa, openai, anthropic, mcp
+│   ├── runners/            # BenchmarkRunner, TraceWriter, ExecutionContext
+│   ├── scorers/            # 12 scorers across 6 dimensions
+│   ├── reports/            # JSON, HTML, slice, CLEAR scorecard reports
+│   ├── exporters/          # Langfuse exporter (optional)
+│   ├── leaderboard/        # FastAPI leaderboard service
+│   ├── reproducibility/    # Artifact locking + paper-table targets
+│   └── taxonomy/           # 24-leaf TRAIL-adapted HPC error taxonomy
 │
-├── benchmark/              # Benchmark dataset (static source data)
-│   ├── tasks/specs/        # Task specification files (JSON)
-│   ├── environments/       # HPC state snapshot bundles
-│   ├── configs/            # Scoring profiles, tool registry
-│   └── qa/                 # ExaBench-QA dataset (query corpus)
+├── benchmark/              # Static benchmark data (versioned in git)
+│   ├── tasks/specs/        # 30 original JSON tasks (JOB / MON / ENERGY)
+│   ├── tasks/task_set_v1.json   # 36 HPC v1 tasks (Souza 2025 schema)
+│   ├── tasks/dataset_splits.py  # FROZEN 21 dev / 9 test split
+│   ├── tasks/lite_manifest_v1.json  # ExaBench-Lite curated subset
+│   ├── environments/env_01–env_20/  # 20 deterministic snapshot bundles
+│   ├── configs/            # scoring_profiles.yaml, hpc_tool_catalog.yaml,
+│   │                       # error_taxonomy.yaml
+│   └── qa/                 # ExaBench-QA (~95 HPC operational queries)
 │
-├── data/runs/              # Runtime artifacts (traces, results — gitignored)
-├── tests/                  # Unit and integration tests
-└── docs/                   # Documentation
-    └── framework/          # Framework design documents (01–07)
+├── data/                   # Generated artifacts
+│   ├── runs/               # Per-run traces & results (gitignored)
+│   ├── reports/            # Validity gate reports
+│   ├── robustness/         # pass^k results
+│   └── rubric_validation/  # Annotator profiles, response set, guides
+│
+├── prompts/judge/          # LLM-judge rubric + error taxonomy templates
+├── docs/                   # Documentation (see Documentation section)
+├── scripts/                # Bundle generation, validity gates, rubric tooling
+└── tests/                  # 51 test files (unit + integration)
 ```
 
-## Quick Start
+## Quick start
 
 ```bash
 pip install -e ".[dev]"
 
-# Validate all benchmark data
+# 1. Validate every task spec and environment bundle
 exabench validate benchmark
 
-# Run a task
+# 2. Run one task end-to-end with the zero-tool baseline
 exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa
+
+# 3. Run a real adapter and emit a CLEAR scorecard
+export OPENAI_API_KEY=sk-…
+exabench run all --adapter openai:gpt-4o --split dev
+exabench report json data/runs/<run_id>
+exabench clear run data/runs/<run_id>
 ```
 
-## Evaluation Dimensions
+## Implemented scope (v0.1)
 
-| Dimension | Weight (v0.1) | Description |
-|---|---|---|
-| Outcome Correctness | 30% | Task answered correctly |
-| Tool-Use Correctness | 20% | Right tools, arguments, sequences |
-| Grounding Quality | 15% | Answer supported by valid evidence |
-| Governance Compliance | 20% | RBAC, refusal, redaction correctness |
-| Robustness | 10% | Consistency across repeated runs |
-| Efficiency | 5% | Latency, token usage, step count |
+| Item | Count | Location |
+|------|-------|----------|
+| Tasks | 66 (30 original + 36 HPC v1) | `benchmark/tasks/specs/`, `benchmark/tasks/task_set_v1.json` |
+| Environments | 20 deterministic snapshot bundles | `benchmark/environments/env_01`…`env_20` |
+| Roles (scored) | 3 — `scientific_user`, `sysadmin`, `facility_admin` | `benchmark/configs/scoring_profiles.yaml` |
+| Roles (schema) | 2 more — `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
+| QCATs (scored) | 3 — `JOB`, `MON`, `ENERGY` | `benchmark/tasks/specs/` |
+| QCATs (schema) | 7 more — `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `docs/framework/07-taxonomy.md` |
+| Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
+| Mock tool families | 5 — slurm, docs, rbac, telemetry, facility | `src/exabench/tools/` |
+| Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
+| Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
+| Tests | 760 passing | `tests/` |
 
-## Implementation Status
+The 6 evaluation dimensions and their `default_hpc_v01` weights:
 
-ExaBench is under active development. The roadmap describes three phases:
+| Dimension | Weight | Scorer |
+|-----------|--------|--------|
+| Outcome correctness | 0.30 | `OutcomeScorer` (or `HybridScorer`) |
+| Tool-use correctness | 0.20 | `ToolUseScorer` (BFCL-decomposed) |
+| Governance / RBAC | 0.20 | `GovernanceScorer` |
+| Grounding | 0.15 | `GroundingScorer` |
+| Robustness (pass^k) | 0.10 | `RobustnessScorer` |
+| Efficiency | 0.05 | `EfficiencyScorer` |
 
-- **Phase 1** — Minimal executable benchmark: task/environment loaders, mock tools (SLURM, docs, RBAC), one adapter, runner, trace writer, and core scorers
-- **Phase 2** — Stronger benchmark: telemetry tool, grounding/tool-use scorers, HTML reports, role × category slicing
-- **Phase 3** — Advanced extensions: robustness variants, facility/energy tools, MCP compatibility, API service
-
-See [docs/roadmap.md](docs/roadmap.md) for details.
-
-## v0.1 Scope
-
-- **Tasks**: ~30 (3 categories: JOB, MON, ENERGY)
-- **Environments**: ~5 deterministic HPC snapshots
-- **Roles**: `scientific_user`, `sysadmin`, `facility_admin`
-- **Baselines**: `direct_qa`, `rag_baseline`, `tool_agent_baseline`
-
-## ExaBench-QA
-
-The `benchmark/qa/` directory contains the ExaBench-QA query dataset — ~95 HPC operational queries with role-specific variants, taxonomies, and schemas. Queries cover job scheduling, monitoring, energy, and policy topics across multiple roles. Data is stored in CSV, JSON, and Markdown formats in `benchmark/qa/data/queries/`.
+The CLEAR scorecard (`exabench clear run`) aggregates Efficacy, Assurance,
+Reliability, Cost, and Latency into a single comparable score per model.
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Framework Index](docs/framework/index.md) | Document map and quick links |
-| [01 Overview](docs/framework/01-overview.md) | Principles, v0.1 scope, single source of truth |
-| [03 Architecture](docs/framework/03-architecture.md) | Benchmark design: layers, entities, workflow |
-| [04 Implementation](docs/framework/04-implementation.md) | Software architecture, CLI, adapters |
-| [05 Environments](docs/framework/05-environments.md) | Environment snapshot format |
-| [06 Evaluation](docs/framework/06-evaluation.md) | Metrics, trace schema, scoring |
-| [07 Taxonomy](docs/framework/07-taxonomy.md) | Roles, categories, access control |
-| [Roadmap](docs/roadmap.md) | Implementation phases and milestones |
-| [Repo Assessment](docs/REPO_ASSESSMENT.md) | Full assessment, backlogs, improvement roadmap |
+| Document | Purpose |
+|----------|---------|
+| [docs/framework/index.md](docs/framework/index.md) | Documentation map |
+| [docs/framework/09-system-architecture.md](docs/framework/09-system-architecture.md) | **Authoritative system architecture** — components, data flow, scoring pipeline, CLEAR scorecard |
+| [docs/framework/01-overview.md](docs/framework/01-overview.md) | Principles and v0.1 scope |
+| [docs/framework/02-background.md](docs/framework/02-background.md) | Motivation and related work |
+| [docs/framework/03-architecture.md](docs/framework/03-architecture.md) | Benchmark design (layers, entities, workflow) |
+| [docs/framework/04-implementation.md](docs/framework/04-implementation.md) | Developer guide to the codebase |
+| [docs/framework/05-environments.md](docs/framework/05-environments.md) | Snapshot format |
+| [docs/framework/06-evaluation.md](docs/framework/06-evaluation.md) | Evaluation protocol, trace and result schemas |
+| [docs/framework/07-taxonomy.md](docs/framework/07-taxonomy.md) | Roles, QCATs, knowledge sources, RBAC |
+| [docs/framework/scoring-dimensions.md](docs/framework/scoring-dimensions.md) | Per-scorer reference |
+| [docs/COMMANDS.md](docs/reference/commands.md) | CLI command reference |
+| [docs/environments-overview.md](docs/reference/environments-overview.md) | Inventory of all 20 environment bundles |
+| [docs/adapters-and-tools.md](docs/guides/adapters-and-tools.md) | Plain-English adapter and tool guide |
+| [docs/architecture-flowchart.md](docs/reference/architecture-flowchart.md) | System diagrams |
+| [docs/langfuse-integration.md](docs/guides/langfuse-integration.md) | Observability backend |
+| [docs/paper_reproduction_guide.md](docs/guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
+| [docs/roadmap.md](.claude/plans/2026-05-02-roadmap.md) | Open backlog and next milestones |
+| [CHANGELOG.md](CHANGELOG.md) | Release notes |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guide |
+| [SECURITY.md](SECURITY.md) | Vulnerability reporting and threat model |
+
+## ExaBench-QA
+
+The `benchmark/qa/` directory embeds the ExaBench-QA dataset — ~95 HPC
+operational queries with role-specific variants and structured taxonomies. It
+is consumed by the `direct_qa` baseline and seeds task design for the v1 HPC
+task set.
 
 ## License
 

@@ -1,8 +1,11 @@
 # 09 — System Architecture (Current State)
 
-> **Authoritative reference.** This document describes the system as it is implemented, not as originally planned. Earlier docs (01–07) contain outdated scope declarations (e.g., "~5 snapshots", `rag_baseline`, `tool_agent_baseline`). When in conflict, this document takes precedence.
+> **Authoritative reference.** This document describes the system as
+> implemented. Pages 01–07 describe the same system at higher levels of
+> abstraction (principles, design, developer guide, taxonomy, evaluation
+> protocol) and are kept in sync with this page.
 >
-> Last updated: 2026-05-01
+> Last updated: 2026-05-02
 
 ---
 
@@ -393,21 +396,20 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 10. Stale Documentation
+## 10. Document hierarchy
 
-The following earlier docs contain outdated information. When in conflict, trust the code and this document:
+This document is the authoritative current-state reference. The framework
+documentation cleanup of 2026-05-02 rewrote pages 01–07 (and
+`scoring-dimensions.md`) so they all describe the system as implemented; if
+any of those pages diverges from this one in the future, the divergence is
+a bug to be fixed in the older page, not in this one.
 
-| Doc | Stale claim | Actual |
-|-----|------------|--------|
-| 01-overview.md | "~30 tasks, ~5 snapshots" | 66 tasks, 20 snapshots |
-| 01-overview.md | baselines: `rag_baseline`, `tool_agent_baseline` | adapters: `direct_qa`, `openai`, `anthropic`, `mcp` |
-| 03-architecture.md | 3 roles, 3 QCATs in v0.1 scope | Same, but 2 more roles in schema |
-| 04-implementation.md | OutcomeScorer only | 12 scorers across 6 dimensions |
-| 06-evaluation.md | Score-based error taxonomy (§11a) | Separate file: `reports/error_taxonomy.py` |
-| 06-evaluation.md | No mention of CheckpointScorer | Fully implemented in `checkpoint_scorer.py` |
-| 06-evaluation.md | No mention of WorfEvalScorer | Implemented but not yet wired |
-| index.md | Links to adapters-and-tools.md, chat-outcomes.md, etc. | Some of these files are stale or superseded |
-| README.md | "v0.1 Scope: ~30 tasks, ~5 envs, 3 baselines" | 66 tasks, 20 envs, 4 adapters |
+Six early-version documents were removed in the same cleanup
+(`docs-integration-plan.md`, `benchmark-status-and-design.md`,
+`chat-outcomes.md`, `architecture-clarification.md`, `docs/langfuse.md`,
+`docs/taxonomy/README.md`); their content was either folded into the
+authoritative pages or moved to
+`.claude/plans/2026-05-02-future-work.md`.
 
 ---
 
@@ -433,7 +435,7 @@ make run-all-openai MODEL=meta-llama/Llama-3.1-8B-Instruct
 
 ## 12. CLI Command Reference (Summary)
 
-Full reference: `docs/COMMANDS.md`
+Full reference: `docs/reference/commands.md`
 
 | Command | Description |
 |---------|-------------|

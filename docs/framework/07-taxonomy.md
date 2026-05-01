@@ -1,66 +1,77 @@
 # 07 — Taxonomy
 
-**Owner:** Mohsen
+This page consolidates the four taxonomic dimensions used to organise
+ExaBench tasks: **roles**, **query categories (QCAT)**, **knowledge source
+scopes**, and **access control / RBAC tiers**. It also documents the
+canonical task metadata schema.
 
-This page consolidates the taxonomy dimensions used to organize ExaBench tasks: roles, query categories (QCAT), access control, and query metadata schema.
-
----
-
-## 1. Roles & Personas
-
-Who is asking in an ExaBench task. Schema values: `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer`.
-
-| Role | Schema Value | Primary Mission | High-Priority QCATs | Example Query |
-|------|-------------|-----------------|---------------------|---------------|
-| **Normal User** | `scientific_user` | Run workloads, manage data | JOB, DATA, PERF, MON, DOCS | "Why did my job fail and how can I fix it?" |
-| **Researcher** | `researcher` | Analyze telemetry, performance, efficiency | AIOPS, PERF, ENERGY, DATA, MON | "Detect power anomalies across 3 years and rank top outlier jobs." |
-| **System Administrator** | `sysadmin` | Cluster reliability, security, scheduling | JOB, MON, DATA, SEC, AIOPS | "Drain node n101 and requeue pending jobs." |
-| **Facility Admin** | `facility_admin` | Power and cooling operations | MON, ENERGY, FAC, AIOPS, DOCS | "List all active critical alarms and show affected racks." |
-| **System Designer/Architect** | `system_designer` | Capacity planning, topology, benchmarking | ARCH, PERF, ENERGY, MON, DOCS | "Estimate LINPACK scaling for 512 nodes and identify bottlenecks." |
-
-See `docs/taxonomy/roles/` for per-role query categories, example queries, and priority tags.
+The authoritative Pydantic types live in `src/exabench/schemas/task.py`.
 
 ---
 
-## 2. Query Categories (QCAT)
+## 1. Roles & personas
 
-| Code | Name | Description |
-|------|------|--------------|
-| **JOB** | Job & Workflow Management | Submitting, monitoring, debugging jobs; queues; batch scripts |
-| **MON** | Monitoring & Observability | Metrics, logs, alerts, dashboards, telemetry correlation |
-| **ENERGY** | Power, Energy & Sustainability | Power monitoring, PUE, energy-aware scheduling |
-| **PERF** | Performance & Optimization | Profiling, bottlenecks, scaling studies |
-| **DATA** | Data & Storage Management | Filesystems, quotas, I/O, data transfer |
-| **SEC** | Security & Policy | IAM, access control, compliance |
-| **FAC** | Facility & Environmental | Cooling, BMS/DCIM, rack health, alarms |
-| **ARCH** | Architecture & Capacity | Topology design, performance modeling |
-| **AIOPS** | AI & Intelligent Operations | Anomaly detection, predictive maintenance |
-| **DOCS** | Documentation & Support | FAQs, tutorials, troubleshooting |
+A task's `role` field says **who is asking**. ExaBench defines five role
+values; v0.1 scores three.
 
-v0.1 focuses on: **JOB**, **MON**, **ENERGY**. All 10 QCATs are active in the full taxonomy; role files under `docs/taxonomy/roles/` document per-role sub-categories and priorities.
+| Role | Schema value | Scored in v0.1? | Primary mission | Priority QCATs |
+|------|-------------|-----------------|-----------------|----------------|
+| **Normal user / scientific user** | `scientific_user` | ✅ | Run workloads, manage own data | JOB, MON, ENERGY (scored); DATA, PERF, DOCS (taxonomy) |
+| **System administrator** | `sysadmin` | ✅ | Cluster reliability, scheduling, security | JOB, MON, ENERGY (scored); DATA, SEC, AIOPS (taxonomy) |
+| **Facility admin** | `facility_admin` | ✅ | Power and cooling operations | MON, ENERGY (scored); FAC, AIOPS, DOCS (taxonomy) |
+| Researcher | `researcher` | schema only | Telemetry analysis, performance, efficiency | AIOPS, PERF, ENERGY (taxonomy) |
+| System designer / architect | `system_designer` | schema only | Capacity planning, topology, benchmarking | ARCH, PERF, ENERGY (taxonomy) |
+
+The two unscored roles are present in `task.py` and in
+`benchmark/configs/hpc_tool_catalog.yaml` so that tasks can be authored for
+them, but no task currently uses them. Promotion to scored status is tracked
+in `.claude/plans/2026-05-02-future-work.md` §B8.
 
 ---
 
-## 3. Knowledge Source Scope
+## 2. Query categories (QCAT)
 
-Every ExaBench task declares which knowledge source groups may be used as evidence. This constrains what the agent may retrieve and which environment documents are in scope.
+The `qcat` field labels the functional domain of the task. Ten QCATs are
+defined in the taxonomy; v0.1 scores three.
 
-Source codes map to the 10 groups defined in `docs/taxonomy/05_knowledge_sources.md`.
+| Code | Name | Scored in v0.1? | Description |
+|------|------|-----------------|-------------|
+| **JOB** | Job & Workflow Management | ✅ | Submitting, monitoring, debugging jobs; queues; batch scripts |
+| **MON** | Monitoring & Observability | ✅ | Metrics, logs, alerts, dashboards, telemetry correlation |
+| **ENERGY** | Power, Energy & Sustainability | ✅ | Power monitoring, PUE, energy-aware scheduling |
+| PERF | Performance & Optimisation | taxonomy only | Profiling, bottlenecks, scaling studies |
+| DATA | Data & Storage Management | taxonomy only | Filesystems, quotas, I/O, transfers |
+| SEC | Security & Policy | taxonomy only | IAM, access control, compliance |
+| FAC | Facility & Environmental | taxonomy only | Cooling, BMS/DCIM, rack health, alarms |
+| ARCH | Architecture & Capacity | taxonomy only | Topology design, performance modelling |
+| AIOPS | AI & Intelligent Operations | taxonomy only | Anomaly detection, predictive maintenance |
+| DOCS | Documentation & Support | taxonomy only | FAQs, tutorials, troubleshooting |
 
-| Code | Group | Description | Primary Roles |
+The seven taxonomy-only QCATs are accepted by the schema and the validator,
+but no scored tasks exist for them. Expansion to PERF, AIOPS, and SEC is part
+of the v0.2 evaluation matrix (`.claude/plans/2026-05-02-future-work.md` §B2).
+
+---
+
+## 3. Knowledge source scope
+
+`knowledge_source_scope: list[KnowledgeSourceCode]` constrains which document
+groups the environment exposes and which the agent may cite as evidence.
+
+| Code | Group | Description | Primary roles |
 |------|-------|-------------|---------------|
-| `ARCH_DOC` | System Architecture & Hardware Docs | Cluster topology, hardware specs, rack layouts, BoM, firmware | `system_designer`, `sysadmin` |
-| `OPS_DOC` | Sysadmin & Operations Manuals | Queue config, LDAP/RBAC policy, backup procedures, change management | `sysadmin` |
-| `FAC_DOC` | Facility & Infrastructure Docs | Cooling diagrams, BMS/DCIM config, P&ID, power distribution, setpoints | `facility_admin`, `system_designer` |
-| `USR_DOC` | User Documentation & Help Resources | Onboarding guides, SLURM/PBS references, batch script templates, FAQs | `scientific_user`, `researcher` |
-| `DATA_GOV` | Data Management & Governance | Backup/archival policy, data retention, GDPR, data transfer rules | `sysadmin`, `researcher` |
-| `POLICY` | Organizational & Policy Documents | AUP, SLA, security policy, incident response plan, energy management | `sysadmin`, `facility_admin` |
-| `ADMIN_DATA` | Administrative & Org Data | Project allocations, billing rules, vendor contracts, maintenance calendar | `system_designer`, `sysadmin` |
-| `WIKI` | Knowledge Base / Wiki / Portal | How-to guides, troubleshooting pages, internal wiki, helpdesk KB | all roles |
-| `REF_STD` | Reference Standards & Config Tables | ASHRAE setpoints, SLURM partition definitions, compliance standards | `facility_admin`, `system_designer` |
-| `ENG_DOC` | Engineering & Upgrade Documents | RFPs, System Acceptance Tests, expansion plans, integration diagrams | `system_designer` |
+| `ARCH_DOC` | System architecture & hardware | Cluster topology, hardware specs, rack layouts, BoM, firmware | `system_designer`, `sysadmin` |
+| `OPS_DOC` | Sysadmin & operations manuals | Queue config, LDAP/RBAC policy, backup procedures, change mgmt | `sysadmin` |
+| `FAC_DOC` | Facility & infrastructure | Cooling diagrams, BMS/DCIM config, P&ID, power distribution, setpoints | `facility_admin`, `system_designer` |
+| `USR_DOC` | User documentation & help | Onboarding guides, SLURM/PBS reference, batch templates, FAQs | `scientific_user`, `researcher` |
+| `DATA_GOV` | Data management & governance | Backup/archival, retention, GDPR, data transfer rules | `sysadmin`, `researcher` |
+| `POLICY` | Organisational & policy | AUP, SLA, security policy, incident response, energy mgmt | `sysadmin`, `facility_admin` |
+| `ADMIN_DATA` | Administrative & org data | Project allocations, billing, vendor contracts, maintenance calendar | `system_designer`, `sysadmin` |
+| `WIKI` | Knowledge base / wiki / portal | How-to, troubleshooting pages, internal wiki, helpdesk KB | all |
+| `REF_STD` | Reference standards & config tables | ASHRAE setpoints, partition definitions, compliance standards | `facility_admin`, `system_designer` |
+| `ENG_DOC` | Engineering & upgrade documents | RFPs, system acceptance tests, expansion plans, integration diagrams | `system_designer` |
 
-### Usage in task specs
+Example task usage:
 
 ```json
 {
@@ -68,66 +79,93 @@ Source codes map to the 10 groups defined in `docs/taxonomy/05_knowledge_sources
 }
 ```
 
-This field controls which document groups the environment exposes and which the agent is permitted to cite as evidence. See `src/exabench/schemas/task.py` for the canonical type definition.
+The canonical type definition is in `src/exabench/schemas/task.py`.
 
 ---
 
-## 4. Access Control & RBAC
+## 4. Access control & RBAC
 
-Data exposure and permission tiers for ExaBench tasks.
+ExaBench enforces two-layered access control: **access tiers** govern data
+exposure, **role permissions** govern tool calls.
 
-### Access Levels
+### 4.1 Access levels (data exposure)
 
-| Level | Users | Scope |
-|-------|-------|-------|
-| **User-Level** | Normal users, Researchers | Own jobs, public docs, safe how-to |
-| **Elevated/Privileged** | Sysadmins, Project managers | Software install, config, user management |
-| **Restricted Read-Only** | Researchers | Aggregated, anonymized telemetry |
-| **Sensitive/Admin-Only** | Sysadmins, Security | Auth logs, security config, network |
-| **Highly Sensitive** | Architects, Facility operators | Procurement, physical access design |
+| Level | Holders | Scope |
+|-------|---------|-------|
+| **User-level** | scientific_user, researcher | Own jobs, public docs, safe how-to |
+| **Elevated / privileged** | sysadmin, project managers | Software install, config, user management |
+| **Restricted read-only** | researcher | Aggregated, anonymised telemetry |
+| **Sensitive / admin-only** | sysadmin, security | Auth logs, security config, network |
+| **Highly sensitive** | architect, facility_admin | Procurement, physical access design |
 
-### Access Tier Definitions
+### 4.2 Access tiers (per-task)
 
 | Tier | Description | Controls |
 |------|-------------|----------|
-| Tier-1: Public/User-Level | Safe docs, non-sensitive RAG | No approval |
-| Tier-2: Privileged | Real telemetry | Role-based validation |
-| Tier-3: Restricted Read-Only | Energy dashboards, KPIs | Read-only |
-| Tier-4: Highly Sensitive | Procurement, cybersecurity | Approval + isolation |
+| Tier-1 — Public / user-level | Safe docs, non-sensitive RAG | No approval |
+| Tier-2 — Privileged | Real telemetry | Role-based validation |
+| Tier-3 — Restricted read-only | Energy dashboards, KPIs | Read-only |
+| Tier-4 — Highly sensitive | Procurement, cyber-security | Approval + isolation |
 
-### Policy Notes
+### 4.3 RBAC policy v1.1
 
-- **Least-privilege:** Each role gets minimum required access.
-- **Data anonymization:** Facility/energy data for researchers must be aggregated and anonymized.
-- **Audit logging:** Privileged actions are logged and reviewable.
+Per-environment, per-role permissions live in
+`benchmark/environments/env_NN/rbac_policy.yaml`. Each entry declares:
+
+- `allowed_tools` — list of tool methods this role may call.
+- `partition_access` — which SLURM partitions are visible / submittable.
+- `access_tiers` — Tier-1 to Tier-4 as above.
+
+The policies follow least-privilege: each role gets the minimum required
+access. Privileged actions are logged in the trace (whether or not the
+agent uses them) and contribute to the governance dimension.
+
+The catalog of every tool method, its `role_visibility`, and its
+`dangerous_args` conditions is in `benchmark/configs/hpc_tool_catalog.yaml`
+(16 methods across the 5 tool families). Forbidden tool calls and
+permission-denied propagation are absorbing hard-fails — see
+[06 — Evaluation §6](06-evaluation.md).
 
 ---
 
-## 5. Task Metadata Schema
+## 5. Task metadata schema
 
-Canonical fields for benchmark task records. The authoritative Pydantic definition is `src/exabench/schemas/task.py`.
+Authoritative Pydantic definition: `src/exabench/schemas/task.py`. The
+following fields are required on every task spec; the validator
+(`exabench validate benchmark`) enforces them.
 
-| Key | Type | Purpose | Example |
-|-----|------|---------|---------|
+| Field | Type | Purpose | Example |
+|-------|------|---------|---------|
 | `task_id` | `str` | Unique identifier | `"JOB-USR-003"` |
 | `role` | `Role` | Persona context | `"scientific_user"` |
 | `qcat` | `QCat` | Functional domain | `"JOB"` |
 | `query_text` | `str` | User-facing prompt | `"Why did my job fail?"` |
-| `difficulty` | `Difficulty` | Complexity tier | `"medium"` |
-| `knowledge_source_scope` | `list[KnowledgeSourceCode]` | Permitted evidence groups | `["USR_DOC", "WIKI"]` |
+| `difficulty` | `Difficulty` | `"easy"` / `"medium"` / `"hard"` / `"adversarial"` | `"medium"` |
+| `difficulty_tier` | `int` | Numeric tier (1, 2, 3) | `2` |
+| `knowledge_source_scope` | `list[KnowledgeSourceCode]` | Allowed evidence groups | `["USR_DOC", "WIKI"]` |
 | `allowed_tools` | `list[str]` | Tool whitelist | `["slurm", "docs"]` |
 | `gold_evidence_refs` | `list[str]` | Expected evidence anchors | `["job_891234_oom"]` |
 | `expected_answer_type` | `AnswerType` | Output form | `"diagnosis"` |
 | `environment_id` | `str` | Snapshot linkage | `"env_01"` |
-| `hard_fail_conditions` | `list[str]` | Automatic-fail triggers | `["fabricated_evidence"]` |
-| `eval_criteria` | `EvalCriteria` | Scoring config | `{evaluation_mode: "semantic_match"}` |
+| `hard_fail_conditions` | `list[str]` | Absorbing-failure triggers | `["fabricated_evidence"]` |
+| `eval_criteria` | `EvalCriteria` | Scoring config | `{"evaluation_mode": "semantic_match"}` |
+| `aggregate_weight_profile` | `str` | Profile name | `"default_hpc_v01"` |
+| `scoring_readiness` | `Literal["draft","ready","locked"]` | Validation state | `"ready"` |
+| `task_creation_date` | `date` | Authoring date (contamination tracking) | `"2026-02-10"` |
+| `contamination_risk` | `Literal["clean","elevated","unknown"]` | Pre-training-leakage risk | `"clean"` |
+
+`HPCTaskSpec` (used for the 36 v1 tasks in `task_set_v1.json`) extends
+`TaskSpec` with `HPCRoleVariant` blocks for multi-role variants and
+`HPCGroundTruth` for component-wise gold answers.
 
 ---
 
-## 6. Related Documents
+## 6. Authoritative schemas & related documents
 
-- Role detail pages: `docs/taxonomy/roles/` (per-role query categories, priorities, example queries)
-- Knowledge source taxonomy: `docs/taxonomy/05_knowledge_sources.md`
-- Task schema: `src/exabench/schemas/task.py`
-- Evaluation protocol: [06-evaluation](06-evaluation.md)
-- Architecture: [03-architecture](03-architecture.md) § 4–5
+- Task & role schema: `src/exabench/schemas/task.py`
+- Trace & result schema: `src/exabench/schemas/trace.py`
+- Tool catalog: `benchmark/configs/hpc_tool_catalog.yaml`
+- RBAC policies: `benchmark/environments/env_NN/rbac_policy.yaml`
+- Evaluation protocol: [06 — Evaluation](06-evaluation.md)
+- Architecture: [03 — Architecture §4](03-architecture.md)
+- Implemented system: [09 — System Architecture](09-system-architecture.md)

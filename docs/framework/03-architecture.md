@@ -1,514 +1,223 @@
-# 03 — Architecture & Benchmark Specification
+# 03 — Benchmark Architecture (Design)
 
-Owner: Mohsen
+This page defines the **conceptual architecture** of ExaBench: the design
+principles, the layers a benchmark item traverses, the entities that compose
+the benchmark data model, and the execution workflow the system follows.
 
-## Purpose
+It answers the question:
 
-This page defines how the **ExaBench benchmark** is structured: its design principles, layers, entities, execution workflow, and relationships between tasks, environments, traces, and results.
+> **How is the ExaBench benchmark structured as a *benchmark*, independent of
+> any particular software implementation?**
 
-ExaBench is a framework for evaluating AI agents that operate in HPC environments (e.g., ODA, ExaSage). This page specifies the **benchmark design** — what is being evaluated, in what world, and how — not the software implementation (see [04 — Implementation](04-implementation.md)).
+For the **current implementation** of these concepts — the file layout under
+`src/exabench/`, the executable scoring pipeline, and the actual dataset scope
+— see [09 — System Architecture](09-system-architecture.md).
 
-It specifies:
-
-- the benchmark design principles
-- the benchmark layers (task, interaction, execution)
-- the core entities (Task, Environment, Trace, Result)
-- the unit of evaluation
-- the execution architecture
-- the minimum viable v0.1 scope
-
-This page answers:
-
-> **How is the ExaBench benchmark structured?**
-> 
-
-Detailed evaluation logic, scoring dimensions, trace schema, and pass/fail rules are defined in [06 — Evaluation](06-evaluation.md).
-
-## v0.1 Scope Reference
-
-This page follows the canonical v0.1 scope defined in [01 — Overview](01-overview.md).
-
-Unless explicitly marked as future work, ExaBench v0.1 is fixed as: Roles `scientific_user`, `sysadmin`, `facility_admin`; Categories `JOB`, `MON`, `ENERGY`; ~30 tasks; ~5 environment snapshots; baselines `direct_qa`, `rag_baseline`, `tool_agent_baseline`.
-
-## Canonical Principle Reference
-
-Principles: role-aware, tool-using, permission-aware, trace-based, reproducible via environment snapshots. See [01 — Overview](01-overview.md).
+For the canonical evaluation protocol, trace schema, and result schema, see
+[06 — Evaluation](06-evaluation.md).
 
 ---
 
-## 1. Benchmark Design Principles
+## 1. Design principles
 
-ExaBench is designed around six core principles.
+ExaBench's architecture is shaped by six principles. They are deliberately
+stronger than those of generic agent benchmarks because HPC operational
+contexts demand it.
 
-### 1.1 Reproducibility
-
-Benchmark runs must be repeatable across agents, models, and evaluation settings. ExaBench therefore relies on deterministic environment snapshots and mock tool backends rather than live production infrastructure.
-
-### 1.2 Realism
-
-Tasks should reflect realistic HPC user and operational scenarios, including job monitoring, telemetry inspection, policy lookup, incident diagnosis, and energy-aware reasoning.
-
-### 1.3 Role-awareness
-
-HPC environments are inherently multi-role. The same scenario may require different evidence, actions, and response boundaries depending on whether the requester is a user, researcher, sysadmin, facility operator, or HPC architect.
-
-### 1.4 Traceability
-
-ExaBench evaluates not only final outputs but also the observable interaction process, including tool calls, retrieved evidence, and execution steps.
-
-### 1.5 Governance-awareness
-
-Agents must be evaluated in the presence of permissions, policy constraints, and safe-response expectations. Correct refusal, redaction, and access-boundary compliance are part of benchmark design.
-
-### 1.6 Extensibility
-
-The framework should support future extensions such as richer tools, live backends, multi-agent execution (benchmarking systems where the agent under test is a multi-agent orchestration; ExaBench still connects to a single entry point), human-in-the-loop workflows, and broader HPC operational coverage.
+| # | Principle | What it requires |
+|---|-----------|------------------|
+| 1 | **Reproducibility** | Every run targets a deterministic snapshot bundle and mock tool backend. No live cluster, no time-of-day drift. |
+| 2 | **Realism** | Tasks reflect actual HPC user and operator scenarios — job failures, telemetry anomalies, energy reasoning, policy lookup, incident triage. |
+| 3 | **Role-awareness** | The same scenario can require different evidence, actions, or refusals depending on the requester role. RBAC is part of the *task*, not a deployment concern. |
+| 4 | **Traceability** | Evaluation considers the full observable interaction process — tool calls, observations, reasoning steps — not only the final answer. |
+| 5 | **Governance-awareness** | Permission compliance, refusal correctness, and access-boundary enforcement are first-class scoring dimensions. |
+| 6 | **Extensibility** | The architecture supports future additions (live agent connectors, multi-turn episodes, multi-agent orchestration) without breaking existing artifacts. |
 
 ---
 
-## 2. Three-layer Benchmark Model
+## 2. Three benchmark layers
 
-ExaBench is structured as a three-layer benchmark.
+Every ExaBench item lives in three layers simultaneously.
 
-### Layer A — Task Benchmark
+### Layer A — Task
 
-This layer defines the benchmark item space.
+Defines the benchmark *item space*: the role-aware question, the success
+criteria, and the expected output form.
 
-It includes:
+> What is being asked?
 
-- role-aware task/query corpus
-- task categories and difficulty
-- expected output forms
-- success conditions
-- evidence expectations
+### Layer B — Interaction
 
-This layer answers:
+Defines how an agent is allowed to act: the tool surface exposed for the role,
+the tool-access constraints, and the expected evidence pathway.
 
-> **What is being asked?**
-> 
+> How is the agent allowed to act?
 
-### Layer B — Interaction Benchmark
+### Layer C — Execution
 
-This layer defines how the agent is expected to interact with the environment.
+Defines the deterministic world the task is executed in: the snapshot bundle,
+the replayable telemetry, the mock tool backends, the run manifest.
 
-It includes:
+> In what world is the task executed?
 
-- available tools
-- tool-access constraints
-- role-aware access boundaries
-- expected interaction patterns
-- evidence pathways
-
-This layer answers:
-
-> **How is the agent allowed to act?**
-> 
-
-### Layer C — Execution Benchmark
-
-This layer defines the reproducible world in which the task is executed.
-
-It includes:
-
-- deterministic HPC environment snapshots
-- replayable telemetry and incident state
-- mock tool backends
-- execution logging
-- benchmark artifacts
-
-This layer answers:
-
-> **In what world is the task executed?**
-> 
-
-Together, these three layers allow ExaBench to evaluate not only answer quality but also **interactive operational competence in realistic HPC settings**.
+The combination of all three layers makes ExaBench an **interactive
+operational competence** benchmark, not a question-answering benchmark.
 
 ---
 
-## 3. Unit of Evaluation
+## 3. Unit of evaluation
 
-The basic unit of evaluation in ExaBench is:
+The smallest evaluable instance in ExaBench is:
 
 > **Task + Role + Environment Snapshot + Agent Run + Result**
-> 
 
-This is important because a benchmark instance is not merely a question-answer pair. It is a fully specified evaluation unit in which correct behavior depends on:
-
-- the **task**
-- the **requester role**
-- the **environment snapshot**
-- the **agent’s interaction behavior during the run**
-
-A result is produced from the run and later interpreted by the evaluation protocol defined in [06-evaluation](06-evaluation.md).
-
-### 3.1 Why this matters
-
-The same task text may yield different valid behavior depending on:
-
-- permission level
-- available evidence
-- environment state
-- tool availability
-- operational constraints
-
-ExaBench therefore treats the benchmark item as a structured execution instance, not as a standalone prompt.
-
-## 4. Taxonomic Dimensions of a Benchmark Item
-
-Each ExaBench benchmark item is associated with a structured taxonomy. At minimum, a benchmark item should include:
-
-- **Role / Persona** — who is asking
-- **QCAT Category** — the primary HPC query category
-- **Capability Group** — the main competence being exercised
-- **Access / Policy Profile** — what data or actions are allowed
-- **Knowledge Source Scope** — which knowledge source groups (from `docs/taxonomy/05_knowledge_sources.md`) may be used as evidence
-- **Difficulty Level** — expected complexity of execution or reasoning
-- **Expected Output Type** — narrative answer, diagnosis, recommendation, table, structured JSON, and so on
-
-This taxonomy makes ExaBench more than a task list. It supports controlled slicing by role, category, capability, governance profile, and task type. See [07-taxonomy](07-taxonomy.md).
+The same task text can produce different valid behaviours depending on role,
+permission profile, environment state, and tool availability. ExaBench
+therefore treats every benchmark item as a structured execution instance, not
+a standalone prompt.
 
 ---
 
-## 5. Core Benchmark Data Model
+## 4. Core data model
 
-ExaBench is built around four primary entities: **Task**, **Environment**, **Trace**, and **Result**.
+ExaBench is organised around four primary entities. Their authoritative
+schemas live in `src/exabench/schemas/`.
 
-### 5.1 Task
+### 4.1 Task — `schemas/task.py`
 
-A `Task` represents one benchmark item.
+A task captures *what is being asked* together with the constraints under
+which it must be answered.
 
-A task defines:
+Required fields include `task_id`, `role`, `qcat`, `query_text`, `difficulty`,
+`environment_id`, `allowed_tools`, `eval_criteria`, `hard_fail_conditions`,
+`knowledge_source_scope`, and `aggregate_weight_profile`.
 
-- what is being asked
--under which role and access conditions
--which environment is required
--what successful task completion means
--which evidence or outputs are expected
+Two task spec types are used in practice:
 
-Typical task fields include:
+| Type | Used for | File |
+|------|----------|------|
+| `TaskSpec` | 30 original JOB/MON/ENERGY tasks | `benchmark/tasks/specs/*.json` |
+| `HPCTaskSpec` | 36 HPC v1 tasks (multi-role variants) | `benchmark/tasks/task_set_v1.json` |
 
-- `task_id`
--`role`
--`qcat`
--`category`
--`difficulty`
--`query_text`
--`required_capabilities`
--`allowed_tools`
--`knowledge_source_scope` — list of `KnowledgeSourceCode` values from the knowledge source taxonomy
--`access_tier`
--`expected_outputs`
--`gold_evidence_refs`
--`permission_profile`
--`environment_id`
--`success_criteria`
--`failure_modes`
--`answer_schema`
+Both flow through the same loader and scorer pipeline.
 
-Task-level evaluation fields are defined in [07-taxonomy](07-taxonomy.md) and linked to [06-evaluation](06-evaluation.md).
+### 4.2 Environment — `schemas/snapshot.py`
 
-### 5.2 Environment
+A deterministic HPC world-state composed of scheduler state (`SlurmState`),
+telemetry (`telemetry/*.parquet`, `*.csv`), policy (`rbac_policy.yaml`),
+documentation (`docs/*.md`), and incident metadata (`incident_metadata.json`).
+Every task references exactly one `environment_id`. See
+[05 — Environments](05-environments.md) and
+[environments-overview.md](../reference/environments-overview.md) for the format and the
+inventory of all 20 bundles.
 
-An `Environment` represents a deterministic HPC world-state used for execution.
+### 4.3 Trace — `schemas/trace.py`
 
-An environment may include:
+The full record of one agent run. Includes the ordered list of `TraceStep`s
+(messages, `ToolCall`s, `Observation`s), the final answer, hard-fail flag,
+model name, prompt and completion token counts, and runtime metadata. The
+trace schema is normative and unchanged across adapters.
 
-- scheduler state
--telemetry state
--topology state
--policy state
--incident context
--documentation scope
+### 4.4 Result — `schemas/trace.py` (`BenchmarkResult`)
 
-Each task references exactly one valid `environment_id`, ensuring that execution is reproducible and does not depend on live infrastructure.
-
-### 5.3 Trace
-
-A `Trace` records the observable behavior of an agent during one run.
-
-At a structural level, the trace captures:
-
-- interaction steps
--tool invocations
--observations returned from tools
--final output
--runtime metadata
-
-The formal trace schema is specified in [06-evaluation](06-evaluation.md).
-
-### 5.4 Result
-
-A `Result` stores the benchmark outcome of one evaluated run.
-
-At a structural level, it links:
-
-- the task
--the environment
--the run
--the trace
--the evaluation output
-
-The formal result schema and score interpretation are defined in [06-evaluation](06-evaluation.md).
-
+The scored artifact for one trace. Includes per-dimension scores, the
+aggregate score, the violation vector, the CuP-gated efficacy, the cost and
+latency estimate, and pointers to the trace and run manifest.
 
 ---
 
-## 6. Architectural Execution Workflow
+## 5. Architectural execution workflow
 
-A standard ExaBench run follows this architecture-level workflow:
+A standard ExaBench run, abstracted from the implementation, follows seven
+steps. The implemented version of this workflow with method names is in
+[09 — System Architecture §4](09-system-architecture.md).
 
-1. **Load task**
-    - Read the benchmark item and its role, environment, and execution constraints.
-2. **Load environment snapshot**
-    - Initialize the deterministic HPC state referenced by the task.
-3. **Expose allowed tools**
-    - Provide only the tools and permissions allowed for the task and role.
-4. **Execute agent run**
-    - Submit the task input and allow the agent to interact with the environment.
-5. **Capture execution trace**
-    - Record tool calls, observations, outputs, and runtime metadata.
-6. **Produce result artifact**
-    - Store the run output for later evaluation under the protocol defined in [06-evaluation](06-evaluation.md).
+1. **Load task** — read the benchmark item with all role and execution
+   constraints.
+2. **Load environment snapshot** — initialise the deterministic world state
+   referenced by `environment_id` and validate the bundle.
+3. **Build the role-filtered tool surface** — only the tools and methods
+   permitted for the task's role are exposed.
+4. **Execute the agent run** — submit the task to the adapter, allow it to
+   call tools, and capture the resulting trace.
+5. **Score the run** — apply the scorer set defined by the task and the
+   active scoring profile, compute the aggregate score, and detect hard-fail
+   conditions.
+6. **Persist the result** — write the trace, the result, and the run
+   manifest under `data/runs/<run_id>/`.
+7. **Optional: export to observability** — if a `BaseExporter` (e.g.
+   `LangfuseExporter`) is configured, emit trace + scores.
 
-This workflow ensures a clean separation between:
-
-- benchmark specification
-- runtime execution
-- evaluation logic
-
-
-
----
-
-## 7. Tool Environment Model
-
-### 7.1 v0.1 Tool Philosophy
-
-ExaBench v0.1 should not depend on live SLURM, HPC monitoring tools (Grafana, InfluxDB, etc.), facility energy monitoring, or production documentation systems.
-
-Instead, v0.1 should use **deterministic mock tools** backed by local files, SQLite, or structured snapshot bundles. This makes the benchmark reproducible, portable, easier to debug, and easier to publish.
-
-### 7.2 Initial Tool Families
-
-The initial tool layer may include mock interfaces for:
-
-- scheduler/job inspection
-- telemetry querying
-- document retrieval
-- RBAC or policy checks
-- facility-state inspection
-
-Illustrative examples:
-
-- `slurm.query_jobs()`
--`slurm.job_details(job_id)`
-- `telemetry.query(metric, labels, time_range)`
--`docs.retrieve(query)`
--`rbac.check(user_role, resource)`
--`facility.get_rack_state(rack_id)`
-
-The exact interface definitions belong in the implementation design and tool architecture pages.
-
-### 7.3 Why mock tools first
-
-Mock tools are preferred initially because they:
-
-- avoid site-specific infrastructure coupling
-- support deterministic benchmarking
-- simplify debugging
-- support artifact release and reproducibility
-- reduce operational overhead for external adopters
-
-
-## 8. Environment Snapshot Model
-
-Each benchmark environment should be packaged as a deterministic snapshot bundle referenced by `environment_id`.
-
-A snapshot may include artifacts such as:
-
-- scheduler state
-- telemetry timeseries
-- power or energy data
-- topology metadata
-- policy definitions
-- document subsets — keyed by `KnowledgeSourceCode` (e.g., `USR_DOC`, `OPS_DOC`, `FAC_DOC`); see `docs/taxonomy/05_knowledge_sources.md`
-- incident metadata
-
-This design allows ExaBench to model realistic HPC conditions without depending on a live cluster.
-
-The operational registry of environments is defined in [05-environments](05-environments.md).
+This separates benchmark specification (Task + Environment), runtime
+execution (Adapter + Tools), and evaluation logic (Scorers + Profile).
 
 ---
 
-## 9. Capability-oriented Benchmark View
+## 6. Tool environment model
 
-In addition to task categories, ExaBench can organize tasks by capability group. This makes explicit which forms of agent competence are being exercised.
+ExaBench v0.1 uses **deterministic mock tools** rather than live SLURM,
+Grafana, InfluxDB, BMS/DCIM, or production documentation systems. This is a
+benchmarking choice, not a limitation of ambition: mock tools make
+benchmarking reproducible, debuggable, publishable, and independent of
+site-specific infrastructure. The connect-to-agent mode tracked in
+`.claude/plans/2026-05-02-future-work.md` §C9 will additionally allow scoring
+production agents that have their own cluster access.
 
-Illustrative capability groups include:
+The tool families implemented today are:
 
-- retrieval grounding
-- telemetry querying
-- cross-source fusion
-- diagnostic reasoning
-- optimization recommendation
-- role-aware response adaptation
-- permission compliance
-- incident triage
-- energy-aware reasoning
-- action planning
+| Family | Methods (count) | Source |
+|--------|-----------------|--------|
+| `slurm` | `query_jobs`, `job_details`, `list_nodes`, `list_partitions`, … | `tools/slurm_tool.py` |
+| `docs` | `retrieve` | `tools/docs_tool.py` |
+| `rbac` | `check`, `get_allowed_tools`, `check_permission` | `tools/rbac_tool.py` |
+| `telemetry` | `query_timeseries`, `query_node_metrics`, `query_memory_events` | `tools/telemetry_tool.py` |
+| `facility` | `get_power_usage`, `query_node_power`, `query_rack_telemetry`, … | `tools/facility_tool.py` |
 
-This capability layer supports more interpretable reporting and targeted benchmark expansion.
-
-In addition to task categories, ExaBench can organize tasks by capability group. This makes explicit which forms of agent competence are being exercised.
-
-Illustrative capability groups include:
-
-- retrieval grounding
-- telemetry querying
-- cross-source fusion
-- diagnostic reasoning
-- optimization recommendation
-- role-aware response adaptation
-- permission compliance
-- incident triage
-- energy-aware reasoning
-- action planning
-
-This capability layer supports more interpretable reporting and targeted benchmark expansion.
+The full method-by-method catalog with role visibility and dangerous-arg
+conditions is in `benchmark/configs/hpc_tool_catalog.yaml`.
 
 ---
 
-## 10. Minimal ExaBench v0.1 Scope
+## 7. Capability view (for reporting)
 
-ExaBench v0.1 is intentionally small but publishable.
+In addition to QCAT, every task is annotated with a capability group so that
+benchmark reports can stratify by *what skill is being exercised*. The
+capability dimensions used today are:
 
-### Roles
+retrieval grounding, telemetry querying, cross-source fusion, diagnostic
+reasoning, optimisation recommendation, role-aware response adaptation,
+permission compliance, incident triage, energy-aware reasoning, action
+planning.
 
-- scientific_user
-- sysadmin
-- facility_admin
-
-### Categories
-
-- JOB
-- MON
-- ENERGY
-
-### Dataset size
-
-- approximately 30 tasks
-
-### Environment coverage
-
-- approximately 5 snapshots
-
-### Baseline styles
-
-- direct QA
-- RAG-style retrieval baseline
-- tool-using agent baseline
-
-This scope is designed to validate the framework architecture before broader expansion.
-
-ExaBench v0.1 is intentionally small but publishable.
-
-### Roles
-
-- scientific_user
-- sysadmin
-- facility_admin
-
-### Categories
-
-- JOB
-- MON
-- ENERGY
-
-### Dataset size
-
-- approximately 30 tasks
-
-### Environment coverage
-
-- approximately 5 snapshots
-
-### Baseline styles
-
-- direct QA
-- RAG-style retrieval baseline
-- tool-using agent baseline
-
-This scope is designed to validate the framework architecture before broader expansion.
+Reports surface these as columns alongside Role × QCAT × Difficulty.
 
 ---
 
-## 11. Repository and Implementation Mapping
-
-The ExaBench repository structure (aligned with the [README](../README.md)):
-
-```
-ExaBench/
-├── src/exabench/           # Python package (pip install exabench)
-│   ├── schemas/            # Pydantic data models (environment, snapshot, task, result, trace, trace_annotation)
-│   ├── taxonomy/           # HPC error taxonomy YAML (hpc_error_taxonomy.yaml — 24 TRAIL-adapted leaf categories)
-│   ├── environment/        # Snapshot loading + validation (snapshot_loader, snapshot_validator)
-│   ├── loaders/            # Task and environment loaders
-│   ├── tasks/              # Task loading + Lite selection (task_loader, lite_selector, context_builder)
-│   ├── validation/         # T1–T10 validation pipeline orchestrator (task_pipeline)
-│   ├── tools/              # Mock HPC tools (SLURM, telemetry, docs, RBAC, facility)
-│   ├── adapters/           # Agent backend adapters
-│   ├── runners/            # Execution runner and trace writer
-│   ├── scorers/            # Scoring engine (outcome, governance, efficiency, error_annotator)
-│   ├── reports/            # Report generation
-│   ├── utils/              # Shared utilities
-│   └── cli/                # exabench run / validate / lite commands
-│
-├── benchmark/              # Benchmark dataset (static source data)
-│   ├── tasks/specs/        # Task specification files (JSON)
-│   ├── tasks/dataset_splits.py  # TEST_TASK_IDS / DEV_TASK_IDS / LITE_TASK_IDS (frozen 2026-03-21)
-│   ├── tasks/lite_manifest_v1.json  # ExaBench-Lite selection manifest (output of lite_selector.py)
-│   ├── environments/       # HPC state snapshot bundles (env_01–env_20)
-│   ├── configs/            # Scoring profiles, tool registry
-│   └── qa/                 # ExaBench-QA dataset (query corpus)
-│
-├── scripts/                # Utility scripts (generate_bundles.py, check_coverage.py)
-├── data/runs/              # Runtime artifacts (traces, results — gitignored)
-├── tests/                  # Unit and integration tests
-└── docs/                   # Documentation
-    └── framework/          # Framework design documents (01–07)
-```
-
-Detailed implementation interfaces, CLI commands, and build milestones are in [04 — Implementation](04-implementation.md).
-
----
-
-## 12. Page Responsibilities in the ExaBench Design
-
-To keep the framework consistent, page responsibilities are separated as follows:
+## 8. Page responsibilities
 
 | Page | Responsibility |
 |------|----------------|
-| **03 — Architecture** (this page) | Benchmark structure, entities, workflow |
-| **04 — Implementation** | Software architecture, CLI, adapters, tools |
-| **05 — Environments** | Environment snapshot format and registry |
-| **06 — Evaluation** | Scoring, trace schema, result schema |
-| **07 — Taxonomy** | Roles, categories, task schema, access control |
+| **03 — Architecture** (this page) | Conceptual structure of the benchmark |
+| **04 — Implementation** | How the architecture is realised in `src/exabench/` |
+| **05 — Environments** | Snapshot bundle format |
+| **06 — Evaluation** | Scoring protocol, trace schema, result schema |
+| **07 — Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
+| **09 — System Architecture** | Authoritative current-state reference |
 
 ---
 
-## 13. Bottom Line
+## 9. Bottom line
 
-ExaBench is not just a collection of HPC questions. It is a benchmark framework for evaluating **interactive, tool-using, role-aware, and governance-constrained AI agent systems** in HPC environments.
-
-Its defining architectural elements are:
+ExaBench is not a collection of HPC questions. It is a benchmark framework
+for evaluating **interactive, tool-using, role-aware, governance-constrained
+AI agent systems** in HPC environments. Its defining architectural elements
+are:
 
 - role-aware benchmark tasks
 - deterministic environment snapshots
-- controlled tool exposure
-- traceable agent interaction
-- structured result artifacts
-- reproducible execution architecture
+- a controlled tool surface with explicit RBAC
+- a normative trace schema and structured result artifact
+- a six-dimension multi-scorer pipeline with hard-fail semantics
+- a reproducible execution architecture
 
-This page provides the architectural foundation of ExaBench. The detailed evaluation protocol is defined separately in [06-evaluation](06-evaluation.md).
-
----
+The detailed evaluation protocol is defined in [06 — Evaluation](06-evaluation.md).
