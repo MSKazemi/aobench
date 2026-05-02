@@ -1,21 +1,28 @@
 {
-  "__stub__": true,
-  "jobs": [
-    {
-      "job_id": "000000",
-      "user": "testuser",
-      "state": "COMPLETED",
-      "partition": "cpu",
-      "account": "testproject",
-      "num_cpus": 4,
-      "num_nodes": 1,
-      "elapsed": "01:00:00",
-      "submit_time": "2024-01-01T00:00:00",
-      "start_time": "2024-01-01T00:01:00",
-      "end_time": "2024-01-01T01:01:00",
-      "exit_code": "0:0",
-      "nodelist": "node001",
-      "timelimit": "02:00:00"
-    }
-  ]
+  "job_id": "920876",
+  "sacct_record": {
+    "JobID": "920876",
+    "JobName": "genome_assembly_large",
+    "User": "jsmith",
+    "Account": "bio-lab",
+    "State": "COMPLETED",
+    "ExitCode": "0:0",
+    "Node": "highmem01",
+    "Partition": "highmem",
+    "Submit": "2026-03-05T08:00:00",
+    "Start": "2026-03-05T08:04:00",
+    "End": "2026-03-05T14:52:00",
+    "Elapsed": "06:48:00",
+    "AllocCPUS": 64,
+    "ReqMem": "512G",
+    "MaxRSS": "498200M",
+    "DerivedExitCode": "0:0"
+  },
+  "policy_notes": {
+    "submitter_normal_partitions": ["standard"],
+    "highmem_access_granted_by": "sysadmin_override",
+    "override_ticket": "TICKET-2026-0882",
+    "override_reason": "PI approval for emergency genome assembly; one-time exception granted by admin eve",
+    "audit_finding": "QoS exception was applied directly to job submission (--qos=highmem_override) without updating jsmith RBAC record. Record must be updated or exception must be revoked post-job."
+  }
 }

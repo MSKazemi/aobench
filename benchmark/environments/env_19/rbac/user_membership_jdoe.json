@@ -1,4 +1,39 @@
 {
-  "__stub__": true,
-  "note": "minimal stub \u2014 replace with real data"
+  "username": "jdoe",
+  "full_name": "Jane Doe",
+  "uid": 10042,
+  "primary_group": "users",
+  "projects": [
+    {
+      "project_id": "proj_x",
+      "role": "member",
+      "joined": "2025-09-01",
+      "partition_access": ["standard", "highmem"],
+      "cpu_hour_limit": 5000,
+      "gpu_hour_limit": 0,
+      "storage_quota_gb": 500
+    },
+    {
+      "project_id": "proj_y",
+      "role": "member",
+      "joined": "2026-03-02",
+      "partition_access": ["standard", "gpu"],
+      "cpu_hour_limit": 3000,
+      "gpu_hour_limit": 200,
+      "storage_quota_gb": 1000
+    }
+  ],
+  "rbac_conflicts": [
+    {
+      "type": "dual_project_standard_partition",
+      "description": "jdoe is a member of both proj_x and proj_y; both have standard partition access. Combined QoS priority may exceed per-user fairshare limit.",
+      "resolution": "Set default_account=proj_x; require --account=proj_y for explicit proj_y submissions."
+    }
+  ],
+  "pending_changes": [
+    "Add jdoe to LDAP group proj_y_members",
+    "Grant gpu partition submit permission under account proj_y",
+    "Set storage quota: /lustre/proj_y/jdoe = 1 TB",
+    "Update slurm QoS association: user=jdoe account=proj_y partition=gpu maxgpuperjob=2"
+  ]
 }
