@@ -10,8 +10,8 @@
 <a id=__codelineno-0-10 name=__codelineno-0-10 href=#__codelineno-0-10></a>┌─────────────────────────────────────────────────────────────┐
 <a id=__codelineno-0-11 name=__codelineno-0-11 href=#__codelineno-0-11></a>│  Adapter  (e.g. OpenAIAdapter)                              │
 <a id=__codelineno-0-12 name=__codelineno-0-12 href=#__codelineno-0-12></a>│  • Sends task.query_text + tool schemas → LLM               │
-<a id=__codelineno-0-13 name=__codelineno-0-13 href=#__codelineno-0-13></a>│  • When LLM calls a tool → ToolRegistry.dispatch()  ─────┐  │
-<a id=__codelineno-0-14 name=__codelineno-0-14 href=#__codelineno-0-14></a>│  • Appends [tool call + observation] as a TraceStep  ◄────┘  │
+<a id=__codelineno-0-13 name=__codelineno-0-13 href=#__codelineno-0-13></a>│  • When LLM calls a tool → ToolRegistry.dispatch()   ─────┐ │
+<a id=__codelineno-0-14 name=__codelineno-0-14 href=#__codelineno-0-14></a>│  • Appends [tool call + observation] as a TraceStep  ◄────┘ │
 <a id=__codelineno-0-15 name=__codelineno-0-15 href=#__codelineno-0-15></a>│  • Repeats until LLM gives a final answer  (≤ 10 rounds)    │
 <a id=__codelineno-0-16 name=__codelineno-0-16 href=#__codelineno-0-16></a>│  • Returns completed Trace                                  │
 <a id=__codelineno-0-17 name=__codelineno-0-17 href=#__codelineno-0-17></a>└──────────────────────────────┬──────────────────────────────┘
@@ -33,7 +33,7 @@
 <a id=__codelineno-0-33 name=__codelineno-0-33 href=#__codelineno-0-33></a>│  • ToolUseScorer     — tool selection &amp; argument quality    │
 <a id=__codelineno-0-34 name=__codelineno-0-34 href=#__codelineno-0-34></a>│  • GovernanceScorer  — RBAC compliance, permission checks   │
 <a id=__codelineno-0-35 name=__codelineno-0-35 href=#__codelineno-0-35></a>│  • GroundingScorer   — answer grounded in observations      │
-<a id=__codelineno-0-36 name=__codelineno-0-36 href=#__codelineno-0-36></a>│  • EfficiencyScorer  — step count  (≤ 5 steps → 1.0)       │
+<a id=__codelineno-0-36 name=__codelineno-0-36 href=#__codelineno-0-36></a>│  • EfficiencyScorer  — step count  (≤ 5 steps → 1.0)        │
 <a id=__codelineno-0-37 name=__codelineno-0-37 href=#__codelineno-0-37></a>│                                                             │
 <a id=__codelineno-0-38 name=__codelineno-0-38 href=#__codelineno-0-38></a>│  → BenchmarkResult: aggregate_score (0–1) + DimensionScores │
 <a id=__codelineno-0-39 name=__codelineno-0-39 href=#__codelineno-0-39></a>└─────────────────────────────────────────────────────────────┘
