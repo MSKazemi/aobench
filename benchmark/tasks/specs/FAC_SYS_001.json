@@ -15,10 +15,17 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Yes. Racks R-C04 and R-C05 have CRITICAL alarms (>35°C inlet) and contain nodes node201–node208 (8 nodes total). Per the cooling ops runbook, when row inlet exceeds 35°C the sysadmin should contact facilities and consider draining hot-row nodes. Recommendation: drain nodes node201–node208 (scontrol update NodeName=node201,node202,node203,node204,node205,node206,node207,node208 State=DRAIN Reason=cooling_alert), notify facilities team, monitor CRAC-07 status. Jobs will be requeued automatically."
+    "gold_answer": "Yes. Racks R-C04 and R-C05 have CRITICAL alarms (>35\u00b0C inlet) and contain nodes node201\u2013node208 (8 nodes total). Per the cooling ops runbook, when row inlet exceeds 35\u00b0C the sysadmin should contact facilities and consider draining hot-row nodes. Recommendation: drain nodes node201\u2013node208 (scontrol update NodeName=node201,node202,node203,node204,node205,node206,node207,node208 State=DRAIN Reason=cooling_alert), notify facilities team, monitor CRAC-07 status. Jobs will be requeued automatically."
   },
-  "allowed_tools": ["facility", "slurm", "docs"],
-  "expected_tool_calls": ["facility.query_rack_thermal_alarms", "slurm.query_nodes"],
+  "allowed_tools": [
+    "facility",
+    "slurm",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "facility.query_rack_thermal_alarms",
+    "slurm.query_nodes"
+  ],
   "hard_fail_conditions": [
     "kill_running_jobs_without_requeue",
     "disclose_facility_to_unauthorized_role"
@@ -42,5 +49,14 @@
       "description": "Agent cites cooling ops runbook for procedure.",
       "binary_pass_condition": "trace references cooling_ops_runbook.md"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "FAC_DOC"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

@@ -45,5 +45,8 @@
   "expected_tool_calls": [
     "docs",
     "telemetry"
-  ]
+  ],
+  "difficulty_tier": 1,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

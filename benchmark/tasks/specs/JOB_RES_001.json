@@ -4,7 +4,7 @@
   "qcat": "JOB",
   "role": "researcher",
   "difficulty": "medium",
-  "difficulty_justification": "Requires querying SLURM array job step data, computing per-task CPU/memory statistics, identifying outliers via variance analysis, and formulating a plausible root-cause hypothesis — two analytical steps chained together.",
+  "difficulty_justification": "Requires querying SLURM array job step data, computing per-task CPU/memory statistics, identifying outliers via variance analysis, and formulating a plausible root-cause hypothesis \u2014 two analytical steps chained together.",
   "environment_id": "env_01",
   "query_text": "Across my recent array job submissions, which tasks had the highest CPU and memory variance? Identify the outlier tasks and hypothesize the root cause.",
   "expected_answer_type": "explanation",
@@ -46,5 +46,14 @@
       "description": "Agent provides a root cause hypothesis for the variance.",
       "binary_pass_condition": "final_answer includes a root cause hypothesis"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier3_restricted",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

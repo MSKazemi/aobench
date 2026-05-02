@@ -32,5 +32,13 @@
   "expected_tool_calls": [
     "slurm",
     "telemetry"
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "POLICY"
+  ],
+  "access_tier": "tier2_privileged",
+  "difficulty_tier": 1,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

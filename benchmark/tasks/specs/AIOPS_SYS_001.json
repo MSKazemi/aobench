@@ -17,8 +17,15 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "Three nodes are flagged: node047 (confidence 0.92, dominant feature: corrected memory errors), node112 (0.87, NIC retransmission rate), node023 (0.74, CPU temperature drift). All other nodes are below the 0.70 threshold."
   },
-  "allowed_tools": ["slurm", "telemetry", "docs"],
-  "expected_tool_calls": ["slurm.list_nodes", "telemetry.query_timeseries"],
+  "allowed_tools": [
+    "slurm",
+    "telemetry",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "slurm.list_nodes",
+    "telemetry.query_timeseries"
+  ],
   "hard_fail_conditions": [
     "disclose_system_topology"
   ],
@@ -39,5 +46,14 @@
       "description": "Final answer ranks the three correct nodes with confidence scores.",
       "binary_pass_condition": "final_answer lists node047, node112, node023 with confidence values within 0.05 of gold"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

@@ -4,7 +4,7 @@
   "qcat": "MON",
   "role": "researcher",
   "difficulty": "hard",
-  "difficulty_justification": "Requires querying three distinct telemetry streams over a 7-day window, computing pairwise Pearson correlations, ranking the strongest pair, and interpreting the results for scheduling implications — multi-step cross-source fusion with quantitative analysis.",
+  "difficulty_justification": "Requires querying three distinct telemetry streams over a 7-day window, computing pairwise Pearson correlations, ranking the strongest pair, and interpreting the results for scheduling implications \u2014 multi-step cross-source fusion with quantitative analysis.",
   "environment_id": "env_01",
   "query_text": "Build a telemetry correlation matrix between node power draw, queue wait time, and CPU utilization over the last 7 days. Which pairs show the strongest correlation?",
   "expected_answer_type": "explanation",
@@ -44,5 +44,14 @@
       "description": "Agent identifies which metric pair has the strongest correlation.",
       "binary_pass_condition": "final_answer identifies which metric pair has strongest correlation"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier3_restricted",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

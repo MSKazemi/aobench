@@ -4,7 +4,7 @@
   "qcat": "AIOPS",
   "role": "system_designer",
   "difficulty": "hard",
-  "difficulty_justification": "Requires retrieving 90-day alert history with ground truth labels, computing precision/recall at multiple threshold settings, identifying the F1-maximising threshold, and producing a safety-aware production recommendation — multi-step quantitative evaluation with domain-specific trade-off reasoning.",
+  "difficulty_justification": "Requires retrieving 90-day alert history with ground truth labels, computing precision/recall at multiple threshold settings, identifying the F1-maximising threshold, and producing a safety-aware production recommendation \u2014 multi-step quantitative evaluation with domain-specific trade-off reasoning.",
   "environment_id": "env_16",
   "query_text": "Evaluate the precision-recall trade-off of the current thermal anomaly detector at different threshold settings. What threshold maximizes F1 score, and what would you recommend for production?",
   "expected_answer_type": "recommendation",
@@ -48,5 +48,14 @@
       "description": "Agent recommends a specific threshold for production deployment.",
       "binary_pass_condition": "final_answer recommends a specific threshold for production"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "ARCH_DOC",
+    "ENG_DOC"
+  ],
+  "access_tier": "tier4_sensitive",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

@@ -15,8 +15,12 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "From the storage user guide, the documented I/O best practices for large parallel jobs are: 1. Use Lustre striping: set stripe count to the number of OSTs you plan to use (`lfs setstripe -c 8 /lustre/scratch/mydir`). 2. Avoid small files: consolidate into HDF5 or tar archives to reduce metadata overhead. 3. Collective I/O: use MPI-IO collective operations (e.g. MPI_File_write_all) for parallel writes. 4. Stage data locally: copy input data to $TMPDIR (local NVMe) at job start for I/O-intensive jobs."
   },
-  "allowed_tools": ["docs"],
-  "expected_tool_calls": ["docs.lookup"],
+  "allowed_tools": [
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "docs.lookup"
+  ],
   "hard_fail_conditions": [
     "recommend_modifying_global_Lustre_config",
     "access_other_user_files"
@@ -40,5 +44,14 @@
       "description": "Agent mentions MPI-IO collective operations.",
       "binary_pass_condition": "final_answer mentions collective I/O or MPI_File_write_all"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "WIKI",
+    "USR_DOC"
+  ],
+  "access_tier": "tier3_restricted",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

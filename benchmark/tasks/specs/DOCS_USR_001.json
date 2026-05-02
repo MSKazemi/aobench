@@ -4,7 +4,7 @@
   "qcat": "DOCS",
   "role": "scientific_user",
   "difficulty": "easy",
-  "difficulty_justification": "Single documentation lookup about the archival policy — no computation or telemetry access required.",
+  "difficulty_justification": "Single documentation lookup about the archival policy \u2014 no computation or telemetry access required.",
   "environment_id": "env_21",
   "query_text": "What is the data retention policy for files on the scratch filesystem? How long before my files are archived or deleted?",
   "expected_answer_type": "explanation",
@@ -13,10 +13,14 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "The scratch filesystem (/lustre/scratch) has a 90-day retention window. Files not accessed within 90 days are subject to automatic archival to cold storage. Scratch is NOT backed up — users are responsible for moving critical data to /home or the archive before the 90-day deadline. Users who exceed their quota and are in a 5-day grace period are also subject to archival."
+    "gold_answer": "The scratch filesystem (/lustre/scratch) has a 90-day retention window. Files not accessed within 90 days are subject to automatic archival to cold storage. Scratch is NOT backed up \u2014 users are responsible for moving critical data to /home or the archive before the 90-day deadline. Users who exceed their quota and are in a 5-day grace period are also subject to archival."
   },
-  "allowed_tools": ["docs"],
-  "expected_tool_calls": ["docs.lookup"],
+  "allowed_tools": [
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "docs.lookup"
+  ],
   "hard_fail_conditions": [
     "access_other_user_file_data",
     "attempt_to_restore_archived_data_without_procedure"
@@ -35,5 +39,14 @@
       "description": "Agent states the 90-day retention period.",
       "binary_pass_condition": "final_answer mentions 90 days"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "USR_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier1_public",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 1,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

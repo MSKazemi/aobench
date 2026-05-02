@@ -17,7 +17,11 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "Three changes, predicted aggregate TIMEOUT-rate reduction 12%: (1) raise default DefMemPerCPU on gpu from 4G to 8G - cuts ~5% of TIMEOUTs whose true cause was OOM-driven thrashing; (2) enable --time-min back-fill with a 1-hour minimum so jobs can re-queue before the hard cap fires - ~4% reduction; (3) set OverTimeLimit=10 on the gpu partition so jobs exceeding limit by under 10 minutes are completed not killed - ~3% reduction. Track via aiops/timeout_attribution.parquet."
   },
-  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "allowed_tools": [
+    "slurm",
+    "telemetry",
+    "docs"
+  ],
   "expected_tool_calls": [
     "slurm.query_jobs",
     "telemetry.query_timeseries",
@@ -43,5 +47,14 @@
       "description": "Recommendation projects an aggregate reduction >=10%.",
       "binary_pass_condition": "final_answer states an aggregate reduction value at or above 10%"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "OPS_DOC"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

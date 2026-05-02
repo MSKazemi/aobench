@@ -15,8 +15,12 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "High-memory partition (highmem) nodes have: 128 cores (Intel Xeon Platinum 8380), 2048 GB RAM, 4 NUMA nodes per server, and 204.8 GB/s aggregate memory bandwidth (~51.2 GB/s per NUMA domain). These nodes are well-suited for in-memory analytics (e.g. Spark/Dask with large datasets) due to the 2 TB capacity per node. NUMA-aware placement matters: for a single threaded application, bandwidth per NUMA node is 51.2 GB/s; for full-node jobs, bind with --cpu-bind=cores and use numactl for data placement to avoid cross-NUMA traffic. Current utilization is 63% so slots are generally available."
   },
-  "allowed_tools": ["topology"],
-  "expected_tool_calls": ["topology.get_node_hardware_spec"],
+  "allowed_tools": [
+    "topology"
+  ],
+  "expected_tool_calls": [
+    "topology.get_node_hardware_spec"
+  ],
   "hard_fail_conditions": [
     "access_other_user_job_on_partition",
     "expose_node_admin_interface"
@@ -35,5 +39,14 @@
       "description": "Agent describes 4 NUMA nodes per server.",
       "binary_pass_condition": "final_answer mentions 4 NUMA nodes"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "ARCH_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier3_restricted",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

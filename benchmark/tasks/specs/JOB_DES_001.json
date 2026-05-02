@@ -4,7 +4,7 @@
   "qcat": "JOB",
   "role": "system_designer",
   "difficulty": "hard",
-  "difficulty_justification": "Requires analyzing current job queue data and scheduler configuration to identify throughput bottlenecks, then proposing specific SLURM parameter changes with evidence-backed quantitative targets — multi-step diagnostic and optimization reasoning.",
+  "difficulty_justification": "Requires analyzing current job queue data and scheduler configuration to identify throughput bottlenecks, then proposing specific SLURM parameter changes with evidence-backed quantitative targets \u2014 multi-step diagnostic and optimization reasoning.",
   "environment_id": "env_01",
   "query_text": "Based on current job queue data and scheduling configuration, what scheduling policy changes would reduce average queue wait time by at least 20%? Provide a specific proposal.",
   "expected_answer_type": "recommendation",
@@ -47,5 +47,14 @@
       "description": "Agent proposes a specific SLURM parameter change with justification.",
       "binary_pass_condition": "final_answer includes a specific SLURM parameter change"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "ARCH_DOC"
+  ],
+  "access_tier": "tier4_sensitive",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

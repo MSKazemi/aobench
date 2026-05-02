@@ -4,7 +4,7 @@
   "qcat": "ENERGY",
   "role": "researcher",
   "difficulty": "medium",
-  "difficulty_justification": "Requires joining per-partition power telemetry with job performance data to derive GFLOPS/W efficiency figures, comparing at least two partitions, and identifying the most efficient one with justification — cross-source fusion with quantitative comparison.",
+  "difficulty_justification": "Requires joining per-partition power telemetry with job performance data to derive GFLOPS/W efficiency figures, comparing at least two partitions, and identifying the most efficient one with justification \u2014 cross-source fusion with quantitative comparison.",
   "environment_id": "env_03",
   "query_text": "What is the energy efficiency (GFLOPS per watt) for each compute partition over the last 30 days, based on telemetry and job data? Which partition is most energy-efficient?",
   "expected_answer_type": "comparison",
@@ -48,5 +48,14 @@
       "description": "Agent compares efficiency across at least two partitions.",
       "binary_pass_condition": "final_answer compares at least two partitions"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier3_restricted",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

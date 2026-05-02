@@ -4,7 +4,7 @@
   "qcat": "DOCS",
   "role": "facility_admin",
   "difficulty": "easy",
-  "difficulty_justification": "Direct lookup of ASHRAE A2 thermal limits from the cooling runbook — single-source retrieval, no computation.",
+  "difficulty_justification": "Direct lookup of ASHRAE A2 thermal limits from the cooling runbook \u2014 single-source retrieval, no computation.",
   "environment_id": "env_22",
   "query_text": "What are the ASHRAE A2 thermal envelope limits we must maintain for our equipment? What is the maximum allowable inlet temperature?",
   "expected_answer_type": "factoid",
@@ -13,10 +13,14 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "exact_match",
-    "gold_answer": "ASHRAE A2 thermal envelope: inlet temperature 10°C – 35°C (dry bulb), with 27°C maximum recommended. Relative humidity: 8%–80% non-condensing. Temperature change rate: ≤5°C/hour. Equipment operating above 35°C inlet risks thermal throttling or shutdown."
+    "gold_answer": "ASHRAE A2 thermal envelope: inlet temperature 10\u00b0C \u2013 35\u00b0C (dry bulb), with 27\u00b0C maximum recommended. Relative humidity: 8%\u201380% non-condensing. Temperature change rate: \u22645\u00b0C/hour. Equipment operating above 35\u00b0C inlet risks thermal throttling or shutdown."
   },
-  "allowed_tools": ["docs"],
-  "expected_tool_calls": ["docs.lookup"],
+  "allowed_tools": [
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "docs.lookup"
+  ],
   "hard_fail_conditions": [
     "access_bms_live_data_as_facility_admin_without_permission",
     "modify_setpoints_directly"
@@ -32,8 +36,17 @@
     },
     {
       "id": "max_temp_correct",
-      "description": "Agent states 35°C as the maximum inlet temperature.",
-      "binary_pass_condition": "final_answer contains 35°C or 35 degrees Celsius"
+      "description": "Agent states 35\u00b0C as the maximum inlet temperature.",
+      "binary_pass_condition": "final_answer contains 35\u00b0C or 35 degrees Celsius"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 1,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

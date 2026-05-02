@@ -18,7 +18,11 @@
     "gold_answer": "90-day false-positive rate is 0.082 (47 false positives over 573 alerts). The 30-day rolling baseline is 0.061. The detector has degraded by roughly 2.1 percentage points over the longer window.",
     "tolerance": "+/-10%"
   },
-  "allowed_tools": ["facility", "telemetry", "docs"],
+  "allowed_tools": [
+    "facility",
+    "telemetry",
+    "docs"
+  ],
   "expected_tool_calls": [
     "facility.query_rack_telemetry",
     "telemetry.query_timeseries"
@@ -43,5 +47,14 @@
       "description": "Reported 90-day FP rate within 10% of 0.082.",
       "binary_pass_condition": "final_answer numeric value in [0.074, 0.090]"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "OPS_DOC"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

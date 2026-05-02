@@ -4,7 +4,7 @@
   "qcat": "PERF",
   "role": "system_designer",
   "difficulty": "hard",
-  "difficulty_justification": "Requires retrieving current node benchmark data, applying hardware scaling ratios (core count, memory bandwidth) for the target CPU, projecting cluster-level LINPACK improvement, and noting scaling limitations — multi-step quantitative modeling requiring domain knowledge.",
+  "difficulty_justification": "Requires retrieving current node benchmark data, applying hardware scaling ratios (core count, memory bandwidth) for the target CPU, projecting cluster-level LINPACK improvement, and noting scaling limitations \u2014 multi-step quantitative modeling requiring domain knowledge.",
   "environment_id": "env_17",
   "query_text": "Based on current performance benchmarks in the environment, model the expected LINPACK improvement if we replace the current CPU nodes with AMD EPYC 9654 nodes (96 cores, 384 GB/s memory bandwidth). Show your calculation.",
   "expected_answer_type": "recommendation",
@@ -47,5 +47,14 @@
       "description": "Agent mentions at least one scaling limitation or caveat.",
       "binary_pass_condition": "final_answer mentions at least one scaling limitation"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "ARCH_DOC",
+    "ENG_DOC"
+  ],
+  "access_tier": "tier4_sensitive",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

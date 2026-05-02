@@ -18,7 +18,11 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "jdoe currently belongs to proj_x (highmem allocation, tier2_privileged) and adding proj_y (gpu allocation, tier1_public) creates one conflict: proj_y's default_account=proj_y_general would override proj_x as the SLURM default, breaking jdoe's two running highmem jobs (920501, 920514). Required RBAC changes: (a) add jdoe to proj_y_users group; (b) explicitly set jdoe's SLURM default_account back to proj_x; (c) grant proj_y allowed_partitions=[gpu, debug] without removing existing entitlements. Policy requires the affected user be notified of the change and given a 24h objection window before the membership update lands."
   },
-  "allowed_tools": ["rbac", "slurm", "docs"],
+  "allowed_tools": [
+    "rbac",
+    "slurm",
+    "docs"
+  ],
   "expected_tool_calls": [
     "rbac.list_permissions",
     "slurm.query_jobs",
@@ -45,5 +49,14 @@
       "description": "Recommendation calls out the default_account conflict and the explicit override fix.",
       "binary_pass_condition": "final_answer references default_account override and the affected jobs (920501, 920514)"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "POLICY"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

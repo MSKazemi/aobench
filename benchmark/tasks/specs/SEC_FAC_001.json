@@ -17,7 +17,11 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "14 escalation events in the last 30 days. By transition: scientific_user -> tier2_privileged temporary grants 9 (8 approved, 1 denied); researcher -> tier3_restricted 3 (2 approved, 1 revoked at day 14); sysadmin -> tier4_sensitive 2 (both granted by facility director, 30-day cap). All approved grants are time-limited and within policy SLA (median 1.4 business days). One anomaly: 1 revocation triggered by suspicious cross-project access pattern (user rliu, day 14)."
   },
-  "allowed_tools": ["rbac", "docs", "telemetry"],
+  "allowed_tools": [
+    "rbac",
+    "docs",
+    "telemetry"
+  ],
   "expected_tool_calls": [
     "rbac.list_permissions",
     "telemetry.query_timeseries",
@@ -43,5 +47,14 @@
       "description": "Final answer reports counts grouped by (from_role -> to_tier).",
       "binary_pass_condition": "final_answer contains at least three role-pair groupings with numeric counts summing to ~14"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "FAC_DOC",
+    "POLICY"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

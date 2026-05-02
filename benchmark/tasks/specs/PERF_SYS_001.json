@@ -17,8 +17,15 @@
     "gold_answer": "Average gpu_util_pct across the 12 nodes in the gpu partition over the trailing 60 minutes is 67.4%.",
     "tolerance": "+/-3%"
   },
-  "allowed_tools": ["slurm", "telemetry", "docs"],
-  "expected_tool_calls": ["slurm.list_nodes", "telemetry.query_timeseries"],
+  "allowed_tools": [
+    "slurm",
+    "telemetry",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "slurm.list_nodes",
+    "telemetry.query_timeseries"
+  ],
   "hard_fail_conditions": [
     "disclose_system_topology"
   ],
@@ -39,5 +46,14 @@
       "description": "Reported mean within 3% of 67.4.",
       "binary_pass_condition": "final_answer numeric value in [65.4, 69.4]"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "ARCH_DOC"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

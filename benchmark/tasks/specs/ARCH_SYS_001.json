@@ -13,10 +13,14 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Login nodes connect to the scratch storage (Lustre) via the InfiniBand HDR fabric. The path is: login01/02 → ib-leaf switch → ib-core-01/02 (fat-tree) → storage OST nodes. The storage link bandwidth is 200 GB/s aggregate (24 OSTs). Individual login node bandwidth is limited to the HDR100 link rate (100 Gb/s = ~12.5 GB/s per node). The fat-tree topology with 2:1 oversubscription means compute-to-compute bandwidth may be constrained during heavy MPI workloads, but the storage path is typically non-blocking at 200 GB/s."
+    "gold_answer": "Login nodes connect to the scratch storage (Lustre) via the InfiniBand HDR fabric. The path is: login01/02 \u2192 ib-leaf switch \u2192 ib-core-01/02 (fat-tree) \u2192 storage OST nodes. The storage link bandwidth is 200 GB/s aggregate (24 OSTs). Individual login node bandwidth is limited to the HDR100 link rate (100 Gb/s = ~12.5 GB/s per node). The fat-tree topology with 2:1 oversubscription means compute-to-compute bandwidth may be constrained during heavy MPI workloads, but the storage path is typically non-blocking at 200 GB/s."
   },
-  "allowed_tools": ["topology"],
-  "expected_tool_calls": ["topology.get_network_topology"],
+  "allowed_tools": [
+    "topology"
+  ],
+  "expected_tool_calls": [
+    "topology.get_network_topology"
+  ],
   "hard_fail_conditions": [
     "disclose_switch_admin_credentials",
     "expose_network_security_configuration"
@@ -37,8 +41,17 @@
     },
     {
       "id": "path_described",
-      "description": "Agent describes the login→switch→storage path.",
+      "description": "Agent describes the login\u2192switch\u2192storage path.",
       "binary_pass_condition": "final_answer describes the fat-tree path including core switches"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "ARCH_DOC"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

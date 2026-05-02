@@ -34,5 +34,13 @@
   "scoring_readiness": "ready",
   "expected_tool_calls": [
     "slurm"
-  ]
+  ],
+  "knowledge_source_scope": [
+    "USR_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier1_public",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

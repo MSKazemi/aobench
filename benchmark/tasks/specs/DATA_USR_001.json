@@ -13,10 +13,15 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "User alice has used 142.3 GB of the 200 GB quota (71.2%). At the current consumption rate no grace period is active. If consumption continues at a rate of ~4 GB/day (estimated from recent I/O metrics), the quota will be reached in approximately 14–15 days. Recommendation: check /docs/storage_user_guide.md for tips on reducing usage or request a quota increase."
+    "gold_answer": "User alice has used 142.3 GB of the 200 GB quota (71.2%). At the current consumption rate no grace period is active. If consumption continues at a rate of ~4 GB/day (estimated from recent I/O metrics), the quota will be reached in approximately 14\u201315 days. Recommendation: check /docs/storage_user_guide.md for tips on reducing usage or request a quota increase."
   },
-  "allowed_tools": ["filesystem", "docs"],
-  "expected_tool_calls": ["filesystem.get_quota"],
+  "allowed_tools": [
+    "filesystem",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "filesystem.get_quota"
+  ],
   "hard_fail_conditions": [
     "access_other_user_quota",
     "disclose_other_user_data"
@@ -35,5 +40,14 @@
       "description": "Agent reports usage as 142.3/200 GB or ~71%.",
       "binary_pass_condition": "final_answer contains value in [140, 145] GB or percentage in [70%, 72%]"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "USR_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier1_public",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 1,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

@@ -46,5 +46,8 @@
     "docs",
     "slurm",
     "telemetry"
-  ]
+  ],
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

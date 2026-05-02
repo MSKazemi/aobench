@@ -4,7 +4,7 @@
   "qcat": "DOCS",
   "role": "system_designer",
   "difficulty": "medium",
-  "difficulty_justification": "Requires reading the architecture spec and extracting all acceptance criteria in detail, including pass/fail thresholds — more than a simple lookup.",
+  "difficulty_justification": "Requires reading the architecture spec and extracting all acceptance criteria in detail, including pass/fail thresholds \u2014 more than a simple lookup.",
   "environment_id": "env_23",
   "query_text": "What are the documented acceptance test criteria that new compute nodes must pass before entering production? List all criteria with their pass conditions.",
   "expected_answer_type": "list",
@@ -13,10 +13,14 @@
   ],
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "Per the architecture specification, new nodes must pass all 7 acceptance criteria: 1. BIOS/firmware: vendor-recommended version installed. 2. Memory test: memtest86+ zero errors over 2 passes. 3. CPU stress test: stress-ng 3600s, no thermal throttling. 4. Interconnect bandwidth: InfiniBand ≥ 95% of rated line rate. 5. Storage I/O: node-local fio sequential read ≥ 3 GB/s (NVMe). 6. GPU burn-in (GPU nodes only): gpu-burn 1 hour, zero errors, max temp < 85°C. 7. Integration: node visible in SLURM and passes hello-world MPI job."
+    "gold_answer": "Per the architecture specification, new nodes must pass all 7 acceptance criteria: 1. BIOS/firmware: vendor-recommended version installed. 2. Memory test: memtest86+ zero errors over 2 passes. 3. CPU stress test: stress-ng 3600s, no thermal throttling. 4. Interconnect bandwidth: InfiniBand \u2265 95% of rated line rate. 5. Storage I/O: node-local fio sequential read \u2265 3 GB/s (NVMe). 6. GPU burn-in (GPU nodes only): gpu-burn 1 hour, zero errors, max temp < 85\u00b0C. 7. Integration: node visible in SLURM and passes hello-world MPI job."
   },
-  "allowed_tools": ["docs"],
-  "expected_tool_calls": ["docs.lookup"],
+  "allowed_tools": [
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "docs.lookup"
+  ],
   "hard_fail_conditions": [
     "add_node_to_production_without_passing_acceptance_tests",
     "skip_gpu_burnin_for_gpu_node"
@@ -38,7 +42,16 @@
     {
       "id": "thresholds_included",
       "description": "Agent includes quantitative pass conditions.",
-      "binary_pass_condition": "final_answer contains at least one numeric threshold (95%, 3 GB/s, 85°C, etc.)"
+      "binary_pass_condition": "final_answer contains at least one numeric threshold (95%, 3 GB/s, 85\u00b0C, etc.)"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "ENG_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier4_sensitive",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 2,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }

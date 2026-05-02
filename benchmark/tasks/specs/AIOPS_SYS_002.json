@@ -18,7 +18,11 @@
     "evaluation_mode": "semantic_match",
     "gold_answer": "Top three contributing features for node042: corrected memory errors (EDAC) trending up, CPU package temperature above 85 C, and NIC retransmission rate spiking. Historically this combination precedes a DIMM failure within roughly 4 hours. Two jobs are currently allocated to node042 (jobs 911204 and 911207). Action: drain node042 immediately, requeue or notify the affected users so the jobs can migrate, and open a hardware ticket citing alert ID node042-2026-05-01-1400."
   },
-  "allowed_tools": ["slurm", "telemetry", "docs"],
+  "allowed_tools": [
+    "slurm",
+    "telemetry",
+    "docs"
+  ],
   "expected_tool_calls": [
     "telemetry.query_node_metrics",
     "slurm.list_nodes",
@@ -45,5 +49,14 @@
       "description": "Recommendation identifies DIMM/imminent-hardware failure and prescribes drain + ticket.",
       "binary_pass_condition": "final_answer contains a drain instruction, a ticket reference, and the failure-mode prediction"
     }
-  ]
+  ],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "access_tier": "tier2_privileged",
+  "aggregate_weight_profile": "alpha1_grounding",
+  "difficulty_tier": 3,
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean"
 }
