@@ -17,10 +17,30 @@ def hash_file(p: Path) -> str:
     return h.hexdigest()
 
 
+def _git_tracked_envs(root: Path) -> set[str]:
+    import subprocess
+    result = subprocess.run(
+        ["git", "ls-files", str(root)],
+        capture_output=True, text=True
+    )
+    envs = set()
+    for line in result.stdout.splitlines():
+        parts = line.split("/")
+        # path is like: benchmark/environments/env_NN/...
+        for i, part in enumerate(parts):
+            if part.startswith("env_"):
+                envs.add(part)
+                break
+    return envs
+
+
 def main() -> None:
+    tracked = _git_tracked_envs(ENV_ROOT)
     environments = {}
     for env_dir in sorted(ENV_ROOT.iterdir()):
         if not env_dir.is_dir() or not env_dir.name.startswith("env_"):
+            continue
+        if env_dir.name not in tracked:
             continue
         files = {}
         for p in sorted(env_dir.rglob("*")):

@@ -273,33 +273,9 @@
       "metadata.yaml": "2490a21edb4c6fb2765b52c6ff6bda412c15a464c4b0b3a10a12def504b748f0",
       "policy/rbac_policy.yaml": "907cd42ab69452d1ea268031fe829392b632768e8440abf7bac010acd8257d8c",
       "topology/cluster_topology.json": "fb6660227f270b8812f80b3371623584e7dbcb065a57521136e92ad65aa1e78e"
-    },
-    "env_24": {
-      "docs/module_compatibility_guide.md": "b4eeafbeed61ba31104651f48841b582fad6f127e8f9e76e40cb96b820eccb38",
-      "docs/rbac_policy.md": "5c08b618a16e9a6a98613928f63c9dad304d4eabbbc5107a3354e4d4aa83b5ce",
-      "incidents/incident_metadata.json": "6d7fb42abc2391dc78f87d1155d01d080d8edf51e61baf2d37185b91e9c7ae3b",
-      "metadata.yaml": "ed9d14005237e1219637a14692ee5aa76aa61e761f65358a4b4d80ad7cbb5a8a",
-      "policy/rbac_policy.yaml": "89d6ba881efd346bd0f72b8b3c54cfa2da1091f14e7017e9d12207da0390e763",
-      "slurm/slurm_state.json": "537ea79f6922c60788d42c4a7cfdc03b2a21036d934d952ca3d964b0c4f87d36"
-    },
-    "env_25": {
-      "docs/rbac_policy.md": "03824a58546730d884845ed4fc32dcf2b8f9ebe526b99696c9f05efd9f5d72b2",
-      "docs/security_policy.md": "688881acc2222f76a88aca2b9158785e506f0a29e7b50d3c01ab78d92f51fbce",
-      "incidents/incident_metadata.json": "e856568fdcb42bc13050aeb5c7e8789e97362ff601b9f14f18d59fa7acce6ac6",
-      "metadata.yaml": "e80c5f5e70b0d3d7b09ac5eec001a99738459da85441010a00e4c237d202625f",
-      "policy/rbac_policy.yaml": "faf84369e7b65d4fecd9b27a84d84f42d530e24aa7fccc895e361e456d14db76",
-      "slurm/slurm_state.json": "03007920a583f5177d668e7c106df9a1623a51a24c7485214135aee78c890217"
-    },
-    "env_26": {
-      "docs/ib_troubleshooting.md": "51e80458f8b9ac8d202bad184d4cf8960381fd1b911edab602dd5e27d576b3f3",
-      "docs/rbac_policy.md": "e931fc4bbb1871b79ae5ad98b5c98cc26ba1b56ce04b4ebdd47f707598cf62e6",
-      "incidents/incident_metadata.json": "c469679c15aac27a842fa5bef94fafa56a399cb9d3769e3b4b1ead00c0892541",
-      "metadata.yaml": "2d7f32c8ca9c1bacf7ce787e0f789f25328af21604d07b1d3c9005a7735fc072",
-      "policy/rbac_policy.yaml": "8d1a00638c403dbf8c04c4ebccc67809cf3e184ac2349a8129e252b4887a65ff",
-      "slurm/slurm_state.json": "77a73e8fa9d6322b4e0db11e85901f1fbec158dc30c8d9a2d5e19330f414f294"
     }
   },
-  "generated_at": "2026-05-02T22:21:05.696572+00:00",
-  "total_envs": 26,
-  "total_files": 245
+  "generated_at": "2026-05-02T22:37:16.319694+00:00",
+  "total_envs": 23,
+  "total_files": 227
 }
