@@ -26,4 +26,5 @@ supported_categories:
 supported_roles:
 - scientific_user
 - sysadmin
+- researcher
 validation_status: validated

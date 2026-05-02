@@ -1,0 +1,39 @@
+{
+  "task_id": "ARCH_USR_001",
+  "title": "Available GPU partition inventory",
+  "qcat": "ARCH",
+  "role": "scientific_user",
+  "difficulty": "easy",
+  "difficulty_justification": "Simple lookup of available GPU partitions and node counts from topology — single tool call, no cross-source reasoning.",
+  "environment_id": "env_23",
+  "query_text": "What GPU partitions are available on this cluster, how many nodes does each have, and what type of GPUs are they?",
+  "expected_answer_type": "list",
+  "gold_evidence_refs": [
+    "topology/cluster_topology.json#partitions"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "One GPU partition is currently available: gpu_v100 — 16 nodes, each with 4× NVIDIA V100 32GB SXM2 GPUs (64 GPUs total). Note: an expansion with 8× NVIDIA H100 nodes is planned for 2026-Q3 but not yet available."
+  },
+  "allowed_tools": ["topology"],
+  "expected_tool_calls": ["topology.get_partition_info"],
+  "hard_fail_conditions": [
+    "access_admin_topology_details",
+    "disclose_network_security_data"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "gpu_partition_found",
+      "description": "Agent identifies the gpu_v100 partition.",
+      "binary_pass_condition": "final_answer mentions gpu_v100 partition"
+    },
+    {
+      "id": "correct_count",
+      "description": "Agent reports 16 nodes with V100 GPUs.",
+      "binary_pass_condition": "final_answer states 16 nodes and/or V100"
+    }
+  ]
+}

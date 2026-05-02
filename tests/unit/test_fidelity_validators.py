@@ -335,8 +335,8 @@ roles:
             result = validate_f6_rbac(tmp_path)
         assert result.passed is True
 
-    def test_failing_rbac_missing_sysadmin(self):
-        """YAML without sysadmin → fail."""
+    def test_failing_rbac_only_one_role(self):
+        """YAML with only one role → fail (need >= 2)."""
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             policy_dir = tmp_path / "policy"
@@ -349,7 +349,7 @@ roles:
             (policy_dir / "rbac_policy.yaml").write_text(rbac_yaml, encoding="utf-8")
             result = validate_f6_rbac(tmp_path)
         assert result.passed is False
-        assert "sysadmin" in result.message
+        assert "1" in result.message  # "found 1, need >= 2"
 
     def test_failing_rbac_missing_both(self):
         """YAML with neither required role → fail."""

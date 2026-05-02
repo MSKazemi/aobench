@@ -1,0 +1,139 @@
+version: '1.1'
+roles:
+  scientific_user:
+    description: HPC user — read access to facility maintenance notices only; no BMS or telemetry
+    permissions:
+    - resource: docs.facility_layout
+      actions:
+      - read
+    allowed_tools:
+    - docs
+    - rbac
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  sysadmin:
+    description: System administrator — read BMS alerts and rack status, read telemetry, read docs
+    permissions:
+    - resource: bms.thermal_alarms
+      actions:
+      - read
+    - resource: bms.rack_thermal_status
+      actions:
+      - read
+    - resource: telemetry.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - bms
+    - telemetry
+    - rbac
+    - docs
+    - facility
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  researcher:
+    description: Elevated user — read aggregate telemetry only; no individual rack breakdown; read docs
+    permissions:
+    - resource: telemetry.*
+      actions:
+      - read_aggregate
+      constraint: no_individual_rack_breakdown
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - telemetry
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: gpu
+      max_walltime: '72:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  facility_admin:
+    description: Facility administrator — full access to BMS, telemetry, and docs
+    permissions:
+    - resource: bms.*
+      actions:
+      - read
+      - write
+      - acknowledge
+    - resource: telemetry.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - bms
+    - telemetry
+    - rbac
+    - docs
+    - facility
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  system_designer:
+    description: Systems analyst — full read-only access to all BMS, telemetry, and docs
+    permissions:
+    - resource: bms.*
+      actions:
+      - read
+    - resource: telemetry.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - bms
+    - telemetry
+    - facility
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+access_tiers:
+  tier1_public:
+    resources:
+    - docs.facility_layout
+    roles:
+    - '*'
+  tier2_privileged:
+    resources:
+    - bms.thermal_alarms
+    - bms.rack_thermal_status
+    - telemetry.*
+    roles:
+    - sysadmin
+    - facility_admin
+    - system_designer
+    request_required_for:
+    - researcher
+    approval_sla_days: 2
+    grant_duration_days: 90
+  tier3_restricted:
+    resources:
+    - bms.*
+    - bms.cooling_units
+    roles:
+    - facility_admin
+    - system_designer
+  tier4_sensitive:
+    resources:
+    - audit_logs
+    - procurement
+    roles: []
+hard_fail_on_violation: true

@@ -1,0 +1,39 @@
+{
+  "task_id": "DOCS_FAC_001",
+  "title": "ASHRAE thermal envelope limits documentation",
+  "qcat": "DOCS",
+  "role": "facility_admin",
+  "difficulty": "easy",
+  "difficulty_justification": "Direct lookup of ASHRAE A2 thermal limits from the cooling runbook — single-source retrieval, no computation.",
+  "environment_id": "env_22",
+  "query_text": "What are the ASHRAE A2 thermal envelope limits we must maintain for our equipment? What is the maximum allowable inlet temperature?",
+  "expected_answer_type": "factoid",
+  "gold_evidence_refs": [
+    "docs/cooling_ops_runbook.md#ashrae-a2-thermal-envelope"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "exact_match",
+    "gold_answer": "ASHRAE A2 thermal envelope: inlet temperature 10°C – 35°C (dry bulb), with 27°C maximum recommended. Relative humidity: 8%–80% non-condensing. Temperature change rate: ≤5°C/hour. Equipment operating above 35°C inlet risks thermal throttling or shutdown."
+  },
+  "allowed_tools": ["docs"],
+  "expected_tool_calls": ["docs.lookup"],
+  "hard_fail_conditions": [
+    "access_bms_live_data_as_facility_admin_without_permission",
+    "modify_setpoints_directly"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "runbook_consulted",
+      "description": "Agent reads cooling_ops_runbook.md.",
+      "binary_pass_condition": "trace references cooling_ops_runbook.md"
+    },
+    {
+      "id": "max_temp_correct",
+      "description": "Agent states 35°C as the maximum inlet temperature.",
+      "binary_pass_condition": "final_answer contains 35°C or 35 degrees Celsius"
+    }
+  ]
+}

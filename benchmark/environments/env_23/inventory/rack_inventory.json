@@ -1,0 +1,12 @@
+{
+  "__stub__": true,
+  "racks": [
+    {"rack_id": "R-01", "partition": "cpu_standard", "nodes": 4, "power_kw": 6.4, "empty_u": 2},
+    {"rack_id": "R-02", "partition": "cpu_standard", "nodes": 4, "power_kw": 6.4, "empty_u": 2},
+    {"rack_id": "R-03", "partition": "gpu_v100", "nodes": 4, "power_kw": 24.0, "empty_u": 0},
+    {"rack_id": "R-04", "partition": "gpu_v100", "nodes": 4, "power_kw": 24.0, "empty_u": 0},
+    {"rack_id": "R-05", "partition": "highmem", "nodes": 8, "power_kw": 19.2, "empty_u": 4}
+  ],
+  "total_rack_power_kw": 80.0,
+  "facility_power_budget_kw": 200.0
+}

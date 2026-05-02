@@ -103,7 +103,7 @@ benchmark/
 │   └── lite_manifest_v1.json  ExaBench-Lite task subset
 │
 ├── environments/
-│   └── env_01/ … env_20/   20 snapshot bundles, each with:
+│   └── env_01/ … env_23/   23 snapshot bundles, each with:
 │       ├── slurm_state.json     SLURM jobs, nodes, partitions
 │       ├── incident_metadata.json  Active incidents
 │       ├── rbac_policy.yaml     Role permissions (v1.1, 5 roles)
@@ -122,7 +122,7 @@ benchmark/
 | Item | v0.1 delivered |
 |------|----------------|
 | Tasks | 30 original + 36 HPC v1 = 66 total |
-| Environments | 20 snapshot bundles |
+| Environments | 23 snapshot bundles |
 | Roles | 3 scored (`sci_user`, `sysadmin`, `fac_admin`) + 2 schema-only |
 | QCATs | 3 scored (`JOB`, `MON`, `ENERGY`) + 7 schema-only |
 | Adapters | 4 implemented (`direct_qa`, `openai`, `anthropic`, `mcp`) |

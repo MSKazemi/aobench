@@ -1,0 +1,33 @@
+environment_id: env_23
+snapshot_name: Capacity Expansion Planning
+scenario_type: architecture_review
+cluster_name: exabench-cluster-c
+snapshot_timestamp: 2026-04-01T10:00:00Z
+bundle_root: environments/env_23
+supported_roles:
+  - sysadmin
+  - researcher
+  - facility_admin
+  - system_designer
+supported_categories:
+  - ARCH
+  - PERF
+  - DOCS
+included_sources:
+  - topology
+  - inventory
+  - docs
+  - rbac
+included_files:
+  - topology/cluster_topology.json
+  - inventory/hardware_inventory.json
+  - inventory/rack_inventory.json
+  - docs/architecture_spec.md
+  - docs/capacity_planning_guide.md
+  - policy/rbac_policy.yaml
+implementation_status: scaffolded
+validation_status: not_checked
+description: >
+  Stub snapshot capturing cluster architecture and capacity planning data.
+  Includes network and storage topology, hardware inventory, rack layout,
+  architecture specification, and capacity planning documentation.

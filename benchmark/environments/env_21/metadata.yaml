@@ -1,0 +1,30 @@
+environment_id: env_21
+snapshot_name: Storage Quota Pressure
+scenario_type: storage_management
+cluster_name: exabench-cluster-a
+snapshot_timestamp: 2026-03-15T09:00:00Z
+bundle_root: environments/env_21
+supported_roles:
+  - scientific_user
+  - sysadmin
+  - researcher
+  - facility_admin
+  - system_designer
+supported_categories:
+  - DATA
+included_sources:
+  - filesystem
+  - docs
+  - rbac
+included_files:
+  - filesystem/quota_report.json
+  - filesystem/io_metrics.json
+  - docs/data_management_policy.md
+  - docs/storage_user_guide.md
+  - policy/rbac_policy.yaml
+implementation_status: scaffolded
+validation_status: not_checked
+description: >
+  Stub snapshot representing a Lustre storage system under quota pressure.
+  Includes per-user and per-project quota data, I/O throughput metrics,
+  data management policy docs, and role-aware RBAC controls.

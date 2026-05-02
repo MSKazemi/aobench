@@ -1,7 +1,7 @@
 # Environment Bundles — Overview
 
-ExaBench v0.1 ships **20 deterministic HPC environment snapshot bundles**
-under `benchmark/environments/env_01/` … `env_20/`. Each bundle freezes a
+ExaBench ships **23 deterministic HPC environment snapshot bundles**
+under `benchmark/environments/env_01/` … `env_23/`. Each bundle freezes a
 realistic operational scenario — a job failure, a queue-congestion event, a
 cooling unit fault, a policy violation, a multi-job interference incident,
 and so on — so that any agent run against the bundle is reproducible.
@@ -30,10 +30,13 @@ authoritative `metadata.yaml` of each bundle, read the file directly.
 | `capacity_planning` | env_13, env_14 | 6-month CPU trend, GPU demand forecast |
 | `multi_job_interference` | env_15, env_20 | Memory oversubscription, Lustre I/O contention |
 | `scheduler_misconfiguration` | env_16 | Wrong default partition after reconfig |
+| `storage_management` | env_21 | Lustre quota pressure; per-user and per-project usage |
+| `facility_incident` | env_22 | Cooling alarm response; degraded CRAC in high-density GPU row |
+| `architecture_review` | env_23 | Capacity expansion planning; cluster topology and hardware inventory |
 
 ---
 
-## All 20 bundles
+## All 23 bundles
 
 | Env | Scenario type | Scored roles | Scored QCATs | Description |
 |-----|---------------|--------------|--------------|-------------|
@@ -57,11 +60,9 @@ authoritative `metadata.yaml` of each bundle, read the file directly.
 | **env_18** | `job_failure` | scientific_user | JOB | User `alice` resubmitted a long-running simulation but the checkpoint file is missing. |
 | **env_19** | `energy_anomaly` | facility_admin | ENERGY | `gpu02` and `gpu03` allocated for 9 h but utilisation is ≈ 0 % — energy waste. |
 | **env_20** | `multi_job_interference` | sysadmin | JOB, MON | Lustre I/O contention: a checkpoint job on nodes 1–4 is starving a science job on nodes 5–8. |
-
-(`researcher` and `system_designer` appear above as *supported* roles for
-some bundles; v0.1 scoring covers `scientific_user`, `sysadmin`, and
-`facility_admin` only — see
-[`taxonomy.md §1`](../framework/taxonomy.md).)
+| **env_21** | `storage_management` | scientific_user, sysadmin, researcher, facility_admin, system_designer | DATA | Lustre quota pressure with per-user and per-project usage data; I/O metrics stub. |
+| **env_22** | `facility_incident` | scientific_user, sysadmin, researcher, facility_admin, system_designer | FAC, ENERGY, DOCS | Cooling alarm response: CRAC-07 degraded in high-density GPU row C; BMS alarms and runbook. |
+| **env_23** | `architecture_review` | sysadmin, researcher, facility_admin, system_designer | ARCH, PERF, DOCS | Capacity expansion planning: cluster topology, hardware inventory, and capacity planning guide. |
 
 ---
 

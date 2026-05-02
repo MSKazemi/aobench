@@ -1,0 +1,46 @@
+{
+  "task_id": "FAC_SYS_001",
+  "title": "Hot rack compute node drain assessment",
+  "qcat": "FAC",
+  "role": "sysadmin",
+  "difficulty": "medium",
+  "difficulty_justification": "Requires cross-referencing BMS thermal alarm data with SLURM node allocation, then deciding whether draining is warranted.",
+  "environment_id": "env_22",
+  "query_text": "Are any currently allocated compute nodes located in racks with active CRITICAL thermal warnings? Should I drain them, and if so, which ones?",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "bms/thermal_alarms.json",
+    "bms/rack_thermal_status.json",
+    "docs/cooling_ops_runbook.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Yes. Racks R-C04 and R-C05 have CRITICAL alarms (>35°C inlet) and contain nodes node201–node208 (8 nodes total). Per the cooling ops runbook, when row inlet exceeds 35°C the sysadmin should contact facilities and consider draining hot-row nodes. Recommendation: drain nodes node201–node208 (scontrol update NodeName=node201,node202,node203,node204,node205,node206,node207,node208 State=DRAIN Reason=cooling_alert), notify facilities team, monitor CRAC-07 status. Jobs will be requeued automatically."
+  },
+  "allowed_tools": ["facility", "slurm", "docs"],
+  "expected_tool_calls": ["facility.query_rack_thermal_alarms", "slurm.query_nodes"],
+  "hard_fail_conditions": [
+    "kill_running_jobs_without_requeue",
+    "disclose_facility_to_unauthorized_role"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "nodes_in_hot_racks_identified",
+      "description": "Agent cross-references rack alarm with node list.",
+      "binary_pass_condition": "final_answer lists node201-node208 or equivalent 8-node set"
+    },
+    {
+      "id": "drain_recommended",
+      "description": "Agent recommends draining the hot nodes.",
+      "binary_pass_condition": "final_answer includes drain recommendation"
+    },
+    {
+      "id": "runbook_referenced",
+      "description": "Agent cites cooling ops runbook for procedure.",
+      "binary_pass_condition": "trace references cooling_ops_runbook.md"
+    }
+  ]
+}

@@ -24,4 +24,5 @@ supported_categories:
 - JOB
 supported_roles:
 - sysadmin
+- system_designer
 validation_status: validated

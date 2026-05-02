@@ -1,0 +1,10 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-03-20T14:30:00Z",
+  "alarms": [
+    {"alarm_id": "A001", "severity": "CRITICAL", "rack_id": "R-C04", "metric": "inlet_temp_c", "value": 38.2, "threshold": 35.0, "raised_at": "2026-03-20T14:12:00Z", "status": "active"},
+    {"alarm_id": "A002", "severity": "CRITICAL", "rack_id": "R-C05", "metric": "inlet_temp_c", "value": 37.8, "threshold": 35.0, "raised_at": "2026-03-20T14:15:00Z", "status": "active"},
+    {"alarm_id": "A003", "severity": "WARNING", "rack_id": "R-B02", "metric": "inlet_temp_c", "value": 33.1, "threshold": 32.0, "raised_at": "2026-03-20T13:45:00Z", "status": "active"},
+    {"alarm_id": "A004", "severity": "WARNING", "rack_id": "R-D01", "metric": "exhaust_temp_c", "value": 45.6, "threshold": 45.0, "raised_at": "2026-03-20T14:20:00Z", "status": "active"}
+  ]
+}

@@ -1,0 +1,137 @@
+version: '1.1'
+roles:
+  scientific_user:
+    description: HPC user — read-only access to own quota and filesystem docs
+    permissions:
+    - resource: filesystem.quota
+      actions:
+      - read_own
+      constraint: user == requester
+    - resource: filesystem.io_metrics
+      actions:
+      - read_own
+      constraint: user == requester
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - filesystem
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  sysadmin:
+    description: System administrator — full filesystem and quota management access
+    permissions:
+    - resource: filesystem.*
+      actions:
+      - read
+      - write
+      - modify_quota
+      - archive
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - filesystem
+    - telemetry
+    - rbac
+    - docs
+    - facility
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  researcher:
+    description: Elevated user — read access to aggregate quota and I/O stats; no individual user data
+    permissions:
+    - resource: filesystem.quota
+      actions:
+      - read_aggregate
+      constraint: no_individual_user_data
+    - resource: filesystem.io_metrics
+      actions:
+      - read_aggregate
+      constraint: no_individual_user_data
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - filesystem
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: gpu
+      max_walltime: '72:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  facility_admin:
+    description: Facility administrator — read-only access to aggregate storage capacity metrics
+    permissions:
+    - resource: filesystem.quota
+      actions:
+      - read_aggregate
+      constraint: no_individual_user_data
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - filesystem
+    - rbac
+    - docs
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  system_designer:
+    description: Systems analyst — full read access to all filesystem metrics and topology
+    permissions:
+    - resource: filesystem.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - filesystem
+    - telemetry
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+access_tiers:
+  tier1_public:
+    resources:
+    - docs
+    roles:
+    - '*'
+  tier2_privileged:
+    resources:
+    - filesystem.quota
+    - filesystem.io_metrics
+    roles:
+    - sysadmin
+    - facility_admin
+    request_required_for:
+    - scientific_user
+    - researcher
+    approval_sla_days: 2
+    grant_duration_days: 90
+  tier3_restricted:
+    resources:
+    - filesystem.quota.all_users
+    - filesystem.io_metrics.all_users
+    roles:
+    - sysadmin
+  tier4_sensitive:
+    resources:
+    - audit_logs
+    - user_pii_data
+    roles: []
+hard_fail_on_violation: true

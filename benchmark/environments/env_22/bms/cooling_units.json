@@ -1,0 +1,12 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-03-20T14:30:00Z",
+  "crac_units": [
+    {"unit_id": "CRAC-07", "status": "degraded", "setpoint_c": 18.0, "supply_temp_c": 22.4, "return_temp_c": 36.8, "capacity_kw": 30.0, "load_kw": 28.9, "fault": "Compressor 2 efficiency low — 82% of rated capacity"},
+    {"unit_id": "CRAC-04", "status": "ok", "setpoint_c": 18.0, "supply_temp_c": 17.8, "return_temp_c": 31.2, "capacity_kw": 25.0, "load_kw": 14.3, "fault": null},
+    {"unit_id": "CRAC-01", "status": "ok", "setpoint_c": 18.0, "supply_temp_c": 17.5, "return_temp_c": 28.9, "capacity_kw": 25.0, "load_kw": 9.8, "fault": null}
+  ],
+  "total_cooling_capacity_kw": 80.0,
+  "total_it_load_kw": 56.6,
+  "design_pue": 1.35
+}

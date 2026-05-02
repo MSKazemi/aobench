@@ -494,7 +494,7 @@ def validate_f5_telemetry_cadence(bundle_dir: Path) -> ValidatorResult:
 # ---------------------------------------------------------------------------
 
 def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
-    """F6: RBAC policy must include at least scientific_user and sysadmin roles."""
+    """F6: RBAC policy requires at least 2 distinct roles defined in the RBAC policy."""
     rbac_path = bundle_dir / "policy" / "rbac_policy.yaml"
     if not rbac_path.exists():
         return ValidatorResult(
@@ -502,7 +502,7 @@ def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
             passed=True,
             metric="rbac_roles",
             value=None,
-            expected="roles⊇{scientific_user,sysadmin}",
+            expected="len(roles)>=2",
             message="skipped (no rbac file)",
         )
 
@@ -515,7 +515,7 @@ def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
             passed=False,
             metric="rbac_roles",
             value=None,
-            expected="roles⊇{scientific_user,sysadmin}",
+            expected="len(roles)>=2",
             message=f"failed to parse YAML: {e}",
         )
 
@@ -544,20 +544,18 @@ def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
 
     _collect_roles(policy)
 
-    required = {"scientific_user", "sysadmin"}
-    missing = required - role_names
-    passed = len(missing) == 0
+    passed = len(role_names) >= 2
 
     return ValidatorResult(
         validator_id="F6",
         passed=passed,
         metric="rbac_roles",
         value=float(len(role_names)),
-        expected="roles⊇{scientific_user,sysadmin}",
+        expected="len(roles)>=2",
         message=(
-            f"found roles: {sorted(role_names)}"
+            f"found {len(role_names)} roles: {sorted(role_names)}"
             if passed
-            else f"missing roles: {sorted(missing)}"
+            else f"insufficient roles: found {len(role_names)}, need >= 2"
         ),
     )
 

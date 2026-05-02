@@ -325,22 +325,25 @@ This helps align snapshots with QCAT categories and capabilities.
 
 ## 12 — Current Environment Coverage
 
-ExaBench currently ships 20 canonical snapshot bundles across all 8 scenario types.
+ExaBench currently ships 23 canonical snapshot bundles across 11 scenario types.
 
 | Scenario type | Count | Env IDs |
 |---------------|-------|---------|
-| `job_failure` | 4 | env_01, env_17, env_18, + env_01 (OOM) |
-| `energy_anomaly` | 4 | env_06, env_07, env_19, + env_03/env_04/env_05 legacy |
+| `job_failure` | 3 | env_01, env_17, env_18 |
+| `energy_anomaly` | 3 | env_06, env_07, env_19 |
 | `node_degradation` | 2 | env_08, env_09 |
 | `policy_violation` | 2 | env_10, env_11 |
 | `queue_congestion` | 2 | env_02, env_12 |
 | `capacity_planning` | 2 | env_13, env_14 |
 | `multi_job_interference` | 2 | env_15, env_20 |
 | `scheduler_misconfiguration` | 1 | env_16 |
+| `storage_management` | 1 | env_21 |
+| `facility_incident` | 1 | env_22 |
+| `architecture_review` | 1 | env_23 |
 
 ### Naming convention
 
-Canonical environment IDs use the `env_NN` scheme (zero-padded). New bundles should continue from `env_21`.
+Canonical environment IDs use the `env_NN` scheme (zero-padded). New bundles should continue from `env_24`.
 
 ---
 
@@ -368,6 +371,9 @@ Canonical environment IDs use the `env_NN` scheme (zero-padded). New bundles sho
 | `env_18` | Checkpoint File Missing Restart Fails | `job_failure` | `scientific_user` | `JOB` | `validated` |
 | `env_19` | GPU Idle Energy Waste Not Released | `energy_anomaly` | `facility_admin` | `ENERGY`, `MON` | `validated` |
 | `env_20` | Lustre IO Contention Multi-Job Interference | `multi_job_interference` | `sysadmin` | `JOB`, `MON` | `validated` |
+| `env_21` | Storage Quota Pressure | `storage_management` | all 5 roles | `DATA` | `not_checked` |
+| `env_22` | Cooling Alarm Response | `facility_incident` | all 5 roles | `FAC`, `ENERGY`, `DOCS` | `not_checked` |
+| `env_23` | Capacity Expansion Planning | `architecture_review` | sysadmin, researcher, facility_admin, system_designer | `ARCH`, `PERF`, `DOCS` | `not_checked` |
 
 Every task must reference exactly one valid `environment_id` from this table.
 

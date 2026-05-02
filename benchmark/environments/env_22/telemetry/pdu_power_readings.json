@@ -1,0 +1,9 @@
+{
+  "__stub__": true,
+  "note": "30-day PDU power reading stub; replace with real timeseries parquet",
+  "columns": ["timestamp", "rack_id", "pdu_id", "power_kw", "current_a"],
+  "sample_rows": [
+    {"timestamp": "2026-03-20T14:00:00Z", "rack_id": "R-C04", "pdu_id": "PDU-C04-A", "power_kw": 9.2, "current_a": 40.1},
+    {"timestamp": "2026-03-20T14:00:00Z", "rack_id": "R-C05", "pdu_id": "PDU-C05-A", "power_kw": 8.9, "current_a": 38.7}
+  ]
+}

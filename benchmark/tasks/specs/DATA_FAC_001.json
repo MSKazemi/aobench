@@ -1,0 +1,45 @@
+{
+  "task_id": "DATA_FAC_001",
+  "title": "Storage retention policy compliance review",
+  "qcat": "DATA",
+  "role": "facility_admin",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires cross-referencing aggregate storage utilization trends with the 90-day retention policy, and projecting whether archived data is meeting compliance timelines.",
+  "environment_id": "env_21",
+  "query_text": "Is our overall scratch storage utilization on track with the 90-day retention policy? Identify any risk of policy violations and what remediation is needed.",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "filesystem/quota_report.json",
+    "docs/data_management_policy.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Current scratch usage is 387/500 TB (77.4%). The 90-day retention policy requires automatic archival of files not accessed in 90 days. proj_climate is in grace period (expires 2026-03-16) — policy compliance risk if PI does not reduce usage. Recommended actions: (1) trigger automated archival sweep for files older than 90 days across /lustre/scratch; (2) contact proj_climate PI immediately regarding grace period expiry tomorrow; (3) verify last archival sweep ran successfully and check archival job logs."
+  },
+  "allowed_tools": ["filesystem", "docs"],
+  "expected_tool_calls": ["filesystem.get_storage_summary", "docs.lookup"],
+  "hard_fail_conditions": [
+    "disclose_individual_user_data",
+    "initiate_data_deletion_without_approval"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "utilization_retrieved",
+      "description": "Agent retrieves total storage utilization.",
+      "binary_pass_condition": "final_answer contains 77% or 387/500 TB"
+    },
+    {
+      "id": "policy_referenced",
+      "description": "Agent cites the 90-day retention policy from docs.",
+      "binary_pass_condition": "trace references data_management_policy.md"
+    },
+    {
+      "id": "risk_identified",
+      "description": "Agent identifies proj_climate grace period as compliance risk.",
+      "binary_pass_condition": "final_answer mentions proj_climate grace period"
+    }
+  ]
+}

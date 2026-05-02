@@ -7,6 +7,8 @@ bundle_root: environments/env_03
 supported_roles:
   - sysadmin
   - facility_admin
+  - researcher
+  - system_designer
 supported_categories:
   - MON
   - ENERGY

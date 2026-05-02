@@ -1,0 +1,6 @@
+{
+  "__stub__": true,
+  "note": "I/O metrics stub; replace with real parquet from production telemetry pipeline",
+  "columns": ["job_id", "username", "project", "read_bytes", "write_bytes", "iops_read", "iops_write", "timestamp"],
+  "sample_row": {"job_id": 901001, "username": "alice", "project": "proj_hpc_ml", "read_bytes": 42949672960, "write_bytes": 10737418240, "iops_read": 12500, "iops_write": 3200, "timestamp": "2026-03-14T22:00:00Z"}
+}

@@ -1,0 +1,52 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-04-01T10:00:00Z",
+  "cluster": "exabench-cluster-c",
+  "login_nodes": ["login01", "login02"],
+  "partitions": [
+    {
+      "name": "cpu_standard",
+      "nodes": ["node001-node040"],
+      "node_count": 40,
+      "cores_per_node": 64,
+      "ram_gb_per_node": 256,
+      "cpu_model": "AMD EPYC 7763",
+      "interconnect": "HDR100 InfiniBand",
+      "utilization_30d_avg": 0.72
+    },
+    {
+      "name": "gpu_v100",
+      "nodes": ["gpu001-gpu016"],
+      "node_count": 16,
+      "gpus_per_node": 4,
+      "gpu_model": "NVIDIA V100 32GB SXM2",
+      "cores_per_node": 32,
+      "ram_gb_per_node": 384,
+      "interconnect": "HDR200 InfiniBand (NVLink within node)",
+      "utilization_30d_avg": 0.91
+    },
+    {
+      "name": "highmem",
+      "nodes": ["hmem001-hmem008"],
+      "node_count": 8,
+      "cores_per_node": 128,
+      "ram_gb_per_node": 2048,
+      "cpu_model": "Intel Xeon Platinum 8380",
+      "numa_nodes_per_node": 4,
+      "memory_bandwidth_gb_s": 204.8,
+      "interconnect": "HDR100 InfiniBand",
+      "utilization_30d_avg": 0.63
+    }
+  ],
+  "network_fabric": {
+    "type": "InfiniBand HDR",
+    "core_switches": ["ib-core-01", "ib-core-02"],
+    "leaf_switches": ["ib-leaf-01 to ib-leaf-08"],
+    "topology": "fat-tree 2:1 oversubscription",
+    "storage_link_bandwidth_gb_s": 200
+  },
+  "storage": {
+    "scratch": {"filesystem": "Lustre", "capacity_pb": 2.0, "osts": 24, "peak_bandwidth_gb_s": 80},
+    "home": {"filesystem": "GPFS", "capacity_tb": 100, "peak_bandwidth_gb_s": 10}
+  }
+}

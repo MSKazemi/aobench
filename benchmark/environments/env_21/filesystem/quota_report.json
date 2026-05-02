@@ -1,0 +1,17 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-03-15T09:00:00Z",
+  "filesystem": "/lustre/scratch",
+  "total_capacity_tb": 500,
+  "used_tb": 387,
+  "users": [
+    {"username": "alice", "used_gb": 142.3, "quota_gb": 200, "grace_period": null},
+    {"username": "bob", "used_gb": 189.7, "quota_gb": 200, "grace_period": "2026-03-18"},
+    {"username": "carol", "used_gb": 48.1, "quota_gb": 200, "grace_period": null}
+  ],
+  "projects": [
+    {"project": "proj_hpc_ml", "used_tb": 18.4, "quota_tb": 20, "grace_period": null},
+    {"project": "proj_climate", "used_tb": 19.8, "quota_tb": 20, "grace_period": "2026-03-16"},
+    {"project": "proj_genomics", "used_tb": 11.2, "quota_tb": 15, "grace_period": null}
+  ]
+}

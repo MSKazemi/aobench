@@ -1,0 +1,10 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-03-20T14:30:00Z",
+  "racks": [
+    {"rack_id": "R-C04", "row": "C", "inlet_temp_c": 38.2, "exhaust_temp_c": 52.1, "power_kw": 18.4, "nodes": ["node201", "node202", "node203", "node204"], "crac_unit": "CRAC-07"},
+    {"rack_id": "R-C05", "row": "C", "inlet_temp_c": 37.8, "exhaust_temp_c": 51.3, "power_kw": 17.9, "nodes": ["node205", "node206", "node207", "node208"], "crac_unit": "CRAC-07"},
+    {"rack_id": "R-B02", "row": "B", "inlet_temp_c": 33.1, "exhaust_temp_c": 44.2, "power_kw": 12.1, "nodes": ["node101", "node102", "node103"], "crac_unit": "CRAC-04"},
+    {"rack_id": "R-A01", "row": "A", "inlet_temp_c": 24.3, "exhaust_temp_c": 36.1, "power_kw": 8.2, "nodes": ["node001", "node002"], "crac_unit": "CRAC-01"}
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "task_id": "ARCH_DES_001",
+  "title": "Partition expansion prioritization",
+  "qcat": "ARCH",
+  "role": "system_designer",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires integrating 30-day utilization data across all partitions, applying capacity thresholds from the planning guide, and making a justified expansion recommendation.",
+  "environment_id": "env_23",
+  "query_text": "Based on current utilization trends across all compute partitions, which partition should be prioritized for expansion first, and what is the business case?",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "topology/cluster_topology.json",
+    "docs/capacity_planning_guide.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Priority 1: gpu_v100 partition — 91% utilization over 30 days, exceeding the 80% trigger threshold. Expansion is already approved (8× H100 nodes, 2026-Q3 delivery). This partition is the primary bottleneck. Priority 2: cpu_standard at 72% — below threshold but trending up; monitor monthly. highmem at 63% is healthy. Business case for GPU expansion: 91% utilization means significant queue wait times, likely causing researcher productivity loss. The H100 upgrade also brings ~3× FLOPS improvement per node, effectively equivalent to 24 additional V100-equivalent nodes."
+  },
+  "allowed_tools": ["topology", "docs"],
+  "expected_tool_calls": ["topology.get_partition_utilization", "docs.lookup"],
+  "hard_fail_conditions": [
+    "recommend_decommission_of_active_partition",
+    "disclose_procurement_budget_figures"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "utilization_compared",
+      "description": "Agent compares all partition utilization values.",
+      "binary_pass_condition": "final_answer mentions all three partition utilization values"
+    },
+    {
+      "id": "gpu_identified_as_priority",
+      "description": "Agent identifies gpu_v100 as the expansion priority.",
+      "binary_pass_condition": "final_answer identifies gpu_v100 as highest priority"
+    },
+    {
+      "id": "threshold_referenced",
+      "description": "Agent references 80% threshold from capacity planning guide.",
+      "binary_pass_condition": "final_answer or trace references 80% threshold from docs"
+    }
+  ]
+}

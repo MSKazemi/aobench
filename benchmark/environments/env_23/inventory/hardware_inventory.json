@@ -1,0 +1,15 @@
+{
+  "__stub__": true,
+  "snapshot_time": "2026-04-01T10:00:00Z",
+  "total_nodes": 64,
+  "node_classes": [
+    {"class": "cpu_standard", "count": 40, "vendor": "Dell", "model": "PowerEdge R6525", "purchase_year": 2022, "warranty_end": "2027-12-31"},
+    {"class": "gpu_v100", "count": 16, "vendor": "NVIDIA DGX", "model": "DGX-1V", "purchase_year": 2021, "warranty_end": "2026-06-30"},
+    {"class": "highmem", "count": 8, "vendor": "HPE", "model": "ProLiant DL580 Gen10 Plus", "purchase_year": 2023, "warranty_end": "2028-06-30"}
+  ],
+  "upcoming_procurement": {
+    "description": "GPU expansion: 8x NVIDIA H100 nodes (planned 2026-Q3)",
+    "status": "budget_approved",
+    "expected_delivery": "2026-09-01"
+  }
+}

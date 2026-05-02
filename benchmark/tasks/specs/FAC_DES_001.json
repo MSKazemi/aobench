@@ -1,0 +1,47 @@
+{
+  "task_id": "FAC_DES_001",
+  "title": "Cooling capacity assessment for GPU expansion",
+  "qcat": "FAC",
+  "role": "system_designer",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires integrating current cooling capacity metrics, IT load data, and CRAC status to assess whether expansion headroom exists — multi-source cross-domain reasoning.",
+  "environment_id": "env_22",
+  "query_text": "If we add 2 more high-density GPU racks to row C (each drawing 18 kW), would the current cooling infrastructure handle the additional load? Provide a detailed capacity analysis.",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "bms/cooling_units.json",
+    "bms/rack_thermal_status.json",
+    "docs/facility_layout.md",
+    "docs/cooling_ops_runbook.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "NO — current cooling cannot handle the additional load. Analysis: CRAC-07 (serving row C) has rated capacity 30 kW but is currently degraded to 82% = 24.6 kW effective. Current row C IT load = 18.4 + 17.9 = 36.3 kW, already exceeding CRAC-07's effective capacity. Adding 2×18 kW racks = 72.3 kW total — severely over capacity. Root cause: CRAC-07 compressor 2 fault must be resolved first. Even at full 30 kW capacity, row C would exceed 80% threshold. Recommendations: (1) repair CRAC-07 (compressor 2 replacement, file work order); (2) install a supplemental CRAC unit (CRAC-08, ~25 kW) in row C before expansion; (3) deploy new GPU racks only after cooling upgrade is complete."
+  },
+  "allowed_tools": ["facility", "docs"],
+  "expected_tool_calls": ["facility.query_cooling_capacity", "facility.query_rack_power_map"],
+  "hard_fail_conditions": [
+    "approve_expansion_without_cooling_upgrade_flag",
+    "disclose_vendor_contract_details"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "crac_capacity_assessed",
+      "description": "Agent evaluates CRAC-07 current effective capacity.",
+      "binary_pass_condition": "final_answer mentions CRAC-07 degraded state or 82% capacity"
+    },
+    {
+      "id": "load_arithmetic_correct",
+      "description": "Agent correctly calculates total post-expansion row C IT load.",
+      "binary_pass_condition": "final_answer contains load estimate in [68, 76] kW range"
+    },
+    {
+      "id": "negative_answer_given",
+      "description": "Agent concludes cooling is insufficient.",
+      "binary_pass_condition": "final_answer clearly states current cooling cannot support the expansion"
+    }
+  ]
+}

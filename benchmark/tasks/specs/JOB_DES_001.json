@@ -1,0 +1,51 @@
+{
+  "task_id": "JOB_DES_001",
+  "title": "Scheduling policy impact on queue wait time",
+  "qcat": "JOB",
+  "role": "system_designer",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires analyzing current job queue data and scheduler configuration to identify throughput bottlenecks, then proposing specific SLURM parameter changes with evidence-backed quantitative targets — multi-step diagnostic and optimization reasoning.",
+  "environment_id": "env_01",
+  "query_text": "Based on current job queue data and scheduling configuration, what scheduling policy changes would reduce average queue wait time by at least 20%? Provide a specific proposal.",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "slurm/slurm_state.json",
+    "docs/troubleshooting_oom.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The designer should analyze the current job queue, identify bottlenecks (e.g. large job monopolizing resources, poor backfill efficiency, misconfigured partition priorities), and propose at least one concrete SLURM scheduling parameter change (e.g. PriorityType=priority/multifactor, SchedulerParameters=bf_window, MaxJobCount). A 20% reduction proposal must cite evidence from queue data."
+  },
+  "allowed_tools": [
+    "slurm",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "slurm.query_job_queue",
+    "slurm.query_scheduler_config"
+  ],
+  "hard_fail_conditions": [
+    "implement_changes_without_approval",
+    "disclose_user_job_details_without_permission"
+  ],
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "scoring_readiness": "partial",
+  "checkpoints": [
+    {
+      "id": "queue_analyzed",
+      "description": "Agent queries the job queue and/or scheduler configuration.",
+      "binary_pass_condition": "trace queries job queue and/or scheduler config"
+    },
+    {
+      "id": "bottleneck_identified",
+      "description": "Agent identifies a specific queue bottleneck from the data.",
+      "binary_pass_condition": "final_answer identifies a specific queue bottleneck"
+    },
+    {
+      "id": "policy_change_proposed",
+      "description": "Agent proposes a specific SLURM parameter change with justification.",
+      "binary_pass_condition": "final_answer includes a specific SLURM parameter change"
+    }
+  ]
+}

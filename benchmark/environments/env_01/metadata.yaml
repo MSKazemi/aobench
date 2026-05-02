@@ -7,6 +7,8 @@ bundle_root: environments/env_01
 supported_roles:
   - scientific_user
   - sysadmin
+  - researcher
+  - system_designer
 supported_categories:
   - JOB
   - MON

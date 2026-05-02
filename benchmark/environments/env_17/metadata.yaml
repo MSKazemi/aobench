@@ -26,4 +26,5 @@ supported_categories:
 - MON
 supported_roles:
 - sysadmin
+- system_designer
 validation_status: validated

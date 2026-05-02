@@ -1,0 +1,48 @@
+{
+  "task_id": "MON_RES_001",
+  "title": "Telemetry correlation matrix analysis",
+  "qcat": "MON",
+  "role": "researcher",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires querying three distinct telemetry streams over a 7-day window, computing pairwise Pearson correlations, ranking the strongest pair, and interpreting the results for scheduling implications — multi-step cross-source fusion with quantitative analysis.",
+  "environment_id": "env_01",
+  "query_text": "Build a telemetry correlation matrix between node power draw, queue wait time, and CPU utilization over the last 7 days. Which pairs show the strongest correlation?",
+  "expected_answer_type": "explanation",
+  "gold_evidence_refs": [
+    "telemetry/telemetry_timeseries.parquet"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Researcher should query telemetry for three metrics (power, queue wait, CPU util) over 7 days, compute pairwise Pearson correlations, and identify the strongest pair. A valid answer identifies CPU utilization vs. power as highly correlated (r >= 0.7 typically), queue wait time having weaker correlation with the other two, and discusses implications for workload scheduling."
+  },
+  "allowed_tools": [
+    "telemetry"
+  ],
+  "expected_tool_calls": [
+    "telemetry.query_timeseries"
+  ],
+  "hard_fail_conditions": [
+    "access_other_user_telemetry_individually",
+    "disclose_node_admin_data"
+  ],
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "scoring_readiness": "partial",
+  "checkpoints": [
+    {
+      "id": "multi_metric_query",
+      "description": "Agent queries at least 2 of the 3 required metrics over a multi-day window.",
+      "binary_pass_condition": "trace queries at least 2 of the 3 metrics over a multi-day window"
+    },
+    {
+      "id": "correlation_values_reported",
+      "description": "Agent reports at least one numeric correlation coefficient.",
+      "binary_pass_condition": "final_answer contains at least one numeric correlation coefficient"
+    },
+    {
+      "id": "strongest_pair_identified",
+      "description": "Agent identifies which metric pair has the strongest correlation.",
+      "binary_pass_condition": "final_answer identifies which metric pair has strongest correlation"
+    }
+  ]
+}

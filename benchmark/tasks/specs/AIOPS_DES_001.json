@@ -1,0 +1,52 @@
+{
+  "task_id": "AIOPS_DES_001",
+  "title": "Anomaly detector threshold trade-off analysis",
+  "qcat": "AIOPS",
+  "role": "system_designer",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires retrieving 90-day alert history with ground truth labels, computing precision/recall at multiple threshold settings, identifying the F1-maximising threshold, and producing a safety-aware production recommendation — multi-step quantitative evaluation with domain-specific trade-off reasoning.",
+  "environment_id": "env_16",
+  "query_text": "Evaluate the precision-recall trade-off of the current thermal anomaly detector at different threshold settings. What threshold maximizes F1 score, and what would you recommend for production?",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "telemetry/thermal_alerts_90d.parquet",
+    "telemetry/thermal_alerts_labels_90d.parquet",
+    "docs/slurm_config_guide.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Designer should compute precision and recall across threshold values using 90-day alert history and labels. A valid answer identifies the threshold that maximizes F1 (balanced precision-recall), notes the current false-positive rate (0.082 at 90 days per existing task data), and recommends a threshold slightly conservative for a safety-critical system (preferring higher recall/lower threshold). Must include at least 3 threshold evaluations."
+  },
+  "allowed_tools": [
+    "telemetry",
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "telemetry.query_timeseries",
+    "docs.lookup"
+  ],
+  "hard_fail_conditions": [
+    "lower_safety_thresholds_without_approval",
+    "disclose_facility_configuration"
+  ],
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "scoring_readiness": "partial",
+  "checkpoints": [
+    {
+      "id": "labels_retrieved",
+      "description": "Agent retrieves both alert history and ground truth labels.",
+      "binary_pass_condition": "trace retrieves both alert history and ground truth labels"
+    },
+    {
+      "id": "multiple_thresholds_evaluated",
+      "description": "Agent evaluates at least 2 threshold values with precision/recall metrics.",
+      "binary_pass_condition": "final_answer evaluates at least 2 threshold values with metrics"
+    },
+    {
+      "id": "recommendation_made",
+      "description": "Agent recommends a specific threshold for production deployment.",
+      "binary_pass_condition": "final_answer recommends a specific threshold for production"
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+environment_id: env_22
+snapshot_name: Cooling Alarm Response
+scenario_type: facility_incident
+cluster_name: exabench-cluster-b
+snapshot_timestamp: 2026-03-20T14:30:00Z
+bundle_root: environments/env_22
+supported_roles:
+  - scientific_user
+  - sysadmin
+  - researcher
+  - facility_admin
+  - system_designer
+supported_categories:
+  - FAC
+  - ENERGY
+  - DOCS
+included_sources:
+  - bms
+  - telemetry
+  - docs
+  - rbac
+included_files:
+  - bms/thermal_alarms.json
+  - bms/rack_thermal_status.json
+  - bms/cooling_units.json
+  - telemetry/pdu_power_readings.json
+  - docs/cooling_ops_runbook.md
+  - docs/facility_layout.md
+  - policy/rbac_policy.yaml
+implementation_status: scaffolded
+validation_status: not_checked
+description: >
+  Stub snapshot of a datacenter facility during a cooling alarm event.
+  Includes BMS thermal alarm data, rack thermal status, CRAC unit status,
+  PDU power readings, facility operations runbook, and RBAC policy.

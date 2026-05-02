@@ -14,18 +14,27 @@ The authoritative Pydantic types live in `src/exabench/schemas/task.py`.
 A task's `role` field says **who is asking**. ExaBench defines five role
 values; v0.1 scores three.
 
-| Role | Schema value | Scored in v0.1? | Primary mission | Priority QCATs |
-|------|-------------|-----------------|-----------------|----------------|
-| **Normal user / scientific user** | `scientific_user` | ✅ | Run workloads, manage own data | JOB, MON, ENERGY (scored); DATA, PERF, DOCS (taxonomy) |
-| **System administrator** | `sysadmin` | ✅ | Cluster reliability, scheduling, security | JOB, MON, ENERGY (scored); DATA, SEC, AIOPS (taxonomy) |
-| **Facility admin** | `facility_admin` | ✅ | Power and cooling operations | MON, ENERGY (scored); FAC, AIOPS, DOCS (taxonomy) |
-| Researcher | `researcher` | schema only | Telemetry analysis, performance, efficiency | AIOPS, PERF, ENERGY (taxonomy) |
-| System designer / architect | `system_designer` | schema only | Capacity planning, topology, benchmarking | ARCH, PERF, ENERGY (taxonomy) |
+| Role | Schema value | Has tasks? | Primary mission | Priority QCATs |
+|------|-------------|------------|-----------------|----------------|
+| **Normal user / scientific user** | `scientific_user` | ✅ | Run workloads, manage own data | JOB, MON, ENERGY, DATA, DOCS, FAC |
+| **System administrator** | `sysadmin` | ✅ | Cluster reliability, scheduling, security | JOB, MON, ENERGY, DATA, SEC, AIOPS, ARCH |
+| **Facility admin** | `facility_admin` | ✅ | Power and cooling operations | MON, ENERGY, FAC, AIOPS, DOCS, ARCH |
+| **Researcher** | `researcher` | ✅ | Telemetry analysis, performance, efficiency | AIOPS, PERF, ENERGY, JOB, MON, DATA, DOCS |
+| **System designer / architect** | `system_designer` | ✅ | Capacity planning, topology, benchmarking | ARCH, PERF, ENERGY, JOB, AIOPS, DATA, DOCS |
 
-The two unscored roles are present in `task.py` and in
-`benchmark/configs/hpc_tool_catalog.yaml` so that tasks can be authored for
-them, but no task currently uses them. Promotion to scored status is planned
-for a future release.
+All five roles have scored tasks in the current task set (`task_set_v3.json`).
+
+### 1.1 Role abbreviations (task ID naming convention)
+
+Task IDs encode the role as a 3-letter abbreviation, e.g. `JOB-USR-003`.
+
+| Abbreviation | Role |
+|---|---|
+| USR | scientific_user |
+| SYS | sysadmin |
+| FAC | facility_admin |
+| RES | researcher |
+| DES | system_designer |
 
 ---
 
@@ -34,22 +43,20 @@ for a future release.
 The `qcat` field labels the functional domain of the task. Ten QCATs are
 defined in the taxonomy; v0.1 scores three.
 
-| Code | Name | Scored in v0.1? | Description |
-|------|------|-----------------|-------------|
+| Code | Name | Has tasks? | Description |
+|------|------|------------|-------------|
 | **JOB** | Job & Workflow Management | ✅ | Submitting, monitoring, debugging jobs; queues; batch scripts |
 | **MON** | Monitoring & Observability | ✅ | Metrics, logs, alerts, dashboards, telemetry correlation |
 | **ENERGY** | Power, Energy & Sustainability | ✅ | Power monitoring, PUE, energy-aware scheduling |
-| PERF | Performance & Optimisation | taxonomy only | Profiling, bottlenecks, scaling studies |
-| DATA | Data & Storage Management | taxonomy only | Filesystems, quotas, I/O, transfers |
-| SEC | Security & Policy | taxonomy only | IAM, access control, compliance |
-| FAC | Facility & Environmental | taxonomy only | Cooling, BMS/DCIM, rack health, alarms |
-| ARCH | Architecture & Capacity | taxonomy only | Topology design, performance modelling |
-| AIOPS | AI & Intelligent Operations | taxonomy only | Anomaly detection, predictive maintenance |
-| DOCS | Documentation & Support | taxonomy only | FAQs, tutorials, troubleshooting |
+| **PERF** | Performance & Optimisation | ✅ | Profiling, bottlenecks, scaling studies |
+| **DATA** | Data & Storage Management | ✅ | Filesystems, quotas, I/O performance, data transfer, backup/archival |
+| **SEC** | Security & Policy | ✅ | IAM, access control, compliance |
+| **FAC** | Facility, Infrastructure & Environmental Systems | ✅ | Cooling, BMS/DCIM, power distribution, rack health, alarms |
+| **ARCH** | System Architecture, Design & Capacity Planning | ✅ | Topology, hardware specs, capacity planning, benchmarking |
+| **AIOPS** | AI & Intelligent Operations | ✅ | Anomaly detection, predictive maintenance |
+| **DOCS** | Documentation, Support & Knowledge Assistance | ✅ | Docs retrieval, tutorials, FAQs, policies, troubleshooting |
 
-The seven taxonomy-only QCATs are accepted by the schema and the validator,
-but no scored tasks exist for them. Expansion to PERF, AIOPS, and SEC is
-planned for the v0.2 evaluation matrix.
+All ten QCATs have scored tasks in `task_set_v3.json` (71 tasks total).
 
 ---
 

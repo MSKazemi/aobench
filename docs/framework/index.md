@@ -32,7 +32,7 @@ For a complete component map, end-to-end data flow, and scoring pipeline details
 | Document | Purpose |
 |----------|---------|
 | [`docs/reference/commands.md`](../reference/commands.md) | Full CLI reference (every flag of every sub-command) |
-| [`docs/reference/environments-overview.md`](../reference/environments-overview.md) | Inventory of all 20 environment bundles |
+| [`docs/reference/environments-overview.md`](../reference/environments-overview.md) | Inventory of all 23 environment bundles |
 | [`docs/guides/adapters-and-tools.md`](../guides/adapters-and-tools.md) | Plain-English adapter and tool guide |
 | [`docs/reference/system-architecture.md`](../reference/system-architecture.md) | System architecture + Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |

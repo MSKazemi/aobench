@@ -27,7 +27,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `make audit-scorers` | Run O.a–O.c scorer validity audit and write `benchmark/scorer_audit_v1.json` |
 | `make oracle-check` | Check that each task's gold answer is derivable from snapshot data |
 | `make independence-check` | Detect near-duplicate tasks by cosine similarity of feature vectors |
-| `make generate-rbac-docs` | Generate `docs/rbac_policy.md` for all 20 environment bundles |
+| `make generate-rbac-docs` | Generate `docs/rbac_policy.md` for all 23 environment bundles |
 | `make create-task-stubs` | Create minimal stub evidence files for oracle-check failures |
 | `make leaderboard LEADERBOARD_RESULTS=<dir>` | Build CLEAR leaderboard from `<dir>/<model>/*.json` result files |
 | `make check-validity-gates` | Run V0–V6 pre-publication validity gates and write `data/reports/validity_gates.json` (V0 = fidelity precondition, warning-only in v0.2) |

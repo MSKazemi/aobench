@@ -24,4 +24,5 @@ supported_categories:
 - MON
 supported_roles:
 - sysadmin
+- researcher
 validation_status: validated

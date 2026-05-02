@@ -91,20 +91,13 @@ def create_app():  # noqa: ANN201
     # ------------------------------------------------------------------ #
     # 2. POST /submit
     # ------------------------------------------------------------------ #
-    class SubmitPayload(_fastapi.BaseModel if _FASTAPI_AVAILABLE else object):
+    from pydantic import BaseModel as _BM
+
+    class SubmitPayload(_BM):
         model_id: str
         display_name: str
         organization: str
         results: list[ResultRow]
-
-    if _FASTAPI_AVAILABLE:
-        from pydantic import BaseModel as _BM
-
-        class SubmitPayload(_BM):  # type: ignore[no-redef]
-            model_id: str
-            display_name: str
-            organization: str
-            results: list[ResultRow]
 
     @app.post("/submit", response_model=SubmissionStatus)
     def submit_endpoint(payload: SubmitPayload) -> SubmissionStatus:  # type: ignore[valid-type]

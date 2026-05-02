@@ -35,7 +35,7 @@ ExaBench is designed to evaluate behaviours that ordinary QA benchmarks miss.
 
 | Principle | Meaning |
 |-----------|---------|
-| **Role-aware** | The same operational question may require different answers, evidence scope, and refusal behaviour depending on the requester role (`scientific_user`, `sysadmin`, `facility_admin`). |
+| **Role-aware** | The same operational question may require different answers, evidence scope, and refusal behaviour depending on the requester role (`scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer`). |
 | **Tool-using** | Agents are evaluated as systems that interact with controlled HPC tools (scheduler, telemetry, docs, RBAC, facility). |
 | **Permission-aware** | Success requires respecting RBAC and policy boundaries. Forbidden tool calls and permission violations hard-fail the run regardless of the final answer. |
 | **Trace-based** | Evaluation considers the execution trace — tool selection, arguments, sequence, evidence pathway — not only the final answer. |
@@ -47,28 +47,25 @@ These principles are checked by twelve scorers organised into six dimensions
 
 ---
 
-## 3. v0.1 implemented scope
+## 3. Implemented scope
 
-The following table describes the system **as implemented**, with line numbers
-to authoritative artifacts.
+The following table describes the system **as currently implemented**, with paths to authoritative artifacts.
 
 | Item | Quantity | Authoritative source |
 |------|----------|----------------------|
 | Original tasks (JOB / MON / ENERGY) | 30 | `benchmark/tasks/specs/*.json` |
 | HPC v1 tasks (Souza 2025 schema) | 36 | `benchmark/tasks/task_set_v1.json` |
-| **Total tasks** | **66** | |
-| Environment snapshot bundles | 20 (`env_01`…`env_20`) | `benchmark/environments/` |
+| **Current task set (v3 — all 10 QCATs)** | **71** | `benchmark/tasks/task_set_v3.json` |
+| Environment snapshot bundles | 23 (`env_01`…`env_23`) | `benchmark/environments/` |
 | Mock tool families | 5 (slurm, docs, rbac, telemetry, facility) | `src/exabench/tools/` |
 | Tool methods catalogued | 16 | `benchmark/configs/hpc_tool_catalog.yaml` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
-| Roles scored in v0.1 | 3 — `scientific_user`, `sysadmin`, `facility_admin` | `benchmark/configs/scoring_profiles.yaml` |
-| Roles in schema | 5 (the above + `researcher`, `system_designer`) | `src/exabench/schemas/task.py` |
-| QCATs scored in v0.1 | 3 — `JOB`, `MON`, `ENERGY` | `benchmark/tasks/specs/` |
-| QCATs in taxonomy | 10 (the above + `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS`) | [Taxonomy](taxonomy.md) |
+| Roles with tasks | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
+| QCATs with tasks | 10 — all QCATs covered | [Taxonomy](taxonomy.md) |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
 | Dataset split | 21 dev / 9 test, frozen 2026-03-21 | `benchmark/tasks/dataset_splits.py` |
-| Tests passing | 760 | `tests/` |
+| Tests passing | 1045 | `tests/` |
 | CLI commands | 9 sub-trees (run, validate, lite, report, compare, robustness, clear, leaderboard) | [`COMMANDS.md`](../reference/commands.md) |
 
 ---

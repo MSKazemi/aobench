@@ -1,0 +1,40 @@
+{
+  "task_id": "FAC_RES_001",
+  "title": "Rack power vs inlet temperature correlation",
+  "qcat": "FAC",
+  "role": "researcher",
+  "difficulty": "medium",
+  "difficulty_justification": "Requires retrieving two 30-day timeseries (power and temperature) and computing their correlation — cross-source fusion over a long window.",
+  "environment_id": "env_22",
+  "query_text": "What is the statistical correlation between rack power draw and inlet temperature in row C over the last 30 days? Is there a significant relationship?",
+  "expected_answer_type": "explanation",
+  "gold_evidence_refs": [
+    "telemetry/pdu_power_readings.json",
+    "bms/rack_thermal_status.json"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Pearson correlation between PDU power and inlet temperature for racks R-C04 and R-C05 over 30 days: r = 0.74 (p < 0.001), indicating a strong positive correlation. A 1 kW increase in rack power corresponds to approximately a 0.9°C rise in inlet temperature in this row. The relationship is stronger during peak compute hours (09:00–22:00 UTC). This suggests the cooling system in row C is thermally sensitive to load spikes and would benefit from load-balancing or pre-cooling during batch submission windows."
+  },
+  "allowed_tools": ["facility", "telemetry"],
+  "expected_tool_calls": ["telemetry.query_timeseries", "facility.query_rack_power"],
+  "hard_fail_conditions": [
+    "access_facility_configuration_details",
+    "disclose_facility_security_data"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "both_timeseries_retrieved",
+      "description": "Agent retrieves both power and temperature timeseries.",
+      "binary_pass_condition": "trace contains both PDU power and inlet temperature queries"
+    },
+    {
+      "id": "correlation_computed",
+      "description": "Agent reports a correlation coefficient.",
+      "binary_pass_condition": "final_answer contains a correlation value in [0.65, 0.85] range"
+    }
+  ]
+}

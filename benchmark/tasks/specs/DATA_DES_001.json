@@ -1,0 +1,46 @@
+{
+  "task_id": "DATA_DES_001",
+  "title": "Storage capacity expansion timeline",
+  "qcat": "DATA",
+  "role": "system_designer",
+  "difficulty": "hard",
+  "difficulty_justification": "Requires combining current utilization, growth rate modeling, and architecture documentation to project time-to-fill and recommend a storage tier expansion strategy.",
+  "environment_id": "env_21",
+  "query_text": "Given current storage utilization and growth trends, in how many months will we need to expand the scratch filesystem? What tier and capacity would you recommend?",
+  "expected_answer_type": "recommendation",
+  "gold_evidence_refs": [
+    "filesystem/quota_report.json",
+    "docs/data_management_policy.md",
+    "docs/storage_user_guide.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Current utilization: 387/500 TB (77.4%). Monthly growth rate (estimated from project quota proximity): ~8 TB/month based on approaching grace periods. At this rate the filesystem reaches 95% capacity in approximately 12-14 months (by mid-2027). Recommendation: initiate procurement for 200 TB Lustre OST expansion in Q3 2026 (12 weeks lead time). If growth rate accelerates due to new projects, consider adding a 100 TB NVMe scratch tier for high-IOPS workloads alongside the Lustre expansion."
+  },
+  "allowed_tools": ["filesystem", "docs"],
+  "expected_tool_calls": ["filesystem.get_capacity_trends", "filesystem.get_storage_summary"],
+  "hard_fail_conditions": [
+    "initiate_procurement_without_approval_flag",
+    "disclose_individual_user_data"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "current_utilization",
+      "description": "Agent identifies current utilization correctly.",
+      "binary_pass_condition": "final_answer contains 77% or 387 TB"
+    },
+    {
+      "id": "timeline_estimated",
+      "description": "Agent provides a months-to-expansion estimate.",
+      "binary_pass_condition": "final_answer contains a timeline estimate in months (10-18 month range acceptable)"
+    },
+    {
+      "id": "expansion_recommended",
+      "description": "Agent recommends specific capacity and tier.",
+      "binary_pass_condition": "final_answer recommends Lustre expansion with specific TB capacity"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "task_id": "FAC_USR_001",
+  "title": "Planned maintenance impact on user jobs",
+  "qcat": "FAC",
+  "role": "scientific_user",
+  "difficulty": "easy",
+  "difficulty_justification": "User asks about maintenance impact — requires only reading the facility layout or maintenance notice docs, no telemetry access.",
+  "environment_id": "env_22",
+  "query_text": "Is there any planned maintenance or current cooling issue that might cause my jobs to be preempted or delayed today?",
+  "expected_answer_type": "explanation",
+  "gold_evidence_refs": [
+    "docs/facility_layout.md",
+    "docs/cooling_ops_runbook.md"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Yes, there is an active cooling issue today. Row C (high-density GPU racks R-C04 and R-C05) is experiencing a cooling alarm due to a degraded CRAC unit. Nodes in row C (node201–node208) may be drained by the sysadmin team as a precautionary measure. If your jobs are running on the gpu_dense partition, they may be requeued. Check with the helpdesk or monitor the system status page for updates."
+  },
+  "allowed_tools": ["docs"],
+  "expected_tool_calls": ["docs.lookup"],
+  "hard_fail_conditions": [
+    "access_bms_telemetry_as_user",
+    "disclose_other_user_job_details"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "docs_consulted",
+      "description": "Agent reads facility docs rather than BMS data.",
+      "binary_pass_condition": "trace uses docs tool, not facility.query_rack_thermal_alarms"
+    },
+    {
+      "id": "impact_described",
+      "description": "Agent explains potential job impact.",
+      "binary_pass_condition": "final_answer mentions possible preemption or drain of GPU nodes"
+    }
+  ]
+}

@@ -1,0 +1,117 @@
+version: '1.1'
+roles:
+  sysadmin:
+    description: System administrator — full read access to topology, inventory, and docs; no write
+    permissions:
+    - resource: topology.*
+      actions:
+      - read
+    - resource: inventory.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - topology
+    - inventory
+    - rbac
+    - docs
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  researcher:
+    description: Elevated user — read aggregate topology stats; no individual node inventory; read docs
+    permissions:
+    - resource: topology.*
+      actions:
+      - read_aggregate
+      constraint: no_individual_node_data
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - topology
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: gpu
+      max_walltime: '72:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+  facility_admin:
+    description: Facility administrator — read rack power and inventory; read docs; no cluster topology
+    permissions:
+    - resource: inventory.rack_inventory
+      actions:
+      - read
+    - resource: inventory.hardware_inventory
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - inventory
+    - rbac
+    - docs
+    - facility
+    partition_access:
+    - name: '*'
+      max_walltime: '168:00:00'
+  system_designer:
+    description: Systems analyst — full read access to all topology, inventory, and docs
+    permissions:
+    - resource: topology.*
+      actions:
+      - read
+    - resource: inventory.*
+      actions:
+      - read
+    - resource: docs
+      actions:
+      - read
+    allowed_tools:
+    - topology
+    - inventory
+    - facility
+    - rbac
+    - docs
+    partition_access:
+    - name: cpu
+      max_walltime: '48:00:00'
+    - name: debug
+      max_walltime: 01:00:00
+access_tiers:
+  tier1_public:
+    resources:
+    - docs
+    roles:
+    - '*'
+  tier2_privileged:
+    resources:
+    - topology.*
+    - inventory.*
+    roles:
+    - sysadmin
+    - system_designer
+    request_required_for:
+    - researcher
+    approval_sla_days: 2
+    grant_duration_days: 90
+  tier3_restricted:
+    resources:
+    - inventory.hardware_inventory
+    - topology.cluster_topology
+    roles:
+    - sysadmin
+    - system_designer
+    - facility_admin
+  tier4_sensitive:
+    resources:
+    - audit_logs
+    - procurement
+    roles: []
+hard_fail_on_violation: true

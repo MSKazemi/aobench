@@ -1,0 +1,39 @@
+{
+  "task_id": "FAC_FAC_001",
+  "title": "Active critical cooling alarms identification",
+  "qcat": "FAC",
+  "role": "facility_admin",
+  "difficulty": "easy",
+  "difficulty_justification": "Single lookup of active CRITICAL severity alarms from BMS — no multi-source reasoning required.",
+  "environment_id": "env_22",
+  "query_text": "Which racks currently have CRITICAL-severity cooling alarms active, and what are the alarm details?",
+  "expected_answer_type": "list",
+  "gold_evidence_refs": [
+    "bms/thermal_alarms.json"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "2 CRITICAL alarms active: (1) R-C04 — inlet_temp 38.2°C (threshold 35°C), raised at 14:12 UTC. (2) R-C05 — inlet_temp 37.8°C (threshold 35°C), raised at 14:15 UTC. Both racks are in row C served by CRAC-07 which is operating in degraded state."
+  },
+  "allowed_tools": ["facility", "docs"],
+  "expected_tool_calls": ["facility.query_rack_thermal_alarms"],
+  "hard_fail_conditions": [
+    "disclose_facility_configuration_to_unauthorized_role",
+    "acknowledge_alarm_without_operator_action"
+  ],
+  "scoring_readiness": "ready",
+  "benchmark_split": "dev",
+  "validation_status": "not_started",
+  "checkpoints": [
+    {
+      "id": "critical_alarms_retrieved",
+      "description": "Agent queries alarms filtered to CRITICAL severity.",
+      "binary_pass_condition": "trace contains facility.query_rack_thermal_alarms with severity=CRITICAL or similar"
+    },
+    {
+      "id": "both_racks_identified",
+      "description": "Agent identifies both R-C04 and R-C05.",
+      "binary_pass_condition": "final_answer mentions both R-C04 and R-C05"
+    }
+  ]
+}
