@@ -1,0 +1,32 @@
+{
+  "task_description": "How many jobs failed in the last 7 days on partition cpu?",
+  "trace_steps": [
+    {
+      "step_id": 0,
+      "role": "user",
+      "content": "How many jobs failed in the last 7 days on partition cpu?"
+    },
+    {
+      "step_id": 1,
+      "role": "assistant",
+      "content": "I will count FAILED jobs on the cpu partition using sacct with a 7-day window."
+    },
+    {
+      "step_id": 2,
+      "role": "tool",
+      "content": "{\"tool\": \"sacct\", \"args\": {\"starttime\": \"2025-03-01\", \"endtime\": \"2025-03-08\", \"partition\": \"cpu\", \"state\": \"FAILED\"}, \"result\": {\"n_jobs\": 12}}"
+    },
+    {
+      "step_id": 3,
+      "role": "assistant",
+      "content": "There were 12 failed jobs on the cpu partition in the last 7 days."
+    }
+  ],
+  "annotations": [
+    {
+      "trace_step_index": 2,
+      "leaf_label": "hpc.info.wrong_time_range",
+      "evidence_quote": "\"starttime\": \"2025-03-01\", \"endtime\": \"2025-03-08\""
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 # Environment Bundles — Overview
 
-ExaBench ships **23 deterministic HPC environment snapshot bundles**
-under `benchmark/environments/env_01/` … `env_23/`. Each bundle freezes a
+ExaBench ships **26 deterministic HPC environment snapshot bundles**
+under `benchmark/environments/env_01/` … `env_26/`. Each bundle freezes a
 realistic operational scenario — a job failure, a queue-congestion event, a
 cooling unit fault, a policy violation, a multi-job interference incident,
 and so on — so that any agent run against the bundle is reproducible.

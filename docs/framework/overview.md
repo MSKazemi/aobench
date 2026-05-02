@@ -55,8 +55,8 @@ The following table describes the system **as currently implemented**, with path
 |------|----------|----------------------|
 | Original tasks (JOB / MON / ENERGY) | 30 | `benchmark/tasks/specs/*.json` |
 | HPC v1 tasks (Souza 2025 schema) | 36 | `benchmark/tasks/task_set_v1.json` |
-| **Current task set (v3 — all 10 QCATs)** | **71** | `benchmark/tasks/task_set_v3.json` |
-| Environment snapshot bundles | 23 (`env_01`…`env_23`) | `benchmark/environments/` |
+| **Current task set (v3 — all 10 QCATs)** | **80** | `benchmark/tasks/specs/` |
+| Environment snapshot bundles | 26 (`env_01`…`env_26`) | `benchmark/environments/` |
 | Mock tool families | 5 (slurm, docs, rbac, telemetry, facility) | `src/exabench/tools/` |
 | Tool methods catalogued | 16 | `benchmark/configs/hpc_tool_catalog.yaml` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
@@ -64,8 +64,8 @@ The following table describes the system **as currently implemented**, with path
 | QCATs with tasks | 10 — all QCATs covered | [Taxonomy](taxonomy.md) |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
-| Dataset split | 53 dev / 18 test (~25% held-out), extended 2026-05-02 | `benchmark/tasks/dataset_splits.py` |
-| Tests passing | 1045 | `tests/` |
+| Dataset split | 62 dev / 18 test (~22% held-out), frozen 2026-05-02 (v0.3) | `benchmark/tasks/dataset_splits.py` |
+| Tests passing | 1048 | `tests/` |
 | CLI commands | 9 sub-trees (run, validate, lite, report, compare, robustness, clear, leaderboard) | [`COMMANDS.md`](../reference/commands.md) |
 
 ---

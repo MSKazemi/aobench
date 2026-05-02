@@ -1,0 +1,32 @@
+{
+  "task_description": "What was the total energy consumed by partition gpu in March?",
+  "trace_steps": [
+    {
+      "step_id": 0,
+      "role": "user",
+      "content": "What was the total energy consumed by partition gpu in March?"
+    },
+    {
+      "step_id": 1,
+      "role": "assistant",
+      "content": "I will query the energy accounting database for the gpu partition covering March 2025."
+    },
+    {
+      "step_id": 2,
+      "role": "tool",
+      "content": "{\"tool\": \"energy_query\", \"result\": {\"partition\": \"gpu\", \"start\": \"2025-03-01\", \"end\": \"2025-03-31\", \"energy_kwh\": 4200.0}}"
+    },
+    {
+      "step_id": 3,
+      "role": "assistant",
+      "content": "The gpu partition consumed 4.2 MWh in March 2025."
+    }
+  ],
+  "annotations": [
+    {
+      "trace_step_index": 3,
+      "leaf_label": "hpc.output.unit_error",
+      "evidence_quote": "The gpu partition consumed 4.2 MWh in March 2025."
+    }
+  ]
+}

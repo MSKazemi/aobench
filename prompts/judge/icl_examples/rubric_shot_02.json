@@ -1,0 +1,8 @@
+{
+  "task_description": "What is the peak memory usage of job 912045 on node r02c03?",
+  "agent_response": "The peak RSS for job 912045 on r02c03 was 47.6. I queried via: sstat -j 912045 --format=MaxRSS --allsteps.",
+  "gold_answer": "Peak RSS was 47.6 GB on node r02c03.",
+  "score": 0.55,
+  "rationale": "The agent retrieved the correct numeric value (47.6) but omitted the unit (GB). Memory figures without units are ambiguous — MaxRSS in Slurm is reported in kilobytes by default and must be converted; the agent appears to have performed the conversion silently but did not state it. The gold answer explicitly requires the GB unit. Half credit awarded for the correct magnitude; full credit withheld due to the missing unit.",
+  "confidence": "medium"
+}

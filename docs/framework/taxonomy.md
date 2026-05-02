@@ -39,7 +39,7 @@ Task IDs encode the role as a 3-letter abbreviation, e.g. `JOB-USR-003`.
 ## 2. Query categories (QCAT)
 
 The `qcat` field labels the functional domain of the task. All ten QCATs
-have scored tasks in `task_set_v3.json` (71 tasks total).
+have scored tasks in `benchmark/tasks/specs/` (80 tasks total).
 
 | Code | Name | Has tasks? | Description |
 |------|------|------------|-------------|

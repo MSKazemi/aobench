@@ -1,0 +1,26 @@
+{
+  "task_description": "What is the current queue depth on partition bigmem?",
+  "trace_steps": [
+    {
+      "step_id": 0,
+      "role": "user",
+      "content": "What is the current queue depth on partition bigmem?"
+    },
+    {
+      "step_id": 1,
+      "role": "assistant",
+      "content": "I will query the Slurm scheduler for pending jobs on the bigmem partition."
+    },
+    {
+      "step_id": 2,
+      "role": "tool",
+      "content": "{\"tool\": \"squeue\", \"args\": {\"partition\": \"bigmem\", \"state\": \"PENDING\"}, \"result\": {\"n_pending\": 7}}"
+    },
+    {
+      "step_id": 3,
+      "role": "assistant",
+      "content": "There are currently 7 pending jobs in the bigmem partition queue."
+    }
+  ],
+  "annotations": []
+}

@@ -57,11 +57,11 @@ class TestF1JobDuration:
     def test_insufficient_jobs(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
-            # Only 4 jobs with elapsed — need ≥ 8
+            # Only 4 jobs with elapsed — need ≥ 8; per spec, this is a SKIP (passed=True)
             jobs = [{"elapsed": "01:00:00"} for _ in range(4)]
             _write_slurm(tmp_path, jobs)
             result = validate_f1_job_duration(tmp_path)
-        assert result.passed is False
+        assert result.passed is True
         assert "insufficient" in result.message.lower()
 
     def test_passing_lognormal(self):
@@ -133,10 +133,10 @@ class TestF2JobSize:
     def test_insufficient_jobs(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
-            jobs = [{"num_cpus": 4} for _ in range(5)]  # only 5
+            jobs = [{"num_cpus": 4} for _ in range(5)]  # only 5; per spec, SKIP (passed=True)
             _write_slurm(tmp_path, jobs)
             result = validate_f2_job_size(tmp_path)
-        assert result.passed is False
+        assert result.passed is True
         assert "insufficient" in result.message.lower()
 
     def test_passing_power_law(self):
@@ -168,13 +168,13 @@ class TestF2JobSize:
         assert "degenerate" in result.message.lower()
 
     def test_none_cpus_skipped(self):
-        """Jobs with None num_cpus are excluded; if < 10 remain → fail."""
+        """Jobs with None num_cpus are excluded; if < 10 remain → SKIP (passed=True) per spec."""
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             jobs = [{"num_cpus": None} for _ in range(15)]
             _write_slurm(tmp_path, jobs)
             result = validate_f2_job_size(tmp_path)
-        assert result.passed is False  # insufficient valid jobs
+        assert result.passed is True  # insufficient valid jobs → skip
 
 
 # ---------------------------------------------------------------------------
@@ -193,7 +193,7 @@ class TestF3JobStateMix:
             tmp_path = Path(tmp)
             _write_slurm(tmp_path, [{"state": "COMPLETED"} for _ in range(5)])
             result = validate_f3_job_state_mix(tmp_path)
-        assert result.passed is False
+        assert result.passed is True  # per spec, insufficient samples → SKIP
         assert "insufficient" in result.message.lower()
 
     def test_passing_state_mix(self):

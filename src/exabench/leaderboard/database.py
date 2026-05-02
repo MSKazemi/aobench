@@ -67,7 +67,8 @@ def create_tables(conn: sqlite3.Connection) -> None:
             submission_id TEXT PRIMARY KEY,
             model_id TEXT NOT NULL,
             status TEXT NOT NULL DEFAULT 'pending',
-            message TEXT DEFAULT ''
+            message TEXT DEFAULT '',
+            superseded_by TEXT DEFAULT NULL
         );
         CREATE TABLE IF NOT EXISTS verification_results (
             model_id TEXT PRIMARY KEY,

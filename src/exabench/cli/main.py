@@ -10,6 +10,7 @@ from exabench.cli.compare_cmd import compare_app
 from exabench.cli.leaderboard_cmd import leaderboard_app
 from exabench.cli.lite_cmd import lite_app
 from exabench.cli.report_cmd import report_app
+from exabench.cli.rescore_cmd import app as rescore_app
 from exabench.cli.robustness_cmd import robustness_app
 from exabench.cli.run_cmd import run_app
 from exabench.cli.validate_cmd import validate_app
@@ -26,6 +27,7 @@ app.add_typer(validate_app, name="validate")
 app.add_typer(lite_app, name="lite")
 app.add_typer(report_app, name="report")
 app.add_typer(compare_app, name="compare")
+app.add_typer(rescore_app, name="rescore")
 app.add_typer(robustness_app, name="robustness")
 app.add_typer(clear_app, name="clear")
 app.add_typer(leaderboard_app, name="leaderboard")

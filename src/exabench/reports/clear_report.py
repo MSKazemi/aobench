@@ -213,6 +213,20 @@ def compute_clear_scores(
         costs = [r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None]
         mean_cost = round(sum(costs) / len(costs), 6) if costs else None
 
+        agent_cost_usd = round(sum(costs), 6) if costs else None
+        judge_costs = [r.judge_cost_usd for r in results if r.judge_cost_usd is not None]
+        judge_cost_usd = round(sum(judge_costs), 6) if judge_costs else None
+        total_cost_usd = (
+            round((agent_cost_usd or 0.0) + (judge_cost_usd or 0.0), 6)
+            if (agent_cost_usd is not None or judge_cost_usd is not None)
+            else None
+        )
+        judge_cost_fraction = (
+            round(judge_cost_usd / total_cost_usd, 4)
+            if (judge_cost_usd is not None and total_cost_usd and total_cost_usd > 0)
+            else None
+        )
+
         latencies = [r.latency_seconds for r in results if r.latency_seconds is not None]
         mean_latency = round(sum(latencies) / len(latencies), 3) if latencies else None
 
@@ -289,6 +303,10 @@ def compute_clear_scores(
             "A": A,
             "R": R,
             "mean_cost_usd": mean_cost,
+            "agent_cost_usd": agent_cost_usd,
+            "judge_cost_usd": judge_cost_usd,
+            "total_cost_usd": total_cost_usd,
+            "judge_cost_fraction": judge_cost_fraction,
             "mean_latency_s": mean_latency,
             "CNA": mean_cna,
             "CPS": round(cps, 6) if cps is not None else None,
@@ -337,6 +355,17 @@ def compute_clear_scores(
         else:
             clear = None
         per_model[model]["clear_score"] = clear
+
+    # Warn when judge calls are dominating the sweep budget (§8.4)
+    import warnings as _warnings
+    for model in model_names:
+        jcf = per_model[model].get("judge_cost_fraction")
+        if jcf is not None and jcf > 0.30:
+            _warnings.warn(
+                f"[CLEAR] judge_cost_fraction={jcf:.2%} for model '{model}' "
+                f"exceeds 30% — investigate prompt size or batching.",
+                stacklevel=2,
+            )
 
     return per_model
 

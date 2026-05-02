@@ -47,12 +47,12 @@ ExaBench/
 │   └── taxonomy/           # 24-leaf TRAIL-adapted HPC error taxonomy
 │
 ├── benchmark/              # Static benchmark data (versioned in git)
-│   ├── tasks/specs/        # 71 JSON task specs (all 10 QCATs × 5 roles)
+│   ├── tasks/specs/        # 80 JSON task specs (all 10 QCATs × 5 roles)
 │   ├── tasks/task_set_v1.json   # 36 HPC v1 tasks (Souza 2025 schema)
-│   ├── tasks/task_set_v3.json   # v3 task index (71 tasks)
-│   ├── tasks/dataset_splits.py  # 53 dev / 18 test split (~25% held-out)
+│   ├── tasks/task_set_v3.json   # v3 task index (80 tasks)
+│   ├── tasks/dataset_splits.py  # 62 dev / 18 test split (~22% held-out)
 │   ├── tasks/lite_manifest_v1.json  # ExaBench-Lite curated subset
-│   ├── environments/env_01–env_23/  # 23 deterministic snapshot bundles
+│   ├── environments/env_01–env_26/  # 26 deterministic snapshot bundles
 │   ├── configs/            # scoring_profiles.yaml, hpc_tool_catalog.yaml,
 │   │                       # error_taxonomy.yaml
 │   └── qa/                 # ExaBench-QA (~95 HPC operational queries)
@@ -91,15 +91,15 @@ exabench clear run data/runs/<run_id>
 
 | Item | Count | Location |
 |------|-------|----------|
-| Tasks | 71 (30 original + 36 HPC v1 + 5 v3 expansion) | `benchmark/tasks/specs/`, `benchmark/tasks/task_set_v3.json` |
-| Environments | 23 deterministic snapshot bundles | `benchmark/environments/env_01`…`env_23` |
+| Tasks | 80 across 10 QCATs × 5 roles | `benchmark/tasks/specs/` |
+| Environments | 26 deterministic snapshot bundles | `benchmark/environments/env_01`…`env_26` |
 | Roles (scored) | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
 | QCATs (scored) | 10 — `JOB`, `MON`, `ENERGY`, `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `benchmark/tasks/specs/` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
 | Mock tool families | 5 — slurm, docs, rbac, telemetry, facility | `src/exabench/tools/` |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
-| Tests | 760 passing | `tests/` |
+| Tests | 1048 passing | `tests/` |
 
 The 6 evaluation dimensions and their `default_hpc_v01` weights:
 

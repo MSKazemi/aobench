@@ -28,7 +28,7 @@ src/exabench/
 ├── tasks/             Dataset management
 │   ├── task_loader.py Load task by ID from benchmark/tasks/specs/
 │   ├── context_builder.py Build RAG context string for HPC task set v1
-│   └── dataset_splits.py  split manifest (53 dev / 18 test tasks, ~25% held-out)
+│   └── dataset_splits.py  split manifest (62 dev / 18 test tasks, ~22% held-out)
 │
 ├── environment/       Environment snapshot system
 │   ├── snapshot_loader.py   Build ToolRegistry from EnvBundle
@@ -96,15 +96,15 @@ src/exabench/
 ```
 benchmark/
 ├── tasks/
-│   ├── specs/          71 task JSON files across all 10 QCATs × 5 roles
+│   ├── specs/          80 task JSON files across all 10 QCATs × 5 roles
 │   ├── task_set_v1.json  36 HPC task set v1 tasks (HPCTaskSpec format)
-│   ├── task_set_v3.json  71-task v3 index (all QCATs + researcher/system_designer)
-│   ├── dataset_splits.py 53 dev / 18 test split (~25% held-out, never modify after first run)
+│   ├── task_set_v3.json  v3 task index (80 tasks)
+│   ├── dataset_splits.py 62 dev / 18 test split (~22% held-out, frozen 2026-05-02)
 │   ├── guidelines/     6 domain guideline files for task set v1
 │   └── lite_manifest_v1.json  ExaBench-Lite task subset
 │
 ├── environments/
-│   └── env_01/ … env_23/   23 snapshot bundles, each with:
+│   └── env_01/ … env_26/   26 snapshot bundles, each with:
 │       ├── slurm_state.json     SLURM jobs, nodes, partitions
 │       ├── incident_metadata.json  Active incidents
 │       ├── rbac_policy.yaml     Role permissions (v1.1, 5 roles)
@@ -123,7 +123,7 @@ benchmark/
 | Item | v0.1 baseline | v0.3 (current) |
 |------|---------------|----------------|
 | Tasks | 66 (30 original + 36 HPC v1) | 71 (+ PERF/DATA/SEC/FAC/ARCH/AIOPS/DOCS tasks) |
-| Environments | 20 snapshot bundles (env_01–env_20) | 23 snapshot bundles (env_01–env_23) |
+| Environments | 20 snapshot bundles (env_01–env_20) | 26 snapshot bundles (env_01–env_26) |
 | Roles (scored) | 3 (`scientific_user`, `sysadmin`, `facility_admin`) | 5 (all roles, incl. `researcher`, `system_designer`) |
 | QCATs (scored) | 3 (`JOB`, `MON`, `ENERGY`) | 10 (all QCATs) |
 | Adapters | 4 implemented (`direct_qa`, `openai`, `anthropic`, `mcp`) | 4 |
