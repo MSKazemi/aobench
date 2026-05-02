@@ -293,6 +293,27 @@ generate-rbac-docs:  ## Generate docs/rbac_policy.md for all environment bundles
 create-task-stubs:  ## Create minimal stub evidence files for oracle-check failures
 	$(PYTHON) scripts/create_task_stubs.py
 
+##@ Pre-flight
+
+.PHONY: preflight
+preflight: smoke-keys verify-snapshots  ## Run all pre-flight checks (P1–P10)
+	exabench validate benchmark
+	exabench validate snapshots
+	@test -f data/judge_config.json || (echo "ERROR: data/judge_config.json missing — run: python3 scripts/freeze_judge_config.py" && exit 1)
+	@echo "preflight: all checks passed ✓"
+
+.PHONY: smoke-keys
+smoke-keys:  ## Verify OpenAI (and optionally Together.ai) API keys are valid
+	python3 scripts/smoke_keys.py
+
+.PHONY: verify-snapshots
+verify-snapshots:  ## Verify snapshot file hashes match data/snapshots/MANIFEST.json
+	python3 scripts/verify_snapshots.py
+
+.PHONY: cost-check
+cost-check:  ## Print v0.2 experiment budget spend vs. remaining
+	python3 scripts/cost_check.py
+
 ##@ Leaderboard
 
 .PHONY: leaderboard
