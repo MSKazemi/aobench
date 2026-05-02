@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "exabench"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "Benchmark framework for evaluating AI agents in HPC environments"
 readme = "README.md"
 license = { text = "Apache-2.0" }
