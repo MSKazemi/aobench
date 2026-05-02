@@ -82,7 +82,6 @@ nav:
   - Usage:
     - Adapters & Tools: guides/adapters-and-tools.md
     - Langfuse Integration: guides/langfuse-integration.md
-    - Paper Reproduction: guides/paper-reproduction.md
     - Implementation Guide: framework/implementation.md
   - Reference:
     - System Architecture: reference/system-architecture.md
