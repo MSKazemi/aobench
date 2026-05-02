@@ -1,17 +1,85 @@
 {
-  "__stub__": true,
-  "snapshot_time": "2026-03-15T09:00:00Z",
   "filesystem": "/lustre/scratch",
-  "total_capacity_tb": 500,
-  "used_tb": 387,
+  "snapshot_time": "2026-03-15T09:00:00Z",
+  "total_capacity_tb": 2000,
+  "used_tb": 1480,
+  "available_tb": 520,
+  "utilization_pct": 74.0,
   "users": [
-    {"username": "alice", "used_gb": 142.3, "quota_gb": 200, "grace_period": null},
-    {"username": "bob", "used_gb": 189.7, "quota_gb": 200, "grace_period": "2026-03-18"},
-    {"username": "carol", "used_gb": 48.1, "quota_gb": 200, "grace_period": null}
+    {
+      "username": "alice",
+      "quota_gb": 2000,
+      "used_gb": 1740,
+      "utilization_pct": 87.0,
+      "inode_quota": 5000000,
+      "inodes_used": 3820000,
+      "grace_period_active": false,
+      "growth_7d_gb": 120,
+      "days_to_limit_at_current_rate": 18
+    },
+    {
+      "username": "bob",
+      "quota_gb": 1000,
+      "used_gb": 340,
+      "utilization_pct": 34.0,
+      "inode_quota": 2000000,
+      "inodes_used": 410000,
+      "grace_period_active": false,
+      "growth_7d_gb": 5,
+      "days_to_limit_at_current_rate": 924
+    },
+    {
+      "username": "carol",
+      "quota_gb": 1500,
+      "used_gb": 1200,
+      "utilization_pct": 80.0,
+      "inode_quota": 3000000,
+      "inodes_used": 2100000,
+      "grace_period_active": false,
+      "growth_7d_gb": 35,
+      "days_to_limit_at_current_rate": 86
+    },
+    {
+      "username": "jdoe",
+      "quota_gb": 500,
+      "used_gb": 88,
+      "utilization_pct": 17.6,
+      "inode_quota": 1000000,
+      "inodes_used": 95000,
+      "grace_period_active": false,
+      "growth_7d_gb": 2,
+      "days_to_limit_at_current_rate": 2058
+    }
   ],
   "projects": [
-    {"project": "proj_hpc_ml", "used_tb": 18.4, "quota_tb": 20, "grace_period": null},
-    {"project": "proj_climate", "used_tb": 19.8, "quota_tb": 20, "grace_period": "2026-03-16"},
-    {"project": "proj_genomics", "used_tb": 11.2, "quota_tb": 15, "grace_period": null}
+    {
+      "project_id": "proj_genomics",
+      "quota_tb": 200,
+      "used_tb": 188,
+      "utilization_pct": 94.0,
+      "grace_period_active": false,
+      "grace_expires": null,
+      "growth_30d_tb": 12,
+      "days_to_limit_at_current_rate": 30
+    },
+    {
+      "project_id": "proj_climate",
+      "quota_tb": 300,
+      "used_tb": 180,
+      "utilization_pct": 60.0,
+      "grace_period_active": false,
+      "growth_30d_tb": 8,
+      "days_to_limit_at_current_rate": 450
+    },
+    {
+      "project_id": "proj_ml",
+      "quota_tb": 500,
+      "used_tb": 450,
+      "utilization_pct": 90.0,
+      "grace_period_active": true,
+      "grace_expires": "2026-03-22T00:00:00Z",
+      "growth_30d_tb": 40,
+      "days_to_limit_at_current_rate": 37
+    }
   ]
 }

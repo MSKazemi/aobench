@@ -1,6 +1,32 @@
 {
-  "__stub__": true,
-  "note": "I/O metrics stub; replace with real parquet from production telemetry pipeline",
-  "columns": ["job_id", "username", "project", "read_bytes", "write_bytes", "iops_read", "iops_write", "timestamp"],
-  "sample_row": {"job_id": 901001, "username": "alice", "project": "proj_hpc_ml", "read_bytes": 42949672960, "write_bytes": 10737418240, "iops_read": 12500, "iops_write": 3200, "timestamp": "2026-03-14T22:00:00Z"}
+  "filesystem": "/lustre/scratch",
+  "snapshot_time": "2026-03-15T09:00:00Z",
+  "mds_metrics": {
+    "metadata_ops_per_sec": 12400,
+    "open_files": 84200,
+    "create_rate_per_sec": 340
+  },
+  "oss_metrics": [
+    {"oss_id": "oss01", "read_mb_per_s": 3200, "write_mb_per_s": 1800, "iops_read": 48000, "iops_write": 22000, "load_pct": 72},
+    {"oss_id": "oss02", "read_mb_per_s": 2800, "write_mb_per_s": 3100, "iops_read": 41000, "iops_write": 38000, "load_pct": 81},
+    {"oss_id": "oss03", "read_mb_per_s": 4100, "write_mb_per_s": 900,  "iops_read": 62000, "iops_write": 11000, "load_pct": 68},
+    {"oss_id": "oss04", "read_mb_per_s": 1200, "write_mb_per_s": 4800, "iops_read": 18000, "iops_write": 58000, "load_pct": 88}
+  ],
+  "per_user_io_last_5_jobs": {
+    "alice": [
+      {"job_id": "924100", "read_gb": 142.5, "write_gb": 98.3,  "peak_read_mb_s": 480,  "peak_write_mb_s": 320, "io_pattern": "sequential"},
+      {"job_id": "924055", "read_gb": 88.2,  "write_gb": 72.1,  "peak_read_mb_s": 510,  "peak_write_mb_s": 290, "io_pattern": "sequential"},
+      {"job_id": "923800", "read_gb": 201.4, "write_gb": 189.8, "peak_read_mb_s": 920,  "peak_write_mb_s": 880, "io_pattern": "checkpoint_heavy"},
+      {"job_id": "923410", "read_gb": 55.0,  "write_gb": 310.5, "peak_read_mb_s": 180,  "peak_write_mb_s": 1200,"io_pattern": "write_heavy"},
+      {"job_id": "922980", "read_gb": 77.3,  "write_gb": 45.2,  "peak_read_mb_s": 420,  "peak_write_mb_s": 210, "io_pattern": "sequential"}
+    ]
+  },
+  "anomalies": [
+    {
+      "oss_id": "oss04",
+      "type": "write_saturation",
+      "detected_at": "2026-03-15T08:42:00Z",
+      "description": "oss04 write bandwidth at 88% capacity — risk of write stall if a second checkpoint-heavy job starts"
+    }
+  ]
 }
