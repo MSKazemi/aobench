@@ -28,42 +28,68 @@ _TIER_TO_DIFFICULTY = {1: "easy", 2: "medium", 3: "hard"}
 BOOTSTRAP_N = 10_000
 BOOTSTRAP_SEED = 42
 
+# Default location of task spec files (relative to cwd or absolute)
+_DEFAULT_SPECS_DIR = Path("benchmark/tasks/specs")
+
+
+def _build_difficulty_map(specs_dir: Path) -> dict[str, str]:
+    """Return {task_id: difficulty_string} from task spec JSON files."""
+    mapping: dict[str, str] = {}
+    if not specs_dir.exists():
+        return mapping
+    for spec_file in specs_dir.glob("*.json"):
+        try:
+            spec = json.loads(spec_file.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            continue
+        task_id = spec.get("task_id")
+        if not task_id:
+            continue
+        diff = spec.get("difficulty")
+        if diff in DIFFICULTIES:
+            mapping[task_id] = diff
+        elif diff == "adversarial":
+            mapping[task_id] = "hard"
+        else:
+            tier = spec.get("difficulty_tier")
+            if tier is not None:
+                mapped = _TIER_TO_DIFFICULTY.get(int(tier))
+                if mapped:
+                    mapping[task_id] = mapped
+    return mapping
+
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
 
-def _load_results_jsonl(path: Path) -> list[dict]:
-    """Load a results.jsonl file, skipping malformed lines."""
+def _load_results_from_model_dir(model_dir: Path) -> list[dict]:
+    """Load all result JSON files from run_*/results/*.json under a model directory."""
     records: list[dict] = []
-    with path.open(encoding="utf-8") as fh:
-        for lineno, line in enumerate(fh, start=1):
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                records.append(json.loads(line))
-            except json.JSONDecodeError as exc:
-                warnings.warn(f"{path}:{lineno}: skipping malformed JSON line: {exc}")
+    for result_file in sorted(model_dir.glob("run_*/results/*.json")):
+        try:
+            records.append(json.loads(result_file.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, OSError) as exc:
+            warnings.warn(f"{result_file}: skipping unreadable result: {exc}")
     return records
 
 
-def _get_difficulty(record: dict) -> str | None:
-    """Extract difficulty string from a result record.
-
-    Checks 'difficulty' key first; falls back to mapping 'task_difficulty_tier'
-    integer (1→easy, 2→medium, 3→hard).  Returns None when neither is present.
-    """
+def _get_difficulty(record: dict, spec_map: dict[str, str] | None = None) -> str | None:
+    """Extract difficulty string from a result record, falling back to spec_map lookup."""
     diff = record.get("difficulty")
     if diff in DIFFICULTIES:
         return diff
-    # Some records may carry extra string values like "adversarial" — treat as hard
     if diff == "adversarial":
         return "hard"
     tier = record.get("task_difficulty_tier")
     if tier is not None:
         return _TIER_TO_DIFFICULTY.get(int(tier))
+    # Fall back to spec-derived map if available
+    if spec_map:
+        task_id = record.get("task_id")
+        if task_id:
+            return spec_map.get(task_id)
     return None
 
 
@@ -116,18 +142,18 @@ def _bootstrap_ci(
 # ---------------------------------------------------------------------------
 
 
-def compute_difficulty_ablation(runs_dir: Path) -> dict:
+def compute_difficulty_ablation(runs_dir: Path, specs_dir: Path | None = None) -> dict:
     """Compute difficulty-stratified scores with bootstrap CIs from a runs directory."""
-    # Discover model subdirs
+    # Discover model subdirs (look for run_*/results/*.json)
     model_dirs: list[Path] = []
     if runs_dir.exists():
         model_dirs = sorted(
-            [d for d in runs_dir.iterdir() if d.is_dir() and (d / "results.jsonl").exists()]
+            [d for d in runs_dir.iterdir() if d.is_dir() and any(d.glob("run_*/results/*.json"))]
         )
 
     if not model_dirs:
         warnings.warn(
-            f"No model subdirs with results.jsonl found under {runs_dir}. "
+            f"No model subdirs with run results found under {runs_dir}. "
             "Writing empty output."
         )
         return {
@@ -140,15 +166,18 @@ def compute_difficulty_ablation(runs_dir: Path) -> dict:
 
     model_names = [d.name for d in model_dirs]
 
+    # Load difficulty map from task specs (runner doesn't embed it in results)
+    spec_map = _build_difficulty_map(specs_dir or _DEFAULT_SPECS_DIR)
+
     # Load and stratify records per model
     # model_strata[model][difficulty] = list of scores
     model_strata: dict[str, dict[str, list[float]]] = {
         m: {d: [] for d in DIFFICULTIES} for m in model_names
     }
     for d in model_dirs:
-        records = _load_results_jsonl(d / "results.jsonl")
+        records = _load_results_from_model_dir(d)
         for rec in records:
-            diff = _get_difficulty(rec)
+            diff = _get_difficulty(rec, spec_map)
             score = _get_score(rec)
             if diff in DIFFICULTIES and score is not None:
                 model_strata[d.name][diff].append(score)
@@ -197,6 +226,11 @@ def main(argv: list[str] | None = None) -> int:
         default="data/ablations/difficulty.json",
         help="Output JSON path (default: data/ablations/difficulty.json)",
     )
+    parser.add_argument(
+        "--specs",
+        default=str(_DEFAULT_SPECS_DIR),
+        help="Directory containing task spec JSON files (default: benchmark/tasks/specs/)",
+    )
     args = parser.parse_args(argv)
 
     runs_dir = Path(args.runs)
@@ -205,7 +239,7 @@ def main(argv: list[str] | None = None) -> int:
     if not runs_dir.exists():
         warnings.warn(f"Runs directory does not exist: {runs_dir}. Writing empty output.")
 
-    result = compute_difficulty_ablation(runs_dir)
+    result = compute_difficulty_ablation(runs_dir, specs_dir=Path(args.specs))
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(json.dumps(result, indent=2), encoding="utf-8")

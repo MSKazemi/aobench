@@ -66,18 +66,14 @@ DIMENSIONS = ["outcome", "tool_use", "grounding", "governance", "robustness", "e
 # ---------------------------------------------------------------------------
 
 
-def _load_results_jsonl(path: Path) -> list[dict]:
-    """Load a results.jsonl file, skipping malformed lines."""
+def _load_results_from_model_dir(model_dir: Path) -> list[dict]:
+    """Load all result JSON files from run_*/results/*.json under a model directory."""
     records: list[dict] = []
-    with path.open(encoding="utf-8") as fh:
-        for lineno, line in enumerate(fh, start=1):
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                records.append(json.loads(line))
-            except json.JSONDecodeError as exc:
-                warnings.warn(f"{path}:{lineno}: skipping malformed JSON line: {exc}")
+    for result_file in sorted(model_dir.glob("run_*/results/*.json")):
+        try:
+            records.append(json.loads(result_file.read_text(encoding="utf-8")))
+        except (json.JSONDecodeError, OSError) as exc:
+            warnings.warn(f"{result_file}: skipping unreadable result: {exc}")
     return records
 
 
@@ -169,16 +165,16 @@ def compute_clear_weights_ablation(runs_dir: Path) -> dict:
     """Compute CLEAR weight ablation data from a runs directory."""
     variant_names = list(WEIGHT_VARIANTS.keys())
 
-    # Discover model subdirs
+    # Discover model subdirs (look for run_*/results/*.json)
     model_dirs: list[Path] = []
     if runs_dir.exists():
         model_dirs = sorted(
-            [d for d in runs_dir.iterdir() if d.is_dir() and (d / "results.jsonl").exists()]
+            [d for d in runs_dir.iterdir() if d.is_dir() and any(d.glob("run_*/results/*.json"))]
         )
 
     if not model_dirs:
         warnings.warn(
-            f"No model subdirs with results.jsonl found under {runs_dir}. "
+            f"No model subdirs with run results found under {runs_dir}. "
             "Writing empty output."
         )
         return {
@@ -198,7 +194,7 @@ def compute_clear_weights_ablation(runs_dir: Path) -> dict:
     # Load records per model
     model_records: dict[str, list[dict]] = {}
     for d in model_dirs:
-        model_records[d.name] = _load_results_jsonl(d / "results.jsonl")
+        model_records[d.name] = _load_results_from_model_dir(d)
 
     # Compute scores per variant × model
     scores: dict[str, dict[str, float]] = {}
