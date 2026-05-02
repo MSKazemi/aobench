@@ -1,25 +1,56 @@
 {
-  "__stub__": true,
-  "cluster": "exabench-stub",
-  "snapshot_time": "2024-01-01T00:00:00Z",
-  "jobs": [],
-  "nodes": [],
+  "cluster": "exabench-cluster-a",
+  "snapshot_time": "2026-02-16T08:00:00Z",
+  "nodes": [
+    {"name": "node01", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["standard"]},
+    {"name": "node02", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["standard"]},
+    {"name": "node03", "state": "drain",     "cpus": 64, "memory_mb": 512000, "partitions": ["standard"], "reason": "thermal: inlet_temp=34C exceeds threshold 30C"},
+    {"name": "node04", "state": "idle",      "cpus": 64, "memory_mb": 512000, "partitions": ["standard", "highmem"]},
+    {"name": "gpu01",  "state": "allocated", "cpus": 32, "memory_mb": 256000, "partitions": ["gpu"], "gpu_count": 4, "gpu_model": "A100-80GB"},
+    {"name": "gpu02",  "state": "allocated", "cpus": 32, "memory_mb": 256000, "partitions": ["gpu"], "gpu_count": 4, "gpu_model": "A100-80GB"},
+    {"name": "gpu03",  "state": "drain",     "cpus": 32, "memory_mb": 256000, "partitions": ["gpu"], "gpu_count": 4, "gpu_model": "A100-80GB", "reason": "thermal: gpu_temp=87C near throttle threshold (90C) due to CRAC failure"}
+  ],
   "partitions": [
+    {"name": "standard", "max_time": "48:00:00", "max_mem_per_node_mb": 512000, "default_mem_per_cpu_mb": 2048},
+    {"name": "highmem",  "max_time": "24:00:00", "max_mem_per_node_mb": 1024000, "default_mem_per_cpu_mb": 4096},
+    {"name": "gpu",      "max_time": "72:00:00", "max_mem_per_node_mb": 256000,  "default_mem_per_cpu_mb": 2048}
+  ],
+  "jobs": [
     {
-      "name": "cpu",
-      "max_time": "48:00:00"
+      "job_id": "913401",
+      "job_name": "llm_finetune_batch",
+      "user": "alice",
+      "account": "ai-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "gpu01",
+      "partition": "gpu",
+      "submit_time": "2026-02-15T22:00:00Z",
+      "start_time":  "2026-02-15T22:05:00Z",
+      "end_time":    null,
+      "elapsed": "09:55:00",
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "mem_requested_mb": 131072,
+      "time_limit": "24:00:00"
     },
     {
-      "name": "gpu",
-      "max_time": "72:00:00"
-    },
-    {
-      "name": "highmem",
-      "max_time": "48:00:00"
-    },
-    {
-      "name": "debug",
-      "max_time": "01:00:00"
+      "job_id": "913455",
+      "job_name": "diffusion_model_train",
+      "user": "bob",
+      "account": "ai-lab",
+      "state": "RUNNING",
+      "exit_code": null,
+      "node": "gpu02",
+      "partition": "gpu",
+      "submit_time": "2026-02-16T01:00:00Z",
+      "start_time":  "2026-02-16T01:02:00Z",
+      "end_time":    null,
+      "elapsed": "06:58:00",
+      "num_cpus": 32,
+      "num_nodes": 1,
+      "mem_requested_mb": 131072,
+      "time_limit": "48:00:00"
     }
   ]
 }
