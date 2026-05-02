@@ -1,21 +1,44 @@
-{
-  "__stub__": true,
-  "jobs": [
-    {
-      "job_id": "000000",
-      "user": "testuser",
-      "state": "COMPLETED",
-      "partition": "cpu",
-      "account": "testproject",
-      "num_cpus": 4,
-      "num_nodes": 1,
-      "elapsed": "01:00:00",
-      "submit_time": "2024-01-01T00:00:00",
-      "start_time": "2024-01-01T00:01:00",
-      "end_time": "2024-01-01T01:01:00",
-      "exit_code": "0:0",
-      "nodelist": "node001",
-      "timelimit": "02:00:00"
+[
+  {
+    "job_id": "910803",
+    "sacct_record": {
+      "JobID": "910803",
+      "JobName": "dft_calculation_r7",
+      "User": "bob",
+      "Account": "chem-lab",
+      "State": "RUNNING",
+      "ExitCode": null,
+      "Node": "node02",
+      "Partition": "standard",
+      "Submit": "2026-02-14T04:45:00",
+      "Start": "2026-02-14T04:48:00",
+      "End": null,
+      "Elapsed": "05:12:00",
+      "AllocCPUS": 16,
+      "ReqMem": "64G",
+      "MaxRSS": null,
+      "TimeLimit": "08:00:00"
     }
-  ]
-}
+  },
+  {
+    "job_id": "910944",
+    "sacct_record": {
+      "JobID": "910944",
+      "JobName": "vasp_relaxation_batch",
+      "User": "dave",
+      "Account": "materials-lab",
+      "State": "RUNNING",
+      "ExitCode": null,
+      "Node": "node04",
+      "Partition": "highmem",
+      "Submit": "2026-02-13T23:30:00",
+      "Start": "2026-02-13T23:35:00",
+      "End": null,
+      "Elapsed": "11:30:00",
+      "AllocCPUS": 64,
+      "ReqMem": "256G",
+      "MaxRSS": null,
+      "TimeLimit": "12:00:00"
+    }
+  }
+]

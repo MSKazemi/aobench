@@ -1,4 +1,36 @@
 {
-  "__stub__": true,
-  "note": "minimal stub \u2014 replace with real data"
+  "snapshot_time": "2026-02-14T10:00:00Z",
+  "model": "walltime_xgb_v2",
+  "predictions": [
+    {
+      "job_id": "910803",
+      "job_name": "dft_calculation_r7",
+      "user": "bob",
+      "account": "chem-lab",
+      "current_elapsed": "05:12:00",
+      "requested_walltime": "08:00:00",
+      "predicted_finish_time": "2026-02-14T12:45:00Z",
+      "predicted_remaining": "02:45:00",
+      "predicted_total_walltime": "07:57:00",
+      "walltime_limit_exceeded_probability": 0.15,
+      "confidence": 0.87,
+      "basis": "Similar DFT jobs (chem-lab, 16-core, 64G) historically complete in 7.5-8.5h. Current progress rate (epoch 312/400) matches expected trajectory.",
+      "recommendation": "Job is on track to complete within requested walltime."
+    },
+    {
+      "job_id": "910944",
+      "job_name": "vasp_relaxation_batch",
+      "user": "dave",
+      "account": "materials-lab",
+      "current_elapsed": "11:30:00",
+      "requested_walltime": "12:00:00",
+      "predicted_finish_time": "2026-02-14T11:05:00Z",
+      "predicted_remaining": "01:05:00",
+      "predicted_total_walltime": "12:35:00",
+      "walltime_limit_exceeded_probability": 0.78,
+      "confidence": 0.82,
+      "basis": "Job has processed 94% of ionic relaxation steps but convergence is slowing (energy delta 3x above threshold). Similar slow-convergence cases exceeded walltime 78% of the time.",
+      "recommendation": "High risk of TIMEOUT. Recommend user to checkpoint and resubmit with extended walltime."
+    }
+  ]
 }
