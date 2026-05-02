@@ -33,6 +33,7 @@ theme:
 plugins:
   - search
   - include-markdown
+  - social
   - minify:
       minify_html: true
 
@@ -50,6 +51,9 @@ markdown_extensions:
 extra:
   version:
     provider: mike
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX
 
 nav:
   - Home: index.md
