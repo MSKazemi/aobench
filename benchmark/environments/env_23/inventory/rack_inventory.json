@@ -1,12 +1,20 @@
 {
-  "__stub__": true,
+  "snapshot_time": "2026-04-01T10:00:00Z",
+  "cluster": "exabench-cluster-c",
   "racks": [
-    {"rack_id": "R-01", "partition": "cpu_standard", "nodes": 4, "power_kw": 6.4, "empty_u": 2},
-    {"rack_id": "R-02", "partition": "cpu_standard", "nodes": 4, "power_kw": 6.4, "empty_u": 2},
-    {"rack_id": "R-03", "partition": "gpu_v100", "nodes": 4, "power_kw": 24.0, "empty_u": 0},
-    {"rack_id": "R-04", "partition": "gpu_v100", "nodes": 4, "power_kw": 24.0, "empty_u": 0},
-    {"rack_id": "R-05", "partition": "highmem", "nodes": 8, "power_kw": 19.2, "empty_u": 4}
+    {"rack_id": "R001", "row": "A", "type": "compute_standard", "nodes": ["node001","node002","node003","node004"], "total_power_kw": 12.8, "power_limit_kw": 20.0, "headroom_kw": 7.2, "u_used": 20, "u_total": 42},
+    {"rack_id": "R002", "row": "A", "type": "compute_standard", "nodes": ["node005","node006","node007","node008"], "total_power_kw": 13.4, "power_limit_kw": 20.0, "headroom_kw": 6.6, "u_used": 20, "u_total": 42},
+    {"rack_id": "R016", "row": "D", "type": "compute_highmem",  "nodes": ["highmem01","highmem02"],               "total_power_kw": 11.2, "power_limit_kw": 15.0, "headroom_kw": 3.8, "u_used": 8,  "u_total": 42},
+    {"rack_id": "R032", "row": "C", "type": "compute_gpu",      "nodes": ["gpu01","gpu02","gpu03","gpu04"],        "total_power_kw": 19.8, "power_limit_kw": 20.0, "headroom_kw": 0.2, "u_used": 16, "u_total": 42},
+    {"rack_id": "R033", "row": "C", "type": "compute_gpu",      "nodes": ["gpu05","gpu06","gpu07","gpu08"],        "total_power_kw": 20.0, "power_limit_kw": 20.0, "headroom_kw": 0.0, "u_used": 16, "u_total": 42},
+    {"rack_id": "R050", "row": "E", "type": "storage",          "nodes": ["oss01","oss02","oss03","oss04"],        "total_power_kw": 8.4,  "power_limit_kw": 15.0, "headroom_kw": 6.6, "u_used": 16, "u_total": 42},
+    {"rack_id": "R060", "row": "F", "type": "network",          "nodes": ["spine01","spine02"],                   "total_power_kw": 3.2,  "power_limit_kw": 10.0, "headroom_kw": 6.8, "u_used": 4,  "u_total": 42}
   ],
-  "total_rack_power_kw": 80.0,
-  "facility_power_budget_kw": 200.0
+  "facility_power_summary": {
+    "total_it_load_kw": 820,
+    "facility_power_cap_kw": 1000,
+    "available_for_expansion_kw": 180,
+    "pue_current": 1.38,
+    "note": "GPU row (row C) is at 100% power utilisation. New GPU racks must go to row C extension or require a UPS/PDU upgrade."
+  }
 }

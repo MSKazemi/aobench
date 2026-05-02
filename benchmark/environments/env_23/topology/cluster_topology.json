@@ -1,52 +1,69 @@
 {
-  "__stub__": true,
-  "snapshot_time": "2026-04-01T10:00:00Z",
   "cluster": "exabench-cluster-c",
-  "login_nodes": ["login01", "login02"],
+  "snapshot_time": "2026-04-01T10:00:00Z",
+  "login_nodes": [
+    {"name": "login01", "ip": "10.0.0.1", "network_uplink_gbps": 25},
+    {"name": "login02", "ip": "10.0.0.2", "network_uplink_gbps": 25}
+  ],
   "partitions": [
     {
-      "name": "cpu_standard",
-      "nodes": ["node001-node040"],
-      "node_count": 40,
-      "cores_per_node": 64,
-      "ram_gb_per_node": 256,
-      "cpu_model": "AMD EPYC 7763",
-      "interconnect": "HDR100 InfiniBand",
-      "utilization_30d_avg": 0.72
-    },
-    {
-      "name": "gpu_v100",
-      "nodes": ["gpu001-gpu016"],
-      "node_count": 16,
-      "gpus_per_node": 4,
-      "gpu_model": "NVIDIA V100 32GB SXM2",
-      "cores_per_node": 32,
-      "ram_gb_per_node": 384,
-      "interconnect": "HDR200 InfiniBand (NVLink within node)",
-      "utilization_30d_avg": 0.91
+      "name": "standard",
+      "nodes": ["node[001-128]"],
+      "node_count": 128,
+      "cpus_per_node": 64,
+      "memory_gb_per_node": 256,
+      "interconnect": "HDR InfiniBand 200 Gbps",
+      "storage_access": "Lustre /lustre/scratch via IB",
+      "utilization_30d_pct": 78,
+      "description": "General-purpose CPU partition"
     },
     {
       "name": "highmem",
-      "nodes": ["hmem001-hmem008"],
-      "node_count": 8,
-      "cores_per_node": 128,
-      "ram_gb_per_node": 2048,
-      "cpu_model": "Intel Xeon Platinum 8380",
-      "numa_nodes_per_node": 4,
-      "memory_bandwidth_gb_s": 204.8,
-      "interconnect": "HDR100 InfiniBand",
-      "utilization_30d_avg": 0.63
+      "nodes": ["highmem[01-16]"],
+      "node_count": 16,
+      "cpus_per_node": 128,
+      "memory_gb_per_node": 2048,
+      "numa_domains": 4,
+      "memory_bandwidth_gb_per_s": 409,
+      "interconnect": "HDR InfiniBand 200 Gbps",
+      "storage_access": "Lustre /lustre/scratch via IB",
+      "utilization_30d_pct": 94,
+      "description": "High-memory nodes (AMD EPYC 7742, 4 NUMA domains × 512 GB)"
+    },
+    {
+      "name": "gpu",
+      "nodes": ["gpu[01-48]"],
+      "node_count": 48,
+      "cpus_per_node": 32,
+      "memory_gb_per_node": 512,
+      "gpus_per_node": 4,
+      "gpu_model": "NVIDIA A100 80GB SXM4",
+      "gpu_memory_gb": 80,
+      "nvlink": true,
+      "interconnect": "HDR InfiniBand 200 Gbps",
+      "storage_access": "Lustre /lustre/scratch via IB",
+      "utilization_30d_pct": 97,
+      "description": "GPU partition — A100 nodes for ML/AI workloads"
     }
   ],
-  "network_fabric": {
-    "type": "InfiniBand HDR",
-    "core_switches": ["ib-core-01", "ib-core-02"],
-    "leaf_switches": ["ib-leaf-01 to ib-leaf-08"],
+  "storage": [
+    {
+      "name": "Lustre /lustre/scratch",
+      "type": "Lustre 2.15",
+      "capacity_pb": 2.0,
+      "throughput_peak_gb_per_s": 80,
+      "mds_count": 2,
+      "oss_count": 16,
+      "network_path": "Login nodes → IB fabric (leaf switch per rack → spine) → OSS servers",
+      "latency_us": 120
+    }
+  ],
+  "network": {
     "topology": "fat-tree 2:1 oversubscription",
-    "storage_link_bandwidth_gb_s": 200
-  },
-  "storage": {
-    "scratch": {"filesystem": "Lustre", "capacity_pb": 2.0, "osts": 24, "peak_bandwidth_gb_s": 80},
-    "home": {"filesystem": "GPFS", "capacity_tb": 100, "peak_bandwidth_gb_s": 10}
+    "switch_type": "Mellanox Quantum HDR",
+    "leaf_uplinks_gbps": 200,
+    "spine_links_gbps": 400,
+    "login_to_scratch_bandwidth_gbps": 25,
+    "node_to_scratch_bandwidth_gbps": 12.5
   }
 }

@@ -1,15 +1,53 @@
 {
-  "__stub__": true,
   "snapshot_time": "2026-04-01T10:00:00Z",
-  "total_nodes": 64,
-  "node_classes": [
-    {"class": "cpu_standard", "count": 40, "vendor": "Dell", "model": "PowerEdge R6525", "purchase_year": 2022, "warranty_end": "2027-12-31"},
-    {"class": "gpu_v100", "count": 16, "vendor": "NVIDIA DGX", "model": "DGX-1V", "purchase_year": 2021, "warranty_end": "2026-06-30"},
-    {"class": "highmem", "count": 8, "vendor": "HPE", "model": "ProLiant DL580 Gen10 Plus", "purchase_year": 2023, "warranty_end": "2028-06-30"}
+  "cluster": "exabench-cluster-c",
+  "node_types": [
+    {
+      "type": "standard_compute",
+      "count": 128,
+      "cpu_model": "Intel Xeon Platinum 8358 (Ice Lake)",
+      "cpus_per_node": 2,
+      "cores_per_cpu": 32,
+      "memory_gb": 256,
+      "memory_type": "DDR4-3200 ECC",
+      "storage_local_tb": 3.84,
+      "nic_model": "Mellanox ConnectX-6 HDR",
+      "procured": "2022-06"
+    },
+    {
+      "type": "highmem_compute",
+      "count": 16,
+      "cpu_model": "AMD EPYC 7742 (Rome)",
+      "cpus_per_node": 2,
+      "cores_per_cpu": 64,
+      "memory_gb": 2048,
+      "memory_type": "DDR4-3200 ECC 8-channel",
+      "numa_domains": 4,
+      "memory_bandwidth_gb_per_s": 409,
+      "storage_local_tb": 7.68,
+      "nic_model": "Mellanox ConnectX-6 HDR",
+      "procured": "2022-06"
+    },
+    {
+      "type": "gpu_compute",
+      "count": 48,
+      "cpu_model": "AMD EPYC 7313 (Milan)",
+      "cpus_per_node": 2,
+      "cores_per_cpu": 16,
+      "memory_gb": 512,
+      "gpus_per_node": 4,
+      "gpu_model": "NVIDIA A100 80GB SXM4",
+      "gpu_memory_gb": 80,
+      "gpu_fp32_tflops": 77.97,
+      "gpu_fp16_tflops": 312.0,
+      "nvlink_version": "NVLink 3.0",
+      "nvlink_bandwidth_gb_per_s": 600,
+      "nic_model": "Mellanox ConnectX-6 HDR",
+      "procured": "2023-03"
+    }
   ],
-  "upcoming_procurement": {
-    "description": "GPU expansion: 8x NVIDIA H100 nodes (planned 2026-Q3)",
-    "status": "budget_approved",
-    "expected_delivery": "2026-09-01"
-  }
+  "end_of_life_flags": [
+    {"type": "standard_compute", "note": "Intel Ice Lake nodes procured 2022; EoL ~2027. No immediate action."},
+    {"type": "highmem_compute",  "note": "AMD Rome nodes procured 2022; EoL ~2026-Q4. Evaluate refresh in 2026."}
+  ]
 }
