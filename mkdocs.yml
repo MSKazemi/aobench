@@ -75,19 +75,19 @@ nav:
     - Overview: framework/overview.md
     - Background: framework/background.md
     - Architecture: framework/architecture.md
-    - System Architecture: framework/system-architecture.md
     - Environments: framework/environments.md
     - Evaluation: framework/evaluation.md
     - Scoring Dimensions: framework/scoring-dimensions.md
     - Taxonomy: framework/taxonomy.md
-    - Implementation: framework/implementation.md
   - Usage:
     - Adapters & Tools: guides/adapters-and-tools.md
     - Langfuse Integration: guides/langfuse-integration.md
     - Paper Reproduction: guides/paper-reproduction.md
-    - CLI Commands: reference/commands.md
+    - Implementation Guide: framework/implementation.md
+  - Reference:
+    - System Architecture: reference/system-architecture.md
     - Environments Overview: reference/environments-overview.md
-    - Architecture Flowchart: reference/architecture-flowchart.md
+    - CLI Commands: reference/commands.md
   - About:
     - Changelog: about/changelog.md
     - Contributing: about/contributing.md

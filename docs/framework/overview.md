@@ -7,7 +7,7 @@ redefine the fundamentals collected here.
 
 For an authoritative end-to-end description of the implemented system,
 including the component map and the scoring pipeline, see
-[System Architecture](system-architecture.md).
+[System Architecture](../reference/system-architecture.md).
 
 ---
 
@@ -95,7 +95,7 @@ extensions for future releases:
 
 | If you want to… | Read |
 |-----------------|------|
-| Understand the implemented system end-to-end | [System Architecture](system-architecture.md) |
+| Understand the implemented system end-to-end | [System Architecture](../reference/system-architecture.md) |
 | Run the benchmark | [COMMANDS.md](../reference/commands.md) |
 | Author a new task | [Implementation](implementation.md) and [Taxonomy](taxonomy.md) |
 | Understand scoring | [Evaluation](evaluation.md) and [scoring-dimensions.md](scoring-dimensions.md) |

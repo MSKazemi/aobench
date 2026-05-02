@@ -239,4 +239,4 @@ for a future release.
 
 For the workflow that produces these scores, see
 [Evaluation](evaluation.md). For the implementation map, see
-[System Architecture §5–7](system-architecture.md).
+[System Architecture §5–7](../reference/system-architecture.md).

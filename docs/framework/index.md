@@ -22,11 +22,11 @@ here describes the system **as implemented**; the documentation cleanup of
 | [Environments](environments.md) | Snapshot bundle format and core design |
 | [Evaluation](evaluation.md) | Evaluation protocol, twelve scorers, hard-fail rules, trace and result schemas |
 | [Taxonomy](taxonomy.md) | Roles, QCATs, knowledge sources, RBAC tiers, task metadata schema |
-| [System Architecture](system-architecture.md) | **Authoritative current-state reference** — three-repo ecosystem, component map, end-to-end data flow, scoring pipeline, CLEAR scorecard |
+| [System Architecture](../reference/system-architecture.md) | **Authoritative current-state reference** — component map, end-to-end data flow, scoring pipeline, CLEAR scorecard, architecture diagrams |
 | [Scoring Dimensions](scoring-dimensions.md) | Per-scorer formulas and weight profiles |
 
 When in doubt about scope numbers or component names,
-**[`system-architecture.md`](system-architecture.md) is ground truth**. The
+**[`reference/system-architecture.md`](../reference/system-architecture.md) is ground truth**. The
 other framework pages stay aligned with it as a matter of policy; if you
 spot a divergence, the divergence is a bug.
 
@@ -39,7 +39,7 @@ spot a divergence, the divergence is a bug.
 | [`docs/reference/commands.md`](../reference/commands.md) | Full CLI reference (every flag of every sub-command) |
 | [`docs/reference/environments-overview.md`](../reference/environments-overview.md) | Inventory of all 20 environment bundles |
 | [`docs/guides/adapters-and-tools.md`](../guides/adapters-and-tools.md) | Plain-English adapter and tool guide |
-| [`docs/reference/architecture-flowchart.md`](../reference/architecture-flowchart.md) | Mermaid diagrams |
+| [`docs/reference/system-architecture.md`](../reference/system-architecture.md) | System architecture + Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |
 | [`docs/guides/paper-reproduction.md`](../guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
 | [GitHub README](https://github.com/MSKazemi/ExaBench#readme) | Repository entry point and quick start |
@@ -52,9 +52,9 @@ spot a divergence, the divergence is a bug.
 ## Quick links
 
 - Run the benchmark: [`COMMANDS.md`](../reference/commands.md)
-- All component responsibilities: [system-architecture §2](system-architecture.md)
-- End-to-end data flow: [system-architecture §4](system-architecture.md)
-- Scoring pipeline: [system-architecture §5](system-architecture.md)
-- CLEAR scorecard formula: [system-architecture §6](system-architecture.md)
+- All component responsibilities: [system-architecture §2](../reference/system-architecture.md)
+- End-to-end data flow: [system-architecture §4](../reference/system-architecture.md)
+- Scoring pipeline: [system-architecture §5](../reference/system-architecture.md)
+- CLEAR scorecard formula: [system-architecture §6](../reference/system-architecture.md)
 - Implemented dataset scope: [overview §3](overview.md)
 - Environment inventory: [`environments-overview.md`](../reference/environments-overview.md)

@@ -11,7 +11,7 @@ It answers the question:
 
 For the **current implementation** of these concepts — the file layout under
 `src/exabench/`, the executable scoring pipeline, and the actual dataset scope
-— see [System Architecture](system-architecture.md).
+— see [System Architecture](../reference/system-architecture.md).
 
 For the canonical evaluation protocol, trace schema, and result schema, see
 [Evaluation](evaluation.md).
@@ -130,7 +130,7 @@ latency estimate, and pointers to the trace and run manifest.
 
 A standard ExaBench run, abstracted from the implementation, follows seven
 steps. The implemented version of this workflow with method names is in
-[System Architecture §4](system-architecture.md).
+[System Architecture §4](../reference/system-architecture.md).
 
 1. **Load task** — read the benchmark item with all role and execution
    constraints.

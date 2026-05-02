@@ -6,7 +6,7 @@ system, and where to look for examples.
 
 The authoritative current-state component diagram, including line-by-line
 descriptions of every module under `src/exabench/`, is in
-[System Architecture](system-architecture.md). When that document and
+[System Architecture](../reference/system-architecture.md). When that document and
 this one diverge, treat 09 as ground truth and update this page.
 
 ---
@@ -37,7 +37,7 @@ src/exabench/
 └── utils/           Logging, ID generation, cost estimation
 ```
 
-For each module, [System Architecture §2](system-architecture.md)
+For each module, [System Architecture §2](../reference/system-architecture.md)
 lists the public classes and functions. Use that as a quick reference.
 
 ---
@@ -116,7 +116,7 @@ business logic in the tool, permission logic in `tools/registry.py`.
    `tests/integration/test_aggregate_scorer.py` (end-to-end).
 
 The 12 implemented scorers and their wiring status are listed in
-[System Architecture §7](system-architecture.md). Notes:
+[System Architecture §7](../reference/system-architecture.md). Notes:
 
 - `WorfEvalScorer` (`workflow_scorer.py`) is implemented but **not yet
   wired** into `AggregateScorer`. Wiring is tracked in the future-work plan
@@ -202,10 +202,10 @@ CI in `.github/workflows/ci.yml` runs `lint`, `typecheck`, `test`, and
 
 | Topic | Page |
 |-------|------|
-| Implemented architecture | [system-architecture.md](system-architecture.md) |
+| Implemented architecture | [system-architecture.md](../reference/system-architecture.md) |
 | CLI reference | [`COMMANDS.md`](../reference/commands.md) |
 | Evaluation protocol | [evaluation.md](evaluation.md) |
 | Scorer reference | [scoring-dimensions.md](scoring-dimensions.md) |
 | Adapters & tools (plain English) | [`adapters-and-tools.md`](../guides/adapters-and-tools.md) |
-| Architecture diagrams | [`architecture-flowchart.md`](../reference/architecture-flowchart.md) |
+| Architecture diagrams | [`system-architecture.md §12`](../reference/system-architecture.md) |
 | Reproducibility | [`paper_reproduction_guide.md`](../guides/paper-reproduction.md) |
