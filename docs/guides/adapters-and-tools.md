@@ -41,27 +41,42 @@ A quick guide to how adapters and tools work in ExaBench.
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Runner                                                     │
-│  1. Loads task + environment                                │
-│  2. Builds tools (pointing at env data)                     │
-│  3. Passes task, env, tools → adapter                       │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+│  1. Loads task + environment (deterministic snapshot)       │
+│  2. Builds ToolRegistry — methods filtered by role          │
+│  3. Passes task, tools → Adapter; receives Trace back       │
+│  4. Passes Trace + task → Scorers; returns BenchmarkResult  │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  Adapter (e.g. OpenAI)                                      │
-│  • Sends task.query_text to the LLM                         │
-│  • Exposes tools as functions to the LLM                    │
-│  • When LLM calls a tool → adapter calls tools_registry     │
-│  • Tools read from env and return data                      │
-│  • Adapter records trace and returns it                     │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
+│  Adapter  (e.g. OpenAIAdapter)                              │
+│  • Sends task.query_text + tool schemas → LLM               │
+│  • When LLM calls a tool → ToolRegistry.dispatch()  ─────┐  │
+│  • Appends [tool call + observation] as a TraceStep  ◄────┘  │
+│  • Repeats until LLM gives a final answer  (≤ 10 rounds)    │
+│  • Returns completed Trace                                  │
+└──────────────────────────────┬──────────────────────────────┘
+                    dispatch   │
+                               ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  Tools (slurm, docs, telemetry, rbac, facility)             │
-│  • Run in-process, no external APIs                         │
+│  Tools  (slurm · docs · telemetry · rbac · facility)        │
+│  • Run in-process — no external APIs                        │
 │  • Read from env bundle (deterministic snapshot)            │
-│  • Enforce RBAC based on role                               │
+│  • Wrong role → permission_denied observation               │
+│  • Return JSON observation → Adapter                        │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               │  ← Adapter returns completed Trace
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│  Scorers  (invoked by Runner · AggregateScorer)             │
+│  • OutcomeScorer     — final answer vs gold                 │
+│  • ToolUseScorer     — tool selection & argument quality    │
+│  • GovernanceScorer  — RBAC compliance, permission checks   │
+│  • GroundingScorer   — answer grounded in observations      │
+│  • EfficiencyScorer  — step count  (≤ 5 steps → 1.0)       │
+│                                                             │
+│  → BenchmarkResult: aggregate_score (0–1) + DimensionScores │
 └─────────────────────────────────────────────────────────────┘
 ```
 
