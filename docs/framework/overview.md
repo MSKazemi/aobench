@@ -71,11 +71,6 @@ to authoritative artifacts.
 | Tests passing | 760 | `tests/` |
 | CLI commands | 9 sub-trees (run, validate, lite, report, compare, robustness, clear, leaderboard) | [`COMMANDS.md`](../reference/commands.md) |
 
-Anything described in the documentation but not present in this table is
-either planned for a future release or a historical artifact left over from
-earlier drafts that has been removed during the 2026-05-02 documentation
-cleanup.
-
 ---
 
 ## 4. Long-term goal
