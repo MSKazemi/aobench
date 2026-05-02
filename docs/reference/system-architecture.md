@@ -1,11 +1,4 @@
-# System Architecture (Current State)
-
-> **Authoritative reference.** This document describes the system as
-> implemented. the other framework pages describe the same system at higher levels of
-> abstraction (principles, design, developer guide, taxonomy, evaluation
-> protocol) and are kept in sync with this page.
->
-> Last updated: 2026-05-02
+# System Architecture
 
 ---
 
@@ -357,23 +350,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 9. Document hierarchy
-
-This document is the authoritative current-state reference. The framework
-documentation cleanup of 2026-05-02 rewrote the other framework pages (and
-`scoring-dimensions.md`) so they all describe the system as implemented; if
-any of those pages diverges from this one in the future, the divergence is
-a bug to be fixed in the older page, not in this one.
-
-Six early-version documents were removed in the same cleanup
-(`docs-integration-plan.md`, `benchmark-status-and-design.md`,
-`chat-outcomes.md`, `architecture-clarification.md`, `docs/langfuse.md`,
-`docs/taxonomy/README.md`); their content was either folded into the
-authoritative pages or deferred to future work.
-
----
-
-## 10. External System Integrations
+## 9. External System Integrations
 
 | System | Integration point | Required? |
 |--------|-----------------|-----------|
@@ -393,7 +370,7 @@ make run-all-openai MODEL=meta-llama/Llama-3.1-8B-Instruct
 
 ---
 
-## 11. CLI Command Reference (Summary)
+## 10. CLI Command Reference (Summary)
 
 Full reference: `docs/reference/commands.md`
 
@@ -413,11 +390,11 @@ Full reference: `docs/reference/commands.md`
 
 ---
 
-## 12. Architecture Diagrams
+## 11. Architecture Diagrams
 
 Visual companion to sections 1–11 above. All diagrams reflect the implemented system (Alpha-0 / v0.1).
 
-### 12.1 System Overview
+### 11.1 System Overview
 
 ```mermaid
 graph TB
@@ -472,7 +449,7 @@ graph TB
 
 ---
 
-### 12.2 Execution Flow (Single Task Run)
+### 11.2 Execution Flow (Single Task Run)
 
 ```mermaid
 flowchart TD
@@ -531,7 +508,7 @@ flowchart TD
 
 ---
 
-### 12.3 Component Architecture
+### 11.3 Component Architecture
 
 ```mermaid
 graph LR
@@ -615,7 +592,7 @@ graph LR
 
 ---
 
-### 12.4 Environment Snapshot Structure
+### 11.4 Environment Snapshot Structure
 
 ```mermaid
 graph TD
@@ -639,7 +616,7 @@ graph TD
 
 ---
 
-### 12.5 Scoring Pipeline
+### 11.5 Scoring Pipeline
 
 ```mermaid
 flowchart LR
@@ -666,7 +643,7 @@ flowchart LR
 
 ---
 
-### 12.6 Role-Based Access Control Flow
+### 11.6 Role-Based Access Control Flow
 
 ```mermaid
 flowchart TD
@@ -691,7 +668,7 @@ flowchart TD
 
 ---
 
-### 12.7 CLI Command Map
+### 11.7 CLI Command Map
 
 ```mermaid
 graph TD

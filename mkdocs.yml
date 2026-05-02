@@ -35,6 +35,9 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - https://unpkg.com/mermaid@11/dist/mermaid.min.js
+
 plugins:
   - search
   - include-markdown
@@ -71,18 +74,18 @@ extra:
 
 nav:
   - Home: index.md
-  - Concepts:
+  - Framework:
     - Overview: framework/overview.md
     - Background: framework/background.md
     - Architecture: framework/architecture.md
     - Environments: framework/environments.md
     - Evaluation: framework/evaluation.md
-    - Scoring Dimensions: framework/scoring-dimensions.md
-    - Taxonomy: framework/taxonomy.md
-  - Usage:
+  - Guides:
     - Adapters & Tools: guides/adapters-and-tools.md
     - Langfuse Integration: guides/langfuse-integration.md
   - Reference:
+    - Scoring Dimensions: framework/scoring-dimensions.md
+    - Taxonomy: framework/taxonomy.md
     - System Architecture: reference/system-architecture.md
     - Environments Overview: reference/environments-overview.md
     - CLI Commands: reference/commands.md

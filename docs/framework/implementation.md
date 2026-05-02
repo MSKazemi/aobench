@@ -4,10 +4,7 @@ This page is a **developer-oriented map of the codebase**. It tells you which
 file owns which responsibility, the conventions to follow when extending the
 system, and where to look for examples.
 
-The authoritative current-state component diagram, including line-by-line
-descriptions of every module under `src/exabench/`, is in
-[System Architecture](../reference/system-architecture.md). When that document and
-this one diverge, treat 09 as ground truth and update this page.
+For a complete component map and line-by-line module descriptions, see [System Architecture](../reference/system-architecture.md).
 
 ---
 

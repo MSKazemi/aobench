@@ -59,27 +59,35 @@ exabench report json --run data/runs/<run-id>
 
 <div class="grid cards" markdown>
 
--   :material-book-open-variant: **Concepts**
+-   :material-book-open-variant: **Framework**
 
     ---
 
-    Benchmark methodology, scoring dimensions, evaluation protocol, and the HPC error taxonomy.
+    Benchmark methodology, evaluation protocol, HPC environments, and scoring design.
 
     [:octicons-arrow-right-24: Read the framework docs](framework/overview.md)
 
--   :material-console: **Usage**
+-   :material-console: **Guides**
 
     ---
 
-    CLI reference, adapter guide, Langfuse integration, and paper reproduction instructions.
+    Adapter setup, tool reference, Langfuse observability integration, and CLI usage.
 
-    [:octicons-arrow-right-24: Browse usage guides](guides/adapters-and-tools.md)
+    [:octicons-arrow-right-24: Browse guides](guides/adapters-and-tools.md)
+
+-   :material-code-tags: **Contributing**
+
+    ---
+
+    Add tasks, environments, adapters, or scorers. Codebase map for new contributors.
+
+    [:octicons-arrow-right-24: How to contribute](about/contributing.md)
 
 -   :material-github: **GitHub**
 
     ---
 
-    Source code, issue tracker, and contribution guide.
+    Source code, issue tracker, and releases.
 
     [:octicons-arrow-right-24: MSKazemi/ExaBench](https://github.com/MSKazemi/ExaBench)
 

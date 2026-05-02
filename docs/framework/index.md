@@ -5,9 +5,7 @@ High-Performance Computing (HPC) environments. It uses role-aware tasks,
 deterministic HPC state snapshots, and trace-based scoring across six
 dimensions.
 
-This index is the entry point to the framework documentation. Every page
-here describes the system **as implemented**; the documentation cleanup of
-2026-05-02 removed early-draft material that no longer matched the code.
+This index is the entry point to the framework documentation.
 
 ---
 
@@ -25,10 +23,7 @@ here describes the system **as implemented**; the documentation cleanup of
 | [System Architecture](../reference/system-architecture.md) | **Authoritative current-state reference** — component map, end-to-end data flow, scoring pipeline, CLEAR scorecard, architecture diagrams |
 | [Scoring Dimensions](scoring-dimensions.md) | Per-scorer formulas and weight profiles |
 
-When in doubt about scope numbers or component names,
-**[`reference/system-architecture.md`](../reference/system-architecture.md) is ground truth**. The
-other framework pages stay aligned with it as a matter of policy; if you
-spot a divergence, the divergence is a bug.
+For a complete component map, end-to-end data flow, and scoring pipeline details, see [System Architecture](../reference/system-architecture.md).
 
 ---
 

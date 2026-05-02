@@ -1,11 +1,4 @@
-# System Architecture (Current State)
-
-> **Authoritative reference.** This document describes the system as
-> implemented. the other framework pages describe the same system at higher levels of
-> abstraction (principles, design, developer guide, taxonomy, evaluation
-> protocol) and are kept in sync with this page.
->
-> Last updated: 2026-05-02
+# System Architecture
 
 ---
 
@@ -430,23 +423,7 @@ flowchart TB
 
 ---
 
-## 9. Document hierarchy
-
-This document is the authoritative current-state reference. The framework
-documentation cleanup of 2026-05-02 rewrote the other framework pages (and
-`scoring-dimensions.md`) so they all describe the system as implemented; if
-any of those pages diverges from this one in the future, the divergence is
-a bug to be fixed in the older page, not in this one.
-
-Six early-version documents were removed in the same cleanup
-(`docs-integration-plan.md`, `benchmark-status-and-design.md`,
-`chat-outcomes.md`, `architecture-clarification.md`, `docs/langfuse.md`,
-`docs/taxonomy/README.md`); their content was either folded into the
-authoritative pages or deferred to future work.
-
----
-
-## 10. External System Integrations
+## 9. External System Integrations
 
 | System | Integration point | Required? |
 |--------|-----------------|-----------|
@@ -466,7 +443,7 @@ make run-all-openai MODEL=meta-llama/Llama-3.1-8B-Instruct
 
 ---
 
-## 11. CLI Command Reference (Summary)
+## 10. CLI Command Reference (Summary)
 
 Full reference: `docs/reference/commands.md`
 

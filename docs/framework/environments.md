@@ -1,9 +1,5 @@
 # Environment Snapshots
 
-**Owner:** Mohsen
-
-*Previously 06. Renamed for integrated doc structure.*
-
 ## Purpose
 
 Environment Snapshots define the **deterministic HPC operational states** used by ExaBench during evaluation.
@@ -409,8 +405,6 @@ All 20 bundles are validated by `validate_bundle()` on every `load_environment()
 | `telemetry.query_node_metrics(node_id)` | Per-node latest-value summary across all metrics |
 | `telemetry.query_memory_events(job_id)` | Memory events CSV lookup |
 | `telemetry.list_metrics()` | List available telemetry files |
-
-> **Historical note:** The original Alpha-0 operational tracker has been superseded by this implementation. All bundles now have `implementation_status: bundled` and `validation_status: validated`.
 
 ### Implementation status values
 

@@ -1,7 +1,5 @@
 # Background — Motivation & Related Work
 
-**Owner:** Mohsen
-
 This page summarizes why ExaBench exists and how it relates to the broader benchmark landscape.
 
 ---
