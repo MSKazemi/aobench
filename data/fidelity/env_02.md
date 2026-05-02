@@ -1,5 +1,5 @@
 # Fidelity Report: env_02
-Generated: 2026-05-02T22:37:39.383862+00:00
+Generated: 2026-05-02T23:10:26.544592+00:00
 
 ## F1 — ✓ PASS
 - Metric: lognormal_mu

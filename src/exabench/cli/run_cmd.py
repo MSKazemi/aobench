@@ -16,10 +16,18 @@ run_app = typer.Typer(help="Run benchmark tasks.")
 # ---------------------------------------------------------------------------
 
 _MODEL_REGISTRY: dict[str, tuple[str, str]] = {
-    "direct_qa":    ("DirectQAAdapter",  "direct_qa"),
-    "gpt-4o":       ("OpenAIAdapter",    "gpt-4o-2024-11-20"),
-    "gpt-4o-mini":  ("OpenAIAdapter",    "gpt-4o-mini-2024-07-18"),
+    "direct_qa":     ("DirectQAAdapter", "direct_qa"),
+    "gpt-4o":        ("OpenAIAdapter",   "gpt-4o"),        # Azure: resolves via AZURE_COORDINATOR_DEPLOYMENT
+    "gpt-4o-mini":   ("OpenAIAdapter",   "gpt-4o-mini"),   # Azure: resolves via AZURE_SUBAGENT_DEPLOYMENT
     "llama-3.3-70b": ("OpenAIAdapter",   "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
+}
+
+# Azure deployment name overrides — read once from env at import time so that
+# smoke tests can patch os.environ before importing this module.
+import os as _os
+_AZURE_DEPLOYMENT_MAP: dict[str, str] = {
+    "gpt-4o":      _os.environ.get("AZURE_COORDINATOR_DEPLOYMENT", "gpt-4o"),
+    "gpt-4o-mini": _os.environ.get("AZURE_SUBAGENT_DEPLOYMENT", "gpt-4o-mini"),
 }
 
 
@@ -50,10 +58,23 @@ def resolve_model(token: str) -> tuple[type, str]:
 
 
 def _build_adapter_from_token(token: str):
-    """Instantiate an adapter from a model registry token."""
+    """Instantiate an adapter from a model registry token.
+
+    For Azure deployments, gpt-4o and gpt-4o-mini resolve to the names in
+    AZURE_COORDINATOR_DEPLOYMENT / AZURE_SUBAGENT_DEPLOYMENT respectively.
+    """
+    import os
+    from dotenv import load_dotenv  # type: ignore[import-not-found]
+    try:
+        load_dotenv()
+    except Exception:  # noqa: BLE001
+        pass
     adapter_class, model_name = resolve_model(token)
     if adapter_class.__name__ == "DirectQAAdapter":
         return adapter_class()
+    # Resolve Azure deployment name override if on Azure
+    if os.environ.get("AZURE_OPENAI_ENDPOINT"):
+        model_name = _AZURE_DEPLOYMENT_MAP.get(token, model_name)
     return adapter_class(model=model_name)
 
 

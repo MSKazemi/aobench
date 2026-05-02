@@ -196,7 +196,7 @@ def _build_client(provider: str | None, model: str) -> tuple[Any, str]:
     if resolved == "azure":
         endpoint   = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
         api_key    = os.environ.get("AZURE_OPENAI_API_KEY", "")
-        api_ver    = os.environ.get("AZURE_API_VERSION", "2024-02-01")
+        api_ver    = os.environ.get("AZURE_OPENAI_API_VERSION", os.environ.get("AZURE_API_VERSION", "2024-08-01-preview"))
         deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "").strip() or model
         if not endpoint or not api_key:
             raise EnvironmentError(
