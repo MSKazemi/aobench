@@ -1,4 +1,41 @@
 {
-  "__stub__": true,
-  "note": "minimal stub \u2014 replace with real data"
+  "alert_id": "AIOPS-2026-0228-042",
+  "node": "node042",
+  "alert_class": "predictive_hardware_failure",
+  "severity": "P1",
+  "confidence": 0.91,
+  "raised_at": "2026-02-28T07:48:00Z",
+  "model": "node_health_xgb_v3",
+  "contributing_factors": [
+    {
+      "feature": "ecc_correctable_errors_24h",
+      "value": 147,
+      "threshold": 50,
+      "shap_weight": 0.41,
+      "description": "147 correctable ECC errors in last 24h (threshold: 50). Rapid escalation from baseline of 2-3/day."
+    },
+    {
+      "feature": "memory_bw_degradation_pct",
+      "value": 18.2,
+      "threshold": 10.0,
+      "shap_weight": 0.28,
+      "description": "Memory bandwidth degraded 18.2% vs 30-day rolling average — consistent with DRAM row hammer or module fault."
+    },
+    {
+      "feature": "cpu_temp_max_c",
+      "value": 88,
+      "threshold": 85,
+      "shap_weight": 0.14,
+      "description": "CPU package temperature peaked at 88°C (3°C over threshold) during last compute burst."
+    },
+    {
+      "feature": "dimm_post_errors",
+      "value": 3,
+      "threshold": 0,
+      "shap_weight": 0.09,
+      "description": "3 DIMM POST errors logged in BMC SEL since last reboot (2026-02-25)."
+    }
+  ],
+  "recommended_action": "Drain node042 immediately and schedule memory module inspection. Replace DIMM slot 4B (highest ECC error density per IPMI sensor).",
+  "affected_jobs": ["920101", "920115"]
 }
