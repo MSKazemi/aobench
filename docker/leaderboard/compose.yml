@@ -1,0 +1,26 @@
+services:
+  leaderboard-api:
+    build:
+      context: ../..
+      dockerfile: docker/leaderboard/Dockerfile
+    container_name: exabench-leaderboard
+    ports:
+      - "8000:8000"
+    volumes:
+      - leaderboard-data:/app/data/leaderboard
+    environment:
+      LEADERBOARD_ADMIN_PASS: ${LEADERBOARD_ADMIN_PASS:-change-me}
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - /usr/local/bin/python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
+      interval: 15s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+volumes:
+  leaderboard-data:

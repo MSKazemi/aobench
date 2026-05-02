@@ -1,0 +1,9 @@
+# ExaBench unified service stack.
+# Starts Langfuse (observability) + leaderboard API.
+# Usage: make stack-up
+#
+# Requires Docker Compose v2.20+ for `include:` support.
+# Check version: docker compose version
+include:
+  - path: docker/langfuse/compose.yml
+  - path: docker/leaderboard/compose.yml

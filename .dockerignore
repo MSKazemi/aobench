@@ -1,0 +1,33 @@
+# Version control
+.git/
+.gitignore
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Data and outputs (too large / runtime-generated)
+data/
+site/
+
+# Tests and docs (not needed in image)
+tests/
+docs/
+
+# Secrets
+.env
+.env.*
+*.local
+
+# Claude Code artifacts
+.claude/
+
+# Docker files themselves (avoid recursive context)
+compose.yml
+docker/

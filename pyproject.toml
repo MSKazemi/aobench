@@ -25,6 +25,7 @@ openai = ["openai>=1.0"]
 anthropic = ["anthropic>=0.30"]
 mcp = ["mcp>=1.0", "openai>=1.0"]
 langfuse = ["langfuse>=4.0"]
+leaderboard = ["fastapi>=0.136.0", "uvicorn>=0.46.0"]
 
 [dependency-groups]
 dev = [
@@ -35,6 +36,7 @@ dev = [
     "pingouin>=0.5",
     "krippendorff>=0.6",
     "scipy>=1.12",
+    "httpx>=0.28.0",
 ]
 docs = [
     "mkdocs>=1.6",
