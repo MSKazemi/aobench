@@ -24,20 +24,20 @@ LANGFUSE_DIR := docker/langfuse
 
 .PHONY: langfuse-up
 langfuse-up:  ## Start Langfuse locally (UI at http://localhost:3000)
-	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml up -d
+	docker compose -f $(LANGFUSE_DIR)/compose.yml up -d
 	@echo "Langfuse starting — UI will be ready at http://localhost:3000"
 
 .PHONY: langfuse-down
 langfuse-down:  ## Stop Langfuse (keeps data volume)
-	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml down
+	docker compose -f $(LANGFUSE_DIR)/compose.yml down
 
 .PHONY: langfuse-logs
 langfuse-logs:  ## Stream Langfuse container logs
-	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml logs -f
+	docker compose -f $(LANGFUSE_DIR)/compose.yml logs -f
 
 .PHONY: langfuse-reset
 langfuse-reset:  ## Stop Langfuse and DELETE all data (volume removed)
-	docker compose -f $(LANGFUSE_DIR)/docker-compose.yml down -v
+	docker compose -f $(LANGFUSE_DIR)/compose.yml down -v
 
 # ── Quality ───────────────────────────────────────────────────────────────────
 
