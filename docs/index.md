@@ -1,11 +1,28 @@
+<div class="hero" markdown>
+
+<p class="hero-label">Open Source · HPC Benchmarking · AI Evaluation</p>
+
 # ExaBench
 
-**Benchmark framework for evaluating AI agents in High-Performance Computing (HPC) environments.**
+<p class="hero-sub">
+Benchmark framework for evaluating AI agents in High-Performance Computing (HPC) environments —
+role-aware, tool-using, trace-based, and reproducible.
+</p>
 
-ExaBench measures how well AI agents complete HPC operational tasks — job scheduling, telemetry interpretation,
-energy reasoning, policy enforcement — using the right tools, the right roles, and the right permissions.
-Every task runs against a deterministic environment snapshot with mock HPC tools, so results are
-reproducible, portable, and safe to publish.
+<div class="badge-row" markdown>
+[![Python](https://img.shields.io/badge/python-3.12+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-4CAF50)](https://github.com/MSKazemi/ExaBench/blob/main/LICENSE)
+[![Version](https://img.shields.io/badge/version-0.1.0-1a237e)](https://github.com/MSKazemi/ExaBench/releases)
+[![Tasks](https://img.shields.io/badge/tasks-30-FF6F00)](benchmark/tasks/)
+[![Environments](https://img.shields.io/badge/environments-20-0288D1)](benchmark/environments/)
+</div>
+
+<div class="btn-row" markdown>
+[Get Started](framework/overview.md){ .btn .btn-primary }
+[View on GitHub](https://github.com/MSKazemi/ExaBench){ .btn .btn-secondary }
+</div>
+
+</div>
 
 ---
 
