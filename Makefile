@@ -39,6 +39,18 @@ langfuse-logs:  ## Stream Langfuse container logs
 langfuse-reset:  ## Stop Langfuse and DELETE all data (volume removed)
 	docker compose -f $(LANGFUSE_DIR)/compose.yml down -v
 
+.PHONY: stack-up
+stack-up:  ## Start the full ExaBench stack (Langfuse + leaderboard API)
+	docker compose up -d --build
+
+.PHONY: stack-down
+stack-down:  ## Stop the full stack (keeps volumes)
+	docker compose down
+
+.PHONY: stack-logs
+stack-logs:  ## Stream logs from the full stack
+	docker compose logs -f
+
 # ── Quality ───────────────────────────────────────────────────────────────────
 
 .PHONY: test
