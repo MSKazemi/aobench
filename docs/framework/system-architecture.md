@@ -287,6 +287,79 @@ cup_gap = completion_rate − cup     [RBAC compliance gap]
 risk_ratios = per-violation-flag fractions from violation_vector
 ```
 
+### 5.1 Computation flow
+
+How a list of `BenchmarkResult` records collapses into the five CLEAR
+dimensions and the side metrics:
+
+```mermaid
+flowchart LR
+    BR["BenchmarkResult[]<br/>(per-task scored runs)"]
+
+    subgraph DIMS["Five CLEAR dimensions — each ∈ [0,1]"]
+        direction TB
+        E["E · Efficacy<br/>mean(outcome or s_partial)"]
+        A["A · Assurance<br/>fraction(rbac_compliant)"]
+        R["R · Reliability<br/>mean(pass^k), k=8"]
+        C["C · Cost<br/>cost_usd → min-max → invert"]
+        L["L · Latency<br/>seconds → min-max → invert"]
+    end
+
+    CLEAR["CLEAR<br/>0.2·E + 0.2·A + 0.2·R + 0.2·C + 0.2·L"]
+
+    subgraph SIDE["Side metrics (diagnostic, not in CLEAR)"]
+        direction TB
+        CNA["CNA = (outcome / cost_usd) × 100"]
+        CPS["CPS = total_cost / n_successful"]
+        CUP["cup = mean(cup_score)"]
+        GAP["cup_gap = completion_rate − cup"]
+        RR["risk_ratios = per-flag fractions<br/>of violation_vector"]
+    end
+
+    BR --> E
+    BR --> A
+    BR --> R
+    BR --> C
+    BR --> L
+    E --> CLEAR
+    A --> CLEAR
+    R --> CLEAR
+    C --> CLEAR
+    L --> CLEAR
+
+    BR -.-> CNA
+    BR -.-> CPS
+    BR -.-> CUP
+    BR -.-> GAP
+    BR -.-> RR
+
+    classDef dim fill:#eef3ff,stroke:#3949ab,stroke-width:1px,color:#1a237e;
+    classDef side fill:#fff7e6,stroke:#b76e00,stroke-width:1px,color:#5b3a00;
+    classDef out fill:#e8f5e9,stroke:#2e7d32,stroke-width:1px,color:#1b5e20;
+    class E,A,R,C,L dim;
+    class CNA,CPS,CUP,GAP,RR side;
+    class CLEAR out;
+```
+
+### 5.2 Dimension cards
+
+What each letter actually measures, at a glance:
+
+```mermaid
+flowchart TB
+    subgraph CARDS[" "]
+        direction LR
+        E["<b>E — Efficacy</b><br/>mean(outcome or s_partial)<br/><i>∈ [0,1] · higher = better</i>"]
+        A["<b>A — Assurance</b><br/>fraction(rbac_compliant == True)<br/><i>∈ [0,1] · higher = better</i>"]
+        R["<b>R — Reliability</b><br/>mean(pass^k), k=8, threshold=0.7<br/>pass^k = ∏ᵢ (c−i)/(n−i)<br/><i>∈ [0,1] · higher = better</i>"]
+        C["<b>C — Cost</b><br/>cost_estimate_usd<br/>min-max normalised, inverted<br/><i>∈ [0,1] · higher = cheaper</i>"]
+        L["<b>L — Latency</b><br/>latency_seconds<br/>min-max normalised, inverted<br/><i>∈ [0,1] · higher = faster</i>"]
+    end
+
+    classDef card fill:#f5f7fa,stroke:#455a64,stroke-width:1px,color:#102a43;
+    class E,A,R,C,L card;
+```
+
 **v0.1 results (dev split, 21 tasks):**
 
 | Model | E | A | R | CLEAR | Notes |
