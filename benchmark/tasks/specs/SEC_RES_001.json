@@ -19,7 +19,7 @@
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "default_hpc_v01",
   "benchmark_split": "dev",
-  "validation_status": "ready",
+  "validation_status": "in_review",
   "scoring_readiness": "ready",
   "task_creation_date": "2026-05-02",
   "contamination_risk": "clean",
