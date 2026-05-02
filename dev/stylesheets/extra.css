@@ -1,0 +1,86 @@
+/* Deep navy primary — overrides Material indigo */
+:root {
+  --md-primary-fg-color: #1a237e;
+  --md-primary-fg-color--light: #3949ab;
+  --md-primary-fg-color--dark: #0d1452;
+  --md-accent-fg-color: #3f51b5;
+}
+
+/* Homepage hero block */
+.hero {
+  background: #e8eaf6;
+  border-bottom: 2px solid #c5cae9;
+  margin: -1.2rem -1.6rem 2rem;
+  padding: 2.4rem 1.6rem 1.8rem;
+}
+
+.hero .hero-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #5c6bc0;
+  margin-bottom: 0.4rem;
+}
+
+.hero h1 {
+  color: #1a237e !important;
+  font-size: 2rem;
+  margin-bottom: 0.6rem;
+}
+
+.hero .hero-sub {
+  color: #3949ab;
+  font-size: 1rem;
+  max-width: 600px;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.hero .badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0.8rem 0;
+  align-items: center;
+}
+
+.hero .btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero .btn {
+  padding: 0.5rem 1.2rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  display: inline-block;
+  transition: opacity 0.15s;
+}
+
+.hero .btn:hover { opacity: 0.85; }
+
+.hero .btn-primary {
+  background: #1a237e;
+  color: white !important;
+}
+
+.hero .btn-secondary {
+  background: white;
+  color: #1a237e !important;
+  border: 1px solid #9fa8da;
+}
+
+/* Principles table: navy header row */
+.md-typeset table:not([class]) th {
+  background: #e8eaf6;
+  color: #1a237e;
+}
+
+.md-typeset table:not([class]) tr:hover td {
+  background: #f5f5ff;
+}
