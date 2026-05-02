@@ -55,5 +55,6 @@
   "aggregate_weight_profile": "alpha1_grounding",
   "difficulty_tier": 2,
   "task_creation_date": "2026-05-02",
-  "contamination_risk": "clean"
+  "contamination_risk": "clean",
+  "benchmark_split": "dev"
 }

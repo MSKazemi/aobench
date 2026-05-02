@@ -48,5 +48,6 @@
   "aggregate_weight_profile": "default_hpc_v01",
   "difficulty_tier": 1,
   "task_creation_date": "2026-05-02",
-  "contamination_risk": "clean"
+  "contamination_risk": "clean",
+  "benchmark_split": "dev"
 }

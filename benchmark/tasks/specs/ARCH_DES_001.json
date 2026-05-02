@@ -50,7 +50,8 @@
   ],
   "knowledge_source_scope": [
     "ARCH_DOC",
-    "ENG_DOC"
+    "ENG_DOC",
+    "ADMIN_DATA"
   ],
   "access_tier": "tier4_sensitive",
   "aggregate_weight_profile": "alpha1_grounding",
