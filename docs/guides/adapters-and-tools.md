@@ -51,8 +51,8 @@ A quick guide to how adapters and tools work in ExaBench.
 ┌─────────────────────────────────────────────────────────────┐
 │  Adapter  (e.g. OpenAIAdapter)                              │
 │  • Sends task.query_text + tool schemas → LLM               │
-│  • When LLM calls a tool → ToolRegistry.dispatch()  ─────┐  │
-│  • Appends [tool call + observation] as a TraceStep  ◄────┘  │
+│  • When LLM calls a tool → ToolRegistry.dispatch()   ─────┐ │
+│  • Appends [tool call + observation] as a TraceStep  ◄────┘ │
 │  • Repeats until LLM gives a final answer  (≤ 10 rounds)    │
 │  • Returns completed Trace                                  │
 └──────────────────────────────┬──────────────────────────────┘
@@ -74,7 +74,7 @@ A quick guide to how adapters and tools work in ExaBench.
 │  • ToolUseScorer     — tool selection & argument quality    │
 │  • GovernanceScorer  — RBAC compliance, permission checks   │
 │  • GroundingScorer   — answer grounded in observations      │
-│  • EfficiencyScorer  — step count  (≤ 5 steps → 1.0)       │
+│  • EfficiencyScorer  — step count  (≤ 5 steps → 1.0)        │
 │                                                             │
 │  → BenchmarkResult: aggregate_score (0–1) + DimensionScores │
 └─────────────────────────────────────────────────────────────┘
