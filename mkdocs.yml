@@ -7,6 +7,7 @@ edit_uri: edit/main/docs/
 
 theme:
   name: material
+  custom_dir: docs/overrides
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -29,6 +30,10 @@ theme:
     - content.tabs.link
     - navigation.top
     - content.action.edit
+    - announce.dismiss
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search
@@ -47,6 +52,7 @@ markdown_extensions:
   - admonition
   - toc:
       permalink: true
+  - md_in_html
 
 extra:
   version:
