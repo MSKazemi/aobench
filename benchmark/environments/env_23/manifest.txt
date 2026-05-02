@@ -1,0 +1,7 @@
+docs/architecture_spec.md
+docs/capacity_planning_guide.md
+inventory/hardware_inventory.json
+inventory/rack_inventory.json
+metadata.yaml
+policy/rbac_policy.yaml
+topology/cluster_topology.json

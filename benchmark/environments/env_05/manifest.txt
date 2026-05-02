@@ -1,8 +1,12 @@
-power/node_power_005.csv
-rack/rack_telemetry_005.csv
-inventory/node_map.csv
 cooling/crac_status.json
-incidents/cooling_incident.json
-policy/rbac_policy.yaml
 docs/cooling_policy.md
 docs/rack_status.md
+docs/rbac_policy.md
+incidents/cooling_incident.json
+inventory/node_map.csv
+metadata.yaml
+policy/rbac_policy.yaml
+power/node_power_005.csv
+rack/rack_telemetry_005.csv
+slurm/slurm_state.json
+telemetry/telemetry_timeseries.parquet

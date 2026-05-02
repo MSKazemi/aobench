@@ -1,6 +1,9 @@
-metadata.yaml
-power/rack_energy_003.csv
-inventory/rack_layout.csv
+aiops/walltime_predictions.json
 baseline/rack_energy_baseline.json
 docs/rack_energy_summary.md
+docs/rbac_policy.md
+inventory/rack_layout.csv
+metadata.yaml
 policy/rbac_policy.yaml
+power/rack_energy_003.csv
+slurm/job_details.json

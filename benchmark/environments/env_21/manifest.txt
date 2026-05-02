@@ -1,0 +1,6 @@
+docs/data_management_policy.md
+docs/storage_user_guide.md
+filesystem/io_metrics.json
+filesystem/quota_report.json
+metadata.yaml
+policy/rbac_policy.yaml
