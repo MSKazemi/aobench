@@ -31,8 +31,8 @@ jobs:
 
       - name: Configure git for mike
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Mohsen Seyedkazemi Ardebili"
+          git config user.email "mohsen.seyedkazemi@gmail.com"
 
       - name: Deploy dev (on push to main)
         if: github.ref == 'refs/heads/main'
