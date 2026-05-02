@@ -133,62 +133,26 @@ def _print_suite_stats(suite: dict) -> None:
     typer.echo(f"{'═' * 60}\n")
 
 
-@robustness_app.command("all")
-def robustness_all(  # noqa: PLR0913
-    adapter: Annotated[str, _OPT_ADAPTER] = "direct_qa",
-    n: Annotated[int, _OPT_N] = 8,
-    pass_threshold: Annotated[float, _OPT_THRESHOLD] = 0.5,
-    output: Annotated[str | None, _OPT_OUTPUT] = None,
-    benchmark_root: Annotated[str, _OPT_BENCH_ROOT] = "benchmark",
-    output_root: Annotated[str, _OPT_OUT_ROOT] = "data/runs",
-    split: Annotated[str | None, typer.Option("--split", help="Only run tasks in this benchmark_split (dev/public_test/hidden_test)")] = None,
+def _robustness_all_for_adapter(
+    *,
+    adapter_label: str,
+    _adapter,
+    tasks: list,
+    n: int,
+    pass_threshold: float,
+    output: str | None,
+    benchmark_root: str,
+    output_root: str,
 ) -> None:
-    """Run ALL benchmark tasks N times each and report suite-level pass^k.
-
-    Produces a robustness JSON with per-task pass^k (k=1,2,4,8), score
-    variance, and cost/latency stats across all N*|tasks| runs.
-
-    Recommended: --n 8 to compute the full k=(1,2,4,8) profile.
-    Use --split dev for a quick smoke-test (12 tasks × N runs).
-    """
-    from exabench.loaders.task_loader import load_tasks_from_dir  # noqa: PLC0415
+    """Run robustness suite for one adapter/model."""
     from exabench.runners.runner import BenchmarkRunner  # noqa: PLC0415
     from exabench.scorers.robustness_scorer import compute_robustness_suite  # noqa: PLC0415
     from exabench.utils.ids import make_run_id  # noqa: PLC0415
 
-    if adapter == "direct_qa":
-        from exabench.adapters.direct_qa_adapter import DirectQAAdapter  # noqa: PLC0415
-        _adapter = DirectQAAdapter()
-    elif adapter.startswith("openai"):
-        from exabench.adapters.openai_adapter import OpenAIAdapter  # noqa: PLC0415
-        model = adapter.split(":", 1)[1] if ":" in adapter else "gpt-4o"
-        _adapter = OpenAIAdapter(model=model)
-    elif adapter.startswith("anthropic"):
-        from exabench.adapters.anthropic_adapter import AnthropicAdapter  # noqa: PLC0415
-        model = adapter.split(":", 1)[1] if ":" in adapter else "claude-sonnet-4-6"
-        _adapter = AnthropicAdapter(model=model)
-    else:
-        typer.echo(f"Unknown adapter: {adapter}", err=True)
-        raise typer.Exit(1)
-
-    specs_dir = Path(benchmark_root) / "tasks" / "specs"
-    all_tasks = load_tasks_from_dir(specs_dir)
-    if not all_tasks:
-        typer.echo(f"No tasks found in {specs_dir}", err=True)
-        raise typer.Exit(1)
-
-    tasks = all_tasks
-    if split:
-        tasks = [t for t in all_tasks if t.benchmark_split == split]
-        if not tasks:
-            typer.echo(f"No tasks with benchmark_split='{split}'", err=True)
-            raise typer.Exit(1)
-        typer.echo(f"Filtered to {len(tasks)} tasks with split={split}")
-
     total_runs = len(tasks) * n
     typer.echo(
         f"\nRobustness suite: {len(tasks)} tasks × {n} runs = {total_runs} total"
-        f"  adapter={adapter}  threshold={pass_threshold}\n"
+        f"  adapter={adapter_label}  threshold={pass_threshold}\n"
     )
 
     runner = BenchmarkRunner(
@@ -219,10 +183,98 @@ def robustness_all(  # noqa: PLR0913
     _print_suite_stats(suite)
 
     if output:
-        Path(output).write_text(json.dumps(suite, indent=2), encoding="utf-8")
-        typer.echo(f"Written: {output}")
-    elif not output:
-        default_path = Path(output_root) / "robustness_suite.json"
-        default_path.parent.mkdir(parents=True, exist_ok=True)
-        default_path.write_text(json.dumps(suite, indent=2), encoding="utf-8")
-        typer.echo(f"Written: {default_path}")
+        out_path = Path(output)
+    else:
+        out_path = Path(output_root) / "robustness_suite.json"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(suite, indent=2), encoding="utf-8")
+    typer.echo(f"Written: {out_path}")
+
+
+@robustness_app.command("all")
+def robustness_all(  # noqa: PLR0913
+    adapter: Annotated[str, _OPT_ADAPTER] = "direct_qa",
+    models: Annotated[str, typer.Option("--models", "-m", help="Comma-separated model tokens (e.g. direct_qa,gpt-4o)")] = "",
+    n: Annotated[int, _OPT_N] = 8,
+    pass_threshold: Annotated[float, _OPT_THRESHOLD] = 0.5,
+    output: Annotated[str | None, _OPT_OUTPUT] = None,
+    benchmark_root: Annotated[str, _OPT_BENCH_ROOT] = "benchmark",
+    output_root: Annotated[str, _OPT_OUT_ROOT] = "data/runs",
+    split: Annotated[str | None, typer.Option("--split", help="Only run tasks in this benchmark_split (dev/public_test/hidden_test)")] = None,
+) -> None:
+    """Run ALL benchmark tasks N times each and report suite-level pass^k.
+
+    Produces a robustness JSON with per-task pass^k (k=1,2,4,8), score
+    variance, and cost/latency stats across all N*|tasks| runs.
+
+    Recommended: --n 8 to compute the full k=(1,2,4,8) profile.
+    Use --split dev for a quick smoke-test (12 tasks × N runs).
+    Use --models to iterate over multiple models in one invocation.
+    """
+    from exabench.loaders.task_loader import load_tasks_from_dir  # noqa: PLC0415
+
+    specs_dir = Path(benchmark_root) / "tasks" / "specs"
+    all_tasks = load_tasks_from_dir(specs_dir)
+    if not all_tasks:
+        typer.echo(f"No tasks found in {specs_dir}", err=True)
+        raise typer.Exit(1)
+
+    tasks = all_tasks
+    if split:
+        tasks = [t for t in all_tasks if t.benchmark_split == split]
+        if not tasks:
+            typer.echo(f"No tasks with benchmark_split='{split}'", err=True)
+            raise typer.Exit(1)
+        typer.echo(f"Filtered to {len(tasks)} tasks with split={split}")
+
+    # Determine which model tokens to use
+    if models:
+        from exabench.cli.run_cmd import resolve_model  # noqa: PLC0415
+        model_tokens = [t.strip() for t in models.split(",") if t.strip()]
+        for token in model_tokens:
+            adapter_class, model_name = resolve_model(token)
+            if adapter_class.__name__ == "DirectQAAdapter":
+                _adapter = adapter_class()
+            else:
+                _adapter = adapter_class(model=model_name)
+            token_output = str(Path(output_root) / token)
+            token_out_file = str(Path(token_output) / "robustness_suite.json") if not output else output
+            typer.echo(f"\n=== Model: {token} → output: {token_output} ===")
+            _robustness_all_for_adapter(
+                adapter_label=token,
+                _adapter=_adapter,
+                tasks=tasks,
+                n=n,
+                pass_threshold=pass_threshold,
+                output=token_out_file,
+                benchmark_root=benchmark_root,
+                output_root=token_output,
+            )
+        return
+
+    # Legacy single-adapter path
+    if adapter == "direct_qa":
+        from exabench.adapters.direct_qa_adapter import DirectQAAdapter  # noqa: PLC0415
+        _adapter = DirectQAAdapter()
+    elif adapter.startswith("openai"):
+        from exabench.adapters.openai_adapter import OpenAIAdapter  # noqa: PLC0415
+        model = adapter.split(":", 1)[1] if ":" in adapter else "gpt-4o"
+        _adapter = OpenAIAdapter(model=model)
+    elif adapter.startswith("anthropic"):
+        from exabench.adapters.anthropic_adapter import AnthropicAdapter  # noqa: PLC0415
+        model = adapter.split(":", 1)[1] if ":" in adapter else "claude-sonnet-4-6"
+        _adapter = AnthropicAdapter(model=model)
+    else:
+        typer.echo(f"Unknown adapter: {adapter}", err=True)
+        raise typer.Exit(1)
+
+    _robustness_all_for_adapter(
+        adapter_label=adapter,
+        _adapter=_adapter,
+        tasks=tasks,
+        n=n,
+        pass_threshold=pass_threshold,
+        output=output,
+        benchmark_root=benchmark_root,
+        output_root=output_root,
+    )

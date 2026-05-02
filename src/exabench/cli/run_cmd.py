@@ -3,13 +3,86 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Optional
 
 import typer
 
 from exabench.utils.logging import configure_logging
 
 run_app = typer.Typer(help="Run benchmark tasks.")
+
+# ---------------------------------------------------------------------------
+# Model registry — maps short token → (AdapterClass, model_name)
+# ---------------------------------------------------------------------------
+
+_MODEL_REGISTRY: dict[str, tuple[str, str]] = {
+    "direct_qa":    ("DirectQAAdapter",  "direct_qa"),
+    "gpt-4o":       ("OpenAIAdapter",    "gpt-4o-2024-11-20"),
+    "gpt-4o-mini":  ("OpenAIAdapter",    "gpt-4o-mini-2024-07-18"),
+    "llama-3.3-70b": ("OpenAIAdapter",   "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
+}
+
+
+def resolve_model(token: str) -> tuple[type, str]:
+    """Map a model token to (AdapterClass, model_name).
+
+    Raises SystemExit with a helpful message for unknown tokens.
+    """
+    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
+    from exabench.adapters.openai_adapter import OpenAIAdapter
+
+    _CLASS_MAP = {
+        "DirectQAAdapter": DirectQAAdapter,
+        "OpenAIAdapter": OpenAIAdapter,
+    }
+
+    entry = _MODEL_REGISTRY.get(token)
+    if entry is None:
+        valid = ", ".join(sorted(_MODEL_REGISTRY))
+        typer.echo(
+            f"Unknown model token '{token}'. Valid tokens: {valid}",
+            err=True,
+        )
+        raise typer.Exit(1)
+
+    class_name, model_name = entry
+    return _CLASS_MAP[class_name], model_name
+
+
+def _build_adapter_from_token(token: str):
+    """Instantiate an adapter from a model registry token."""
+    adapter_class, model_name = resolve_model(token)
+    if adapter_class.__name__ == "DirectQAAdapter":
+        return adapter_class()
+    return adapter_class(model=model_name)
+
+
+def _load_system_prompt_prefix(path: str | None, task) -> str:
+    """Load and render the system-prompt prefix file for a given task.
+
+    Substitutes {{role}}, {{permitted_tools_csv}}, {{forbidden_tools_csv}}.
+    Returns an empty string when path is None.
+    """
+    if path is None:
+        return ""
+
+    prefix_text = Path(path).read_text(encoding="utf-8")
+
+    role = getattr(task, "role", "")
+
+    # permitted tools = allowed_tools on the task (or empty)
+    allowed = getattr(task, "allowed_tools", None) or []
+    permitted_csv = ", ".join(allowed) if allowed else ""
+
+    # forbidden tools = hard_fail_conditions on the task (or empty)
+    hard_fail = getattr(task, "hard_fail_conditions", None) or []
+    forbidden_csv = ", ".join(hard_fail) if hard_fail else ""
+
+    prefix_text = prefix_text.replace("{{role}}", str(role))
+    prefix_text = prefix_text.replace("{{permitted_tools_csv}}", permitted_csv)
+    prefix_text = prefix_text.replace("{{forbidden_tools_csv}}", forbidden_csv)
+
+    return prefix_text
 
 
 def _build_adapter(name: str):
@@ -156,36 +229,143 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
     raise typer.Exit(1)
 
 
+def _run_all_for_model(
+    *,
+    adapter_label: str,
+    adapter_obj,
+    tasks: list,
+    benchmark_root: str,
+    output_root: str,
+    split: str,
+    langfuse: bool,
+    report: bool,
+    system_prompt_prefix_path: str | None,
+) -> None:
+    """Inner helper: run all tasks for one adapter/model and write artifacts."""
+    from exabench.runners.runner import BenchmarkRunner
+    from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+    from exabench.utils.ids import make_run_id
+    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
+
+    exporter = _build_exporter(langfuse)
+    run_id = make_run_id()
+    runner = BenchmarkRunner(
+        adapter=adapter_obj,
+        benchmark_root=Path(benchmark_root),
+        output_root=Path(output_root),
+        exporter=exporter,
+    )
+
+    run_dir = Path(output_root) / run_id
+    write_run_manifest(
+        run_dir,
+        model=adapter_label.split(":", 1)[1] if ":" in adapter_label else adapter_label,
+        adapter=adapter_label,
+        split=split,
+    )
+
+    results = []
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[bold blue]{task.description}"),
+        BarColumn(),
+        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+        TextColumn("•"),
+        TimeElapsedColumn(),
+        TextColumn("{task.fields[status]}"),
+        transient=False,
+    ) as progress:
+        task_bar = progress.add_task(
+            f"run_id={run_id}  adapter={adapter_label}",
+            total=len(tasks),
+            status=f"0/{len(tasks)} done",
+        )
+        for bench_task in tasks:
+            progress.update(task_bar, description=f"[bold blue]{bench_task.task_id}[/bold blue]")
+            _check_fidelity_gate(bench_task.environment_id)
+
+            # Apply system-prompt prefix if requested
+            if system_prompt_prefix_path is not None:
+                prefix = _load_system_prompt_prefix(system_prompt_prefix_path, bench_task)
+                if hasattr(adapter_obj, "_system_prompt") and prefix:
+                    original = adapter_obj._system_prompt
+                    adapter_obj._system_prompt = prefix + "\n\n" + original
+
+            try:
+                result = runner.run(
+                    bench_task.task_id,
+                    bench_task.environment_id,
+                    run_id=run_id,
+                )
+                results.append((bench_task.task_id, result))
+                score_str = f"[green]score={result.aggregate_score:.4f}[/green]"
+            except Exception as e:
+                results.append((bench_task.task_id, None))
+                score_str = f"[red]FAILED: {e}[/red]"
+            finally:
+                # Restore original system prompt
+                if system_prompt_prefix_path is not None and hasattr(adapter_obj, "_system_prompt"):
+                    adapter_obj._system_prompt = original  # type: ignore[possibly-undefined]
+
+            succeeded = sum(1 for _, r in results if r is not None)
+            progress.update(
+                task_bar,
+                advance=1,
+                status=f"{succeeded}/{len(tasks)} done  last={score_str}",
+            )
+
+    finalize_run_artifacts(run_dir, results)
+
+    typer.echo(f"\nRun ID: {run_id}  (adapter={adapter_label})")
+    succeeded = sum(1 for _, r in results if r is not None)
+    typer.echo(f"Completed: {succeeded}/{len(tasks)} tasks")
+
+    if exporter:
+        exporter.flush()
+
+    if report:
+        typer.echo("\nGenerating reports...")
+        _generate_reports(run_dir)
+
+
 @run_app.command("all")
 def run_all(
-    adapter: Annotated[str, typer.Option("--adapter", "-a", help="Adapter name")] = "direct_qa",
+    adapter: Annotated[str, typer.Option("--adapter", "-a", help="Adapter name (single-model, legacy)")] = "direct_qa",
+    models: Annotated[str, typer.Option("--models", "-m", help="Comma-separated model tokens (e.g. direct_qa,gpt-4o)")] = "",
     benchmark_root: Annotated[str, typer.Option("--benchmark", help="Path to benchmark/")] = "benchmark",
     output_root: Annotated[str, typer.Option("--output", "-o", help="Output directory for runs")] = "data/runs",
     split: Annotated[str, typer.Option("--split", "-s", help="Task split: all | dev | lite | test")] = "all",
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
     langfuse: Annotated[bool, typer.Option("--langfuse/--no-langfuse", help="Export traces and scores to Langfuse")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
+    system_prompt_prefix: Annotated[Optional[str], typer.Option("--system-prompt-prefix", help="Path to a text file prepended to the agent system prompt")] = None,
 ) -> None:
     """Run all benchmark tasks. Uses each task's environment_id from its spec.
 
     Creates one run directory with traces and results for every task.
     Use --split lite|dev|all to filter which tasks are run.
+    Use --models to run against multiple models in one invocation (each gets its own run dir).
     """
     configure_logging("DEBUG" if verbose else "WARNING")
 
     from exabench.loaders.task_loader import load_tasks_from_dir
-    from exabench.runners.runner import BenchmarkRunner
-    from exabench.utils.ids import make_run_id
 
-    try:
-        adapter_obj = _build_adapter(adapter)
-    except ValueError:
-        typer.echo(
-            f"Unknown adapter '{adapter}'. "
-            "Available: direct_qa, openai, openai:gpt-4o, mcp:stdio:CMD, mcp:sse:URL",
-            err=True,
-        )
-        raise typer.Exit(1)
+    # Determine which model tokens to iterate over.
+    # --models takes precedence over --adapter when provided.
+    if models:
+        model_tokens = [t.strip() for t in models.split(",") if t.strip()]
+    else:
+        # Legacy single-adapter path: validate with _build_adapter
+        try:
+            _build_adapter(adapter)
+        except ValueError:
+            typer.echo(
+                f"Unknown adapter '{adapter}'. "
+                "Available: direct_qa, openai, openai:gpt-4o, mcp:stdio:CMD, mcp:sse:URL",
+                err=True,
+            )
+            raise typer.Exit(1)
+        model_tokens = None  # signal: use legacy adapter path
 
     specs_dir = Path(benchmark_root) / "tasks" / "specs"
     all_tasks = load_tasks_from_dir(specs_dir)
@@ -203,76 +383,41 @@ def run_all(
         typer.echo(f"No tasks match split '{split}'.", err=True)
         raise typer.Exit(1)
 
-    exporter = _build_exporter(langfuse)
-    run_id = make_run_id()
-    runner = BenchmarkRunner(
-        adapter=adapter_obj,
-        benchmark_root=Path(benchmark_root),
-        output_root=Path(output_root),
-        exporter=exporter,
-    )
-
-    from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
-
-    run_dir = Path(output_root) / run_id
-    write_run_manifest(
-        run_dir,
-        model=adapter.split(":", 1)[1] if ":" in adapter else adapter,
-        adapter=adapter,
-        split=split,
-    )
-
-    from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
-
-    results = []
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[bold blue]{task.description}"),
-        BarColumn(),
-        TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
-        TextColumn("•"),
-        TimeElapsedColumn(),
-        TextColumn("{task.fields[status]}"),
-        transient=False,
-    ) as progress:
-        task_bar = progress.add_task(
-            f"run_id={run_id}  adapter={adapter}",
-            total=len(tasks),
-            status=f"0/{len(tasks)} done",
-        )
-        for bench_task in tasks:
-            progress.update(task_bar, description=f"[bold blue]{bench_task.task_id}[/bold blue]")
-            _check_fidelity_gate(bench_task.environment_id)
-            try:
-                result = runner.run(
-                    bench_task.task_id,
-                    bench_task.environment_id,
-                    run_id=run_id,
-                )
-                results.append((bench_task.task_id, result))
-                score_str = f"[green]score={result.aggregate_score:.4f}[/green]"
-            except Exception as e:
-                results.append((bench_task.task_id, None))
-                score_str = f"[red]FAILED: {e}[/red]"
-            succeeded = sum(1 for _, r in results if r is not None)
-            progress.update(
-                task_bar,
-                advance=1,
-                status=f"{succeeded}/{len(tasks)} done  last={score_str}",
+    if model_tokens is not None:
+        # Multi-model path: iterate over tokens
+        for token in model_tokens:
+            adapter_class, model_name = resolve_model(token)  # exits on unknown token
+            if adapter_class.__name__ == "DirectQAAdapter":
+                adapter_obj = adapter_class()
+            else:
+                adapter_obj = adapter_class(model=model_name)
+            token_output = str(Path(output_root) / token)
+            typer.echo(f"\n=== Model: {token} → output: {token_output} ===")
+            _run_all_for_model(
+                adapter_label=token,
+                adapter_obj=adapter_obj,
+                tasks=tasks,
+                benchmark_root=benchmark_root,
+                output_root=token_output,
+                split=split,
+                langfuse=langfuse,
+                report=report,
+                system_prompt_prefix_path=system_prompt_prefix,
             )
-
-    finalize_run_artifacts(run_dir, results)
-
-    typer.echo(f"\nRun ID: {run_id}")
-    succeeded = sum(1 for _, r in results if r is not None)
-    typer.echo(f"Completed: {succeeded}/{len(tasks)} tasks")
-
-    if exporter:
-        exporter.flush()
-
-    if report:
-        typer.echo("\nGenerating reports...")
-        _generate_reports(run_dir)
+    else:
+        # Legacy single-adapter path
+        adapter_obj = _build_adapter(adapter)
+        _run_all_for_model(
+            adapter_label=adapter,
+            adapter_obj=adapter_obj,
+            tasks=tasks,
+            benchmark_root=benchmark_root,
+            output_root=output_root,
+            split=split,
+            langfuse=langfuse,
+            report=report,
+            system_prompt_prefix_path=system_prompt_prefix,
+        )
 
 
 @run_app.command("task")
@@ -285,10 +430,12 @@ def run_task(
     report: Annotated[bool, typer.Option("--report/--no-report", help="Auto-generate JSON + HTML reports after run")] = True,
     langfuse: Annotated[bool, typer.Option("--langfuse/--no-langfuse", help="Export traces and scores to Langfuse")] = False,
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
+    system_prompt_prefix: Annotated[Optional[str], typer.Option("--system-prompt-prefix", help="Path to a text file prepended to the agent system prompt")] = None,
 ) -> None:
     """Run a single benchmark task."""
     configure_logging("DEBUG" if verbose else "WARNING")
 
+    from exabench.loaders.task_loader import load_task
     from exabench.runners.runner import BenchmarkRunner
 
     try:
@@ -300,6 +447,13 @@ def run_task(
             err=True,
         )
         raise typer.Exit(1)
+
+    # Apply system-prompt prefix if provided
+    if system_prompt_prefix is not None and hasattr(adapter_obj, "_system_prompt"):
+        task_spec = load_task(Path(benchmark_root) / "tasks" / "specs" / f"{task_id}.json")
+        prefix = _load_system_prompt_prefix(system_prompt_prefix, task_spec)
+        if prefix:
+            adapter_obj._system_prompt = prefix + "\n\n" + adapter_obj._system_prompt
 
     exporter = _build_exporter(langfuse)
     runner = BenchmarkRunner(
