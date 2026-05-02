@@ -1,0 +1,28 @@
+{
+  "task_id": "ARCH_DES_002",
+  "title": "Forecasting cluster saturation and producing a procurement timeline",
+  "query_text": "Six-month CPU utilisation telemetry shows growth from 62% in October 2025 to 89% in March 2026. Forecast when the cluster will reach saturation and produce a procurement recommendation with timeline.",
+  "role": "system_designer",
+  "qcat": "ARCH",
+  "difficulty": "hard",
+  "difficulty_tier": 3,
+  "environment_id": "env_13",
+  "gold_evidence_refs": ["telemetry/telemetry_timeseries.parquet", "docs/capacity_planning_guide.md"],
+  "expected_answer_type": "recommendation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "At the current growth rate of ~4.5 percentage points per month, the cluster will reach 100% CPU utilisation in approximately 2.4 months (mid-June 2026). Hardware procurement lead time is typically 4-6 months. Recommendation: initiate procurement process immediately for at least 20% additional compute capacity; issue RFP within 2 weeks; target delivery by Q4 2026 to avoid saturation.",
+    "required_evidence_refs": ["telemetry/telemetry_timeseries.parquet", "docs/capacity_planning_guide.md"]
+  },
+  "knowledge_source_scope": ["ARCH_DOC", "ENG_DOC", "ADMIN_DATA"],
+  "allowed_tools": ["telemetry", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "scoring_readiness": "ready",
+  "validation_status": "not_started",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "access_tier": "tier4_sensitive",
+  "expected_tool_calls": ["telemetry", "docs"]
+}

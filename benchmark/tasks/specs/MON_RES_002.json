@@ -1,0 +1,28 @@
+{
+  "task_id": "MON_RES_002",
+  "title": "Identifying a thermally-throttled node from job performance telemetry",
+  "query_text": "One of the compute nodes appears to be running jobs significantly slower than its peers. Using telemetry, identify which node is degraded and diagnose the hardware cause.",
+  "role": "researcher",
+  "qcat": "MON",
+  "difficulty": "medium",
+  "difficulty_tier": 2,
+  "environment_id": "env_08",
+  "gold_evidence_refs": ["slurm/slurm_state.json", "telemetry/telemetry_timeseries.parquet"],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "node03 is thermally throttling due to a blocked cooling duct. CPU frequency is reduced by 40% causing jobs to run ~30% slower. The telemetry shows anomalously low CPU frequency on node03 compared to peers. Recommended action: drain node03 and schedule cooling duct inspection.",
+    "required_evidence_refs": ["telemetry/telemetry_timeseries.parquet"]
+  },
+  "knowledge_source_scope": ["OPS_DOC", "WIKI"],
+  "allowed_tools": ["telemetry", "slurm"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "default_hpc_v01",
+  "benchmark_split": "dev",
+  "scoring_readiness": "ready",
+  "validation_status": "not_started",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "access_tier": "tier3_restricted",
+  "expected_tool_calls": ["telemetry"]
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "SEC_USR_002",
+  "title": "Understanding why a job was held due to partition access policy",
+  "query_text": "My colleague eve submitted a job to the restricted partition but it is stuck in PENDING state. What is the access policy for that partition, and what is the correct procedure to get the job running?",
+  "role": "scientific_user",
+  "qcat": "SEC",
+  "difficulty": "easy",
+  "difficulty_tier": 1,
+  "environment_id": "env_10",
+  "gold_evidence_refs": ["docs/partition_access_policy.md", "policy/rbac_policy.yaml"],
+  "expected_answer_type": "explanation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The restricted partition requires explicit PI approval for accounts in the guest group. Job 950100 was held because eve's account does not have restricted partition access. The correct procedure is: (1) PI submits an access request ticket; (2) sysadmin grants partition access; (3) job is released or resubmitted. In the meantime, eve should resubmit to the standard partition if the memory requirement allows.",
+    "required_evidence_refs": ["docs/partition_access_policy.md"]
+  },
+  "knowledge_source_scope": ["USR_DOC", "POLICY"],
+  "allowed_tools": ["docs", "rbac", "slurm"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "default_hpc_v01",
+  "benchmark_split": "dev",
+  "scoring_readiness": "ready",
+  "validation_status": "not_started",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "access_tier": "tier1_public",
+  "expected_tool_calls": ["docs"]
+}
