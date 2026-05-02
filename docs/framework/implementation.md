@@ -1,4 +1,4 @@
-# Implementation Guide
+# Developer Guide
 
 This page is a **developer-oriented map of the codebase**. It tells you which
 file owns which responsibility, the conventions to follow when extending the
@@ -208,4 +208,4 @@ CI in `.github/workflows/ci.yml` runs `lint`, `typecheck`, `test`, and
 | Scorer reference | [scoring-dimensions.md](scoring-dimensions.md) |
 | Adapters & tools (plain English) | [`adapters-and-tools.md`](../guides/adapters-and-tools.md) |
 | Architecture diagrams | [`system-architecture.md §12`](../reference/system-architecture.md) |
-| Reproducibility | [`paper_reproduction_guide.md`](../guides/paper-reproduction.md) |
+| How to Contribute | [`contributing.md`](../about/contributing.md) |

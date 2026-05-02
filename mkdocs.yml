@@ -82,12 +82,13 @@ nav:
   - Usage:
     - Adapters & Tools: guides/adapters-and-tools.md
     - Langfuse Integration: guides/langfuse-integration.md
-    - Implementation Guide: framework/implementation.md
   - Reference:
     - System Architecture: reference/system-architecture.md
     - Environments Overview: reference/environments-overview.md
     - CLI Commands: reference/commands.md
+  - Contributing:
+    - How to Contribute: about/contributing.md
+    - Developer Guide: framework/implementation.md
   - About:
     - Changelog: about/changelog.md
-    - Contributing: about/contributing.md
     - Security: about/security.md

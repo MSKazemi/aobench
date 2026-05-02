@@ -100,4 +100,4 @@ extensions for future releases:
 | Author a new task | [Implementation](implementation.md) and [Taxonomy](taxonomy.md) |
 | Understand scoring | [Evaluation](evaluation.md) and [scoring-dimensions.md](scoring-dimensions.md) |
 | Inspect available environments | [environments-overview.md](../reference/environments-overview.md) |
-| Reproduce v0.1 paper tables | [paper_reproduction_guide.md](../guides/paper-reproduction.md) |
+| Contribute or extend the framework | [How to Contribute](../about/contributing.md) and [Developer Guide](implementation.md) |

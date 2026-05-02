@@ -41,7 +41,7 @@ spot a divergence, the divergence is a bug.
 | [`docs/guides/adapters-and-tools.md`](../guides/adapters-and-tools.md) | Plain-English adapter and tool guide |
 | [`docs/reference/system-architecture.md`](../reference/system-architecture.md) | System architecture + Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |
-| [`docs/guides/paper-reproduction.md`](../guides/paper-reproduction.md) | Reproducing v0.1 paper tables |
+| [`CONTRIBUTING.md`](../about/contributing.md) | How to contribute tasks, adapters, scorers |
 | [GitHub README](https://github.com/MSKazemi/ExaBench#readme) | Repository entry point and quick start |
 | [`CHANGELOG.md`](../about/changelog.md) | Release notes |
 | [`CONTRIBUTING.md`](../about/contributing.md) | Contribution guide |
