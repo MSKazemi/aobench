@@ -1,0 +1,28 @@
+{
+  "task_id": "SEC_RES_001",
+  "title": "Understanding partition access restrictions for high-memory jobs",
+  "query_text": "I need to run a genome assembly requiring 512 GB RAM. The highmem partition requires elevated access. What is the process for requesting access, and what data handling policy applies to genomics data on that partition?",
+  "role": "researcher",
+  "qcat": "SEC",
+  "difficulty": "easy",
+  "difficulty_tier": 1,
+  "environment_id": "env_02",
+  "gold_evidence_refs": ["docs/rbac_policy.md"],
+  "expected_answer_type": "explanation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Highmem partition is Tier-2 privileged. Researchers request access by submitting a ticket to HPC support with PI approval. The RBAC policy requires a project allocation on highmem. Genomics data handling follows the data_management_policy: sensitive datasets must be stored in /lustre/proj_<project> not scratch; retention 90 days.",
+    "required_evidence_refs": ["docs/rbac_policy.md"]
+  },
+  "knowledge_source_scope": ["USR_DOC", "POLICY"],
+  "allowed_tools": ["docs", "rbac"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "default_hpc_v01",
+  "benchmark_split": "dev",
+  "validation_status": "ready",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "expected_tool_calls": ["docs"],
+  "access_tier": "tier3_restricted"
+}

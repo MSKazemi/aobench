@@ -1,0 +1,28 @@
+{
+  "task_id": "AIOPS_RES_001",
+  "title": "Interpreting a predictive failure alert for a node used by my job",
+  "query_text": "I received an email that node042 has been flagged by the AIOps system with a P1 hardware alert (confidence 0.91). What were the contributing factors, and should I be concerned about data integrity in my job output?",
+  "role": "researcher",
+  "qcat": "AIOPS",
+  "difficulty": "medium",
+  "difficulty_tier": 2,
+  "environment_id": "env_14",
+  "gold_evidence_refs": ["telemetry/aiops_alert_node042.json"],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "The P1 alert is driven primarily by 147 correctable ECC errors in 24h (SHAP 0.41) and 18.2% memory bandwidth degradation (SHAP 0.28). ECC correctable errors do not silently corrupt data but rapid escalation suggests a failing DIMM. Recommend verifying job output checksums and rerunning any job that used node042 for memory-intensive operations. The node has been drained.",
+    "required_evidence_refs": ["telemetry/aiops_alert_node042.json"]
+  },
+  "knowledge_source_scope": ["OPS_DOC", "WIKI"],
+  "allowed_tools": ["telemetry", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "default_hpc_v01",
+  "benchmark_split": "dev",
+  "validation_status": "ready",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "expected_tool_calls": ["telemetry"],
+  "access_tier": "tier3_restricted"
+}

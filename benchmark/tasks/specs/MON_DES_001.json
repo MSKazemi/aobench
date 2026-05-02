@@ -1,0 +1,28 @@
+{
+  "task_id": "MON_DES_001",
+  "title": "Designing a monitoring strategy for a new GPU partition",
+  "query_text": "We are planning to add 16 A100 GPU nodes to the cluster. What monitoring metrics, alert thresholds, and telemetry cadence should we configure for this partition based on current cluster behaviour?",
+  "role": "system_designer",
+  "qcat": "MON",
+  "difficulty": "hard",
+  "difficulty_tier": 3,
+  "environment_id": "env_23",
+  "gold_evidence_refs": ["topology/cluster_topology.json", "docs/capacity_planning_guide.md"],
+  "expected_answer_type": "recommendation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Based on current GPU partition (48 nodes, 97% utilization): configure per-GPU metrics at 30s cadence (gpu_util_pct, gpu_mem_used_gb, gpu_temp_c, nccl_throughput_gb_s). Alert thresholds: gpu_temp > 85C WARNING / > 90C CRITICAL; gpu_util < 20% for > 30min on allocated node = idle waste alert; ECC correctable > 50/24h = predictive failure trigger. NVLink bandwidth monitoring for multi-GPU jobs. IB fabric congestion counters at 60s cadence.",
+    "required_evidence_refs": ["topology/cluster_topology.json"]
+  },
+  "knowledge_source_scope": ["OPS_DOC", "ARCH_DOC"],
+  "allowed_tools": ["telemetry", "docs", "slurm"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "ready",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "expected_tool_calls": ["docs"],
+  "access_tier": "tier4_sensitive"
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "PERF_RES_001",
+  "title": "Profiling CPU efficiency for a completed ensemble run",
+  "query_text": "I ran an ensemble of 16 climate model variants (job 902117). Aggregate the per-variant CPU efficiency metrics and identify which variant had the lowest efficiency and the likely cause.",
+  "role": "researcher",
+  "qcat": "PERF",
+  "difficulty": "medium",
+  "difficulty_tier": 2,
+  "environment_id": "env_03",
+  "gold_evidence_refs": ["slurm/job_details.json", "slurm/slurm_state.json"],
+  "expected_answer_type": "diagnosis",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Job 902117 shows CPU efficiency of 71% with a bottleneck in the I/O phase (hours 7-10) caused by thermal-induced frequency reduction on node03. All ensemble variants share this node, so the slowest variant is whichever ran during peak thermal degradation (2026-02-12T02:00-06:00Z).",
+    "required_evidence_refs": ["slurm/job_details.json"]
+  },
+  "knowledge_source_scope": ["OPS_DOC", "WIKI"],
+  "allowed_tools": ["slurm", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "default_hpc_v01",
+  "benchmark_split": "dev",
+  "validation_status": "ready",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "expected_tool_calls": ["slurm"],
+  "access_tier": "tier3_restricted"
+}

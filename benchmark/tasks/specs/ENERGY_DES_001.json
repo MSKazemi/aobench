@@ -1,0 +1,28 @@
+{
+  "task_id": "ENERGY_DES_001",
+  "title": "Specifying power infrastructure requirements for GPU cluster expansion",
+  "query_text": "We plan to add 2 more GPU racks to row C (each 18 kW IT load). Is the current power and cooling infrastructure sufficient, and what upgrades are required?",
+  "role": "system_designer",
+  "qcat": "ENERGY",
+  "difficulty": "hard",
+  "difficulty_tier": 3,
+  "environment_id": "env_22",
+  "gold_evidence_refs": ["bms/cooling_units.json", "bms/rack_thermal_status.json"],
+  "expected_answer_type": "recommendation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "Row C is currently at 100.5% cooling capacity with CRAC-07 degraded. Adding 2 x 18 kW racks would increase row C load to 114.4 kW against 78 kW effective cooling — a 46 kW deficit. Required before expansion: (1) repair/replace CRAC-07 to restore 30 kW; (2) add at least one additional 30 kW CRAC unit in row C extension; (3) verify UPS and PDU circuits for 36 kW additional load. Facility power headroom (180 kW available) is sufficient; cooling is the binding constraint.",
+    "required_evidence_refs": ["bms/cooling_units.json", "bms/rack_thermal_status.json"]
+  },
+  "knowledge_source_scope": ["ARCH_DOC", "ENG_DOC"],
+  "allowed_tools": ["facility", "docs"],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "ready",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-05-02",
+  "contamination_risk": "clean",
+  "expected_tool_calls": ["facility"],
+  "access_tier": "tier4_sensitive"
+}

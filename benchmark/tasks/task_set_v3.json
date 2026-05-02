@@ -1,7 +1,7 @@
 {
   "version": "v3",
   "split": "dev",
-  "total_tasks": 71,
+  "total_tasks": 77,
   "task_ids": [
     "AIOPS_DES_001",
     "AIOPS_FAC_001",
@@ -73,6 +73,12 @@
     "SEC_FAC_002",
     "SEC_SYS_001",
     "SEC_SYS_002",
-    "SEC_USR_001"
+    "SEC_USR_001",
+    "PERF_RES_001",
+    "SEC_RES_001",
+    "AIOPS_RES_001",
+    "MON_DES_001",
+    "ENERGY_DES_001",
+    "SEC_DES_001"
   ]
 }
