@@ -27,8 +27,8 @@ included_files:
   - docs/cooling_ops_runbook.md
   - docs/facility_layout.md
   - policy/rbac_policy.yaml
-implementation_status: scaffolded
-validation_status: not_checked
+implementation_status: bundled
+validation_status: validated
 description: >
   Stub snapshot of a datacenter facility during a cooling alarm event.
   Includes BMS thermal alarm data, rack thermal status, CRAC unit status,

@@ -25,8 +25,8 @@ included_files:
   - docs/architecture_spec.md
   - docs/capacity_planning_guide.md
   - policy/rbac_policy.yaml
-implementation_status: scaffolded
-validation_status: not_checked
+implementation_status: bundled
+validation_status: validated
 description: >
   Stub snapshot capturing cluster architecture and capacity planning data.
   Includes network and storage topology, hardware inventory, rack layout,
