@@ -29,7 +29,7 @@
     "disclose_procurement_budget_figures"
   ],
   "scoring_readiness": "ready",
-  "benchmark_split": "dev",
+  "benchmark_split": "test",
   "validation_status": "not_started",
   "checkpoints": [
     {

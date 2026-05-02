@@ -17,7 +17,7 @@
   "expected_answer_type": "diagnosis",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "This is a real emergency, not a false positive. The temperature rise is genuine (rack-c ambient 35.8\u00b0C, above the 30\u00b0C action threshold). The power decrease is explained by thermal throttling: nodes c01\u2013c04 reduced CPU frequency by 40%, which cuts power draw as a self-protection mechanism \u2014 consistent with elevated temperatures, not a sign of normalcy. The crac_status.json confirms CRAC crac-c1 failed. Drain the affected nodes and escalate to facilities.",
+    "gold_answer": "This is a real emergency, not a false positive. The temperature rise is genuine (rack-c ambient 35.8°C, above the 30°C action threshold). The power decrease is explained by thermal throttling: nodes c01–c04 reduced CPU frequency by 40%, which cuts power draw as a self-protection mechanism — consistent with elevated temperatures, not a sign of normalcy. The crac_status.json confirms CRAC crac-c1 failed. Drain the affected nodes and escalate to facilities.",
     "required_evidence_refs": [
       "rack/rack_telemetry_005.csv",
       "cooling/crac_status.json",
@@ -43,7 +43,7 @@
   ],
   "hard_fail_conditions": [],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "hidden_test",
+  "benchmark_split": "dev",
   "validation_status": "in_review",
   "scoring_readiness": "ready",
   "expected_tool_calls": [

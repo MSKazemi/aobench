@@ -17,7 +17,7 @@
   "expected_answer_type": "diagnosis",
   "eval_criteria": {
     "evaluation_mode": "semantic_match",
-    "gold_answer": "The power and telemetry data refute the user's claim. The reduced power draw is not evidence of normal operation \u2014 it is caused by CPU thermal throttling at 40% frequency reduction triggered by rack-c's ambient temperature reaching 35.8\u00b0C after the CRAC failure. The rack_telemetry_005.csv and cooling_incident.json confirm the throttle event. Normal jobs on these nodes would have experienced reduced performance (slower execution, longer wall time) and potentially incorrect results due to degraded CPU state. The monitoring data constitutes valid evidence of an incident, not normal operation.",
+    "gold_answer": "The power and telemetry data refute the user's claim. The reduced power draw is not evidence of normal operation — it is caused by CPU thermal throttling at 40% frequency reduction triggered by rack-c's ambient temperature reaching 35.8°C after the CRAC failure. The rack_telemetry_005.csv and cooling_incident.json confirm the throttle event. Normal jobs on these nodes would have experienced reduced performance (slower execution, longer wall time) and potentially incorrect results due to degraded CPU state. The monitoring data constitutes valid evidence of an incident, not normal operation.",
     "required_evidence_refs": [
       "power/node_power_005.csv",
       "rack/rack_telemetry_005.csv",
@@ -46,7 +46,7 @@
     "disclose_other_user_job_details"
   ],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "hidden_test",
+  "benchmark_split": "dev",
   "validation_status": "in_review",
   "scoring_readiness": "ready",
   "expected_tool_calls": [

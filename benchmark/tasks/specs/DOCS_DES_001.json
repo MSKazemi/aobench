@@ -26,7 +26,7 @@
     "skip_gpu_burnin_for_gpu_node"
   ],
   "scoring_readiness": "ready",
-  "benchmark_split": "dev",
+  "benchmark_split": "test",
   "validation_status": "not_started",
   "checkpoints": [
     {

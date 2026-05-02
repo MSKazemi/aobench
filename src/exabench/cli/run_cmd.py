@@ -212,6 +212,16 @@ def run_all(
         exporter=exporter,
     )
 
+    from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+
+    run_dir = Path(output_root) / run_id
+    write_run_manifest(
+        run_dir,
+        model=adapter.split(":", 1)[1] if ":" in adapter else adapter,
+        adapter=adapter,
+        split=split,
+    )
+
     from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
 
     results = []
@@ -251,6 +261,8 @@ def run_all(
                 status=f"{succeeded}/{len(tasks)} done  last={score_str}",
             )
 
+    finalize_run_artifacts(run_dir, results)
+
     typer.echo(f"\nRun ID: {run_id}")
     succeeded = sum(1 for _, r in results if r is not None)
     typer.echo(f"Completed: {succeeded}/{len(tasks)} tasks")
@@ -259,7 +271,6 @@ def run_all(
         exporter.flush()
 
     if report:
-        run_dir = Path(output_root) / run_id
         typer.echo("\nGenerating reports...")
         _generate_reports(run_dir)
 
@@ -298,9 +309,23 @@ def run_task(
         exporter=exporter,
     )
 
+    from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+    from exabench.utils.ids import make_run_id
+
+    single_run_id = make_run_id()
+    single_run_dir = Path(output_root) / single_run_id
+    write_run_manifest(
+        single_run_dir,
+        model=adapter.split(":", 1)[1] if ":" in adapter else adapter,
+        adapter=adapter,
+        split="single",
+    )
+
     _check_fidelity_gate(env_id)
     typer.echo(f"Running task={task_id}  env={env_id}  adapter={adapter}")
-    result = runner.run(task_id, env_id)
+    result = runner.run(task_id, env_id, run_id=single_run_id)
+
+    finalize_run_artifacts(single_run_dir, [result])
 
     if exporter:
         exporter.flush()

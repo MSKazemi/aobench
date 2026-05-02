@@ -144,7 +144,7 @@ AnswerType = Literal[
 ]
 ValidationStatus = Literal["not_started", "in_review", "validated", "rejected"]
 ScoringReadiness = Literal["blocked", "partial", "ready"]
-BenchmarkSplit = Literal["dev", "public_test", "hidden_test"]
+BenchmarkSplit = Literal["dev", "test", "public_test", "hidden_test"]
 
 
 class ExpectedToolCall(BaseModel):
@@ -261,6 +261,20 @@ class TaskSpec(BaseModel):
     # T1–T10 validity gate (task_lite_spec.md §3.1)
     t1_t10_pass: Optional[bool] = None
     t1_t10_audit_date: Optional[str] = None           # ISO 8601
+
+    # Authoring pipeline fields
+    oracle_program: list[dict[str, Any]] = Field(
+        default_factory=list,
+        description="Ordered list of tool calls that reproduce the gold answer (required for deterministic tasks).",
+    )
+    difficulty_justification: Optional[str] = Field(
+        default=None,
+        description="One-sentence defence of the difficulty tier (e.g. number of tool calls, branching factor).",
+    )
+    independence_attestation: Optional[dict[str, Any]] = Field(
+        default=None,
+        description="Stage E independence audit result: static_dup_check, nearest_existing_task, rationale.",
+    )
 
     @model_validator(mode="after")
     def _check_difficulty_tier_consistency(self) -> "TaskSpec":

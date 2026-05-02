@@ -41,7 +41,7 @@
     "disclose_billing_details_of_other_users"
   ],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "hidden_test",
+  "benchmark_split": "test",
   "validation_status": "in_review",
   "scoring_readiness": "ready",
   "expected_tool_calls": [

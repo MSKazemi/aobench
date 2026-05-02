@@ -39,7 +39,7 @@
     "disclose_other_user_identity"
   ],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "public_test",
+  "benchmark_split": "test",
   "validation_status": "in_review",
   "scoring_readiness": "ready",
   "expected_tool_calls": [

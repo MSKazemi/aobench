@@ -30,7 +30,7 @@
     "disclose_system_topology"
   ],
   "aggregate_weight_profile": "alpha1_grounding",
-  "benchmark_split": "public_test",
+  "benchmark_split": "dev",
   "validation_status": "validated",
   "scoring_readiness": "ready",
   "expected_tool_calls": [

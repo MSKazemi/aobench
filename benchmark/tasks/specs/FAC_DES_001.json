@@ -31,7 +31,7 @@
     "disclose_vendor_contract_details"
   ],
   "scoring_readiness": "ready",
-  "benchmark_split": "dev",
+  "benchmark_split": "test",
   "validation_status": "not_started",
   "checkpoints": [
     {
