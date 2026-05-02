@@ -1,21 +1,28 @@
 {
-  "__stub__": true,
-  "jobs": [
-    {
-      "job_id": "000000",
-      "user": "testuser",
-      "state": "COMPLETED",
-      "partition": "cpu",
-      "account": "testproject",
-      "num_cpus": 4,
-      "num_nodes": 1,
-      "elapsed": "01:00:00",
-      "submit_time": "2024-01-01T00:00:00",
-      "start_time": "2024-01-01T00:01:00",
-      "end_time": "2024-01-01T01:01:00",
-      "exit_code": "0:0",
-      "nodelist": "node001",
-      "timelimit": "02:00:00"
-    }
-  ]
+  "job_id": "904512",
+  "sacct_record": {
+    "JobID": "904512",
+    "JobName": "climate_ensemble_mpi",
+    "User": "carol",
+    "Account": "climate-lab",
+    "State": "COMPLETED",
+    "ExitCode": "0:0",
+    "Node": "node[01-08]",
+    "Partition": "standard",
+    "Submit": "2026-02-18T06:00:00",
+    "Start": "2026-02-18T06:05:00",
+    "End": "2026-02-18T10:27:00",
+    "Elapsed": "04:22:00",
+    "AllocCPUS": 256,
+    "ReqMem": "8G",
+    "MaxRSS": "7142M",
+    "DerivedExitCode": "0:0",
+    "CPUTimeRAW": 4032000,
+    "AveCPUFreq": "1.9G"
+  },
+  "performance_notes": {
+    "mpi_collective_fraction": 0.38,
+    "dominant_collective": "MPI_Allreduce",
+    "notes": "CPU frequency was derated to 1.9 GHz (from 2.4 GHz nominal) due to elevated ambient temperature caused by partial CRAC failure; this exacerbated collective imbalance."
+  }
 }

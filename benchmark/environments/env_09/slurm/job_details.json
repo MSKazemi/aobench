@@ -1,21 +1,56 @@
-{
-  "__stub__": true,
-  "jobs": [
-    {
-      "job_id": "000000",
-      "user": "testuser",
-      "state": "COMPLETED",
-      "partition": "cpu",
-      "account": "testproject",
-      "num_cpus": 4,
-      "num_nodes": 1,
-      "elapsed": "01:00:00",
-      "submit_time": "2024-01-01T00:00:00",
-      "start_time": "2024-01-01T00:01:00",
-      "end_time": "2024-01-01T01:01:00",
-      "exit_code": "0:0",
-      "nodelist": "node001",
-      "timelimit": "02:00:00"
+[
+  {
+    "job_id": "906001",
+    "sacct_record": {
+      "JobID": "906001",
+      "JobName": "fft_scaling_baseline",
+      "User": "dave",
+      "Account": "hpc-benchmarks",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "Node": "node[01-16]",
+      "Partition": "standard",
+      "Submit": "2026-02-19T10:00:00",
+      "Start": "2026-02-19T10:02:00",
+      "End": "2026-02-19T11:08:00",
+      "Elapsed": "01:06:00",
+      "AllocCPUS": 512,
+      "ReqMem": "4G",
+      "MaxRSS": "3820M",
+      "DerivedExitCode": "0:0"
+    },
+    "performance_notes": {
+      "throughput_gflops": 14200,
+      "mpi_efficiency": 0.94
     }
-  ]
-}
+  },
+  {
+    "job_id": "906044",
+    "sacct_record": {
+      "JobID": "906044",
+      "JobName": "fft_scaling_128node",
+      "User": "dave",
+      "Account": "hpc-benchmarks",
+      "State": "COMPLETED",
+      "ExitCode": "0:0",
+      "Node": "node[01-128]",
+      "Partition": "standard",
+      "Submit": "2026-02-20T06:00:00",
+      "Start": "2026-02-20T06:05:00",
+      "End": "2026-02-20T09:18:00",
+      "Elapsed": "03:13:00",
+      "AllocCPUS": 4096,
+      "ReqMem": "4G",
+      "MaxRSS": "3990M",
+      "DerivedExitCode": "0:0"
+    },
+    "performance_notes": {
+      "throughput_gflops": 4700,
+      "mpi_efficiency": 0.31,
+      "slowdown_factor": 3.0,
+      "root_cause": "node06 flapped between allocated and draining 4 times during execution due to recurring ECC errors; each flap stalled all 128 MPI ranks for ~15 minutes",
+      "affected_node": "node06",
+      "ecc_events": 4
+    }
+  }
+]
