@@ -1,31 +1,23 @@
-FROM python:3.12-slim
+FROM python:3.12.10-slim
 
-# Non-root user for security
 RUN groupadd --gid 1001 exabench \
  && useradd --uid 1001 --gid exabench --no-create-home --shell /bin/false exabench
 
 WORKDIR /app
 
-ENV UV_COMPILE_BYTECODE=1
-ENV UV_NO_CACHE=1
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_NO_CACHE=1
 
-# Install uv (latest stable; reproducibility comes from uv.lock for Python deps)
-RUN pip install --no-cache-dir uv
+RUN pip install --no-cache-dir "uv==0.11.8"
 
-# Copy manifests first — layer is cached unless deps change
 COPY pyproject.toml uv.lock ./
 
-# Install only the leaderboard extra (fastapi + uvicorn + base deps); skip dev tools
-# --no-install-project defers the editable install until src/ is present
 RUN uv sync --frozen --no-dev --extra leaderboard --no-install-project
 
-# Copy source
 COPY src/ ./src/
 
-# Install package into the already-resolved venv without re-solving deps
 RUN uv sync --frozen --no-dev --extra leaderboard
 
-# Ensure data directory exists and is owned by the non-root user
 RUN mkdir -p data/leaderboard && chown -R exabench:exabench data/
 
 USER exabench

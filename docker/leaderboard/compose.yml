@@ -1,13 +1,14 @@
 services:
-  leaderboard-api:
+  exabench-leaderboard-api:
     build:
       context: ../..
       dockerfile: docker/leaderboard/Dockerfile
+    image: exabench-leaderboard:latest
     container_name: exabench-leaderboard
     ports:
       - "8000:8000"
     volumes:
-      - leaderboard-data:/app/data/leaderboard
+      - exabench-leaderboard-data:/app/data/leaderboard
     environment:
       LEADERBOARD_ADMIN_PASS: ${LEADERBOARD_ADMIN_PASS:-change-me}
     restart: unless-stopped
@@ -23,4 +24,4 @@ services:
       retries: 3
 
 volumes:
-  leaderboard-data:
+  exabench-leaderboard-data:

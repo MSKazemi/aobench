@@ -19,6 +19,7 @@ from exabench.scorers.governance_scorer import GovernanceScorer
 from exabench.scorers.grounding_scorer import GroundingScorer
 from exabench.scorers.outcome_scorer import OutcomeScorer
 from exabench.scorers.tool_use_scorer import ToolUseScorer
+from exabench.scorers.workflow_scorer import WorfEvalScorer
 from exabench.scoring.cup_scorer import CuPScorer, ViolationVector
 from exabench.utils.cost import estimate_cost
 from exabench.utils.ids import make_result_id
@@ -102,6 +103,14 @@ class AggregateScorer:
         # Use s_partial as the effective outcome when available
         effective_outcome = s_partial if s_partial is not None else raw_outcome
 
+        # --- Workflow scoring (WorfEval) ---
+        worfeval_score: float | None = None
+        if getattr(task, "ground_truth_workflow", None) is not None:
+            from exabench.runners.workflow_graph_builder import WorkflowGraphBuilder  # noqa: PLC0415
+            actual_graph = WorkflowGraphBuilder.build(trace)
+            worfeval_result = WorfEvalScorer.score(actual_graph, task.ground_truth_workflow)
+            worfeval_score = worfeval_result.worfeval_score
+
         # --- CuP scoring ---
         cup_scorer = CuPScorer()
         violation_vector = violation_vector_early
@@ -133,6 +142,7 @@ class AggregateScorer:
             grounding=outputs["grounding"].score,
             governance=outputs["governance"].score,
             efficiency=outputs["efficiency"].score,
+            workflow=worfeval_score,
         )
 
         profile = self._config.get(task.aggregate_weight_profile)

@@ -15,6 +15,7 @@ class DimensionScores(BaseModel):
     governance: Optional[float] = None    # 0–1
     robustness: Optional[float] = None    # 0–1
     efficiency: Optional[float] = None    # 0–1
+    workflow: Optional[float] = None      # 0–1  WorfEval graph-matching score
 
 
 class CheckpointResult(BaseModel):

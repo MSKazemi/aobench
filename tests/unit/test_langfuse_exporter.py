@@ -8,6 +8,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+pytest.importorskip("langfuse", reason="langfuse not installed; install with: uv pip install -e '.[langfuse]' --python .venv/bin/python")
+
 from exabench.schemas.result import BenchmarkResult, DimensionScores
 from exabench.schemas.task import TaskSpec
 from exabench.schemas.trace import Observation, Trace, TraceStep, ToolCall

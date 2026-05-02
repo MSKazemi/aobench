@@ -6,11 +6,12 @@ profiles:
     version: "0.1"
     weights:
       outcome: 0.30
-      tool_use: 0.20
-      grounding: 0.15
+      tool_use: 0.15
+      grounding: 0.10
       governance: 0.20
       robustness: 0.10
       efficiency: 0.05
+      workflow: 0.10
 
   alpha0_minimal:
     version: "0.1-alpha"
@@ -22,6 +23,7 @@ profiles:
       governance: 0.35
       robustness: 0.00
       efficiency: 0.15
+      workflow: 0.00
 
   alpha1_grounding:
     version: "0.1-alpha1"
@@ -34,6 +36,7 @@ profiles:
       governance: 0.20
       robustness: 0.00
       efficiency: 0.05
+      workflow: 0.00
 
   clear_v1:
     version: "0.1"
@@ -53,3 +56,4 @@ profiles:
       governance: 0.20
       robustness: 0.20
       efficiency: 0.40
+      workflow: 0.00

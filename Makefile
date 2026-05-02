@@ -85,7 +85,7 @@ test-cov:  ## Run tests with HTML + terminal coverage report
 ##@ Observability
 
 .PHONY: stack-up
-stack-up:  ## Start the full ExaBench stack (Langfuse + leaderboard API)
+stack-up: langfuse-setup  ## Start the full ExaBench stack (Langfuse + leaderboard API)
 	docker compose up -d --build
 
 .PHONY: stack-down
@@ -96,10 +96,22 @@ stack-down:  ## Stop the full stack (keeps volumes)
 stack-logs:  ## Stream logs from the full stack
 	docker compose logs -f
 
+.PHONY: langfuse-setup
+langfuse-setup:  ## Write Langfuse keys to .env if not already set (idempotent)
+	@[ -f .env ] || cp .env.example .env
+	@grep -q '^LANGFUSE_PUBLIC_KEY=' .env 2>/dev/null || { \
+	  printf '\n# Langfuse — auto-provisioned by make langfuse-setup\n' >> .env; \
+	  printf 'LANGFUSE_PUBLIC_KEY=pk-lf-exabench-local-dev-pub01\n' >> .env; \
+	  printf 'LANGFUSE_SECRET_KEY=sk-lf-exabench-local-dev-sec01\n' >> .env; \
+	  printf 'LANGFUSE_BASE_URL=http://localhost:3000\n' >> .env; \
+	  echo "  → Langfuse keys written to .env"; \
+	}
+
 .PHONY: langfuse-up
-langfuse-up:  ## Start Langfuse only  →  http://localhost:3000
+langfuse-up: langfuse-setup  ## Start Langfuse only  →  http://localhost:3000
 	docker compose -f $(LANGFUSE_DIR)/compose.yml up -d
 	@echo "Langfuse starting — UI will be ready at http://localhost:3000"
+	@echo "  admin login: admin@exabench.local / exabench-admin"
 
 .PHONY: langfuse-down
 langfuse-down:  ## Stop Langfuse (data volume preserved)
@@ -364,6 +376,11 @@ repro-determinism:  ## Verify deterministic score reproducibility across two ind
 .PHONY: fetch-snapshots
 fetch-snapshots:  ## Download canonical snapshot bundles from the remote artifact store
 	PYTHONPATH=src $(PYTHON) -m exabench.reproducibility.targets fetch-snapshots
+
+.PHONY: repro-docker
+repro-docker:  ## Build CLI Docker image and smoke-test the entrypoint
+	docker build -t exabench:repro .
+	docker run --rm exabench:repro --help
 
 ##@ Housekeeping
 
