@@ -179,16 +179,55 @@ conditions is in `benchmark/configs/hpc_tool_catalog.yaml`.
 
 ## 7. Capability view (for reporting)
 
-In addition to QCAT, every task is annotated with a capability group so that
+In addition to **QCAT** (Query Category — the functional domain of a task, e.g. `JOB`, `MON`, `ENERGY`; see [Taxonomy § Query categories](taxonomy.md#2-query-categories-qcat) for the full list), every task is annotated with a capability group so that
 benchmark reports can stratify by *what skill is being exercised*. The
 capability dimensions used today are:
 
-retrieval grounding, telemetry querying, cross-source fusion, diagnostic
-reasoning, optimisation recommendation, role-aware response adaptation,
-permission compliance, incident triage, energy-aware reasoning, action
-planning.
+<div class="grid cards" markdown>
 
-Reports surface these as columns alongside Role × QCAT × Difficulty.
+-   :material-database-search: **Retrieval grounding**
+
+    Finding and citing the right evidence from docs or telemetry.
+
+-   :material-chart-line: **Telemetry querying**
+
+    Interpreting live or snapshot job/node metrics.
+
+-   :material-source-merge: **Cross-source fusion**
+
+    Combining scheduler, telemetry, and docs to answer a question.
+
+-   :material-stethoscope: **Diagnostic reasoning**
+
+    Root-cause analysis for failures, anomalies, or degraded performance.
+
+-   :material-tune: **Optimisation recommendation**
+
+    Suggesting configuration or scheduling changes to improve outcomes.
+
+-   :material-account-check: **Role-aware response adaptation**
+
+    Tailoring answer scope and detail to the requester's role.
+
+-   :material-shield-lock: **Permission compliance**
+
+    Refusing, redacting, or escalating when RBAC boundaries are crossed.
+
+-   :material-alert-circle: **Incident triage**
+
+    Prioritising and categorising active faults or alerts.
+
+-   :material-lightning-bolt: **Energy-aware reasoning**
+
+    Incorporating power draw and efficiency data into recommendations.
+
+-   :material-format-list-checks: **Action planning**
+
+    Producing a sequenced, executable remediation or operational plan.
+
+</div>
+
+Reports surface these as columns alongside **Role × QCAT × Difficulty**.
 
 ---
 
@@ -196,12 +235,12 @@ Reports surface these as columns alongside Role × QCAT × Difficulty.
 
 | Page | Responsibility |
 |------|----------------|
-| **03 — Architecture** (this page) | Conceptual structure of the benchmark |
-| **04 — Implementation** | How the architecture is realised in `src/exabench/` |
-| **05 — Environments** | Snapshot bundle format |
+| **Architecture** (this page) | Conceptual structure of the benchmark |
+| **Implementation** | How the architecture is realised in `src/exabench/` |
+| **Environments** | Snapshot bundle format |
 | **Evaluation** | Scoring protocol, trace schema, result schema |
-| **07 — Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
-| **08 — System Architecture** | Authoritative current-state reference |
+| **Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
+| **System Architecture** | Authoritative current-state reference |
 
 ---
 
