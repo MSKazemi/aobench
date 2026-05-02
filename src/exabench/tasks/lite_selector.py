@@ -302,7 +302,7 @@ def build_manifest(
     manifest: dict[str, Any] = {
         "manifest_version": "1.0",
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        "corpus_version": "v0.1",
+        "corpus_version": "v0.3",
         "stage1_candidates": stage_counts.get("stage1", 0),
         "stage2_attribute_filtered": stage_counts.get("stage2", 0),
         "stage3_execution_filtered": stage_counts.get("stage3", len(lite_tasks)),

@@ -49,7 +49,9 @@ data lineage, and job dependency chains.
 8. **scientific_user**: Only their own job's file I/O. Cannot see other
    users' file access patterns.
    **researcher**: Own jobs + project group jobs' file I/O.
-   **sysadmin / facility_admin**: All jobs' file access across all users.
+   **sysadmin / facility_admin / system_designer**: All jobs' file access
+   across all users. system_designer visibility is for capacity and I/O
+   planning; do not expose individual user data unnecessarily.
    When a scientific_user asks about files accessed by other users' jobs,
    decline and redirect to the sysadmin.
 

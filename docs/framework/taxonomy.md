@@ -12,7 +12,7 @@ The authoritative Pydantic types live in `src/exabench/schemas/task.py`.
 ## 1. Roles & personas
 
 A task's `role` field says **who is asking**. ExaBench defines five role
-values; v0.1 scores three.
+values, all of which have scored tasks in `task_set_v3.json`.
 
 | Role | Schema value | Has tasks? | Primary mission | Priority QCATs |
 |------|-------------|------------|-----------------|----------------|
@@ -21,8 +21,6 @@ values; v0.1 scores three.
 | **Facility admin** | `facility_admin` | ✅ | Power and cooling operations | MON, ENERGY, FAC, AIOPS, DOCS, ARCH |
 | **Researcher** | `researcher` | ✅ | Telemetry analysis, performance, efficiency | AIOPS, PERF, ENERGY, JOB, MON, DATA, DOCS |
 | **System designer / architect** | `system_designer` | ✅ | Capacity planning, topology, benchmarking | ARCH, PERF, ENERGY, JOB, AIOPS, DATA, DOCS |
-
-All five roles have scored tasks in the current task set (`task_set_v3.json`).
 
 ### 1.1 Role abbreviations (task ID naming convention)
 
@@ -40,8 +38,8 @@ Task IDs encode the role as a 3-letter abbreviation, e.g. `JOB-USR-003`.
 
 ## 2. Query categories (QCAT)
 
-The `qcat` field labels the functional domain of the task. Ten QCATs are
-defined in the taxonomy; v0.1 scores three.
+The `qcat` field labels the functional domain of the task. All ten QCATs
+have scored tasks in `task_set_v3.json` (71 tasks total).
 
 | Code | Name | Has tasks? | Description |
 |------|------|------------|-------------|
@@ -55,8 +53,6 @@ defined in the taxonomy; v0.1 scores three.
 | **ARCH** | System Architecture, Design & Capacity Planning | ✅ | Topology, hardware specs, capacity planning, benchmarking |
 | **AIOPS** | AI & Intelligent Operations | ✅ | Anomaly detection, predictive maintenance |
 | **DOCS** | Documentation, Support & Knowledge Assistance | ✅ | Docs retrieval, tutorials, FAQs, policies, troubleshooting |
-
-All ten QCATs have scored tasks in `task_set_v3.json` (71 tasks total).
 
 ---
 

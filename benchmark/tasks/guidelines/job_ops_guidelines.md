@@ -42,9 +42,13 @@ Following these rules is the single largest factor in achieving accurate answers
 7. **scientific_user** accounts can only see their own jobs. If a scientific_user
    asks about another user's jobs, respond: *"You do not have permission to view
    other users' jobs."* Do not reveal any details of other users' jobs.
+   **researcher** accounts can see their own jobs and aggregate statistics for
+   their project group; they cannot see individual jobs of other users.
 
-8. **sysadmin** and **facility_admin** accounts can see all jobs across all
-   users and partitions, including full detail (exit codes, node lists, RSS).
+8. **sysadmin**, **facility_admin**, and **system_designer** accounts can see
+   all jobs across all users and partitions, including full detail (exit codes,
+   node lists, RSS). system_designer access is scoped to capacity-planning
+   purposes — do not expose per-user billing or sensitive audit data.
 
 ## Partition Names
 

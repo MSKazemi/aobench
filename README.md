@@ -47,11 +47,12 @@ ExaBench/
 │   └── taxonomy/           # 24-leaf TRAIL-adapted HPC error taxonomy
 │
 ├── benchmark/              # Static benchmark data (versioned in git)
-│   ├── tasks/specs/        # 30 original JSON tasks (JOB / MON / ENERGY)
+│   ├── tasks/specs/        # 71 JSON task specs (all 10 QCATs × 5 roles)
 │   ├── tasks/task_set_v1.json   # 36 HPC v1 tasks (Souza 2025 schema)
-│   ├── tasks/dataset_splits.py  # FROZEN 21 dev / 9 test split
+│   ├── tasks/task_set_v3.json   # v3 task index (71 tasks)
+│   ├── tasks/dataset_splits.py  # 53 dev / 18 test split (~25% held-out)
 │   ├── tasks/lite_manifest_v1.json  # ExaBench-Lite curated subset
-│   ├── environments/env_01–env_20/  # 20 deterministic snapshot bundles
+│   ├── environments/env_01–env_23/  # 23 deterministic snapshot bundles
 │   ├── configs/            # scoring_profiles.yaml, hpc_tool_catalog.yaml,
 │   │                       # error_taxonomy.yaml
 │   └── qa/                 # ExaBench-QA (~95 HPC operational queries)
@@ -86,16 +87,14 @@ exabench report json data/runs/<run_id>
 exabench clear run data/runs/<run_id>
 ```
 
-## Implemented scope (v0.1)
+## Implemented scope (v0.3)
 
 | Item | Count | Location |
 |------|-------|----------|
-| Tasks | 66 (30 original + 36 HPC v1) | `benchmark/tasks/specs/`, `benchmark/tasks/task_set_v1.json` |
-| Environments | 20 deterministic snapshot bundles | `benchmark/environments/env_01`…`env_20` |
-| Roles (scored) | 3 — `scientific_user`, `sysadmin`, `facility_admin` | `benchmark/configs/scoring_profiles.yaml` |
-| Roles (schema) | 2 more — `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
-| QCATs (scored) | 3 — `JOB`, `MON`, `ENERGY` | `benchmark/tasks/specs/` |
-| QCATs (schema) | 7 more — `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `docs/framework/taxonomy.md` |
+| Tasks | 71 (30 original + 36 HPC v1 + 5 v3 expansion) | `benchmark/tasks/specs/`, `benchmark/tasks/task_set_v3.json` |
+| Environments | 23 deterministic snapshot bundles | `benchmark/environments/env_01`…`env_23` |
+| Roles (scored) | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
+| QCATs (scored) | 10 — `JOB`, `MON`, `ENERGY`, `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `benchmark/tasks/specs/` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
 | Mock tool families | 5 — slurm, docs, rbac, telemetry, facility | `src/exabench/tools/` |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |

@@ -28,7 +28,7 @@ src/exabench/
 ├── tasks/             Dataset management
 │   ├── task_loader.py Load task by ID from benchmark/tasks/specs/
 │   ├── context_builder.py Build RAG context string for HPC task set v1
-│   └── dataset_splits.py  FROZEN split manifest (21 dev / 9 test tasks)
+│   └── dataset_splits.py  split manifest (53 dev / 18 test tasks, ~25% held-out)
 │
 ├── environment/       Environment snapshot system
 │   ├── snapshot_loader.py   Build ToolRegistry from EnvBundle
@@ -96,9 +96,10 @@ src/exabench/
 ```
 benchmark/
 ├── tasks/
-│   ├── specs/          30 original task JSON files (JOB_*.json, MON_*.json, ENERGY_*.json)
+│   ├── specs/          71 task JSON files across all 10 QCATs × 5 roles
 │   ├── task_set_v1.json  36 HPC task set v1 tasks (HPCTaskSpec format)
-│   ├── dataset_splits.py FROZEN — 21 dev / 9 test split (never modify)
+│   ├── task_set_v3.json  71-task v3 index (all QCATs + researcher/system_designer)
+│   ├── dataset_splits.py 53 dev / 18 test split (~25% held-out, never modify after first run)
 │   ├── guidelines/     6 domain guideline files for task set v1
 │   └── lite_manifest_v1.json  ExaBench-Lite task subset
 │
@@ -117,17 +118,17 @@ benchmark/
 └── qa/                  Embedded ExaBench-QA dataset (~95 queries)
 ```
 
-**Actual scope (v0.1):**
+**Delivered scope:**
 
-| Item | v0.1 delivered |
-|------|----------------|
-| Tasks | 30 original + 36 HPC v1 = 66 total |
-| Environments | 23 snapshot bundles |
-| Roles | 3 scored (`sci_user`, `sysadmin`, `fac_admin`) + 2 schema-only |
-| QCATs | 3 scored (`JOB`, `MON`, `ENERGY`) + 7 schema-only |
-| Adapters | 4 implemented (`direct_qa`, `openai`, `anthropic`, `mcp`) |
-| Scorers | 12 scorers across 6 dimensions |
-| CLI commands | 9+ commands |
+| Item | v0.1 baseline | v0.3 (current) |
+|------|---------------|----------------|
+| Tasks | 66 (30 original + 36 HPC v1) | 71 (+ PERF/DATA/SEC/FAC/ARCH/AIOPS/DOCS tasks) |
+| Environments | 20 snapshot bundles (env_01–env_20) | 23 snapshot bundles (env_01–env_23) |
+| Roles (scored) | 3 (`scientific_user`, `sysadmin`, `facility_admin`) | 5 (all roles, incl. `researcher`, `system_designer`) |
+| QCATs (scored) | 3 (`JOB`, `MON`, `ENERGY`) | 10 (all QCATs) |
+| Adapters | 4 implemented (`direct_qa`, `openai`, `anthropic`, `mcp`) | 4 |
+| Scorers | 12 scorers across 6 dimensions | 13 scorers (+ WorfEvalScorer) |
+| CLI commands | 9+ commands | 9+ commands |
 
 ---
 
@@ -311,25 +312,35 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ## 7. Role × QCAT × Environment Coverage
 
-**3 scored roles:**
+**5 scored roles:**
 
 | Role | SLURM access | Telemetry | RBAC | Facility |
 |------|-------------|-----------|------|---------|
 | scientific_user | Own jobs only | Own node only | Read own | No |
 | sysadmin | All jobs + nodes | All nodes | Read + write | Partial |
 | facility_admin | All + cluster-wide | All + energy | Full | Full |
+| researcher | Own + project group | Aggregate + own project | Read own | No |
+| system_designer | All (capacity planning) | All (design scope) | Read all | Design scope |
 
-**3 scored QCATs:**
+**10 scored QCATs:**
 
 | QCAT | Task focus | Tools primarily used |
 |------|-----------|---------------------|
 | JOB | Job submission, status, failure diagnosis | slurm, docs, rbac |
 | MON | Node health, telemetry, incident response | telemetry, slurm, docs |
 | ENERGY | Power usage, efficiency, facility controls | telemetry, facility, rbac |
+| PERF | Profiling, bottlenecks, scaling studies | telemetry, slurm, docs |
+| DATA | Filesystems, quotas, I/O, data transfer | slurm, docs |
+| SEC | IAM, access control, compliance | rbac, docs |
+| FAC | Cooling, BMS/DCIM, rack health, alarms | facility, telemetry, docs |
+| ARCH | Topology, hardware specs, capacity planning | topology, inventory, docs |
+| AIOPS | Anomaly detection, predictive maintenance | telemetry, docs |
+| DOCS | Docs retrieval, tutorials, FAQs, policies | docs |
 
-**Dataset split (frozen 2026-03-21):**
-- Dev: 21 tasks (70%) — stratified by QCAT × role × difficulty
-- Test: 9 tasks (30%) — held-out, run exactly once at end of paper development
+**Dataset split (extended 2026-05-02, first frozen 2026-03-21):**
+- Dev: 53 tasks (~75%) — stratified by QCAT × role × difficulty
+- Test: 18 tasks (~25%) — held-out, run exactly once at end of paper development
+- Single-task strata (DATA/FAC/ARCH/DOCS and all RES/DES strata) are dev-only
 
 ---
 

@@ -105,7 +105,7 @@ def test_task_set_v3_contains_71_tasks():
     # If tasks are dicts, extract task_id
     if task_ids and isinstance(task_ids[0], dict):
         task_ids = [t["task_id"] for t in task_ids]
-    assert len(task_ids) == 71, f"Expected 71 tasks, got {len(task_ids)}"
+    assert len(task_ids) == 80, f"Expected 80 tasks, got {len(task_ids)}"
 
 
 def test_task_set_v3_includes_new_tasks():

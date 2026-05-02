@@ -46,8 +46,10 @@ These guidelines apply to all `node_ops` queries against SLURM node state data.
 ## Role Visibility
 
 8. **All roles** can see aggregate partition state (node counts, utilization %).
-   Only **sysadmin** and **facility_admin** can see per-node details (individual
-   node IDs, drain reasons, hardware fault details).
+   Only **sysadmin**, **facility_admin**, and **system_designer** can see
+   per-node details (individual node IDs, drain reasons, hardware fault details).
+   system_designer access to per-node data is scoped to topology and capacity
+   planning — not operational incident response.
 
 ## Partition Scope
 

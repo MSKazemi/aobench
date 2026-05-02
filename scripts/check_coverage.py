@@ -98,11 +98,11 @@ def main() -> None:
         for s, n in sorted(splits.items()):
             print(f"  {s:<14} {n:>3}  {_bar(n, total)}")
 
-    # ── v0.1 target progress ──────────────────────────────────────────────────
-    TARGET = 30
+    # ── v0.3 target progress ──────────────────────────────────────────────────
+    TARGET = 71
     print(f"\n  {'─'*40}")
     pct = round(100 * total / TARGET)
-    print(f"  v0.1 target: {total}/{TARGET} tasks  [{pct}%]  {_bar(total, TARGET)}")
+    print(f"  v0.3 target: {total}/{TARGET} tasks  [{pct}%]  {_bar(total, TARGET)}")
     print(f"{'─'*56}\n")
 
 

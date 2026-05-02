@@ -904,7 +904,7 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 | `make clear` | Compute CLEAR scorecard for latest run (RUN_DIR=, CLEAR_OUTPUT=, ROBUSTNESS_JSON= overridable) |
 | `make generate-tool-docs` | Write `hpc_tools_guide.md` into each environment's `docs/` dir (from `hpc_tool_catalog.yaml`; role auto-detected from `metadata.yaml`) |
 | `make generate-tool-docs-role` | Same, but force a specific role (`TOOL_DOCS_ROLE=sysadmin`) |
-| `make generate-bundles` | Generate canonical snapshot bundles `env_06–env_20` under `benchmark/environments/` |
+| `make generate-bundles` | Generate canonical snapshot bundles `env_06–env_23` under `benchmark/environments/` |
 | `make validate-bundles` | Validate all snapshot bundles against canonical schemas (exit 0 = all OK) |
 | `make validate-snapshots` | Run F1–F7 fidelity validators on all `env_*/` bundles; write `data/fidelity/` |
 | `make validate-tasks` | Run T1–T10 task validity checks on the task corpus (outputs JSON report to stdout) |

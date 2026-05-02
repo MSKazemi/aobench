@@ -8,7 +8,7 @@ First public release.
 
 - 30 original HPC operational tasks across a 3×3 role–QCAT grid (JOB × 10, MON × 10, ENERGY × 10)
 - 36 HPC task set v1 tasks (job_ops, node_ops, telemetry, energy, dataflow, RBAC)
-- 20 deterministic HPC environment snapshot bundles (env_01–env_20) covering all 8 scenario types
+- 20 deterministic HPC environment snapshot bundles (env_01–env_20) covering 8 scenario types (v0.1 baseline; expanded to env_01–env_23 in v0.3)
 - Difficulty tiers: 10 easy / 13 medium / 7 hard across original 30 tasks
 - Dataset splits frozen (70% dev, 30% test, stratified by QCAT × role)
 - ExaBench-Lite 3-stage selection pipeline (SWE-bench Lite methodology)

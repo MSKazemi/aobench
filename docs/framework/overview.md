@@ -64,7 +64,7 @@ The following table describes the system **as currently implemented**, with path
 | QCATs with tasks | 10 — all QCATs covered | [Taxonomy](taxonomy.md) |
 | Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
-| Dataset split | 21 dev / 9 test, frozen 2026-03-21 | `benchmark/tasks/dataset_splits.py` |
+| Dataset split | 53 dev / 18 test (~25% held-out), extended 2026-05-02 | `benchmark/tasks/dataset_splits.py` |
 | Tests passing | 1045 | `tests/` |
 | CLI commands | 9 sub-trees (run, validate, lite, report, compare, robustness, clear, leaderboard) | [`COMMANDS.md`](../reference/commands.md) |
 
