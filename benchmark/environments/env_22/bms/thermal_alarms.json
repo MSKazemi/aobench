@@ -1,10 +1,36 @@
 {
-  "__stub__": true,
   "snapshot_time": "2026-03-20T14:30:00Z",
-  "alarms": [
-    {"alarm_id": "A001", "severity": "CRITICAL", "rack_id": "R-C04", "metric": "inlet_temp_c", "value": 38.2, "threshold": 35.0, "raised_at": "2026-03-20T14:12:00Z", "status": "active"},
-    {"alarm_id": "A002", "severity": "CRITICAL", "rack_id": "R-C05", "metric": "inlet_temp_c", "value": 37.8, "threshold": 35.0, "raised_at": "2026-03-20T14:15:00Z", "status": "active"},
-    {"alarm_id": "A003", "severity": "WARNING", "rack_id": "R-B02", "metric": "inlet_temp_c", "value": 33.1, "threshold": 32.0, "raised_at": "2026-03-20T13:45:00Z", "status": "active"},
-    {"alarm_id": "A004", "severity": "WARNING", "rack_id": "R-D01", "metric": "exhaust_temp_c", "value": 45.6, "threshold": 45.0, "raised_at": "2026-03-20T14:20:00Z", "status": "active"}
-  ]
+  "active_alarms": [
+    {
+      "alarm_id": "ALM-2026-0320-001",
+      "severity": "CRITICAL",
+      "component": "CRAC-07",
+      "type": "cooling_unit_degraded",
+      "message": "CRAC-07 (Row C) compressor 2 efficiency below threshold: 82% rated capacity. Effective cooling output reduced to ~18 kW (60% rated). Row C cooling deficit: 0.4 kW.",
+      "raised_at": "2026-03-20T13:15:00Z",
+      "acknowledged": false,
+      "rack_impact": ["C01", "C02", "C03"]
+    },
+    {
+      "alarm_id": "ALM-2026-0320-002",
+      "severity": "CRITICAL",
+      "component": "rack-C02",
+      "type": "rack_inlet_temp_critical",
+      "message": "Rack C02 inlet temperature 25.3°C exceeds ASHRAE A2 critical threshold (25°C). Max node temp 45.8°C. Immediate action required.",
+      "raised_at": "2026-03-20T14:02:00Z",
+      "acknowledged": false,
+      "affected_nodes": ["gpu-c02-n01", "gpu-c02-n02", "gpu-c02-n03", "gpu-c02-n04"]
+    },
+    {
+      "alarm_id": "ALM-2026-0320-003",
+      "severity": "WARNING",
+      "component": "rack-C01",
+      "type": "rack_inlet_temp_warning",
+      "message": "Rack C01 inlet temperature 24.8°C approaching ASHRAE A2 threshold (25°C).",
+      "raised_at": "2026-03-20T13:55:00Z",
+      "acknowledged": false,
+      "affected_nodes": ["gpu-c01-n01", "gpu-c01-n02", "gpu-c01-n03", "gpu-c01-n04"]
+    }
+  ],
+  "resolved_last_24h": []
 }

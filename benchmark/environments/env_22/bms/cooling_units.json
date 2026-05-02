@@ -1,12 +1,20 @@
 {
-  "__stub__": true,
   "snapshot_time": "2026-03-20T14:30:00Z",
+  "facility": "exabench-cluster-b datacenter",
   "crac_units": [
-    {"unit_id": "CRAC-07", "status": "degraded", "setpoint_c": 18.0, "supply_temp_c": 22.4, "return_temp_c": 36.8, "capacity_kw": 30.0, "load_kw": 28.9, "fault": "Compressor 2 efficiency low — 82% of rated capacity"},
-    {"unit_id": "CRAC-04", "status": "ok", "setpoint_c": 18.0, "supply_temp_c": 17.8, "return_temp_c": 31.2, "capacity_kw": 25.0, "load_kw": 14.3, "fault": null},
-    {"unit_id": "CRAC-01", "status": "ok", "setpoint_c": 18.0, "supply_temp_c": 17.5, "return_temp_c": 28.9, "capacity_kw": 25.0, "load_kw": 9.8, "fault": null}
+    {"unit_id": "CRAC-01", "row": "A", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 17.8, "return_temp_c": 28.4, "capacity_kw": 30.0, "load_kw": 14.2, "fault": null},
+    {"unit_id": "CRAC-02", "row": "A", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 18.1, "return_temp_c": 29.1, "capacity_kw": 30.0, "load_kw": 16.8, "fault": null},
+    {"unit_id": "CRAC-03", "row": "B", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 17.9, "return_temp_c": 27.8, "capacity_kw": 30.0, "load_kw": 13.5, "fault": null},
+    {"unit_id": "CRAC-04", "row": "B", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 18.2, "return_temp_c": 28.9, "capacity_kw": 30.0, "load_kw": 15.1, "fault": null},
+    {"unit_id": "CRAC-05", "row": "C", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 17.7, "return_temp_c": 31.2, "capacity_kw": 30.0, "load_kw": 24.8, "fault": null},
+    {"unit_id": "CRAC-06", "row": "C", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 18.0, "return_temp_c": 30.8, "capacity_kw": 30.0, "load_kw": 23.9, "fault": null},
+    {"unit_id": "CRAC-07", "row": "C", "status": "degraded", "setpoint_c": 18.0, "supply_temp_c": 22.4, "return_temp_c": 36.8, "capacity_kw": 30.0, "load_kw": 28.9, "fault": "Compressor 2 efficiency low — 82% of rated capacity; CRAC-07 effective cooling reduced to ~60% (18 kW). Row C relies on CRAC-05/06 for remaining load — both now at 83-85% capacity."},
+    {"unit_id": "CRAC-08", "row": "D", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 17.6, "return_temp_c": 26.9, "capacity_kw": 30.0, "load_kw": 11.4, "fault": null}
   ],
-  "total_cooling_capacity_kw": 80.0,
-  "total_it_load_kw": 56.6,
-  "design_pue": 1.35
+  "row_power_summary": {
+    "row_A": {"total_kw": 48.2,  "cooling_capacity_kw": 60.0, "headroom_kw": 11.8},
+    "row_B": {"total_kw": 52.1,  "cooling_capacity_kw": 60.0, "headroom_kw": 7.9},
+    "row_C": {"total_kw": 78.4,  "cooling_capacity_kw": 78.0, "headroom_kw": -0.4, "alert": "CRITICAL: row C at 100.5% cooling capacity — CRAC-07 degradation leaves zero headroom"},
+    "row_D": {"total_kw": 38.8,  "cooling_capacity_kw": 30.0, "headroom_kw": -8.8}
+  }
 }

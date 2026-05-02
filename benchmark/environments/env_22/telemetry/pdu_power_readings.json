@@ -1,9 +1,20 @@
 {
-  "__stub__": true,
-  "note": "30-day PDU power reading stub; replace with real timeseries parquet",
-  "columns": ["timestamp", "rack_id", "pdu_id", "power_kw", "current_a"],
-  "sample_rows": [
-    {"timestamp": "2026-03-20T14:00:00Z", "rack_id": "R-C04", "pdu_id": "PDU-C04-A", "power_kw": 9.2, "current_a": 40.1},
-    {"timestamp": "2026-03-20T14:00:00Z", "rack_id": "R-C05", "pdu_id": "PDU-C05-A", "power_kw": 8.9, "current_a": 38.7}
-  ]
+  "snapshot_time": "2026-03-20T14:30:00Z",
+  "readings": [
+    {"rack_id": "C01", "pdu_id": "PDU-C01-A", "voltage_v": 230.1, "current_a": 41.8, "power_kw": 9.61,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C01", "pdu_id": "PDU-C01-B", "voltage_v": 230.2, "current_a": 41.9, "power_kw": 9.64,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C02", "pdu_id": "PDU-C02-A", "voltage_v": 229.8, "current_a": 44.2, "power_kw": 10.15, "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C02", "pdu_id": "PDU-C02-B", "voltage_v": 230.0, "current_a": 44.6, "power_kw": 10.26, "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C03", "pdu_id": "PDU-C03-A", "voltage_v": 230.3, "current_a": 40.9, "power_kw": 9.41,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C03", "pdu_id": "PDU-C03-B", "voltage_v": 229.9, "current_a": 41.1, "power_kw": 9.45,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C04", "pdu_id": "PDU-C04-A", "voltage_v": 230.1, "current_a": 43.2, "power_kw": 9.94,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "C04", "pdu_id": "PDU-C04-B", "voltage_v": 230.0, "current_a": 43.5, "power_kw": 10.01, "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "A01", "pdu_id": "PDU-A01-A", "voltage_v": 230.0, "current_a": 26.3, "power_kw": 6.05,  "timestamp": "2026-03-20T14:30:00Z"},
+    {"rack_id": "B01", "pdu_id": "PDU-B01-A", "voltage_v": 229.9, "current_a": 29.1, "power_kw": 6.69,  "timestamp": "2026-03-20T14:30:00Z"}
+  ],
+  "row_totals": {
+    "row_C": {"total_kw": 78.47, "pdu_count": 8},
+    "row_A": {"total_kw": 6.05,  "pdu_count": 1},
+    "row_B": {"total_kw": 6.69,  "pdu_count": 1}
+  }
 }
