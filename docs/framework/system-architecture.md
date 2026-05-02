@@ -9,46 +9,7 @@
 
 ---
 
-## 1. Three-Repo Ecosystem
-
-ExaBench is a three-repository system. Each repo has a single responsibility.
-
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                         ExaBench Ecosystem                          │
-│                                                                     │
-│  ┌──────────────────┐   specs /    ┌──────────────────┐            │
-│  │  ExaBench-SoA    │  HANDOFF.md  │    ExaBench       │            │
-│  │  (Scientific)    │ ──────────►  │  (Engineering)    │            │
-│  │                  │             │                    │            │
-│  │ • Literature     │             │ • Core app (pip)   │            │
-│  │ • Paper draft    │             │ • Tasks + Envs     │            │
-│  │ • Feature specs  │             │ • Mock HPC tools   │            │
-│  │ • Gap analysis   │             │ • Scorers + CLI     │            │
-│  └──────────────────┘             └──────────┬─────────┘            │
-│                                              │                      │
-│                                   embedded   │                      │
-│                                   at bench-  │                      │
-│                                   mark/qa/   │                      │
-│  ┌──────────────────┐                        │                      │
-│  │  ExaBench-QA     │  ◄─────────────────────┘                      │
-│  │  (Dataset)       │                                               │
-│  │                  │                                               │
-│  │ • ~95 HPC queries│                                               │
-│  │ • Role variants  │                                               │
-│  │ • JSON schema    │                                               │
-│  └──────────────────┘                                               │
-└─────────────────────────────────────────────────────────────────────┘
-```
-
-**Data flows:**
-- `ExaBench-SoA → ExaBench`: Implementation specs in `outputs/specs/*.md` are converted to engineering prompts via `HANDOFF.md`. Engineering implements them in `ExaBench/src/`.
-- `ExaBench-QA → ExaBench`: Dataset embedded at `ExaBench/benchmark/qa/`. Used by `DirectQAAdapter` as ground truth and to seed task design.
-- `ExaBench-SoA` scripts pipeline: `papers/extracted/*.json` → `scripts/build_outputs.py` → `inventory/feature_matrix.csv`, `outputs/{exabench_backlog, benchmark_gap_analysis, architecture_ideas}.md`.
-
----
-
-## 2. ExaBench App — Component Map
+## 1. ExaBench App — Component Map
 
 ```
 src/exabench/
@@ -137,7 +98,7 @@ src/exabench/
 
 ---
 
-## 3. Dataset & Benchmark Data
+## 2. Dataset & Benchmark Data
 
 ```
 benchmark/
@@ -177,7 +138,7 @@ benchmark/
 
 ---
 
-## 4. End-to-End Execution Flow
+## 3. End-to-End Execution Flow
 
 `exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o`
 
@@ -229,7 +190,7 @@ CLI (run_cmd.py)
 
 ---
 
-## 5. Scoring Pipeline
+## 4. Scoring Pipeline
 
 ```
 Trace + TaskSpec
@@ -300,7 +261,7 @@ Output: BenchmarkResult
 
 ---
 
-## 6. CLEAR Scorecard
+## 5. CLEAR Scorecard
 
 Computed by `reports/clear_report.py` across all results for a run.
 
@@ -335,7 +296,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 7. Scorer Reference Table
+## 6. Scorer Reference Table
 
 | Scorer | File | Dimension | LLM Required | Wired in AggregateScorer |
 |--------|------|-----------|-------------|--------------------------|
@@ -355,7 +316,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 8. Role × QCAT × Environment Coverage
+## 7. Role × QCAT × Environment Coverage
 
 **3 scored roles:**
 
@@ -379,7 +340,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 9. Configuration System
+## 8. Configuration System
 
 **Scoring profiles** (`benchmark/configs/scoring_profiles.yaml`):
 - `alpha0_minimal`: outcome only (1.0)
@@ -396,7 +357,7 @@ risk_ratios = per-violation-flag fractions from violation_vector
 
 ---
 
-## 10. Document hierarchy
+## 9. Document hierarchy
 
 This document is the authoritative current-state reference. The framework
 documentation cleanup of 2026-05-02 rewrote the other framework pages (and
@@ -412,7 +373,7 @@ authoritative pages or deferred to future work.
 
 ---
 
-## 11. External System Integrations
+## 10. External System Integrations
 
 | System | Integration point | Required? |
 |--------|-----------------|-----------|
@@ -432,7 +393,7 @@ make run-all-openai MODEL=meta-llama/Llama-3.1-8B-Instruct
 
 ---
 
-## 12. CLI Command Reference (Summary)
+## 11. CLI Command Reference (Summary)
 
 Full reference: `docs/reference/commands.md`
 
