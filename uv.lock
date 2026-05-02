@@ -751,7 +751,7 @@ wheels = [
 
 [[package]]
 name = "exabench"
-version = "0.1.0.dev0"
+version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "pandas", version = "2.3.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -771,6 +771,11 @@ anthropic = [
 ]
 langfuse = [
     { name = "langfuse" },
+]
+leaderboard = [
+    { name = "fastapi" },
+    { name = "httpx" },
+    { name = "uvicorn" },
 ]
 mcp = [
     { name = "mcp" },
@@ -804,6 +809,8 @@ docs = [
 [package.metadata]
 requires-dist = [
     { name = "anthropic", marker = "extra == 'anthropic'", specifier = ">=0.30" },
+    { name = "fastapi", marker = "extra == 'leaderboard'", specifier = ">=0.115.0" },
+    { name = "httpx", marker = "extra == 'leaderboard'", specifier = ">=0.27.0" },
     { name = "langfuse", marker = "extra == 'langfuse'", specifier = ">=4.0" },
     { name = "mcp", marker = "extra == 'mcp'", specifier = ">=1.0" },
     { name = "openai", marker = "extra == 'mcp'", specifier = ">=1.0" },
@@ -816,8 +823,9 @@ requires-dist = [
     { name = "rapidfuzz", specifier = ">=3.0" },
     { name = "rich", specifier = ">=13.0" },
     { name = "typer", specifier = ">=0.12" },
+    { name = "uvicorn", marker = "extra == 'leaderboard'", specifier = ">=0.34.0" },
 ]
-provides-extras = ["openai", "anthropic", "mcp", "langfuse"]
+provides-extras = ["openai", "anthropic", "mcp", "langfuse", "leaderboard"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -849,6 +857,22 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/8a/0e/97c33bf5009bdbac74fd2beace167cab3f978feb69cc36f1ef79360d6c4e/exceptiongroup-1.3.1-py3-none-any.whl", hash = "sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598", size = 16740, upload-time = "2025-11-21T23:01:53.443Z" },
+]
+
+[[package]]
+name = "fastapi"
+version = "0.136.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "annotated-doc" },
+    { name = "pydantic" },
+    { name = "starlette" },
+    { name = "typing-extensions" },
+    { name = "typing-inspection" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5d/45/c130091c2dfa061bbfe3150f2a5091ef1adf149f2a8d2ae769ecaf6e99a2/fastapi-0.136.1.tar.gz", hash = "sha256:7af665ad7acfa0a3baf8983d393b6b471b9da10ede59c60045f49fbc89a0fa7f", size = 397448, upload-time = "2026-04-23T16:49:44.046Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5a/ff/2e4eca3ade2c22fe1dea7043b8ee9dabe47753349eb1b56a202de8af6349/fastapi-0.136.1-py3-none-any.whl", hash = "sha256:a6e9d7eeada96c93a4d69cb03836b44fa34e2854accb7244a1ece36cd4781c3f", size = 117683, upload-time = "2026-04-23T16:49:42.437Z" },
 ]
 
 [[package]]
@@ -3621,8 +3645,8 @@ name = "uvicorn"
 version = "0.42.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click", marker = "python_full_version < '3.11' or sys_platform != 'emscripten'" },
-    { name = "h11", marker = "python_full_version < '3.11' or sys_platform != 'emscripten'" },
+    { name = "click" },
+    { name = "h11" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e3/ad/4a96c425be6fb67e0621e62d86c402b4a17ab2be7f7c055d9bd2f638b9e2/uvicorn-0.42.0.tar.gz", hash = "sha256:9b1f190ce15a2dd22e7758651d9b6d12df09a13d51ba5bf4fc33c383a48e1775", size = 85393, upload-time = "2026-03-16T06:19:50.077Z" }
