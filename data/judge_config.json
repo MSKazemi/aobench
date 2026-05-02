@@ -1,0 +1,11 @@
+{
+  "judge_config_id": "94d9505dc2bcbb04",
+  "max_tokens_rubric": 1024,
+  "max_tokens_taxonomy": 256,
+  "model": "gpt-4o-2024-11-20",
+  "rubric_path": "prompts/judge/rubric_v2.md",
+  "seed_offset": 0,
+  "taxonomy_path": "prompts/judge/taxonomy_v2.md",
+  "temperature": 0.0,
+  "top_p": 1.0
+}
