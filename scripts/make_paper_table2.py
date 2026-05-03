@@ -1,16 +1,16 @@
-"""make_paper_table2.py — Table 2: CLEAR scorecard for the v0.1 paper.
+"""make_paper_table2.py — Table 2: CLEAR scorecard for the v0.2 paper.
 
-Input:  data/reports/v01_clear_report.json
+Input:  data/reports/v02_clear_report.json
 Output: Markdown + LaTeX table with CLEAR dimensions per model.
 """
 
 import json
 import pathlib
 
-CLEAR_PATH = pathlib.Path("data/reports/v01_clear_report.json")
+CLEAR_PATH = pathlib.Path("data/reports/v02_clear_report.json")
 
-MODEL_ORDER  = ["gpt-4o", "direct_qa"]
-MODEL_LABELS = {"gpt-4o": "GPT-4o", "direct_qa": "direct_qa"}
+MODEL_ORDER  = ["gpt-4o", "gpt-4o-mini", "direct_qa"]
+MODEL_LABELS = {"gpt-4o": "GPT-4o", "gpt-4o-mini": "GPT-4o-mini", "direct_qa": "Direct QA (baseline)"}
 
 COLS = ["clear_score", "E", "A", "R", "C_norm", "L_norm", "CNA", "CPS"]
 HEADERS = ["Model", "CLEAR", "E (Efficacy)", "A (Assurance)", "R (Reliability)",
@@ -59,7 +59,7 @@ latex_header = " & ".join(HEADERS)
 print("\n\n## LaTeX\n")
 print(r"\begin{table}[t]")
 print(r"\centering")
-print(r"\caption{CLEAR scorecard for ExaBench v0.1 dev set.}")
+print(r"\caption{CLEAR scorecard for ExaBench v0.2 dev set (59 tasks).}")
 print(r"\label{tab:clear}")
 print(f"\\begin{{tabular}}{{{cols_spec}}}")
 print(r"\toprule")

@@ -2,8 +2,8 @@
 
 Input:
   - data/fidelity/index.json     (written by 'exabench validate snapshots')
-  - data/runs/v01_dev_*/         (3 model run directories)
-  - data/robustness/v01_*.json   (15 robustness files)
+  - data/runs/v02_dev/           (model run directories)
+  - data/robustness/v02/         (robustness files, optional)
 
 Output: Pass/fail report for V0–V6 gates (stdout or --output file)
 
@@ -28,11 +28,11 @@ from pathlib import Path
 DEFAULT_FIDELITY_INDEX = "data/fidelity/index.json"
 
 DEFAULT_RUN_DIRS = [
-    "data/runs/v01_dev_claude_sonnet",
-    "data/runs/v01_dev_gpt4o",
-    "data/runs/v01_dev_gpt4o_mini",
+    "data/runs/v02_dev/direct_qa",
+    "data/runs/v02_dev/gpt-4o",
+    "data/runs/v02_dev/gpt-4o-mini",
 ]
-DEFAULT_ROB_DIR = "data/robustness"
+DEFAULT_ROB_DIR = "data/robustness/v02"
 
 ROBUSTNESS_TASKS = [
     "JOB_USR_001",
@@ -65,16 +65,26 @@ def find_summary(run_dir: str) -> Path | None:
 
 
 def find_results(run_dir: str) -> list[dict]:
-    """Return list of result dicts from run_dir/*/results/*_result.json."""
+    """Return result dicts from the most recent run_* subdir, or run_dir/results/ directly."""
     base = Path(run_dir)
     results = []
-    # Try run_dir/results/ or run_dir/<run_id>/results/
-    for pattern in ["results/*_result.json", "*/results/*_result.json"]:
-        for f in base.glob(pattern):
+    # Prefer latest run_<id>/results/
+    run_subdirs = sorted(base.glob("run_*"))
+    if run_subdirs:
+        latest = run_subdirs[-1]
+        for f in sorted(latest.glob("results/*.json")):
             try:
                 results.append(json.loads(f.read_text(encoding="utf-8")))
             except Exception:
                 pass
+        if results:
+            return results
+    # Fallback: flat results/ directly under run_dir
+    for f in sorted(base.glob("results/*.json")):
+        try:
+            results.append(json.loads(f.read_text(encoding="utf-8")))
+        except Exception:
+            pass
     return results
 
 
@@ -82,12 +92,20 @@ def load_model_data(run_dirs: list[str]) -> list[dict]:
     """Return list of {label, summary, results} per model."""
     models = []
     for run_dir in run_dirs:
-        sp = find_summary(run_dir)
-        if sp is None:
-            print(f"  WARNING: No run_summary.json in {run_dir}", file=sys.stderr)
-            continue
-        summary = json.loads(sp.read_text(encoding="utf-8"))
         results = find_results(run_dir)
+        if not results:
+            print(f"  WARNING: No results found in {run_dir}", file=sys.stderr)
+            continue
+        sp = find_summary(run_dir)
+        if sp is not None:
+            summary = json.loads(sp.read_text(encoding="utf-8"))
+        else:
+            # Derive summary info from the first result record
+            first = results[0]
+            summary = {
+                "model_name":   first.get("model_name") or first.get("adapter_name") or Path(run_dir).name,
+                "adapter_name": first.get("adapter_name"),
+            }
         label = summary.get("model_name") or summary.get("adapter_name") or Path(run_dir).name
         models.append({"label": label, "summary": summary, "results": results, "run_dir": run_dir})
     return models
@@ -97,11 +115,19 @@ def load_robustness(rob_dir: str) -> dict[str, dict[str, dict]]:
     """Return {task_id: {model_slug: stats}}."""
     base = Path(rob_dir)
     result: dict[str, dict[str, dict]] = {t: {} for t in ROBUSTNESS_TASKS}
-    for f in sorted(base.glob("v01_*.json")):
-        raw = f.stem[len("v01_"):]
+    if not base.exists():
+        return result
+    # Support both v01_<slug>_<task>.json and v02_<slug>_<task>.json naming
+    for f in sorted(base.glob("*.json")):
+        stem = f.stem
+        # Strip version prefix (v01_, v02_, etc.)
+        for prefix in ("v02_", "v01_"):
+            if stem.startswith(prefix):
+                stem = stem[len(prefix):]
+                break
         for slug in sorted(MODEL_SLUG_MAP.keys(), key=len, reverse=True):
-            if raw.startswith(slug + "_"):
-                task_id = raw[len(slug) + 1:]
+            if stem.startswith(slug + "_"):
+                task_id = stem[len(slug) + 1:]
                 if task_id in ROBUSTNESS_TASKS:
                     try:
                         result[task_id][slug] = json.loads(f.read_text(encoding="utf-8"))
