@@ -224,12 +224,15 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
         sys.path.pop(0)
 
     if split == "test":
-        typer.echo(
-            "Error: Test split is locked. "
-            "Inspect outputs/specs/task_lite_spec.md §4.4 for access rules.",
-            err=True,
-        )
-        raise typer.Exit(1)
+        if not _os.environ.get("EXABENCH_UNLOCK_TEST"):
+            typer.echo(
+                "Error: Test split is locked. Set EXABENCH_UNLOCK_TEST=1 to unlock "
+                "(one-shot only — results must not be used to inform further tuning).",
+                err=True,
+            )
+            raise typer.Exit(1)
+        ids = set(TEST_TASK_IDS)
+        return ids
 
     if split == "lite":
         ids = set(LITE_TASK_IDS)
