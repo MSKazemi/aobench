@@ -197,7 +197,7 @@ def _build_client(provider: str | None, model: str) -> tuple[Any, str]:
         endpoint   = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
         api_key    = os.environ.get("AZURE_OPENAI_API_KEY", "")
         api_ver    = os.environ.get("AZURE_OPENAI_API_VERSION", os.environ.get("AZURE_API_VERSION", "2024-08-01-preview"))
-        deployment = os.environ.get("AZURE_OPENAI_DEPLOYMENT", "").strip() or model
+        deployment = model or os.environ.get("AZURE_OPENAI_DEPLOYMENT", "").strip()
         if not endpoint or not api_key:
             raise EnvironmentError(
                 "Azure OpenAI requires AZURE_OPENAI_ENDPOINT and AZURE_OPENAI_API_KEY "
