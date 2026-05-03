@@ -43,7 +43,9 @@ ROBUSTNESS_TASKS = [
 ]
 MODEL_SLUG_MAP = {
     "claude": "Claude-Sonnet-4.6",
+    "gpt-4o-mini": "GPT-4o-mini",
     "gpt4o_mini": "GPT-4o-mini",
+    "gpt-4o": "GPT-4o",
     "gpt4o": "GPT-4o",
 }
 

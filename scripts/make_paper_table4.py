@@ -1,13 +1,13 @@
-"""make_paper_table4.py — Table 4: reliability (pass^8) for the v0.1 paper.
+"""make_paper_table4.py — Table 4: reliability (pass^8) for the v0.2 paper.
 
-Input:  data/robustness/v01_gpt4o_*.json  (5 tasks, n=10 each)
+Input:  data/robustness/v02/gpt-4o_*.json  (5 tasks, n=10 each)
 Output: Markdown table with n_runs, n_passed, pass^8, mean_score, std_dev.
 """
 
 import json
 import pathlib
 
-ROB_DIR = pathlib.Path("data/robustness")
+ROB_DIR = pathlib.Path("data/robustness/v02")
 
 TASK_META = {
     "JOB_USR_001":    ("JOB",    "easy"),
@@ -25,7 +25,7 @@ def fmt(v, decimals=3) -> str:
 
 rows = []
 for task_id in TASK_ORDER:
-    d = json.loads((ROB_DIR / f"v01_gpt4o_{task_id}.json").read_text())
+    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text())
     qcat, diff = TASK_META[task_id]
     rows.append({
         "task_id":    task_id,
