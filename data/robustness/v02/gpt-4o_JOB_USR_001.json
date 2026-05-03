@@ -1,0 +1,32 @@
+{
+  "task_id": "JOB_USR_001",
+  "n_runs": 10,
+  "pass_threshold": 0.5,
+  "n_passing": 0,
+  "pass_k": {
+    "1": 0.0,
+    "2": 0.0,
+    "4": 0.0,
+    "8": 0.0
+  },
+  "mean_score": 0.4216,
+  "std_dev": 0.0012,
+  "min_score": 0.42,
+  "max_score": 0.4244,
+  "range": 0.0044,
+  "robustness_score": 0.9988,
+  "scores": [
+    0.4216,
+    0.4215,
+    0.42,
+    0.4244,
+    0.4227,
+    0.4211,
+    0.4205,
+    0.4214,
+    0.4207,
+    0.4217
+  ],
+  "total_cost_usd": 0.022443,
+  "mean_latency_seconds": 2.994
+}

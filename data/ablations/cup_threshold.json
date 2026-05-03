@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-05-02T23:56:31.846575+00:00",
+  "variants": [
+    "strict",
+    "tolerant_1",
+    "tolerant_2"
+  ],
+  "models": [
+    "direct_qa",
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "pass_rates": {
+    "strict": {
+      "direct_qa": 0.0,
+      "gpt-4o": 0.0172,
+      "gpt-4o-mini": 0.0172
+    },
+    "tolerant_1": {
+      "direct_qa": 0.0,
+      "gpt-4o": 0.1552,
+      "gpt-4o-mini": 0.1552
+    },
+    "tolerant_2": {
+      "direct_qa": 0.0,
+      "gpt-4o": 0.3793,
+      "gpt-4o-mini": 0.3793
+    }
+  }
+}

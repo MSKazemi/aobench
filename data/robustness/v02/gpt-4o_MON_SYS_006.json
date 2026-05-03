@@ -1,0 +1,32 @@
+{
+  "task_id": "MON_SYS_006",
+  "n_runs": 10,
+  "pass_threshold": 0.5,
+  "n_passing": 10,
+  "pass_k": {
+    "1": 1.0,
+    "2": 1.0,
+    "4": 1.0,
+    "8": 1.0
+  },
+  "mean_score": 0.592,
+  "std_dev": 0.0051,
+  "min_score": 0.5827,
+  "max_score": 0.6006,
+  "range": 0.0179,
+  "robustness_score": 0.9949,
+  "scores": [
+    0.5827,
+    0.5893,
+    0.5916,
+    0.5887,
+    0.5985,
+    0.5897,
+    0.594,
+    0.5891,
+    0.5962,
+    0.6006
+  ],
+  "total_cost_usd": 0.143013,
+  "mean_latency_seconds": 7.239
+}

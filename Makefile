@@ -171,6 +171,14 @@ run-all-anthropic:  ## Run all tasks with Anthropic adapter  (MODEL= overridable
 run-all-langfuse:  ## Run all tasks and export to Langfuse  (ADAPTER= overridable)
 	$(EXABENCH) run all --adapter $(ADAPTER) --langfuse
 
+.PHONY: tunnel-mc
+tunnel-mc:  ## Open SSH tunnel to university Ollama server (localhost:11434 → mc:11434)
+	python scripts/ollama_tunnel.py
+
+.PHONY: tunnel-mc-check
+tunnel-mc-check:  ## Verify SSH tunnel + probe Ollama model list
+	python scripts/ollama_tunnel.py --check
+
 ##@ Benchmark — Reports & Analysis
 
 .PHONY: report

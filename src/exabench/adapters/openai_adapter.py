@@ -193,6 +193,12 @@ def _build_client(provider: str | None, model: str) -> tuple[Any, str]:
     if not resolved:
         resolved = "azure" if os.environ.get("AZURE_OPENAI_ENDPOINT") else "openai"
 
+    if resolved == "ollama":
+        base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434").rstrip("/") + "/v1"
+        ollama_model = os.environ.get("OLLAMA_MODEL", model)
+        client = OpenAI(api_key="ollama", base_url=base_url)
+        return client, ollama_model
+
     if resolved == "azure":
         endpoint   = os.environ.get("AZURE_OPENAI_ENDPOINT", "")
         api_key    = os.environ.get("AZURE_OPENAI_API_KEY", "")

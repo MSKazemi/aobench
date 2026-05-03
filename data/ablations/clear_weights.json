@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-05-02T23:56:31.598619+00:00",
+  "variants": [
+    "equal",
+    "e_heavy",
+    "a_heavy",
+    "default"
+  ],
+  "models": [
+    "direct_qa",
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "scores": {
+    "equal": {
+      "direct_qa": 0.4552,
+      "gpt-4o": 0.5799,
+      "gpt-4o-mini": 0.5718
+    },
+    "e_heavy": {
+      "direct_qa": 0.3448,
+      "gpt-4o": 0.5032,
+      "gpt-4o-mini": 0.499
+    },
+    "a_heavy": {
+      "direct_qa": 0.5943,
+      "gpt-4o": 0.4066,
+      "gpt-4o-mini": 0.39
+    },
+    "default": {
+      "direct_qa": 0.416,
+      "gpt-4o": 0.4789,
+      "gpt-4o-mini": 0.4709
+    }
+  },
+  "spearman_rho": {
+    "equal_vs_default": 1.0,
+    "e_heavy_vs_default": 1.0,
+    "a_heavy_vs_default": -0.5
+  }
+}

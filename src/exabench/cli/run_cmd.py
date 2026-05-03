@@ -16,10 +16,34 @@ run_app = typer.Typer(help="Run benchmark tasks.")
 # ---------------------------------------------------------------------------
 
 _MODEL_REGISTRY: dict[str, tuple[str, str]] = {
-    "direct_qa":     ("DirectQAAdapter", "direct_qa"),
-    "gpt-4o":        ("OpenAIAdapter",   "gpt-4o"),        # Azure: resolves via AZURE_COORDINATOR_DEPLOYMENT
-    "gpt-4o-mini":   ("OpenAIAdapter",   "gpt-4o-mini"),   # Azure: resolves via AZURE_SUBAGENT_DEPLOYMENT
-    "llama-3.3-70b": ("OpenAIAdapter",   "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
+    "direct_qa":         ("DirectQAAdapter", "direct_qa"),
+    "gpt-4o":            ("OpenAIAdapter",   "gpt-4o"),        # Azure: resolves via AZURE_COORDINATOR_DEPLOYMENT
+    "gpt-4o-mini":       ("OpenAIAdapter",   "gpt-4o-mini"),   # Azure: resolves via AZURE_SUBAGENT_DEPLOYMENT
+    "llama-3.3-70b":     ("OpenAIAdapter",   "meta-llama/Llama-3.3-70B-Instruct-Turbo"),
+    # Ollama models — require LLM_PROVIDER=ollama or OLLAMA_BASE_URL set
+    "ollama":                    ("OpenAIAdapter",   "ollama"),         # generic; set OLLAMA_MODEL in env
+    "llama3.3:70b":              ("OpenAIAdapter",   "llama3.3:70b"),
+    "llama3.1:70b":              ("OpenAIAdapter",   "llama3.1:70b"),
+    "llama3.1:8b":               ("OpenAIAdapter",   "llama3.1:8b"),
+    "mistral:7b":                ("OpenAIAdapter",   "mistral:7b"),
+    "qwen2.5:72b":               ("OpenAIAdapter",   "qwen2.5:72b"),
+    "deepseek-r1:70b":           ("OpenAIAdapter",   "deepseek-r1:70b"),
+    # University Ollama server (delta.dei.unibo.it via tunnel)
+    "mistral-small:24b":         ("OpenAIAdapter",   "mistral-small:24b"),
+    "mistral-medium-3.5:latest": ("OpenAIAdapter",   "mistral-medium-3.5:latest"),
+    "mistral-nemo:latest":       ("OpenAIAdapter",   "mistral-nemo:latest"),
+    "qwen3.5:122b":              ("OpenAIAdapter",   "qwen3.5:122b"),
+    "qwen3.6:35b-a3b":           ("OpenAIAdapter",   "qwen3.6:35b-a3b"),
+    "nemotron3:33b":             ("OpenAIAdapter",   "nemotron3:33b"),
+    "gemma4:31b":                ("OpenAIAdapter",   "gemma4:31b"),
+    "gemma4:e4b":                ("OpenAIAdapter",   "gemma4:e4b"),
+    "gpt-oss:120b":              ("OpenAIAdapter",   "gpt-oss:120b"),
+    "gpt-oss:latest":            ("OpenAIAdapter",   "gpt-oss:latest"),
+    "gpt-oss:20b":               ("OpenAIAdapter",   "gpt-oss:20b"),
+    "nemotron-3-super:latest":   ("OpenAIAdapter",   "nemotron-3-super:latest"),
+    "qwen3-coder-next:latest":   ("OpenAIAdapter",   "qwen3-coder-next:latest"),
+    "GLM-4.7-Flash:latest":      ("OpenAIAdapter",   "GLM-4.7-Flash:latest"),
+    "devstral-small-2:24b":      ("OpenAIAdapter",   "devstral-small-2:24b"),
 }
 
 # Azure deployment name overrides — read once from env at import time so that
@@ -72,9 +96,16 @@ def _build_adapter_from_token(token: str):
     adapter_class, model_name = resolve_model(token)
     if adapter_class.__name__ == "DirectQAAdapter":
         return adapter_class()
-    # Resolve Azure deployment name override if on Azure
-    if os.environ.get("AZURE_OPENAI_ENDPOINT"):
+    # Resolve Azure deployment name override if on Azure (skip for Ollama tokens)
+    is_ollama = (
+        os.environ.get("LLM_PROVIDER", "").lower() == "ollama"
+        or os.environ.get("OLLAMA_BASE_URL")
+        or token in ("ollama",) or ":" in token  # Ollama model tags contain ":"
+    )
+    if not is_ollama and os.environ.get("AZURE_OPENAI_ENDPOINT"):
         model_name = _AZURE_DEPLOYMENT_MAP.get(token, model_name)
+    if is_ollama:
+        return adapter_class(model=model_name, provider="ollama")
     return adapter_class(model=model_name)
 
 

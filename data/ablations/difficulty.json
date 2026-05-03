@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-05-02T23:57:33.258956+00:00",
+  "difficulties": [
+    "easy",
+    "medium",
+    "hard"
+  ],
+  "models": [
+    "direct_qa",
+    "gpt-4o",
+    "gpt-4o-mini"
+  ],
+  "mean_scores": {
+    "easy": {
+      "direct_qa": 0.3328,
+      "gpt-4o": 0.4542,
+      "gpt-4o-mini": 0.447
+    },
+    "medium": {
+      "direct_qa": 0.3487,
+      "gpt-4o": 0.4585,
+      "gpt-4o-mini": 0.4474
+    },
+    "hard": {
+      "direct_qa": 0.3448,
+      "gpt-4o": 0.4894,
+      "gpt-4o-mini": 0.5055
+    }
+  },
+  "ci_95": {
+    "easy": {
+      "direct_qa": [
+        0.3217,
+        0.3428
+      ],
+      "gpt-4o": [
+        0.3802,
+        0.5208
+      ],
+      "gpt-4o-mini": [
+        0.3704,
+        0.5171
+      ]
+    },
+    "medium": {
+      "direct_qa": [
+        0.3383,
+        0.3608
+      ],
+      "gpt-4o": [
+        0.4176,
+        0.5004
+      ],
+      "gpt-4o-mini": [
+        0.4054,
+        0.49
+      ]
+    },
+    "hard": {
+      "direct_qa": [
+        0.3404,
+        0.3493
+      ],
+      "gpt-4o": [
+        0.4364,
+        0.5417
+      ],
+      "gpt-4o-mini": [
+        0.4523,
+        0.5521
+      ]
+    }
+  }
+}
