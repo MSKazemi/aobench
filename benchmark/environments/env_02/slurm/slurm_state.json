@@ -1,5 +1,5 @@
 {
-  "cluster": "exabench-cluster-a",
+  "cluster": "aobench-cluster-a",
   "snapshot_time": "2026-02-11T09:00:00Z",
   "nodes": [
     {"name": "node01", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["standard", "gpu"]},

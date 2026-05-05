@@ -14,8 +14,8 @@ from datetime import datetime
 
 import pytest
 
-from exabench.schemas.result import BenchmarkResult, DimensionScores
-from exabench.scorers.robustness_scorer import (
+from aobench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.scorers.robustness_scorer import (
     compute_pass_k,
     compute_robustness,
     compute_robustness_suite,

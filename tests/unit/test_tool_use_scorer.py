@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from exabench.schemas.task import (
+from aobench.schemas.task import (
     EvalCriteria, ExpectedToolCall, GoldStep, GoldTrajectory, OrderedPair, TaskSpec,
 )
-from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
-from exabench.scorers.tool_use_scorer import (
+from aobench.schemas.trace import Observation, ToolCall, Trace, TraceStep
+from aobench.scorers.tool_use_scorer import (
     ToolUseScorer, _args_match, _lcs_length,
     score_node_f1, score_ned, score_step_accuracy, score_sequence_violations,
     _compute_clear_T,

@@ -2,11 +2,11 @@
 
 ## Purpose
 
-Environment Snapshots define the **deterministic HPC operational states** used by ExaBench during evaluation.
+Environment Snapshots define the **deterministic HPC operational states** used by AOBench during evaluation.
 
 An environment snapshot is a packaged, reproducible bundle of scheduler state, telemetry, policies, documentation, and incident context that simulates a realistic HPC situation without requiring access to a live system.
 
-Each benchmark task references one environment snapshot through `environment_id`. This allows the same task to be executed repeatedly under the same conditions, ensuring reproducibility, fair comparison, and offline benchmarking. ExaBench relies on these deterministic snapshots rather than live infrastructure as part of its benchmark design.
+Each benchmark task references one environment snapshot through `environment_id`. This allows the same task to be executed repeatedly under the same conditions, ensuring reproducibility, fair comparison, and offline benchmarking. AOBench relies on these deterministic snapshots rather than live infrastructure as part of its benchmark design.
 
 ---
 
@@ -45,7 +45,7 @@ Without snapshots:
 - documents get updated
 - permissions change over time
 
-Using snapshots makes ExaBench:
+Using snapshots makes AOBench:
 
 - reproducible
 - publishable
@@ -92,7 +92,7 @@ A snapshot bundle may include the following components:
 - `incident_metadata.json`
 - `metadata.yaml`
 
-These file types are consistent with the ExaBench architecture page, which already describes the HPC state snapshot model and typical files.
+These file types are consistent with the AOBench architecture page, which already describes the HPC state snapshot model and typical files.
 
 ---
 
@@ -116,7 +116,7 @@ benchmark/environments/
       incident_metadata.json             ← incident timeline + affected resources
 ```
 
-Bundles are validated by `exabench.environment.snapshot_validator.validate_bundle()`.
+Bundles are validated by `aobench.environment.snapshot_validator.validate_bundle()`.
 
 ---
 
@@ -325,7 +325,7 @@ This helps align snapshots with QCAT categories and capabilities.
 
 ## 12 — Current Environment Coverage
 
-ExaBench currently ships 23 canonical snapshot bundles across 11 scenario types.
+AOBench currently ships 23 canonical snapshot bundles across 11 scenario types.
 
 | Scenario type | Count | Env IDs |
 |---------------|-------|---------|
@@ -387,10 +387,10 @@ All 20 bundles are validated by `validate_bundle()` on every `load_environment()
 
 | File | Purpose |
 |------|---------|
-| `src/exabench/schemas/snapshot.py` | Pydantic models: `SlurmState`, `SlurmJob`, `SlurmNode`, `SlurmPartition`, `IncidentMetadata` |
-| `src/exabench/environment/snapshot_validator.py` | `validate_bundle(bundle_root)` — validates JSON schemas, RBAC YAML, parquet columns |
-| `src/exabench/environment/snapshot_loader.py` | `build_tool_registry(bundle, role)` — instantiates all mock tools bound to a role |
-| `src/exabench/loaders/env_loader.py` | `load_environment()` — calls `validate_bundle()` before returning bundle |
+| `src/aobench/schemas/snapshot.py` | Pydantic models: `SlurmState`, `SlurmJob`, `SlurmNode`, `SlurmPartition`, `IncidentMetadata` |
+| `src/aobench/environment/snapshot_validator.py` | `validate_bundle(bundle_root)` — validates JSON schemas, RBAC YAML, parquet columns |
+| `src/aobench/environment/snapshot_loader.py` | `build_tool_registry(bundle, role)` — instantiates all mock tools bound to a role |
+| `src/aobench/loaders/env_loader.py` | `load_environment()` — calls `validate_bundle()` before returning bundle |
 | `scripts/generate_bundles.py` | Generates env_06–env_20 bundles programmatically (`make generate-bundles`) |
 
 ### Telemetry parquet schema (canonical)
@@ -427,7 +427,7 @@ All 20 current bundles are at `validated` status.
 
 ## 13 — Validation Rules
 
-`validate_bundle(bundle_root)` (in `src/exabench/environment/snapshot_validator.py`) checks:
+`validate_bundle(bundle_root)` (in `src/aobench/environment/snapshot_validator.py`) checks:
 
 - `slurm/slurm_state.json` — validates against `SlurmState` Pydantic model
 - `incidents/incident_metadata.json` — validates against `IncidentMetadata` Pydantic model
@@ -446,7 +446,7 @@ make validate-bundles
 
 ## 14 — Future Extensions
 
-Later versions of ExaBench may support:
+Later versions of AOBench may support:
 
 - time-series replay environments
 - partially degraded environments
@@ -459,7 +459,7 @@ Later versions of ExaBench may support:
 
 ## 15 — Bottom Line
 
-Environment Snapshots are a core part of ExaBench. They make the benchmark more than a question set by providing a reproducible HPC world-state for agent evaluation.
+Environment Snapshots are a core part of AOBench. They make the benchmark more than a question set by providing a reproducible HPC world-state for agent evaluation.
 
 Their role is to:
 

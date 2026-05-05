@@ -10,9 +10,9 @@ import pytest
 
 pytest.importorskip("langfuse", reason="langfuse not installed; install with: uv pip install -e '.[langfuse]' --python .venv/bin/python")
 
-from exabench.schemas.result import BenchmarkResult, DimensionScores
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Observation, Trace, TraceStep, ToolCall
+from aobench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Observation, Trace, TraceStep, ToolCall
 
 
 # ---------------------------------------------------------------------------
@@ -124,7 +124,7 @@ def _build_mock_exporter():
     with patch.dict(sys.modules, {
         "langfuse": mock_lf_module,
     }):
-        from exabench.exporters import langfuse_exporter
+        from aobench.exporters import langfuse_exporter
         importlib.reload(langfuse_exporter)
         exporter = langfuse_exporter.LangfuseExporter(
             public_key="pk-test",
@@ -150,7 +150,7 @@ class TestLangfuseExporterInit:
 
         monkeypatch.setattr(builtins, "__import__", mock_import)
 
-        from exabench.exporters import langfuse_exporter
+        from aobench.exporters import langfuse_exporter
         importlib.reload(langfuse_exporter)
 
         with pytest.raises(ImportError, match="langfuse is not installed"):
@@ -163,7 +163,7 @@ class TestLangfuseExporterInit:
 
         mock_lf_module = MagicMock()
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from exabench.exporters import langfuse_exporter
+            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             with pytest.raises(ValueError, match="Langfuse credentials missing"):
                 langfuse_exporter.LangfuseExporter()
@@ -180,7 +180,7 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from exabench.exporters import langfuse_exporter
+            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 
@@ -199,7 +199,7 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from exabench.exporters import langfuse_exporter
+            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 
@@ -220,7 +220,7 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from exabench.exporters import langfuse_exporter
+            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 
@@ -240,9 +240,9 @@ class TestLangfuseExporterExport:
         mock_lf.start_as_current_observation.assert_called_once()
         call_kwargs = mock_lf.start_as_current_observation.call_args.kwargs
         assert call_kwargs["name"] == "JOB_USR_001"
-        # ExaBench trace_id is stored in metadata (not passed as trace_context)
+        # AOBench trace_id is stored in metadata (not passed as trace_context)
         assert "trace_context" not in call_kwargs
-        assert call_kwargs["metadata"]["exabench_trace_id"] == "trace-abc"
+        assert call_kwargs["metadata"]["aobench_trace_id"] == "trace-abc"
 
     def test_export_creates_child_spans_per_step(self):
         exporter, _, mock_root = _build_mock_exporter()

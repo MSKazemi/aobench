@@ -1,4 +1,4 @@
-"""Unit tests for exabench.reproducibility (manifest + compute)."""
+"""Unit tests for aobench.reproducibility (manifest + compute)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from exabench.reproducibility.compute import ComputeRecord, append_compute
-from exabench.reproducibility.manifest import ManifestRecord, write_manifest
+from aobench.reproducibility.compute import ComputeRecord, append_compute
+from aobench.reproducibility.manifest import ManifestRecord, write_manifest
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

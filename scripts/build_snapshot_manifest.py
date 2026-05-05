@@ -50,7 +50,7 @@ def main() -> None:
 
     manifest = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "dataset_version": "exabench-v0.2.0",
+        "dataset_version": "aobench-v0.2.0",
         "total_envs": len(environments),
         "total_files": sum(len(v) for v in environments.values()),
         "environments": environments,

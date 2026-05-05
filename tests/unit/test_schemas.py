@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from exabench.schemas.task import TaskSpec
+from aobench.schemas.task import TaskSpec
 
 
 def test_task_spec_minimal():

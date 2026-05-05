@@ -1,6 +1,6 @@
 # Overview
 
-This page is the canonical statement of **what ExaBench is, the principles it
+This page is the canonical statement of **what AOBench is, the principles it
 applies, and the scope of the v0.1 release**. Other framework documents
 elaborate on specific aspects (architecture, evaluation, taxonomy) but never
 redefine the fundamentals collected here.
@@ -11,27 +11,27 @@ including the component map and the scoring pipeline, see
 
 ---
 
-## 1. What ExaBench is
+## 1. What AOBench is
 
-**ExaBench is a benchmark framework for evaluating AI agent systems in
+**AOBench is a benchmark framework for evaluating AI agent systems in
 High-Performance Computing (HPC) environments.**
 
-ExaBench is the *benchmark*. The agents being evaluated — research baselines
+AOBench is the *benchmark*. The agents being evaluated — research baselines
 (`direct_qa`), commercial LLMs (`openai`, `anthropic`), reference HPC agents
 (`mcp`), or third-party operational assistants such as ODA / ExaSage — are
-*external* systems. ExaBench connects to them through adapters, sends each a
+*external* systems. AOBench connects to them through adapters, sends each a
 task and a constrained tool surface, captures the resulting trace, and scores
 the trace.
 
 Because every run is grounded in a deterministic environment snapshot, results
-are reproducible and portable: ExaBench never requires access to a live
+are reproducible and portable: AOBench never requires access to a live
 cluster.
 
 ---
 
 ## 2. The five benchmark principles
 
-ExaBench is designed to evaluate behaviours that ordinary QA benchmarks miss.
+AOBench is designed to evaluate behaviours that ordinary QA benchmarks miss.
 
 | Principle | Meaning |
 |-----------|---------|
@@ -57,12 +57,12 @@ The following table describes the system **as currently implemented**, with path
 | HPC v1 tasks (Souza 2025 schema) | 36 | `benchmark/tasks/task_set_v1.json` |
 | **Current task set (v3 — all 10 QCATs)** | **80** | `benchmark/tasks/specs/` |
 | Environment snapshot bundles | 26 (`env_01`…`env_26`) | `benchmark/environments/` |
-| Mock tool families | 5 (slurm, docs, rbac, telemetry, facility) | `src/exabench/tools/` |
+| Mock tool families | 5 (slurm, docs, rbac, telemetry, facility) | `src/aobench/tools/` |
 | Tool methods catalogued | 16 | `benchmark/configs/hpc_tool_catalog.yaml` |
-| Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/exabench/adapters/` |
-| Roles with tasks | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/exabench/schemas/task.py` |
+| Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/aobench/adapters/` |
+| Roles with tasks | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/aobench/schemas/task.py` |
 | QCATs with tasks | 10 — all QCATs covered | [Taxonomy](taxonomy.md) |
-| Scorers | 12 across 6 dimensions | `src/exabench/scorers/` |
+| Scorers | 12 across 6 dimensions | `src/aobench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
 | Dataset split | 62 dev / 18 test (~22% held-out), frozen 2026-05-02 (v0.3) | `benchmark/tasks/dataset_splits.py` |
 | Tests passing | 1048 | `tests/` |
@@ -72,7 +72,7 @@ The following table describes the system **as currently implemented**, with path
 
 ## 4. Long-term goal
 
-ExaBench aims to be a **citable, reproducible, and extensible benchmark
+AOBench aims to be a **citable, reproducible, and extensible benchmark
 standard** for comparing HPC-focused agentic systems before they are deployed
 in real supercomputing or data-centre operations.
 
@@ -80,9 +80,9 @@ Beyond the offline mock-tool mode shipped in v0.1, the project plans two
 extensions for future releases:
 
 - **Connect-to-agent mode (§C9)** — adapters that drive HPC agents already
-  deployed on or near clusters via HTTP / MCP / FastAPI. ExaBench still never
+  deployed on or near clusters via HTTP / MCP / FastAPI. AOBench still never
   touches the cluster directly; the agent under test does.
-- **In-situ stress testing** — using ExaBench as a workload driver to
+- **In-situ stress testing** — using AOBench as a workload driver to
   measure latency, throughput, and correctness of production HPC agents
   under realistic load.
 

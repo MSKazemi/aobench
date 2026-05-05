@@ -10,9 +10,9 @@ from pathlib import Path
 import pytest
 import yaml
 
-from exabench.schemas.result import DimensionScores
-from exabench.schemas.workflow_graph import WorkflowEdge, WorkflowGraph, WorkflowNode
-from exabench.scorers.workflow_scorer import WorfEvalScorer
+from aobench.schemas.result import DimensionScores
+from aobench.schemas.workflow_graph import WorkflowEdge, WorkflowGraph, WorkflowNode
+from aobench.scorers.workflow_scorer import WorfEvalScorer
 
 SCORING_PROFILES = Path(__file__).parent.parent.parent / "benchmark/configs/scoring_profiles.yaml"
 
@@ -70,7 +70,7 @@ def test_all_profiles_sum_to_one():
 # ---------------------------------------------------------------------------
 
 def _minimal_task(ground_truth_workflow=None):
-    from exabench.schemas.task import TaskSpec
+    from aobench.schemas.task import TaskSpec
     return TaskSpec(
         task_id="WF_TEST_001",
         title="Workflow test",
@@ -85,7 +85,7 @@ def _minimal_task(ground_truth_workflow=None):
 
 
 def _minimal_trace():
-    from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
+    from aobench.schemas.trace import Observation, ToolCall, Trace, TraceStep
     return Trace(
         trace_id="wf_trace_01",
         run_id="run_01",
@@ -124,7 +124,7 @@ def _gt_workflow() -> WorkflowGraph:
 
 def test_aggregate_scorer_workflow_none_without_gt():
     """When TaskSpec has no ground_truth_workflow, dim_scores.workflow must be None."""
-    from exabench.scorers.aggregate import AggregateScorer
+    from aobench.scorers.aggregate import AggregateScorer
     scorer = AggregateScorer(SCORING_PROFILES)
     result = scorer.score(_minimal_task(ground_truth_workflow=None), _minimal_trace(), run_id="r1")
     assert result.dimension_scores.workflow is None
@@ -132,7 +132,7 @@ def test_aggregate_scorer_workflow_none_without_gt():
 
 def test_aggregate_scorer_workflow_set_with_gt():
     """When TaskSpec has ground_truth_workflow, dim_scores.workflow must be a float in [0,1]."""
-    from exabench.scorers.aggregate import AggregateScorer
+    from aobench.scorers.aggregate import AggregateScorer
     scorer = AggregateScorer(SCORING_PROFILES)
     task = _minimal_task(ground_truth_workflow=_gt_workflow())
     result = scorer.score(task, _minimal_trace(), run_id="r1")
@@ -142,8 +142,8 @@ def test_aggregate_scorer_workflow_set_with_gt():
 
 def test_aggregate_scorer_workflow_perfect_match():
     """When actual trace matches the GT workflow exactly, workflow score should be 1.0."""
-    from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
-    from exabench.scorers.aggregate import AggregateScorer
+    from aobench.schemas.trace import Observation, ToolCall, Trace, TraceStep
+    from aobench.scorers.aggregate import AggregateScorer
 
     # GT: single slurm tool_call node
     gt = WorkflowGraph(

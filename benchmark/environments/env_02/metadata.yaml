@@ -1,7 +1,7 @@
 environment_id: env_02
 snapshot_name: Queue Congestion / Long Pending Jobs
 scenario_type: queue_congestion
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 snapshot_timestamp: 2026-02-11T09:00:00Z
 bundle_root: environments/env_02
 supported_roles:

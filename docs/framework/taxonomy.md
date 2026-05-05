@@ -1,17 +1,17 @@
 # Taxonomy
 
 This page consolidates the four taxonomic dimensions used to organise
-ExaBench tasks: **roles**, **query categories (QCAT)**, **knowledge source
+AOBench tasks: **roles**, **query categories (QCAT)**, **knowledge source
 scopes**, and **access control / RBAC tiers**. It also documents the
 canonical task metadata schema.
 
-The authoritative Pydantic types live in `src/exabench/schemas/task.py`.
+The authoritative Pydantic types live in `src/aobench/schemas/task.py`.
 
 ---
 
 ## 1. Roles & personas
 
-A task's `role` field says **who is asking**. ExaBench defines five role
+A task's `role` field says **who is asking**. AOBench defines five role
 values, all of which have scored tasks in `task_set_v3.json`.
 
 | Role | Schema value | Has tasks? | Primary mission | Priority QCATs |
@@ -82,13 +82,13 @@ Example task usage:
 }
 ```
 
-The canonical type definition is in `src/exabench/schemas/task.py`.
+The canonical type definition is in `src/aobench/schemas/task.py`.
 
 ---
 
 ## 4. Access control & RBAC
 
-ExaBench enforces two-layered access control: **access tiers** govern data
+AOBench enforces two-layered access control: **access tiers** govern data
 exposure, **role permissions** govern tool calls.
 
 ### 4.1 Access levels (data exposure)
@@ -133,9 +133,9 @@ permission-denied propagation are absorbing hard-fails — see
 
 ## 5. Task metadata schema
 
-Authoritative Pydantic definition: `src/exabench/schemas/task.py`. The
+Authoritative Pydantic definition: `src/aobench/schemas/task.py`. The
 following fields are required on every task spec; the validator
-(`exabench validate benchmark`) enforces them.
+(`aobench validate benchmark`) enforces them.
 
 | Field | Type | Purpose | Example |
 |-------|------|---------|---------|
@@ -165,8 +165,8 @@ following fields are required on every task spec; the validator
 
 ## 6. Authoritative schemas & related documents
 
-- Task & role schema: `src/exabench/schemas/task.py`
-- Trace & result schema: `src/exabench/schemas/trace.py`
+- Task & role schema: `src/aobench/schemas/task.py`
+- Trace & result schema: `src/aobench/schemas/trace.py`
 - Tool catalog: `benchmark/configs/hpc_tool_catalog.yaml`
 - RBAC policies: `benchmark/environments/env_NN/rbac_policy.yaml`
 - Evaluation protocol: [Evaluation](evaluation.md)

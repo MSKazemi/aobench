@@ -1,4 +1,4 @@
-"""Unit tests for the ExaBench leaderboard backend (Phase E2.1)."""
+"""Unit tests for the AOBench leaderboard backend (Phase E2.1)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,8 @@ import sqlite3
 import pytest
 from pydantic import ValidationError
 
-from exabench.leaderboard.auth import check_basic_auth
-from exabench.leaderboard.database import (
+from aobench.leaderboard.auth import check_basic_auth
+from aobench.leaderboard.database import (
     create_tables,
     get_connection,
     get_leaderboard,
@@ -16,7 +16,7 @@ from exabench.leaderboard.database import (
     insert_result_rows,
     upsert_clear_row,
 )
-from exabench.leaderboard.models import (
+from aobench.leaderboard.models import (
     CLEARRow,
     LeaderboardResponse,
     ModelEntry,
@@ -24,7 +24,7 @@ from exabench.leaderboard.models import (
     SubmissionStatus,
     VerificationResult,
 )
-from exabench.leaderboard.renderer import render_leaderboard_html
+from aobench.leaderboard.renderer import render_leaderboard_html
 
 
 # ---------------------------------------------------------------------------
@@ -393,7 +393,7 @@ def test_render_leaderboard_html_contains_title(tmp_path):
 
     assert result_path == out
     html = out.read_text()
-    assert "ExaBench Leaderboard" in html
+    assert "AOBench Leaderboard" in html
 
 
 def test_render_leaderboard_html_contains_model_ids(tmp_path):
@@ -450,7 +450,7 @@ def test_render_leaderboard_html_empty_entries(tmp_path):
     out = tmp_path / "lb.html"
     render_leaderboard_html(response, out)
     html = out.read_text()
-    assert "ExaBench Leaderboard" in html
+    assert "AOBench Leaderboard" in html
     assert "<table>" in html
 
 
@@ -462,7 +462,7 @@ def test_fastapi_health_endpoint():
     """GET /health returns 200 with status ok (requires FastAPI)."""
     pytest.importorskip("fastapi", reason="fastapi not installed")
     from fastapi.testclient import TestClient
-    from exabench.leaderboard.api import create_app
+    from aobench.leaderboard.api import create_app
 
     application = create_app()
     assert application is not None, "create_app() returned None despite FastAPI being available"

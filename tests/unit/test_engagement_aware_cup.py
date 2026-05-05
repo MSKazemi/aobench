@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Trace, TraceStep, ToolCall
-from exabench.scorers.engagement import compute_governance_eng, is_engaged
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Trace, TraceStep, ToolCall
+from aobench.scorers.engagement import compute_governance_eng, is_engaged
 
 
 def _make_task(expected_tool_calls: set[str] | None = None) -> TaskSpec:

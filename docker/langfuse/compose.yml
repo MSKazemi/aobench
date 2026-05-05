@@ -1,23 +1,23 @@
 services:
   # ── Langfuse v3 — full self-hosted stack ───────────────────────────────────
   # Services required by Langfuse v3:
-  #   exabench-postgres   — project metadata, users, API keys
-  #   exabench-clickhouse — traces, observations, evaluations (analytics store)
-  #   exabench-redis      — task queue between web and worker
-  #   exabench-minio      — blob storage for media uploads (S3-compatible)
-  #   exabench-langfuse-web    — Next.js UI + API server
-  #   exabench-langfuse-worker — background job processor
+  #   aobench-postgres   — project metadata, users, API keys
+  #   aobench-clickhouse — traces, observations, evaluations (analytics store)
+  #   aobench-redis      — task queue between web and worker
+  #   aobench-minio      — blob storage for media uploads (S3-compatible)
+  #   aobench-langfuse-web    — Next.js UI + API server
+  #   aobench-langfuse-worker — background job processor
 
   # ── Postgres ────────────────────────────────────────────────────────────────
-  exabench-postgres:
+  aobench-postgres:
     image: postgres:16-alpine
-    container_name: exabench-postgres
+    container_name: aobench-postgres
     environment:
       POSTGRES_USER: langfuse
       POSTGRES_PASSWORD: langfuse
       POSTGRES_DB: langfuse
     volumes:
-      - exabench-langfuse-postgres-data:/var/lib/postgresql/data
+      - aobench-langfuse-postgres-data:/var/lib/postgresql/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U langfuse -d langfuse"]
@@ -26,15 +26,15 @@ services:
       retries: 5
 
   # ── ClickHouse ──────────────────────────────────────────────────────────────
-  exabench-clickhouse:
+  aobench-clickhouse:
     image: clickhouse/clickhouse-server:24.12
-    container_name: exabench-clickhouse
+    container_name: aobench-clickhouse
     environment:
       CLICKHOUSE_DB: langfuse
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: langfuse
     volumes:
-      - exabench-langfuse-clickhouse-data:/var/lib/clickhouse
+      - aobench-langfuse-clickhouse-data:/var/lib/clickhouse
       - ./clickhouse-config.xml:/etc/clickhouse-server/config.d/langfuse.xml:ro
     restart: unless-stopped
     healthcheck:
@@ -44,11 +44,11 @@ services:
       retries: 5
 
   # ── Redis ───────────────────────────────────────────────────────────────────
-  exabench-redis:
+  aobench-redis:
     image: redis:7-alpine
-    container_name: exabench-redis
+    container_name: aobench-redis
     volumes:
-      - exabench-langfuse-redis-data:/data
+      - aobench-langfuse-redis-data:/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -57,15 +57,15 @@ services:
       retries: 5
 
   # ── MinIO (S3-compatible blob store) ────────────────────────────────────────
-  exabench-minio:
+  aobench-minio:
     image: minio/minio:latest
-    container_name: exabench-minio
+    container_name: aobench-minio
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: langfuse
       MINIO_ROOT_PASSWORD: langfuse123
     volumes:
-      - exabench-langfuse-minio-data:/data
+      - aobench-langfuse-minio-data:/data
     ports:
       - "9090:9001"   # MinIO console (optional, for debugging)
     restart: unless-stopped
@@ -80,60 +80,60 @@ services:
   # Uses the minio image's bundled `mc` to create the `langfuse` bucket.
   # Runs once at startup; exits 0 when done. restart: on-failure ensures it
   # retries if MinIO is not ready yet, but won't restart after success.
-  exabench-minio-init:
+  aobench-minio-init:
     image: minio/minio:latest
-    container_name: exabench-minio-init
+    container_name: aobench-minio-init
     depends_on:
-      exabench-minio:
+      aobench-minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-        mc alias set local http://exabench-minio:9000 langfuse langfuse123 &&
+        mc alias set local http://aobench-minio:9000 langfuse langfuse123 &&
         mc mb --ignore-existing local/langfuse &&
         echo 'MinIO bucket langfuse ready.'
       "
     restart: on-failure
 
   # ── Langfuse Web (UI + API) ──────────────────────────────────────────────────
-  exabench-langfuse-web:
+  aobench-langfuse-web:
     image: langfuse/langfuse:latest
-    container_name: exabench-langfuse-web
+    container_name: aobench-langfuse-web
     depends_on:
-      exabench-postgres:
+      aobench-postgres:
         condition: service_healthy
-      exabench-clickhouse:
+      aobench-clickhouse:
         condition: service_healthy
-      exabench-redis:
+      aobench-redis:
         condition: service_healthy
-      exabench-minio:
+      aobench-minio:
         condition: service_healthy
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://langfuse:langfuse@exabench-postgres:5432/langfuse
+      DATABASE_URL: postgresql://langfuse:langfuse@aobench-postgres:5432/langfuse
       NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: exabench-nextauth-secret-change-in-production
-      SALT: exabench-salt-change-in-production
+      NEXTAUTH_SECRET: aobench-nextauth-secret-change-in-production
+      SALT: aobench-salt-change-in-production
       ENCRYPTION_KEY: 36653cf14b2bc0d0158f283af1e50c5401321ddb9850fcd7be7a3417ad950a4f
       # ClickHouse
-      CLICKHOUSE_URL: http://exabench-clickhouse:8123
+      CLICKHOUSE_URL: http://aobench-clickhouse:8123
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: langfuse
-      CLICKHOUSE_MIGRATION_URL: clickhouse://exabench-clickhouse:9000
+      CLICKHOUSE_MIGRATION_URL: clickhouse://aobench-clickhouse:9000
       # Redis
-      REDIS_HOST: exabench-redis
+      REDIS_HOST: aobench-redis
       REDIS_PORT: 6379
       # Blob storage (MinIO)
       LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: langfuse
       LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: langfuse123
-      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://exabench-minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://aobench-minio:9000
       LANGFUSE_S3_MEDIA_UPLOAD_REGION: us-east-1
       LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: langfuse123
-      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://exabench-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://aobench-minio:9000
       LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
       LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
       # Misc
@@ -142,15 +142,15 @@ services:
       # ── Auto-provisioning (seed org / project / API keys on first boot) ──────
       # Runs once when the DB is empty; skipped on every subsequent restart.
       # Keys here must match LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY in .env.
-      LANGFUSE_INIT_ORG_ID: exabench-local
-      LANGFUSE_INIT_ORG_NAME: ExaBench
-      LANGFUSE_INIT_PROJECT_ID: exabench-project
-      LANGFUSE_INIT_PROJECT_NAME: ExaBench
-      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: pk-lf-exabench-local-dev-pub01
-      LANGFUSE_INIT_PROJECT_SECRET_KEY: sk-lf-exabench-local-dev-sec01
-      LANGFUSE_INIT_USER_EMAIL: admin@exabench.local
-      LANGFUSE_INIT_USER_NAME: ExaBench Admin
-      LANGFUSE_INIT_USER_PASSWORD: exabench-admin
+      LANGFUSE_INIT_ORG_ID: aobench-local
+      LANGFUSE_INIT_ORG_NAME: AOBench
+      LANGFUSE_INIT_PROJECT_ID: aobench-project
+      LANGFUSE_INIT_PROJECT_NAME: AOBench
+      LANGFUSE_INIT_PROJECT_PUBLIC_KEY: pk-lf-aobench-local-dev-pub01
+      LANGFUSE_INIT_PROJECT_SECRET_KEY: sk-lf-aobench-local-dev-sec01
+      LANGFUSE_INIT_USER_EMAIL: admin@aobench.local
+      LANGFUSE_INIT_USER_NAME: AOBench Admin
+      LANGFUSE_INIT_USER_PASSWORD: aobench-admin
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/public/health || exit 1"]
@@ -160,41 +160,41 @@ services:
       start_period: 60s
 
   # ── Langfuse Worker (background jobs) ───────────────────────────────────────
-  exabench-langfuse-worker:
+  aobench-langfuse-worker:
     image: langfuse/langfuse-worker:latest
-    container_name: exabench-langfuse-worker
+    container_name: aobench-langfuse-worker
     depends_on:
-      exabench-postgres:
+      aobench-postgres:
         condition: service_healthy
-      exabench-clickhouse:
+      aobench-clickhouse:
         condition: service_healthy
-      exabench-redis:
+      aobench-redis:
         condition: service_healthy
-      exabench-minio:
+      aobench-minio:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://langfuse:langfuse@exabench-postgres:5432/langfuse
-      SALT: exabench-salt-change-in-production
+      DATABASE_URL: postgresql://langfuse:langfuse@aobench-postgres:5432/langfuse
+      SALT: aobench-salt-change-in-production
       ENCRYPTION_KEY: 36653cf14b2bc0d0158f283af1e50c5401321ddb9850fcd7be7a3417ad950a4f
       # ClickHouse
-      CLICKHOUSE_URL: http://exabench-clickhouse:8123
+      CLICKHOUSE_URL: http://aobench-clickhouse:8123
       CLICKHOUSE_USER: default
       CLICKHOUSE_PASSWORD: langfuse
-      CLICKHOUSE_MIGRATION_URL: clickhouse://exabench-clickhouse:9000
+      CLICKHOUSE_MIGRATION_URL: clickhouse://aobench-clickhouse:9000
       # Redis
-      REDIS_HOST: exabench-redis
+      REDIS_HOST: aobench-redis
       REDIS_PORT: 6379
       # Blob storage (MinIO)
       LANGFUSE_S3_MEDIA_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_MEDIA_UPLOAD_ACCESS_KEY_ID: langfuse
       LANGFUSE_S3_MEDIA_UPLOAD_SECRET_ACCESS_KEY: langfuse123
-      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://exabench-minio:9000
+      LANGFUSE_S3_MEDIA_UPLOAD_ENDPOINT: http://aobench-minio:9000
       LANGFUSE_S3_MEDIA_UPLOAD_REGION: us-east-1
       LANGFUSE_S3_MEDIA_UPLOAD_FORCE_PATH_STYLE: "true"
       LANGFUSE_S3_EVENT_UPLOAD_BUCKET: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_ACCESS_KEY_ID: langfuse
       LANGFUSE_S3_EVENT_UPLOAD_SECRET_ACCESS_KEY: langfuse123
-      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://exabench-minio:9000
+      LANGFUSE_S3_EVENT_UPLOAD_ENDPOINT: http://aobench-minio:9000
       LANGFUSE_S3_EVENT_UPLOAD_REGION: us-east-1
       LANGFUSE_S3_EVENT_UPLOAD_FORCE_PATH_STYLE: "true"
       # Misc
@@ -202,7 +202,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  exabench-langfuse-postgres-data:
-  exabench-langfuse-clickhouse-data:
-  exabench-langfuse-redis-data:
-  exabench-langfuse-minio-data:
+  aobench-langfuse-postgres-data:
+  aobench-langfuse-clickhouse-data:
+  aobench-langfuse-redis-data:
+  aobench-langfuse-minio-data:

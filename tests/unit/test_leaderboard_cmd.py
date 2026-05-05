@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from exabench.reports.leaderboard import load_results_dir, write_heatmap_csv
-from exabench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.reports.leaderboard import load_results_dir, write_heatmap_csv
+from aobench.schemas.result import BenchmarkResult, DimensionScores
 
 
 # ---------------------------------------------------------------------------
@@ -170,7 +170,7 @@ def test_leaderboard_build_cli_creates_outputs(tmp_path: Path) -> None:
 
     out_dir = tmp_path / "leaderboard"
     from typer.testing import CliRunner
-    from exabench.cli.main import app
+    from aobench.cli.main import app
 
     runner = CliRunner()
     result = runner.invoke(app, [
@@ -191,7 +191,7 @@ def test_leaderboard_build_no_heatmap(tmp_path: Path) -> None:
     ])
     out_dir = tmp_path / "lb"
     from typer.testing import CliRunner
-    from exabench.cli.main import app
+    from aobench.cli.main import app
 
     runner = CliRunner()
     result = runner.invoke(app, [
@@ -205,7 +205,7 @@ def test_leaderboard_build_no_heatmap(tmp_path: Path) -> None:
 
 def test_leaderboard_build_missing_dir(tmp_path: Path) -> None:
     from typer.testing import CliRunner
-    from exabench.cli.main import app
+    from aobench.cli.main import app
 
     runner = CliRunner()
     result = runner.invoke(app, [

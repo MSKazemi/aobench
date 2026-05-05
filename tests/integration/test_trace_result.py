@@ -12,8 +12,8 @@ BENCHMARK_ROOT = Path(__file__).parent.parent.parent / "benchmark"
 
 def test_trace_and_result_files_written(tmp_path):
     """Both trace and result JSON must be written for a completed run."""
-    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-    from exabench.runners.runner import BenchmarkRunner
+    from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+    from aobench.runners.runner import BenchmarkRunner
 
     runner = BenchmarkRunner(
         adapter=DirectQAAdapter(answer="OOM kill on node03"),
@@ -42,8 +42,8 @@ def test_trace_and_result_files_written(tmp_path):
 
 def test_all_dimension_scores_populated(tmp_path):
     """All 5 scorer dimensions must be non-None in a direct_qa result."""
-    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-    from exabench.runners.runner import BenchmarkRunner
+    from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+    from aobench.runners.runner import BenchmarkRunner
 
     runner = BenchmarkRunner(
         adapter=DirectQAAdapter(answer="Job 891234 failed: OOM kill"),

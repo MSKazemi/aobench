@@ -1,7 +1,7 @@
 environment_id: env_05
 snapshot_name: Cooling Unit Failure
 scenario_type: cooling_failure
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 snapshot_timestamp: 2026-02-20T08:45:00Z
 bundle_root: environments/env_05
 supported_roles:

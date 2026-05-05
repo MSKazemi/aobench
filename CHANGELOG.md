@@ -14,11 +14,11 @@
 - env_07 and env_12 now pass all F1–F7 fidelity checks (were failing F1/F2/F3 due to
   synthetic slurm data with uniform runtimes and no completed jobs)
 - Added historical COMPLETED jobs with realistic lognormal runtime distributions to both envs
-- All 23 environment snapshot bundles now pass `exabench validate snapshots` (23/23)
+- All 23 environment snapshot bundles now pass `aobench validate snapshots` (23/23)
 
 ### Validation
 
-- `exabench validate benchmark` → 80/80 tasks, 26/26 environments, passes without `EXABENCH_SKIP_FIDELITY`
+- `aobench validate benchmark` → 80/80 tasks, 26/26 environments, passes without `EXABENCH_SKIP_FIDELITY`
 - Added three new stub environments (env_24 CUDA/OpenMPI conflict, env_25 privilege escalation, env_26 IB link flapping) with complete bundles
 
 ---
@@ -34,7 +34,7 @@ First public release.
 - 20 deterministic HPC environment snapshot bundles (env_01–env_20) covering 8 scenario types (v0.1 baseline; expanded to env_01–env_26 in v0.3)
 - Difficulty tiers: 10 easy / 13 medium / 7 hard across original 30 tasks
 - Dataset splits frozen (70% dev, 30% test, stratified by QCAT × role)
-- ExaBench-Lite 3-stage selection pipeline (SWE-bench Lite methodology)
+- AOBench-Lite 3-stage selection pipeline (SWE-bench Lite methodology)
 
 ### Mock HPC Environment
 
@@ -61,13 +61,13 @@ First public release.
 
 ### CLI
 
-- `exabench validate benchmark` — validate all task and environment data
-- `exabench run task / run all` — run evaluations with configurable adapter, split, verbosity
-- `exabench report json / html / slices` — generate result reports
-- `exabench compare` — diff two run directories
-- `exabench robustness task / robustness all` — compute pass^k reliability
-- `exabench clear run` — CLEAR scorecard for a run
-- `exabench lite select` — ExaBench-Lite subset selection
+- `aobench validate benchmark` — validate all task and environment data
+- `aobench run task / run all` — run evaluations with configurable adapter, split, verbosity
+- `aobench report json / html / slices` — generate result reports
+- `aobench compare` — diff two run directories
+- `aobench robustness task / robustness all` — compute pass^k reliability
+- `aobench clear run` — CLEAR scorecard for a run
+- `aobench lite select` — AOBench-Lite subset selection
 
 ### Infrastructure
 

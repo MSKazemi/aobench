@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from exabench.schemas.task import EvalCriteria, TaskSpec
-from exabench.schemas.trace import Trace
-from exabench.scorers.outcome_scorer import OutcomeScorer
+from aobench.schemas.task import EvalCriteria, TaskSpec
+from aobench.schemas.trace import Trace
+from aobench.scorers.outcome_scorer import OutcomeScorer
 
 
 def _task(gold: str | None = None, mode: str = "semantic_match") -> TaskSpec:

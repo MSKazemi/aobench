@@ -1,7 +1,7 @@
 environment_id: env_21
 snapshot_name: Storage Quota Pressure
 scenario_type: storage_management
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 snapshot_timestamp: 2026-03-15T09:00:00Z
 bundle_root: environments/env_21
 supported_roles:

@@ -1,7 +1,7 @@
 environment_id: env_03
 snapshot_name: Thermal and Power Monitoring
 scenario_type: thermal_power
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 snapshot_timestamp: 2026-02-12T10:00:00Z
 bundle_root: environments/env_03
 supported_roles:

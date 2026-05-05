@@ -1,5 +1,5 @@
 bundle_root: environments/env_19
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: gpu02 and gpu03 have been allocated to a job for 9 hours but GPU utilisation
   has been <2% for the past 6 hours. The nodes are drawing full power (~400W each)
   while GPUs idle. facility_admin must quantify the energy waste and determine if

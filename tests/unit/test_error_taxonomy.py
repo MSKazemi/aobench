@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from exabench.reports.error_taxonomy import classify_error
-from exabench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.reports.error_taxonomy import classify_error
+from aobench.schemas.result import BenchmarkResult, DimensionScores
 
 _TS = datetime.now(tz=timezone.utc)
 

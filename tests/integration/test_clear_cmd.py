@@ -1,4 +1,4 @@
-"""Integration tests: exabench clear run CLI command."""
+"""Integration tests: aobench clear run CLI command."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from pathlib import Path
 
 from typer.testing import CliRunner
 
-from exabench.cli.main import app
-from exabench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.cli.main import app
+from aobench.schemas.result import BenchmarkResult, DimensionScores
 
 runner = CliRunner()
 
@@ -67,7 +67,7 @@ def _make_run_dir(
 
 
 def test_clear_cmd_single_model(tmp_path):
-    """exabench clear run produces a valid CLEAR report for one run directory."""
+    """aobench clear run produces a valid CLEAR report for one run directory."""
     run_dir = _make_run_dir(tmp_path, model_name="gpt-4o", n_tasks=5)
     output_path = tmp_path / "clear_report.json"
 

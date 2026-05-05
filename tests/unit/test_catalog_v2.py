@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from exabench.tools.catalog_loader import (
+from aobench.tools.catalog_loader import (
     DangerousArgEntry,
     ExceptionEntry,
     load_catalog,

@@ -6,9 +6,9 @@ from datetime import datetime, timezone
 
 import pytest
 
-from exabench.schemas.result import BenchmarkResult, CheckpointResult, DimensionScores
-from exabench.schemas.trace import Observation, ToolCall, TraceStep
-from exabench.scorers.checkpoint_scorer import CheckpointSpec, score_checkpoint_run
+from aobench.schemas.result import BenchmarkResult, CheckpointResult, DimensionScores
+from aobench.schemas.trace import Observation, ToolCall, TraceStep
+from aobench.scorers.checkpoint_scorer import CheckpointSpec, score_checkpoint_run
 
 
 # ---------------------------------------------------------------------------

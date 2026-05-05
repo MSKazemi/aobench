@@ -1,4 +1,4 @@
-# Cooling Operations Runbook — ExaBench Cluster B
+# Cooling Operations Runbook — AOBench Cluster B
 
 ## ASHRAE A2 Thermal Envelope
 Per ASHRAE A2 guidelines, compute equipment must operate within:

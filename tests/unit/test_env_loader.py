@@ -1,7 +1,7 @@
 """Unit tests for environment loader."""
 
-from exabench.loaders.env_loader import load_environment
-from exabench.schemas.environment import EnvironmentBundle
+from aobench.loaders.env_loader import load_environment
+from aobench.schemas.environment import EnvironmentBundle
 
 
 def test_load_environment(test_env_dir):

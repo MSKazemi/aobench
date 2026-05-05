@@ -11,8 +11,8 @@ For a complete component map and line-by-line module descriptions, see [System A
 ## 1. Code layout
 
 ```
-src/exabench/
-├── cli/             Typer app — `exabench` console script
+src/aobench/
+├── cli/             Typer app — `aobench` console script
 ├── schemas/         Pydantic v2 data models (no logic)
 ├── loaders/         Stateless task / env loading
 ├── tasks/           Task discovery, dataset splits, RAG context, Lite selection
@@ -41,19 +41,19 @@ lists the public classes and functions. Use that as a quick reference.
 
 ## 2. The eight CLI sub-commands
 
-The `exabench` console script is built with [Typer](https://typer.tiangolo.com/).
+The `aobench` console script is built with [Typer](https://typer.tiangolo.com/).
 Its sub-commands are:
 
 | Command | Module | Purpose |
 |---------|--------|---------|
-| `exabench validate benchmark` | `cli/validate_cmd.py` | Lint every task spec and snapshot bundle |
-| `exabench run task` / `run all` | `cli/run_cmd.py` | Execute one task or the dev split |
-| `exabench lite select` | `cli/lite_cmd.py` | Build the ExaBench-Lite manifest |
-| `exabench report json/html/slices` | `cli/report_cmd.py` | Render reports from a run directory |
-| `exabench compare RUN_A RUN_B` | `cli/compare_cmd.py` | Diff two runs |
-| `exabench robustness task/all` | `cli/robustness_cmd.py` | Compute pass^k |
-| `exabench clear run` | `cli/clear_cmd.py` | Compute the CLEAR scorecard |
-| `exabench leaderboard` | `cli/leaderboard_cmd.py` | Start the FastAPI submission service |
+| `aobench validate benchmark` | `cli/validate_cmd.py` | Lint every task spec and snapshot bundle |
+| `aobench run task` / `run all` | `cli/run_cmd.py` | Execute one task or the dev split |
+| `aobench lite select` | `cli/lite_cmd.py` | Build the AOBench-Lite manifest |
+| `aobench report json/html/slices` | `cli/report_cmd.py` | Render reports from a run directory |
+| `aobench compare RUN_A RUN_B` | `cli/compare_cmd.py` | Diff two runs |
+| `aobench robustness task/all` | `cli/robustness_cmd.py` | Compute pass^k |
+| `aobench clear run` | `cli/clear_cmd.py` | Compute the CLEAR scorecard |
+| `aobench leaderboard` | `cli/leaderboard_cmd.py` | Start the FastAPI submission service |
 
 The full reference, with every flag, is in [`COMMANDS.md`](../reference/commands.md).
 
@@ -120,7 +120,7 @@ The 12 implemented scorers and their wiring status are listed in
   (§A3).
 - `CheckpointScorer` is wired conditionally (only when `task.checkpoints` is
   set). It contributes via `S_partial = 0.5 * (passed/total) + 0.5 * S_full`.
-- `RobustnessScorer` is invoked only via the `exabench robustness` CLI; it is
+- `RobustnessScorer` is invoked only via the `aobench robustness` CLI; it is
   not part of the per-task aggregate.
 
 ---
@@ -129,14 +129,14 @@ The 12 implemented scorers and their wiring status are listed in
 
 End-to-end task authoring is described in
 [Taxonomy §5 (Task Metadata Schema)](taxonomy.md). The minimum
-acceptance criterion is that `exabench validate benchmark` succeeds with the
+acceptance criterion is that `aobench validate benchmark` succeeds with the
 new task: that runs T1–T10 validity gates (covered in
-`src/exabench/validation/`).
+`src/aobench/validation/`).
 
 For programmatic task generation, see `scripts/create_task_stubs.py` and the
 guideline files under `benchmark/tasks/guidelines/`.
 
-The interactive `exabench task create` helper is part of the v0.2 plan (see
+The interactive `aobench task create` helper is part of the v0.2 plan (see
 future-work plan §B1, `task_authoring_spec`).
 
 ---

@@ -1,5 +1,5 @@
 bundle_root: environments/env_11
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: Account 'ml-lab' has consumed 98% of its monthly CPU-hour allocation.
   Three jobs are pending due to QOS limit enforcement. facility_admin must assess
   whether to grant an exception or enforce the limit.

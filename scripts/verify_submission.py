@@ -74,7 +74,7 @@ def check_v5_inter_model_spread(results: list[dict]) -> tuple[bool, str]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(
-        description="Verify an ExaBench run against V0-V6 validity gates."
+        description="Verify an AOBench run against V0-V6 validity gates."
     )
     ap.add_argument("--run-dir", required=True, help="Path to a run directory (contains results/)")
     ap.add_argument("--gates", default="V0,V1,V2,V3,V5", help="Comma-separated gates to check")

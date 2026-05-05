@@ -16,32 +16,32 @@ import pytest
 
 class TestCheckResult:
     def test_pass_result(self):
-        from exabench.cli.validators.base import CheckResult
+        from aobench.cli.validators.base import CheckResult
         r = CheckResult(status="PASS", detail="All good.")
         assert r.status == "PASS"
         assert r.detail == "All good."
         assert r.fix_suggestion is None
 
     def test_fail_result_with_suggestion(self):
-        from exabench.cli.validators.base import CheckResult
+        from aobench.cli.validators.base import CheckResult
         r = CheckResult(status="FAIL", detail="Bad.", fix_suggestion="Fix it.")
         assert r.status == "FAIL"
         assert r.fix_suggestion == "Fix it."
 
     def test_warn_result(self):
-        from exabench.cli.validators.base import CheckResult
+        from aobench.cli.validators.base import CheckResult
         r = CheckResult(status="WARN", detail="Watch out.")
         assert r.status == "WARN"
 
     def test_skip_result(self):
-        from exabench.cli.validators.base import CheckResult
+        from aobench.cli.validators.base import CheckResult
         r = CheckResult(status="SKIP", detail="Skipped.")
         assert r.status == "SKIP"
 
 
 class TestTaskValidityResult:
     def test_pass_result_is_release_ready(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
         r = TaskValidityResult(
             task_id="test_01",
             overall="PASS",
@@ -50,7 +50,7 @@ class TestTaskValidityResult:
         assert r.release_ready is True
 
     def test_warn_result_is_not_release_ready(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
         r = TaskValidityResult(
             task_id="test_01",
             overall="WARN",
@@ -59,7 +59,7 @@ class TestTaskValidityResult:
         assert r.release_ready is False
 
     def test_fail_result_is_not_release_ready(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
         r = TaskValidityResult(
             task_id="test_01",
             overall="FAIL",
@@ -70,7 +70,7 @@ class TestTaskValidityResult:
 
 class TestAggregateOverall:
     def test_all_pass(self):
-        from exabench.cli.validators.base import CheckResult, aggregate_overall
+        from aobench.cli.validators.base import CheckResult, aggregate_overall
         checks = {
             "t1": CheckResult(status="PASS", detail="ok"),
             "t2": CheckResult(status="PASS", detail="ok"),
@@ -78,7 +78,7 @@ class TestAggregateOverall:
         assert aggregate_overall(checks) == "PASS"
 
     def test_any_fail(self):
-        from exabench.cli.validators.base import CheckResult, aggregate_overall
+        from aobench.cli.validators.base import CheckResult, aggregate_overall
         checks = {
             "t1": CheckResult(status="PASS", detail="ok"),
             "t3": CheckResult(status="FAIL", detail="bad"),
@@ -86,21 +86,21 @@ class TestAggregateOverall:
         assert aggregate_overall(checks) == "FAIL"
 
     def test_warn_without_strict(self):
-        from exabench.cli.validators.base import CheckResult, aggregate_overall
+        from aobench.cli.validators.base import CheckResult, aggregate_overall
         checks = {
             "t8": CheckResult(status="WARN", detail="minor issue"),
         }
         assert aggregate_overall(checks, strict=False) == "WARN"
 
     def test_warn_with_strict(self):
-        from exabench.cli.validators.base import CheckResult, aggregate_overall
+        from aobench.cli.validators.base import CheckResult, aggregate_overall
         checks = {
             "t8": CheckResult(status="WARN", detail="minor issue"),
         }
         assert aggregate_overall(checks, strict=True) == "FAIL"
 
     def test_skip_counts_as_pass(self):
-        from exabench.cli.validators.base import CheckResult, aggregate_overall
+        from aobench.cli.validators.base import CheckResult, aggregate_overall
         checks = {
             "t2": CheckResult(status="SKIP", detail="no snapshot"),
             "t6": CheckResult(status="PASS", detail="ok"),
@@ -114,23 +114,23 @@ class TestAggregateOverall:
 
 class TestSchemaAdditions:
     def test_hpc_ground_truth_has_comparison_mode(self):
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.schemas.task import HPCGroundTruth
         gt = HPCGroundTruth(comparison_mode="exact")
         assert gt.comparison_mode == "exact"
 
     def test_hpc_ground_truth_has_derivation_query(self):
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.schemas.task import HPCGroundTruth
         gt = HPCGroundTruth(derivation_query="slurm/jobs.json:job_state")
         assert gt.derivation_query == "slurm/jobs.json:job_state"
 
     def test_hpc_ground_truth_defaults_are_none(self):
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.schemas.task import HPCGroundTruth
         gt = HPCGroundTruth()
         assert gt.comparison_mode is None
         assert gt.derivation_query is None
 
     def test_hpc_task_spec_has_ground_truth_files_excluded(self):
-        from exabench.schemas.task import HPCGroundTruth, HPCTaskSpec
+        from aobench.schemas.task import HPCGroundTruth, HPCTaskSpec
         task = HPCTaskSpec(
             task_id="test_01",
             question="What?",
@@ -145,7 +145,7 @@ class TestSchemaAdditions:
         assert task.ground_truth_files_excluded == ["incidents/inc_001.json"]
 
     def test_hpc_task_spec_has_temporal_anchor(self):
-        from exabench.schemas.task import HPCTaskSpec
+        from aobench.schemas.task import HPCTaskSpec
         task = HPCTaskSpec(
             task_id="test_02",
             question="What happened last week?",
@@ -160,7 +160,7 @@ class TestSchemaAdditions:
         assert task.temporal_anchor == "snapshot_timestamp"
 
     def test_hpc_task_spec_defaults(self):
-        from exabench.schemas.task import HPCTaskSpec
+        from aobench.schemas.task import HPCTaskSpec
         task = HPCTaskSpec(
             task_id="test_03",
             question="Q?",
@@ -181,7 +181,7 @@ class TestSchemaAdditions:
 
 def _make_task(**kwargs) -> Any:
     """Create a minimal HPCTaskSpec for testing."""
-    from exabench.schemas.task import HPCTaskSpec
+    from aobench.schemas.task import HPCTaskSpec
     defaults = dict(
         task_id="t_test_01",
         question="What is the state of job 123?",
@@ -217,21 +217,21 @@ def _make_catalog_mock(tool_names: list[str], version: str = "1.0") -> MagicMock
 
 class TestT1ToolVersionPinning:
     def test_no_required_tools_is_skip(self):
-        from exabench.cli.validators.t1_tool_versions import check_tool_version_pinning
+        from aobench.cli.validators.t1_tool_versions import check_tool_version_pinning
         task = _make_task(required_tools=[])
         catalog = _make_catalog_mock([])
         result = check_tool_version_pinning(task, catalog)
         assert result.status == "SKIP"
 
     def test_all_tools_in_catalog_pass(self):
-        from exabench.cli.validators.t1_tool_versions import check_tool_version_pinning
+        from aobench.cli.validators.t1_tool_versions import check_tool_version_pinning
         task = _make_task(required_tools=["slurm_tool"])
         catalog = _make_catalog_mock(["slurm_tool"], version="2.0")
         result = check_tool_version_pinning(task, catalog)
         assert result.status == "PASS"
 
     def test_missing_tool_fails(self):
-        from exabench.cli.validators.t1_tool_versions import check_tool_version_pinning
+        from aobench.cli.validators.t1_tool_versions import check_tool_version_pinning
         task = _make_task(required_tools=["nonexistent_tool"])
         catalog = _make_catalog_mock(["slurm_tool"])
         result = check_tool_version_pinning(task, catalog)
@@ -239,7 +239,7 @@ class TestT1ToolVersionPinning:
         assert "nonexistent_tool" in result.detail
 
     def test_unknown_version_warns(self):
-        from exabench.cli.validators.t1_tool_versions import check_tool_version_pinning
+        from aobench.cli.validators.t1_tool_versions import check_tool_version_pinning
         task = _make_task(required_tools=["slurm_tool"])
         catalog = _make_catalog_mock(["slurm_tool"], version="unknown")
         result = check_tool_version_pinning(task, catalog)
@@ -252,14 +252,14 @@ class TestT1ToolVersionPinning:
 
 class TestT2ToolSetup:
     def test_missing_snapshot_is_skip(self, tmp_path):
-        from exabench.cli.validators.t2_tool_setup import check_tool_setup
+        from aobench.cli.validators.t2_tool_setup import check_tool_setup
         task = _make_task(required_tools=["slurm_tool"], snapshot_id="env_99")
         result = check_tool_setup(task, tmp_path)
         assert result.status == "SKIP"
         assert "not found" in result.detail
 
     def test_no_required_tools_is_skip(self, tmp_path):
-        from exabench.cli.validators.t2_tool_setup import check_tool_setup
+        from aobench.cli.validators.t2_tool_setup import check_tool_setup
         env_dir = tmp_path / "env_01"
         env_dir.mkdir()
         task = _make_task(required_tools=[], snapshot_id="env_01")
@@ -267,7 +267,7 @@ class TestT2ToolSetup:
         assert result.status == "SKIP"
 
     def test_snapshot_exists_with_data_dirs(self, tmp_path):
-        from exabench.cli.validators.t2_tool_setup import check_tool_setup
+        from aobench.cli.validators.t2_tool_setup import check_tool_setup
         env_dir = tmp_path / "env_01"
         (env_dir / "slurm").mkdir(parents=True)
         task = _make_task(required_tools=["slurm_tool"], snapshot_id="env_01")
@@ -282,13 +282,13 @@ class TestT2ToolSetup:
 
 class TestT3OracleSolvability:
     def test_missing_snapshot_is_skip(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
         task = _make_task(snapshot_id="env_99")
         result = check_oracle_solvability(task, tmp_path)
         assert result.status == "SKIP"
 
     def test_rubric_task_is_skip(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
         env_dir = tmp_path / "env_01"
         env_dir.mkdir()
         task = _make_task(scoring_mode="rubric", snapshot_id="env_01")
@@ -296,7 +296,7 @@ class TestT3OracleSolvability:
         assert result.status == "SKIP"
 
     def test_data_dirs_present_pass(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
         env_dir = tmp_path / "env_01"
         slurm_dir = env_dir / "slurm"
         slurm_dir.mkdir(parents=True)
@@ -306,7 +306,7 @@ class TestT3OracleSolvability:
         assert result.status == "PASS"
 
     def test_missing_data_dir_fails(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
         env_dir = tmp_path / "env_01"
         env_dir.mkdir()
         task = _make_task(data_type="job_ops", snapshot_id="env_01")
@@ -314,8 +314,8 @@ class TestT3OracleSolvability:
         assert result.status == "FAIL"
 
     def test_derivation_query_success(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         slurm_dir = env_dir / "slurm"
         slurm_dir.mkdir(parents=True)
@@ -334,8 +334,8 @@ class TestT3OracleSolvability:
         assert result.status == "PASS"
 
     def test_derivation_query_missing_file_fails(self, tmp_path):
-        from exabench.cli.validators.t3_oracle_solvability import check_oracle_solvability
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t3_oracle_solvability import check_oracle_solvability
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         env_dir.mkdir()
         gt = HPCGroundTruth(derivation_query="slurm/nonexistent.json:job_state")
@@ -354,19 +354,19 @@ class TestT3OracleSolvability:
 
 class TestT4ResidualState:
     def test_olap_task_passes(self):
-        from exabench.cli.validators.t4_residual_state import check_residual_state_policy
+        from aobench.cli.validators.t4_residual_state import check_residual_state_policy
         task = _make_task(workload_type="OLAP")
         result = check_residual_state_policy(task)
         assert result.status == "PASS"
 
     def test_oltp_task_warns(self):
-        from exabench.cli.validators.t4_residual_state import check_residual_state_policy
+        from aobench.cli.validators.t4_residual_state import check_residual_state_policy
         task = _make_task(workload_type="OLTP")
         result = check_residual_state_policy(task)
         assert result.status == "WARN"
 
     def test_oltp_write_task_warns(self):
-        from exabench.cli.validators.t4_residual_state import check_residual_state_policy
+        from aobench.cli.validators.t4_residual_state import check_residual_state_policy
         task = _make_task(task_id="write_job_123", workload_type="OLTP")
         result = check_residual_state_policy(task)
         assert result.status == "WARN"
@@ -378,23 +378,23 @@ class TestT4ResidualState:
 
 class TestT5GTIsolation:
     def test_no_gt_is_skip(self, tmp_path):
-        from exabench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
+        from aobench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
         task = _make_task(ground_truth=None)
         catalog = _make_catalog_mock([])
         result = check_ground_truth_isolation(task, catalog, tmp_path)
         assert result.status == "SKIP"
 
     def test_missing_snapshot_is_skip(self, tmp_path):
-        from exabench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
+        from aobench.schemas.task import HPCGroundTruth
         task = _make_task(snapshot_id="env_99", ground_truth=HPCGroundTruth(job_state="FAILED"))
         catalog = _make_catalog_mock([])
         result = check_ground_truth_isolation(task, catalog, tmp_path)
         assert result.status == "SKIP"
 
     def test_no_leakage_passes(self, tmp_path):
-        from exabench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t5_gt_isolation import check_ground_truth_isolation
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         docs_dir = env_dir / "docs"
         docs_dir.mkdir(parents=True)
@@ -412,33 +412,33 @@ class TestT5GTIsolation:
 
 class TestT6EnvFreeze:
     def test_no_live_calls_passes(self, tmp_path):
-        from exabench.cli.validators.t6_env_freeze import check_environment_freeze
+        from aobench.cli.validators.t6_env_freeze import check_environment_freeze
         # The actual tool source dir is scanned; this test just checks it runs
         result = check_environment_freeze(tmp_path)
         assert result.status in ("PASS", "FAIL", "SKIP")
 
     def test_detects_requests_get(self, tmp_path):
-        from exabench.cli.validators.t6_env_freeze import _scan_source
+        from aobench.cli.validators.t6_env_freeze import _scan_source
         source = 'response = requests.get("http://example.com/api")\n'
         violations = _scan_source(Path("fake_tool.py"), source)
         assert len(violations) == 1
         assert "requests.get" in violations[0]
 
     def test_detects_datetime_now(self, tmp_path):
-        from exabench.cli.validators.t6_env_freeze import _scan_source
+        from aobench.cli.validators.t6_env_freeze import _scan_source
         source = "now = datetime.now()\n"
         violations = _scan_source(Path("fake_tool.py"), source)
         assert len(violations) == 1
         assert "datetime.now()" in violations[0]
 
     def test_ignores_comment_lines(self, tmp_path):
-        from exabench.cli.validators.t6_env_freeze import _scan_source
+        from aobench.cli.validators.t6_env_freeze import _scan_source
         source = "# This would be requests.get(...) but it's a comment\n"
         violations = _scan_source(Path("fake_tool.py"), source)
         assert len(violations) == 0
 
     def test_clean_source_no_violations(self, tmp_path):
-        from exabench.cli.validators.t6_env_freeze import _scan_source
+        from aobench.cli.validators.t6_env_freeze import _scan_source
         source = (
             "import json\n"
             "from pathlib import Path\n"
@@ -455,20 +455,20 @@ class TestT6EnvFreeze:
 
 class TestT7GTCorrectness:
     def test_rubric_task_is_skip(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
         task = _make_task(scoring_mode="rubric")
         result = check_ground_truth_correctness(task, tmp_path)
         assert result.status == "SKIP"
 
     def test_no_gt_is_skip(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
         task = _make_task(ground_truth=None)
         result = check_ground_truth_correctness(task, tmp_path)
         assert result.status == "SKIP"
 
     def test_missing_snapshot_is_skip(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.schemas.task import HPCGroundTruth
         task = _make_task(
             snapshot_id="env_99",
             ground_truth=HPCGroundTruth(job_state="FAILED"),
@@ -477,8 +477,8 @@ class TestT7GTCorrectness:
         assert result.status == "SKIP"
 
     def test_no_derivation_query_warns(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         env_dir.mkdir()
         gt = HPCGroundTruth(job_state="FAILED")
@@ -487,8 +487,8 @@ class TestT7GTCorrectness:
         assert result.status == "WARN"
 
     def test_derivation_query_match_passes(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         (env_dir / "slurm").mkdir(parents=True)
         data = {"job_state": "FAILED"}
@@ -503,8 +503,8 @@ class TestT7GTCorrectness:
         assert result.status == "PASS"
 
     def test_derivation_query_mismatch_fails(self, tmp_path):
-        from exabench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t7_gt_correctness import check_ground_truth_correctness
+        from aobench.schemas.task import HPCGroundTruth
         env_dir = tmp_path / "env_01"
         (env_dir / "slurm").mkdir(parents=True)
         data = {"job_state": "COMPLETED"}  # GT says FAILED
@@ -525,8 +525,8 @@ class TestT7GTCorrectness:
 
 class TestT8Ambiguity:
     def test_deterministic_with_comparison_mode_passes(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.schemas.task import HPCGroundTruth
         gt = HPCGroundTruth(job_state="FAILED", comparison_mode="exact")
         task = _make_task(
             question="What is the state of job 123?",
@@ -537,8 +537,8 @@ class TestT8Ambiguity:
         assert result.status == "PASS"
 
     def test_deterministic_without_comparison_mode_warns(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.schemas.task import HPCGroundTruth
         gt = HPCGroundTruth(job_state="FAILED")  # no comparison_mode
         task = _make_task(
             question="What is the state of job 123?",
@@ -549,7 +549,7 @@ class TestT8Ambiguity:
         assert result.status == "WARN"
 
     def test_relative_time_without_anchor_warns(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
         task = _make_task(
             question="What jobs failed in the last 24 hours?",
             temporal_anchor=None,
@@ -558,7 +558,7 @@ class TestT8Ambiguity:
         assert result.status == "WARN"
 
     def test_relative_time_with_wrong_anchor_fails(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
         task = _make_task(
             question="What jobs failed recently?",
             temporal_anchor="system_clock",  # wrong value
@@ -567,7 +567,7 @@ class TestT8Ambiguity:
         assert result.status == "FAIL"
 
     def test_relative_time_with_correct_anchor_passes(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
         task = _make_task(
             question="What happened yesterday on node001?",
             temporal_anchor="snapshot_timestamp",
@@ -577,7 +577,7 @@ class TestT8Ambiguity:
         assert result.status in ("PASS", "WARN")
 
     def test_rubric_without_rubric_id_warns(self):
-        from exabench.cli.validators.t8_ambiguity import check_task_ambiguity
+        from aobench.cli.validators.t8_ambiguity import check_task_ambiguity
         task = _make_task(
             question="Explain the failure.",
             scoring_mode="rubric",
@@ -593,14 +593,14 @@ class TestT8Ambiguity:
 
 class TestT9Shortcuts:
     def test_small_corpus_is_skip(self):
-        from exabench.cli.validators.t9_shortcuts import check_shortcut_prevention
+        from aobench.cli.validators.t9_shortcuts import check_shortcut_prevention
         task = _make_task()
         result = check_shortcut_prevention(task, [task])
         assert result.status == "SKIP"
 
     def test_diverse_corpus_passes(self):
-        from exabench.cli.validators.t9_shortcuts import check_shortcut_prevention
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t9_shortcuts import check_shortcut_prevention
+        from aobench.schemas.task import HPCGroundTruth
         tasks = [
             _make_task(
                 task_id=f"task_{i:02d}",
@@ -612,8 +612,8 @@ class TestT9Shortcuts:
         assert result.status == "PASS"
 
     def test_dominant_value_fails(self):
-        from exabench.cli.validators.t9_shortcuts import check_shortcut_prevention
-        from exabench.schemas.task import HPCGroundTruth
+        from aobench.cli.validators.t9_shortcuts import check_shortcut_prevention
+        from aobench.schemas.task import HPCGroundTruth
         # All 10 tasks share the same job_id
         tasks = [
             _make_task(
@@ -633,7 +633,7 @@ class TestT9Shortcuts:
 
 class TestT10Reporting:
     def _make_results(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
         return [
             TaskValidityResult(
                 task_id="task_pass",
@@ -653,7 +653,7 @@ class TestT10Reporting:
         ]
 
     def test_generates_report_dict(self):
-        from exabench.cli.validators.t10_reporting import generate_validity_report
+        from aobench.cli.validators.t10_reporting import generate_validity_report
         results = self._make_results()
         report = generate_validity_report(results)
         assert report["summary"]["total_tasks"] == 3
@@ -662,14 +662,14 @@ class TestT10Reporting:
         assert report["summary"]["fail"] == 1
 
     def test_corpus_valid_false_when_failures(self):
-        from exabench.cli.validators.t10_reporting import generate_validity_report
+        from aobench.cli.validators.t10_reporting import generate_validity_report
         results = self._make_results()
         report = generate_validity_report(results, strict=False)
         assert report["corpus_valid"] is False
 
     def test_corpus_valid_true_when_only_warns(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
-        from exabench.cli.validators.t10_reporting import generate_validity_report
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.t10_reporting import generate_validity_report
         results = [
             TaskValidityResult(
                 task_id="task_warn",
@@ -681,8 +681,8 @@ class TestT10Reporting:
         assert report["corpus_valid"] is True
 
     def test_strict_mode_makes_warns_invalid(self):
-        from exabench.cli.validators.base import CheckResult, TaskValidityResult
-        from exabench.cli.validators.t10_reporting import generate_validity_report
+        from aobench.cli.validators.base import CheckResult, TaskValidityResult
+        from aobench.cli.validators.t10_reporting import generate_validity_report
         results = [
             TaskValidityResult(
                 task_id="task_warn",
@@ -694,7 +694,7 @@ class TestT10Reporting:
         assert report["corpus_valid"] is False
 
     def test_writes_json_to_file(self, tmp_path):
-        from exabench.cli.validators.t10_reporting import generate_validity_report
+        from aobench.cli.validators.t10_reporting import generate_validity_report
         results = self._make_results()
         out_path = tmp_path / "report.json"
         generate_validity_report(results, output_path=out_path)
@@ -703,7 +703,7 @@ class TestT10Reporting:
         assert "summary" in data
 
     def test_text_format(self):
-        from exabench.cli.validators.t10_reporting import format_text_report, generate_validity_report
+        from aobench.cli.validators.t10_reporting import format_text_report, generate_validity_report
         results = self._make_results()
         report = generate_validity_report(results)
         text = format_text_report(report)
@@ -712,7 +712,7 @@ class TestT10Reporting:
         assert "task_fail" in text
 
     def test_csv_format(self):
-        from exabench.cli.validators.t10_reporting import format_csv_report, generate_validity_report
+        from aobench.cli.validators.t10_reporting import format_csv_report, generate_validity_report
         results = self._make_results()
         report = generate_validity_report(results)
         csv_text = format_csv_report(report)
@@ -727,7 +727,7 @@ class TestT10Reporting:
 
 class TestValidateTasksCLI:
     def test_missing_task_file_returns_error(self, tmp_path):
-        from exabench.cli.validate_tasks import main
+        from aobench.cli.validate_tasks import main
         ret = main([
             "--task-file", str(tmp_path / "nonexistent.json"),
         ])
@@ -739,7 +739,7 @@ class TestValidateTasksCLI:
         if not task_file.exists():
             pytest.skip("task_set_v1.json not found")
 
-        from exabench.cli.validate_tasks import main
+        from aobench.cli.validate_tasks import main
         # Run only T4 and T8 (pure schema checks, no I/O)
         ret = main([
             "--task-file", str(task_file),
@@ -752,7 +752,7 @@ class TestValidateTasksCLI:
 
 class TestAuditScorersCLI:
     def test_missing_task_file_returns_error(self, tmp_path):
-        from exabench.cli.audit_scorers import main
+        from aobench.cli.audit_scorers import main
         ret = main([
             "--task-file", str(tmp_path / "nonexistent.json"),
         ])
@@ -764,7 +764,7 @@ class TestAuditScorersCLI:
         if not task_file.exists():
             pytest.skip("task_set_v1.json not found")
 
-        from exabench.cli.audit_scorers import main
+        from aobench.cli.audit_scorers import main
         # Run only O.b (negation check — no YAML file needed)
         ret = main([
             "--task-file", str(task_file),
@@ -774,7 +774,7 @@ class TestAuditScorersCLI:
         assert ret in (0, 1)
 
     def test_invalid_check_name_defaults_to_all(self, tmp_path):
-        from exabench.cli.audit_scorers import _resolve_checks
+        from aobench.cli.audit_scorers import _resolve_checks
         result = _resolve_checks("invalid_check")
         assert result == ["oa", "ob", "oc"]  # fallback to all
 
@@ -785,34 +785,34 @@ class TestAuditScorersCLI:
 
 class TestAuditScorerHelpers:
     def test_normalise(self):
-        from exabench.cli.audit_scorers import _normalise
+        from aobench.cli.audit_scorers import _normalise
         assert _normalise("  FAILED  ") == "failed"
         assert _normalise("512 GB") == "512 gb"
 
     def test_negate_slurm_states(self):
-        from exabench.cli.audit_scorers import _negate_value
+        from aobench.cli.audit_scorers import _negate_value
         assert _negate_value("FAILED") == "COMPLETED"
         assert _negate_value("COMPLETED") == "FAILED"
         assert _negate_value("RUNNING") == "PENDING"
 
     def test_negate_numeric(self):
-        from exabench.cli.audit_scorers import _negate_value
+        from aobench.cli.audit_scorers import _negate_value
         result = _negate_value("42")
         assert result == "43"
 
     def test_simple_match_score(self):
-        from exabench.cli.audit_scorers import _simple_match_score
+        from aobench.cli.audit_scorers import _simple_match_score
         assert _simple_match_score("FAILED", "FAILED") == 1.0
         assert _simple_match_score("COMPLETED", "FAILED") == 0.0
 
     def test_deterministic_score_exact(self):
-        from exabench.cli.audit_scorers import _deterministic_score
+        from aobench.cli.audit_scorers import _deterministic_score
         gt = {"job_state": "FAILED", "exit_code": "137"}
         pred = {"job_state": "FAILED", "exit_code": "137"}
         assert _deterministic_score(pred, gt) == 1.0
 
     def test_deterministic_score_partial(self):
-        from exabench.cli.audit_scorers import _deterministic_score
+        from aobench.cli.audit_scorers import _deterministic_score
         gt = {"job_state": "FAILED", "exit_code": "137"}
         pred = {"job_state": "FAILED", "exit_code": "1"}  # exit code wrong
         score = _deterministic_score(pred, gt)

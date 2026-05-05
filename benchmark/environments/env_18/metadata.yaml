@@ -1,5 +1,5 @@
 bundle_root: environments/env_18
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: User 'alice' resubmitted a long-running simulation with checkpoint/restart.
   The job failed immediately with exit code 1 because the checkpoint file path referenced
   in the job script no longer exists (scratch purge). User must identify the root

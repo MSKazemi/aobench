@@ -1,4 +1,4 @@
-# Data Management Policy — ExaBench Cluster A
+# Data Management Policy — AOBench Cluster A
 
 ## 1. Scratch Space Retention
 Scratch filesystem (`/lustre/scratch`) has a **90-day retention window** for files not accessed within that period. Files exceeding quota grace periods (5 days) are subject to automatic archival to cold storage.

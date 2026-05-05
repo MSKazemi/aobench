@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from exabench.cli.compare_cmd import filter_tasks
+from aobench.cli.compare_cmd import filter_tasks
 
 
 def make_task_row(task_id, role, score, hard_fail=False):
@@ -160,7 +160,7 @@ def _make_run_dir(tmp_path, run_id, tasks):
 
 def test_output_json_schema(tmp_path):
     from typer.testing import CliRunner
-    from exabench.cli.main import app
+    from aobench.cli.main import app
 
     tasks_a = [
         {"task_id": "JOB_ADM_001", "role": "sysadmin", "score": 0.5, "hard_fail": False},
@@ -191,7 +191,7 @@ def test_output_json_schema(tmp_path):
 
 def test_label_override_in_json(tmp_path):
     from typer.testing import CliRunner
-    from exabench.cli.main import app
+    from aobench.cli.main import app
 
     tasks = [{"task_id": "JOB_ADM_001", "role": "sysadmin", "score": 0.5}]
     run_dir_a = _make_run_dir(tmp_path, "run_a", tasks)

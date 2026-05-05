@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate synthetic rubric-validation response files for ExaBench.
+"""Generate synthetic rubric-validation response files for AOBench.
 
 Creates 50 JSON response files in data/rubric_validation/responses/ with
 realistic HPC content spanning three rubric templates and three quality tiers.

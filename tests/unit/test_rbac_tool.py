@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from exabench.tools.rbac_tool import MockRBACTool
+from aobench.tools.rbac_tool import MockRBACTool
 
 ENV_ROOT = str(Path(__file__).parent.parent / "data" / "environments" / "test_env_01")
 

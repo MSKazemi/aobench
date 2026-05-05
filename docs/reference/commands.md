@@ -1,24 +1,24 @@
-# ExaBench Command Reference
+# AOBench Command Reference
 
-Reference for all ExaBench CLI commands and Makefile targets.
+Reference for all AOBench CLI commands and Makefile targets.
 
 ## Quick Reference
 
 | Command | Description |
 |---------|-------------|
-| `exabench validate benchmark` | Validate all task specs and environment bundles |
-| `exabench run task` | Run a single benchmark task against an environment |
-| `exabench run all` | Run all benchmark tasks (one run dir, one trace per task) |
-| `exabench report json` | Write a JSON summary of all results in a run directory |
-| `exabench report html` | Write a self-contained HTML benchmark report |
-| `exabench report slices` | Print a role × category score table for a run |
-| `exabench compare runs` | Diff two run directories — show score deltas and regressions |
-| `exabench robustness task` | Run a task N times and report score variance (robustness score) |
-| `exabench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
-| `exabench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
-| `exabench lite select` | Run 3-stage ExaBench-Lite selection and write `benchmark/tasks/lite_manifest_v1.json` |
-| `exabench validate tasks` | Run T1–T10 validity checks with a human-readable pass/fail summary table |
-| `exabench validate snapshots` | Run F1–F7 fidelity validators on all `env_*/` bundles; write `data/fidelity/` |
+| `aobench validate benchmark` | Validate all task specs and environment bundles |
+| `aobench run task` | Run a single benchmark task against an environment |
+| `aobench run all` | Run all benchmark tasks (one run dir, one trace per task) |
+| `aobench report json` | Write a JSON summary of all results in a run directory |
+| `aobench report html` | Write a self-contained HTML benchmark report |
+| `aobench report slices` | Print a role × category score table for a run |
+| `aobench compare runs` | Diff two run directories — show score deltas and regressions |
+| `aobench robustness task` | Run a task N times and report score variance (robustness score) |
+| `aobench robustness all` | Run ALL tasks N times each and report suite-level pass^k |
+| `aobench clear run` | Compute CLEAR (Cost/Latency/Efficacy/Assurance/Reliability) scorecard |
+| `aobench lite select` | Run 3-stage AOBench-Lite selection and write `benchmark/tasks/lite_manifest_v1.json` |
+| `aobench validate tasks` | Run T1–T10 validity checks with a human-readable pass/fail summary table |
+| `aobench validate snapshots` | Run F1–F7 fidelity validators on all `env_*/` bundles; write `data/fidelity/` |
 | `make lite-select` | Run Lite selection pipeline (Stages 1–3) and write the Lite manifest |
 | `make generate-tool-docs` | Write `hpc_tools_guide.md` into all env `docs/` dirs from `hpc_tool_catalog.yaml` |
 | `make validate-tasks` | Run T1–T10 task validity checks on `benchmark/tasks/task_set_v1.json` |
@@ -31,9 +31,9 @@ Reference for all ExaBench CLI commands and Makefile targets.
 | `make create-task-stubs` | Create minimal stub evidence files for oracle-check failures |
 | `make leaderboard LEADERBOARD_RESULTS=<dir>` | Build CLEAR leaderboard from `<dir>/<model>/*.json` result files |
 | `make check-validity-gates` | Run V0–V6 pre-publication validity gates and write `data/reports/validity_gates.json` (V0 = fidelity precondition, warning-only in v0.2) |
-| `exabench validate authoring` | Run oracle_check and independence_check on all tasks |
-| `python -m exabench.cli.validate_tasks` | Run T1–T10 ABC validity checklist against the task corpus |
-| `python -m exabench.cli.audit_scorers` | Run O.a–O.c outcome validity audit against the scorer |
+| `aobench validate authoring` | Run oracle_check and independence_check on all tasks |
+| `python -m aobench.cli.validate_tasks` | Run T1–T10 ABC validity checklist against the task corpus |
+| `python -m aobench.cli.audit_scorers` | Run O.a–O.c outcome validity audit against the scorer |
 | `make rubric-generate-responses` | Generate 50 synthetic HPC validation responses in `data/rubric_validation/responses/` |
 | `make rubric-compute-icc` | Compute ICC(A,1) from annotation CSV (Gate R1) |
 | `make rubric-compute-krippendorff` | Compute Krippendorff α per rubric dimension (Gate R2) |
@@ -51,7 +51,7 @@ Reference for all ExaBench CLI commands and Makefile targets.
 ### Main
 
 ```bash
-exabench [OPTIONS] COMMAND [ARGS]...
+aobench [OPTIONS] COMMAND [ARGS]...
 ```
 
 **Options:**
@@ -69,7 +69,7 @@ exabench [OPTIONS] COMMAND [ARGS]...
 Validate benchmark data.
 
 ```bash
-exabench validate [OPTIONS] COMMAND [ARGS]...
+aobench validate [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### validate benchmark
@@ -77,7 +77,7 @@ exabench validate [OPTIONS] COMMAND [ARGS]...
 Validate all task specs and environment bundles under a benchmark root.
 
 ```bash
-exabench validate benchmark [OPTIONS]
+aobench validate benchmark [OPTIONS]
 ```
 
 | Option | Default | Description |
@@ -88,8 +88,8 @@ exabench validate benchmark [OPTIONS]
 **Example:**
 
 ```bash
-exabench validate benchmark
-exabench validate benchmark --benchmark /path/to/my-benchmark
+aobench validate benchmark
+aobench validate benchmark --benchmark /path/to/my-benchmark
 ```
 
 #### validate snapshots
@@ -99,7 +99,7 @@ Run F1–F7 fidelity validators on all `env_*/` snapshot bundles under
 aggregate `REPORT.md` + `index.json` to the output directory.
 
 ```bash
-exabench validate snapshots [OPTIONS]
+aobench validate snapshots [OPTIONS]
 ```
 
 | Option | Default | Description |
@@ -119,8 +119,8 @@ exabench validate snapshots [OPTIONS]
 **Example:**
 
 ```bash
-exabench validate snapshots
-exabench validate snapshots --environments benchmark/environments --output data/fidelity
+aobench validate snapshots
+aobench validate snapshots --environments benchmark/environments --output data/fidelity
 make validate-snapshots
 ```
 
@@ -143,7 +143,7 @@ make validate-snapshots
 Run the full T1–T10 ABC validity checklist against the HPC task corpus.
 
 ```bash
-python -m exabench.cli.validate_tasks [OPTIONS] [TASK_IDS...]
+python -m aobench.cli.validate_tasks [OPTIONS] [TASK_IDS...]
 ```
 
 | Option | Default | Description |
@@ -163,13 +163,13 @@ python -m exabench.cli.validate_tasks [OPTIONS] [TASK_IDS...]
 
 ```bash
 # Validate all tasks, all checks
-python -m exabench.cli.validate_tasks
+python -m aobench.cli.validate_tasks
 
 # Only run version and setup checks
-python -m exabench.cli.validate_tasks --checks t1,t2
+python -m aobench.cli.validate_tasks --checks t1,t2
 
 # Validate specific tasks, human-readable output
-python -m exabench.cli.validate_tasks job_ops_01 job_ops_02 --format text
+python -m aobench.cli.validate_tasks job_ops_01 job_ops_02 --format text
 
 # Write validity report for release gate
 make validity-report
@@ -180,10 +180,10 @@ make validity-report
 
 ### audit_scorers (standalone script)
 
-Run O.a–O.c outcome validity checks against the ExaBench scorer.
+Run O.a–O.c outcome validity checks against the AOBench scorer.
 
 ```bash
-python -m exabench.cli.audit_scorers [OPTIONS]
+python -m aobench.cli.audit_scorers [OPTIONS]
 ```
 
 | Option | Default | Description |
@@ -201,13 +201,13 @@ python -m exabench.cli.audit_scorers [OPTIONS]
 
 ```bash
 # Run all checks
-python -m exabench.cli.audit_scorers
+python -m aobench.cli.audit_scorers
 
 # String-matching audit only
-python -m exabench.cli.audit_scorers --check oa
+python -m aobench.cli.audit_scorers --check oa
 
 # Rigorous self-consistency test
-python -m exabench.cli.audit_scorers --check oc --n-repeats 10
+python -m aobench.cli.audit_scorers --check oc --n-repeats 10
 
 # Write scorer audit report for release gate
 make audit-scorers
@@ -221,7 +221,7 @@ make audit-scorers
 Run benchmark tasks.
 
 ```bash
-exabench run [OPTIONS] COMMAND [ARGS]...
+aobench run [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### run task
@@ -229,7 +229,7 @@ exabench run [OPTIONS] COMMAND [ARGS]...
 Run a single benchmark task against an environment.
 
 ```bash
-exabench run task [OPTIONS]
+aobench run task [OPTIONS]
 ```
 
 | Option | Short | Default | Description |
@@ -276,34 +276,34 @@ exabench run task [OPTIONS]
 
 ```bash
 # Run with direct_qa adapter (default)
-exabench run task --task JOB_USR_001 --env env_01
+aobench run task --task JOB_USR_001 --env env_01
 
 # Run with OpenAI
-exabench run task -t JOB_USR_001 -e env_01 -a openai:gpt-4o
+aobench run task -t JOB_USR_001 -e env_01 -a openai:gpt-4o
 
 # Run with Anthropic Claude
-exabench run task -t JOB_USR_001 -e env_01 -a anthropic:claude-sonnet-4-6
+aobench run task -t JOB_USR_001 -e env_01 -a anthropic:claude-sonnet-4-6
 
 # Run via a local MCP server subprocess
-exabench run task -t JOB_USR_001 -e env_01 -a "mcp:stdio:python my_agent.py"
+aobench run task -t JOB_USR_001 -e env_01 -a "mcp:stdio:python my_agent.py"
 
 # Run via a remote MCP server (SSE)
-exabench run task -t JOB_USR_001 -e env_01 -a "mcp:sse:http://localhost:8000/sse"
+aobench run task -t JOB_USR_001 -e env_01 -a "mcp:sse:http://localhost:8000/sse"
 
 # Custom benchmark path and output
-exabench run task -t JOB_USR_001 -e env_01 -o results/
+aobench run task -t JOB_USR_001 -e env_01 -o results/
 
 # Skip report generation
-exabench run task -t JOB_USR_001 -e env_01 --no-report
+aobench run task -t JOB_USR_001 -e env_01 --no-report
 
 # Enable DEBUG logging
-exabench run task -t JOB_USR_001 -e env_01 --verbose
+aobench run task -t JOB_USR_001 -e env_01 --verbose
 
 # Export to Langfuse (requires LANGFUSE_PUBLIC_KEY + LANGFUSE_SECRET_KEY)
-exabench run task -t JOB_USR_001 -e env_01 --langfuse
+aobench run task -t JOB_USR_001 -e env_01 --langfuse
 
 # Export to self-hosted Langfuse
-LANGFUSE_HOST=http://localhost:3000 exabench run task -t JOB_USR_001 -e env_01 --langfuse
+LANGFUSE_HOST=http://localhost:3000 aobench run task -t JOB_USR_001 -e env_01 --langfuse
 ```
 
 #### run all
@@ -311,7 +311,7 @@ LANGFUSE_HOST=http://localhost:3000 exabench run task -t JOB_USR_001 -e env_01 -
 Run all benchmark tasks. Uses each task's `environment_id` from its spec. Creates one run directory with a trace and result file for every task. Displays a `rich` progress bar showing the current task ID, overall progress %, elapsed time, and last score.
 
 ```bash
-exabench run all [OPTIONS]
+aobench run all [OPTIONS]
 ```
 
 | Option | Short | Default | Description |
@@ -342,13 +342,13 @@ exabench run all [OPTIONS]
 **Examples:**
 
 ```bash
-exabench run all
-exabench run all --adapter openai:gpt-4o
-exabench run all --adapter anthropic:claude-sonnet-4-6 --split lite
-exabench run all --adapter openai:gpt-4o --split dev
-exabench run all -o my_runs/
-exabench run all --no-report   # skip report generation
-exabench run all --adapter openai:gpt-4o --langfuse   # export all traces to Langfuse
+aobench run all
+aobench run all --adapter openai:gpt-4o
+aobench run all --adapter anthropic:claude-sonnet-4-6 --split lite
+aobench run all --adapter openai:gpt-4o --split dev
+aobench run all -o my_runs/
+aobench run all --no-report   # skip report generation
+aobench run all --adapter openai:gpt-4o --langfuse   # export all traces to Langfuse
 ```
 
 ---
@@ -358,7 +358,7 @@ exabench run all --adapter openai:gpt-4o --langfuse   # export all traces to Lan
 Generate reports from a completed benchmark run directory.
 
 ```bash
-exabench report [OPTIONS] COMMAND [ARGS]...
+aobench report [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### report json
@@ -366,7 +366,7 @@ exabench report [OPTIONS] COMMAND [ARGS]...
 Write a JSON summary of all results in a run directory.
 
 ```bash
-exabench report json [OPTIONS] RUN_DIR
+aobench report json [OPTIONS] RUN_DIR
 ```
 
 | Argument / Option | Short | Default | Description |
@@ -404,8 +404,8 @@ Full category definitions and detection heuristics: `benchmark/configs/error_tax
 **Example:**
 
 ```bash
-exabench report json data/runs/run_20260318_135249_14013e8c
-exabench report json data/runs/run_20260318_135249_14013e8c -o reports/summary.json
+aobench report json data/runs/run_20260318_135249_14013e8c
+aobench report json data/runs/run_20260318_135249_14013e8c -o reports/summary.json
 ```
 
 #### report slices
@@ -413,7 +413,7 @@ exabench report json data/runs/run_20260318_135249_14013e8c -o reports/summary.j
 Print a role × category score table to stdout.
 
 ```bash
-exabench report slices [OPTIONS] RUN_DIR
+aobench report slices [OPTIONS] RUN_DIR
 ```
 
 | Argument  | Description                                      |
@@ -423,7 +423,7 @@ exabench report slices [OPTIONS] RUN_DIR
 **Example:**
 
 ```bash
-exabench report slices data/runs/run_20260318_135249_14013e8c
+aobench report slices data/runs/run_20260318_135249_14013e8c
 ```
 
 **Output:**
@@ -443,13 +443,13 @@ sysadmin                         -   0.610 (n=1)   0.620 (n=3)
 Write a self-contained HTML report for a run directory.
 
 ```bash
-exabench report html RUN_DIR
+aobench report html RUN_DIR
 ```
 
 **Example:**
 
 ```bash
-exabench report html data/runs/run_20260318_143040_6a47e0f0
+aobench report html data/runs/run_20260318_143040_6a47e0f0
 # Output: data/runs/run_20260318_143040_6a47e0f0/report.html
 ```
 
@@ -460,7 +460,7 @@ exabench report html data/runs/run_20260318_143040_6a47e0f0
 Compare two benchmark run directories.
 
 ```bash
-exabench compare [OPTIONS] COMMAND [ARGS]...
+aobench compare [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### compare runs
@@ -468,7 +468,7 @@ exabench compare [OPTIONS] COMMAND [ARGS]...
 Show score deltas between two runs (run_b minus run_a). Positive delta = improvement.
 
 ```bash
-exabench compare runs [OPTIONS] RUN_A RUN_B
+aobench compare runs [OPTIONS] RUN_A RUN_B
 ```
 
 | Argument | Description |
@@ -480,7 +480,7 @@ exabench compare runs [OPTIONS] RUN_A RUN_B
 **Example:**
 
 ```bash
-exabench compare runs data/runs/run_20260318_130835_abc data/runs/run_20260318_143040_def
+aobench compare runs data/runs/run_20260318_130835_abc data/runs/run_20260318_143040_def
 ```
 
 **Output:**
@@ -505,7 +505,7 @@ Improved: 1  Regressed: 0  Unchanged: 9
 Measure score consistency across repeated runs.
 
 ```bash
-exabench robustness [OPTIONS] COMMAND [ARGS]...
+aobench robustness [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### robustness task
@@ -513,7 +513,7 @@ exabench robustness [OPTIONS] COMMAND [ARGS]...
 Run a task N times with the same adapter and report score variance.
 
 ```bash
-exabench robustness task [OPTIONS]
+aobench robustness task [OPTIONS]
 ```
 
 | Option | Short | Default | Description |
@@ -531,7 +531,7 @@ exabench robustness task [OPTIONS]
 **Example:**
 
 ```bash
-exabench robustness task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o --n 8
+aobench robustness task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o --n 8
 ```
 
 **Output:**
@@ -565,7 +565,7 @@ Robustness   : 0.9876  (1 − σ)
 Run ALL benchmark tasks N times each and produce a suite-level pass^k report.
 
 ```bash
-exabench robustness all [OPTIONS]
+aobench robustness all [OPTIONS]
 ```
 
 | Option | Short | Default | Description |
@@ -582,10 +582,10 @@ exabench robustness all [OPTIONS]
 
 ```bash
 # Quick smoke-test on dev split (4 runs each)
-exabench robustness all --adapter direct_qa --n 4 --split dev
+aobench robustness all --adapter direct_qa --n 4 --split dev
 
 # Full reliability run for the paper (all 30 tasks × 8 runs)
-exabench robustness all --adapter openai:gpt-4o --n 8
+aobench robustness all --adapter openai:gpt-4o --n 8
 ```
 
 **Output:** A suite summary printed to stdout and written to `data/runs/robustness_suite.json` (or `--output`). Includes per-task pass^k, mean pass^k across all tasks, total cost, and mean latency.
@@ -594,11 +594,11 @@ exabench robustness all --adapter openai:gpt-4o --n 8
 
 ### lite
 
-ExaBench-Lite subset selection commands. Implements the 3-stage pipeline from `task_lite_spec.md`:
+AOBench-Lite subset selection commands. Implements the 3-stage pipeline from `task_lite_spec.md`:
 Stage 1 (T1–T10 gate + split exclusion) → Stage 2 (attribute filter) → Stage 3 (execution filter).
 
 ```bash
-exabench lite [OPTIONS] COMMAND [ARGS]...
+aobench lite [OPTIONS] COMMAND [ARGS]...
 ```
 
 #### lite select
@@ -606,7 +606,7 @@ exabench lite [OPTIONS] COMMAND [ARGS]...
 Run the full 3-stage Lite selection pipeline and write `benchmark/tasks/lite_manifest_v1.json`.
 
 ```bash
-exabench lite select [OPTIONS]
+aobench lite select [OPTIONS]
 ```
 
 | Option | Default | Description |
@@ -623,13 +623,13 @@ exabench lite select [OPTIONS]
 
 ```bash
 # Stage 1+2 only (Stage 3 pending — no pilot scores yet)
-exabench lite select
+aobench lite select
 
 # Full 3-stage with pilot scores
-exabench lite select --pilot-scores data/runs/v01_dev_gpt4o_mini/run_summary.json
+aobench lite select --pilot-scores data/runs/v01_dev_gpt4o_mini/run_summary.json
 
 # Custom paths
-exabench lite select \
+aobench lite select \
   --task-dir benchmark/tasks/specs \
   --pilot-scores data/pilot_scores.json \
   --output benchmark/tasks/lite_manifest_v2.json
@@ -651,7 +651,7 @@ Compute the CLEAR multi-dimensional scorecard (Mehta 2025, arXiv:2511.14136) acr
 CLEAR = **C**ost · **L**atency · **E**fficacy · **A**ssurance · **R**eliability
 
 ```bash
-exabench clear run [OPTIONS]
+aobench clear run [OPTIONS]
 ```
 
 | Option | Short | Default | Description |
@@ -664,7 +664,7 @@ exabench clear run [OPTIONS]
 
 **CLEAR dimensions:**
 
-| Symbol | Dimension | ExaBench field | Notes |
+| Symbol | Dimension | AOBench field | Notes |
 |--------|-----------|----------------|-------|
 | C | Cost | `cost_estimate_usd` | Min-max normalised across models; lower=better |
 | L | Latency | `latency_seconds` | Min-max normalised across models; lower=better |
@@ -708,21 +708,21 @@ exabench clear run [OPTIONS]
 
 ```bash
 # Step 1: single full run
-exabench run all --adapter openai:gpt-4o
+aobench run all --adapter openai:gpt-4o
 
 # Step 2: robustness run (for pass^8 reliability)
-exabench robustness all --adapter openai:gpt-4o --n 8 \
+aobench robustness all --adapter openai:gpt-4o --n 8 \
     --output data/robustness_gpt4o.json
 
 # Step 3: CLEAR scorecard
-exabench clear run \
+aobench clear run \
     --run-dir data/runs/run_20260319_<id>/ \
     --robustness-json data/robustness_gpt4o.json \
     --reliability-k 8 \
     --output data/clear_report.json
 
 # Multi-model comparison (two run dirs, no robustness — uses pass^1)
-exabench clear run \
+aobench clear run \
     --run-dir data/runs/run_gpt4o/ \
     --run-dir data/runs/run_claude/ \
     --output data/clear_report_comparison.json
@@ -763,8 +763,8 @@ CLEAR report written: data/clear_report.json
 ### Python API
 
 ```python
-from exabench.tasks.task_loader import load_hpc_task_set, load_hpc_task
-from exabench.tasks.context_builder import HPCContextBuilder
+from aobench.tasks.task_loader import load_hpc_task_set, load_hpc_task
+from aobench.tasks.context_builder import HPCContextBuilder
 
 # Load all 36 tasks
 tasks = load_hpc_task_set("benchmark/tasks/task_set_v1.json")
@@ -808,7 +808,7 @@ Query guidelines live in `benchmark/tasks/guidelines/` — one file per data typ
 
 ## Scoring Dimensions
 
-ExaBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
+AOBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
 for full definitions.  Quick reference:
 
 | Dimension | What it measures | Scorer |
@@ -886,7 +886,7 @@ Docker Compose config lives at `docker/langfuse/docker-compose.yml` — no exter
 
 | Target | Description |
 |--------|-------------|
-| `make validate` | Validate all benchmark data (equivalent to `exabench validate benchmark`) |
+| `make validate` | Validate all benchmark data (equivalent to `aobench validate benchmark`) |
 | `make run` | Run a single task (overridable: `TASK=`, `ENV=`, `ADAPTER=`) |
 | `make run-alpha0` | Run Alpha-0 slice: JOB_USR_001 + env_01 + direct_qa |
 | `make run-openai` | Run a task with OpenAI adapter (overridable: `TASK=`, `ENV=`, `MODEL=`) |
@@ -946,9 +946,9 @@ make run-all-anthropic MODEL=claude-sonnet-4-6
 |------------------|-------------|
 | `make leaderboard LEADERBOARD_RESULTS=<dir>` | Build CLEAR leaderboard from per-model result folders |
 | `make leaderboard-serve` | Start the leaderboard HTTP API (requires `fastapi` + `uvicorn`: `uv add fastapi uvicorn`) |
-| `exabench leaderboard build RESULTS_DIR` | Build and export leaderboard tables (JSON + CSV + heatmap) |
+| `aobench leaderboard build RESULTS_DIR` | Build and export leaderboard tables (JSON + CSV + heatmap) |
 
-**`exabench leaderboard build` options:**
+**`aobench leaderboard build` options:**
 
 | Option | Default | Description |
 |--------|---------|-------------|

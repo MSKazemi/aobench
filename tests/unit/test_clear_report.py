@@ -1,4 +1,4 @@
-"""Unit tests for CLEAR metrics in exabench.reports.clear_report."""
+"""Unit tests for CLEAR metrics in aobench.reports.clear_report."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from exabench.reports.clear_report import (
+from aobench.reports.clear_report import (
     build_clear_report,
     compute_assurance_rate,
     compute_cna,
@@ -14,7 +14,7 @@ from exabench.reports.clear_report import (
     compute_clear_scores,
     normalise_min_max,
 )
-from exabench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.schemas.result import BenchmarkResult, DimensionScores
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────

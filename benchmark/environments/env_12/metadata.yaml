@@ -1,5 +1,5 @@
 bundle_root: environments/env_12
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: Account 'ml-lab' has been monopolizing the cluster for 72 hours, consuming
   85% of CPU-hours. Account 'bio-lab' has 12 jobs waiting over 48 hours each due to
   fairshare starvation. Sysadmin must intervene to restore scheduling fairness.

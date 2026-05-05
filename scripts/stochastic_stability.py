@@ -12,7 +12,7 @@ Usage:
         --runs 8 \\
         --output data/rubric_validation/stochastic_stability.csv
 
-The judge is called via the exabench RubricScorer interface.  Set
+The judge is called via the aobench RubricScorer interface.  Set
 JUDGE_API_KEY / JUDGE_PROVIDER env vars before running.
 
 Gate thresholds (spec §4 Gate R3):
@@ -65,7 +65,7 @@ def load_response(responses_dir: Path, response_id: str) -> dict:
 def call_judge(response: dict, judge_model: str) -> float:
     """Call the rubric judge and return the normalized total score [0, 1].
 
-    This integrates with the ExaBench RubricScorer.  When EXABENCH_DRY_RUN=1
+    This integrates with the AOBench RubricScorer.  When EXABENCH_DRY_RUN=1
     is set, returns a synthetic score for testing.
     """
     if os.environ.get("EXABENCH_DRY_RUN") == "1":
@@ -80,10 +80,10 @@ def call_judge(response: dict, judge_model: str) -> float:
         return round(min(1.0, max(0.0, base + rng.uniform(-0.12, 0.12))), 4)
 
     try:
-        from exabench.scoring.rubric_scorer import RubricScorer  # type: ignore[import]
+        from aobench.scoring.rubric_scorer import RubricScorer  # type: ignore[import]
     except ImportError:
         sys.exit(
-            "Cannot import exabench.scoring.rubric_scorer. "
+            "Cannot import aobench.scoring.rubric_scorer. "
             "Run from the project root with 'uv run' or set EXABENCH_DRY_RUN=1 for a dry run."
         )
 

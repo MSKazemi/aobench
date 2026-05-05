@@ -1,6 +1,6 @@
 # Environment Bundles — Overview
 
-ExaBench ships **26 deterministic HPC environment snapshot bundles**
+AOBench ships **26 deterministic HPC environment snapshot bundles**
 under `benchmark/environments/env_01/` … `env_26/`. Each bundle freezes a
 realistic operational scenario — a job failure, a queue-congestion event, a
 cooling unit fault, a policy violation, a multi-job interference incident,
@@ -103,8 +103,8 @@ cat benchmark/environments/env_05/manifest.txt
 
 ## Validating a bundle
 
-`exabench validate benchmark` runs `validate_bundle()` from
-`src/exabench/environment/snapshot_validator.py` over every bundle. It
+`aobench validate benchmark` runs `validate_bundle()` from
+`src/aobench/environment/snapshot_validator.py` over every bundle. It
 checks JSON-schema conformance for `slurm_state.json`,
 `incident_metadata.json`, and `rbac_policy.yaml`, plus the parquet column
 schema for `telemetry/*.parquet`.

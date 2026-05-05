@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from exabench.environment.fidelity_validators import (
+from aobench.environment.fidelity_validators import (
     ValidatorResult,
     validate_f1_job_duration,
     validate_f2_job_size,
@@ -19,7 +19,7 @@ from exabench.environment.fidelity_validators import (
     validate_f6_rbac,
     validate_f7_tool_catalog,
 )
-from exabench.environment.fidelity_report import FidelityReport
+from aobench.environment.fidelity_report import FidelityReport
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 """check_validity_gates.py — Run validity gates V0–V6 before committing paper results.
 
 Input:
-  - data/fidelity/index.json     (written by 'exabench validate snapshots')
+  - data/fidelity/index.json     (written by 'aobench validate snapshots')
   - data/runs/v02_dev/           (model run directories)
   - data/robustness/v02/         (robustness files, optional)
 
@@ -13,7 +13,7 @@ Usage:
 
 Notes:
     V0 is a fidelity precondition — its failure emits a warning but does not
-    block V1–V6 in v0.2.  Run 'exabench validate snapshots' first to populate
+    block V1–V6 in v0.2.  Run 'aobench validate snapshots' first to populate
     data/fidelity/index.json.
 """
 
@@ -145,7 +145,7 @@ def gate_v0(fidelity_index_path: Path) -> dict:
     """V0: All referenced environment snapshots must have a passing fidelity report.
 
     This is a precondition gate.  Failure emits a warning but does not block
-    V1–V6 in v0.2.  Run 'exabench validate snapshots' to populate the index.
+    V1–V6 in v0.2.  Run 'aobench validate snapshots' to populate the index.
     """
     if not fidelity_index_path.exists():
         return {
@@ -155,7 +155,7 @@ def gate_v0(fidelity_index_path: Path) -> dict:
             "warning_only": True,
             "issues": [
                 f"index not found at {fidelity_index_path} — skipped "
-                "(run 'exabench validate snapshots' first)"
+                "(run 'aobench validate snapshots' first)"
             ],
         }
 
@@ -381,7 +381,7 @@ def gate_v6(models: list[dict]) -> dict:
 
 def print_report(gates: list[dict]) -> None:
     print("\n" + "=" * 60)
-    print("ExaBench — Validity Gate Report (V0–V6)")
+    print("AOBench — Validity Gate Report (V0–V6)")
     print("=" * 60)
     for g in gates:
         warn_only = g.get("warning_only", False)
@@ -425,7 +425,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--fidelity-index",
         default=DEFAULT_FIDELITY_INDEX,
-        help="Path to data/fidelity/index.json (written by 'exabench validate snapshots')",
+        help="Path to data/fidelity/index.json (written by 'aobench validate snapshots')",
     )
     parser.add_argument("--output", "-o", default=None, help="Write JSON report here")
     args = parser.parse_args(argv)

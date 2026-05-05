@@ -65,10 +65,10 @@ def call_judge(response: dict, judge_model: str) -> float:
         return round(min(1.0, max(0.0, base + rng.uniform(-0.03, 0.03) + judge_offset)), 4)
 
     try:
-        from exabench.scoring.rubric_scorer import RubricScorer  # type: ignore[import]
+        from aobench.scoring.rubric_scorer import RubricScorer  # type: ignore[import]
     except ImportError:
         sys.exit(
-            "Cannot import exabench.scoring.rubric_scorer. "
+            "Cannot import aobench.scoring.rubric_scorer. "
             "Run from project root with 'uv run' or set EXABENCH_DRY_RUN=1."
         )
 

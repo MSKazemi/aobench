@@ -7,7 +7,7 @@ import json
 import tempfile
 from pathlib import Path
 
-from exabench.environment.replay_determinism import (
+from aobench.environment.replay_determinism import (
     ReplayDeterminismReport,
     validate_telemetry_cadence,
     verify_replay_determinism,

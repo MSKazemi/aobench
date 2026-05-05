@@ -2,7 +2,7 @@
   "manifest_version": "1.0",
   "generated_at": "2026-05-02T00:00:00Z",
   "corpus_version": "v0.3",
-  "note": "Initial placeholder — run `exabench lite select` to populate.",
+  "note": "Initial placeholder — run `aobench lite select` to populate.",
   "stage1_candidates": 0,
   "stage2_attribute_filtered": 0,
   "stage3_execution_filtered": 0,

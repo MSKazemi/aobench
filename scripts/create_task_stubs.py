@@ -50,7 +50,7 @@ def _stub_slurm_state(path: Path) -> None:
     path.write_text(
         json.dumps({
             _STUB_MARKER: True,
-            "cluster": "exabench-stub",
+            "cluster": "aobench-stub",
             "snapshot_time": "2024-01-01T00:00:00Z",
             "jobs": [],
             "nodes": [],

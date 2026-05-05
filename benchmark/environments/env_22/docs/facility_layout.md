@@ -1,4 +1,4 @@
-# Facility Layout — ExaBench Cluster B Datacenter
+# Facility Layout — AOBench Cluster B Datacenter
 
 ## Floor Plan Summary
 | Row | Rack IDs | CRAC Unit | IT Load (kW) | Notes |

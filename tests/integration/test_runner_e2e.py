@@ -11,9 +11,9 @@ BENCHMARK_ROOT = Path(__file__).parent.parent.parent / "benchmark"
 
 def test_alpha0_run(tmp_path):
     """Run JOB_USR_001 on env_01 with direct_qa adapter and validate outputs."""
-    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-    from exabench.runners.runner import BenchmarkRunner
-    from exabench.schemas.result import BenchmarkResult
+    from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+    from aobench.runners.runner import BenchmarkRunner
+    from aobench.schemas.result import BenchmarkResult
 
     runner = BenchmarkRunner(
         adapter=DirectQAAdapter(answer="Job 891234 failed due to out-of-memory (OOM kill)."),

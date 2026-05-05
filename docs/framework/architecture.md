@@ -1,16 +1,16 @@
 # Benchmark Architecture (Design)
 
-This page defines the **conceptual architecture** of ExaBench: the design
+This page defines the **conceptual architecture** of AOBench: the design
 principles, the layers a benchmark item traverses, the entities that compose
 the benchmark data model, and the execution workflow the system follows.
 
 It answers the question:
 
-> **How is the ExaBench benchmark structured as a *benchmark*, independent of
+> **How is the AOBench benchmark structured as a *benchmark*, independent of
 > any particular software implementation?**
 
 For the **current implementation** of these concepts — the file layout under
-`src/exabench/`, the executable scoring pipeline, and the actual dataset scope
+`src/aobench/`, the executable scoring pipeline, and the actual dataset scope
 — see [System Architecture](../reference/system-architecture.md).
 
 For the canonical evaluation protocol, trace schema, and result schema, see
@@ -20,7 +20,7 @@ For the canonical evaluation protocol, trace schema, and result schema, see
 
 ## 1. Design principles
 
-ExaBench's architecture is shaped by six principles. They are deliberately
+AOBench's architecture is shaped by six principles. They are deliberately
 stronger than those of generic agent benchmarks because HPC operational
 contexts demand it.
 
@@ -37,7 +37,7 @@ contexts demand it.
 
 ## 2. Three benchmark layers
 
-Every ExaBench item lives in three layers simultaneously.
+Every AOBench item lives in three layers simultaneously.
 
 ### Layer A — Task
 
@@ -60,19 +60,19 @@ the replayable telemetry, the mock tool backends, the run manifest.
 
 > In what world is the task executed?
 
-The combination of all three layers makes ExaBench an **interactive
+The combination of all three layers makes AOBench an **interactive
 operational competence** benchmark, not a question-answering benchmark.
 
 ---
 
 ## 3. Unit of evaluation
 
-The smallest evaluable instance in ExaBench is:
+The smallest evaluable instance in AOBench is:
 
 > **Task + Role + Environment Snapshot + Agent Run + Result**
 
 The same task text can produce different valid behaviours depending on role,
-permission profile, environment state, and tool availability. ExaBench
+permission profile, environment state, and tool availability. AOBench
 therefore treats every benchmark item as a structured execution instance, not
 a standalone prompt.
 
@@ -80,8 +80,8 @@ a standalone prompt.
 
 ## 4. Core data model
 
-ExaBench is organised around four primary entities. Their authoritative
-schemas live in `src/exabench/schemas/`.
+AOBench is organised around four primary entities. Their authoritative
+schemas live in `src/aobench/schemas/`.
 
 ### 4.1 Task — `schemas/task.py`
 
@@ -128,7 +128,7 @@ latency estimate, and pointers to the trace and run manifest.
 
 ## 5. Architectural execution workflow
 
-A standard ExaBench run, abstracted from the implementation, follows seven
+A standard AOBench run, abstracted from the implementation, follows seven
 steps. The implemented version of this workflow with method names is in
 [System Architecture §4](../reference/system-architecture.md).
 
@@ -155,7 +155,7 @@ execution (Adapter + Tools), and evaluation logic (Scorers + Profile).
 
 ## 6. Tool environment model
 
-ExaBench v0.1 uses **deterministic mock tools** rather than live SLURM,
+AOBench v0.1 uses **deterministic mock tools** rather than live SLURM,
 Grafana, InfluxDB, BMS/DCIM, or production documentation systems. This is a
 benchmarking choice, not a limitation of ambition: mock tools make
 benchmarking reproducible, debuggable, publishable, and independent of
@@ -236,7 +236,7 @@ Reports surface these as columns alongside **Role × QCAT × Difficulty**.
 | Page | Responsibility |
 |------|----------------|
 | **Architecture** (this page) | Conceptual structure of the benchmark |
-| **Implementation** | How the architecture is realised in `src/exabench/` |
+| **Implementation** | How the architecture is realised in `src/aobench/` |
 | **Environments** | Snapshot bundle format |
 | **Evaluation** | Scoring protocol, trace schema, result schema |
 | **Taxonomy** | Roles, QCATs, knowledge sources, RBAC tiers |
@@ -246,7 +246,7 @@ Reports surface these as columns alongside **Role × QCAT × Difficulty**.
 
 ## 9. Bottom line
 
-ExaBench is not a collection of HPC questions. It is a benchmark framework
+AOBench is not a collection of HPC questions. It is a benchmark framework
 for evaluating **interactive, tool-using, role-aware, governance-constrained
 AI agent systems** in HPC environments. Its defining architectural elements
 are:

@@ -1,5 +1,5 @@
 bundle_root: environments/env_20
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: A large I/O-intensive checkpoint job on nodes 1–4 is saturating the Lustre
   filesystem, causing a science job on nodes 5–8 to stall with effective throughput
   <5% of normal. Sysadmin must identify the I/O offender and apply throttling or scheduling

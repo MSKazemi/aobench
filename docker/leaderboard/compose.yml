@@ -1,14 +1,14 @@
 services:
-  exabench-leaderboard-api:
+  aobench-leaderboard-api:
     build:
       context: ../..
       dockerfile: docker/leaderboard/Dockerfile
-    image: exabench-leaderboard:latest
-    container_name: exabench-leaderboard
+    image: aobench-leaderboard:latest
+    container_name: aobench-leaderboard
     ports:
       - "8000:8000"
     volumes:
-      - exabench-leaderboard-data:/app/data/leaderboard
+      - aobench-leaderboard-data:/app/data/leaderboard
     environment:
       LEADERBOARD_ADMIN_PASS: ${LEADERBOARD_ADMIN_PASS:-change-me}
     restart: unless-stopped
@@ -24,4 +24,4 @@ services:
       retries: 3
 
 volumes:
-  exabench-leaderboard-data:
+  aobench-leaderboard-data:

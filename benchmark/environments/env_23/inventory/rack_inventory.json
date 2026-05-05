@@ -1,6 +1,6 @@
 {
   "snapshot_time": "2026-04-01T10:00:00Z",
-  "cluster": "exabench-cluster-c",
+  "cluster": "aobench-cluster-c",
   "racks": [
     {"rack_id": "R001", "row": "A", "type": "compute_standard", "nodes": ["node001","node002","node003","node004"], "total_power_kw": 12.8, "power_limit_kw": 20.0, "headroom_kw": 7.2, "u_used": 20, "u_total": 42},
     {"rack_id": "R002", "row": "A", "type": "compute_standard", "nodes": ["node005","node006","node007","node008"], "total_power_kw": 13.4, "power_limit_kw": 20.0, "headroom_kw": 6.6, "u_used": 20, "u_total": 42},

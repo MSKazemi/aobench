@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Trace diff utility for ExaBench reproducibility verification.
+"""Trace diff utility for AOBench reproducibility verification.
 
 Compares two trace JSON files, ignoring whitelisted fields.
 Exits 0 if traces are equivalent, 1 if differences found, 2 on usage error.
@@ -67,7 +67,7 @@ def deep_diff(a, b, path=""):
     return diffs
 
 def main():
-    ap = argparse.ArgumentParser(description="Compare two ExaBench trace JSON files.")
+    ap = argparse.ArgumentParser(description="Compare two AOBench trace JSON files.")
     ap.add_argument("trace_a", help="Path to first trace JSON file")
     ap.add_argument("trace_b", help="Path to second trace JSON file")
     ap.add_argument("--whitelist", nargs="*", default=[], help="Additional fields to ignore")

@@ -15,14 +15,14 @@ BENCHMARK_ROOT = Path(__file__).parent.parent.parent / "benchmark"
 
 class TestWriteRunManifest:
     def test_creates_manifest_json(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
 
         assert (tmp_path / "MANIFEST.json").exists()
 
     def test_manifest_is_valid_json(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
 
@@ -30,16 +30,16 @@ class TestWriteRunManifest:
         assert isinstance(data, dict)
 
     def test_manifest_contains_dataset_version(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="test_model", adapter="direct_qa", split="all")
 
         data = json.loads((tmp_path / "MANIFEST.json").read_text(encoding="utf-8"))
         assert "dataset_version" in data
-        assert data["dataset_version"] == "exabench-v0.2.0"
+        assert data["dataset_version"] == "aobench-v0.2.0"
 
     def test_manifest_contains_commit_hash(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="test_model", adapter="direct_qa", split="dev")
 
@@ -50,7 +50,7 @@ class TestWriteRunManifest:
         assert len(data["commit_hash"]) > 0
 
     def test_manifest_model_adapter_split(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="gpt-4o", adapter="openai:gpt-4o", split="lite")
 
@@ -60,7 +60,7 @@ class TestWriteRunManifest:
         assert data["split"] == "lite"
 
     def test_manifest_has_started_at(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
 
@@ -69,7 +69,7 @@ class TestWriteRunManifest:
         assert data["started_at"] is not None
 
     def test_manifest_finished_at_initially_none(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
 
@@ -77,7 +77,7 @@ class TestWriteRunManifest:
         assert data.get("finished_at") is None
 
     def test_creates_run_dir_if_absent(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         nested = tmp_path / "runs" / "run_20260101_120000_abc12345"
         assert not nested.exists()
@@ -88,7 +88,7 @@ class TestWriteRunManifest:
         assert (nested / "MANIFEST.json").exists()
 
     def test_explicit_judge_config_id(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest
+        from aobench.runners.run_artifacts import write_run_manifest
 
         write_run_manifest(
             tmp_path,
@@ -117,7 +117,7 @@ class TestFinalizeRunArtifacts:
         )
 
     def test_creates_compute_json(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         finalize_run_artifacts(tmp_path, [self._make_result()])
@@ -125,7 +125,7 @@ class TestFinalizeRunArtifacts:
         assert (tmp_path / "COMPUTE.json").exists()
 
     def test_compute_json_is_valid_json(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         finalize_run_artifacts(tmp_path, [self._make_result()])
@@ -134,7 +134,7 @@ class TestFinalizeRunArtifacts:
         assert isinstance(data, dict)
 
     def test_compute_json_contains_total_tokens_in(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         finalize_run_artifacts(tmp_path, [self._make_result(prompt_tokens=200)])
@@ -144,7 +144,7 @@ class TestFinalizeRunArtifacts:
         assert data["total_tokens_in"] == 200
 
     def test_compute_json_contains_total_usd(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         finalize_run_artifacts(tmp_path, [self._make_result(cost_usd=0.05)])
@@ -154,7 +154,7 @@ class TestFinalizeRunArtifacts:
         assert abs(data["total_usd"] - 0.05) < 1e-9
 
     def test_compute_json_aggregates_multiple_results(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         results = [
@@ -171,7 +171,7 @@ class TestFinalizeRunArtifacts:
         assert abs(data["per_task_avg_usd"] - 0.02) < 1e-9
 
     def test_compute_json_handles_none_results(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         # Mix of (task_id, result) tuples including a failed task (None)
@@ -184,7 +184,7 @@ class TestFinalizeRunArtifacts:
     def test_compute_json_handles_missing_fields(self, tmp_path):
         """Results lacking cost/latency fields should default to 0 without crashing."""
         from types import SimpleNamespace
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         bare_result = SimpleNamespace()  # no cost/latency attributes at all
@@ -196,7 +196,7 @@ class TestFinalizeRunArtifacts:
         assert data["total_tokens_in"] == 0
 
     def test_manifest_finished_at_set_after_finalize(self, tmp_path):
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
 
         write_run_manifest(tmp_path, model="direct_qa", adapter="direct_qa", split="dev")
         finalize_run_artifacts(tmp_path, [self._make_result()])
@@ -206,7 +206,7 @@ class TestFinalizeRunArtifacts:
 
     def test_finalize_without_prior_manifest(self, tmp_path):
         """finalize_run_artifacts must not crash even if MANIFEST.json was never written."""
-        from exabench.runners.run_artifacts import finalize_run_artifacts
+        from aobench.runners.run_artifacts import finalize_run_artifacts
 
         # No write_run_manifest call — run_dir may not even exist yet
         finalize_run_artifacts(tmp_path, [])
@@ -220,10 +220,10 @@ class TestFinalizeRunArtifacts:
 class TestDryRunArtifacts:
     def test_dry_run_emits_manifest_and_compute(self, tmp_path):
         """After a full BenchmarkRunner dry run, both artifact files must exist."""
-        from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-        from exabench.runners.runner import BenchmarkRunner
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
-        from exabench.utils.ids import make_run_id
+        from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+        from aobench.runners.runner import BenchmarkRunner
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.utils.ids import make_run_id
 
         run_id = make_run_id()
         run_dir = tmp_path / run_id
@@ -249,10 +249,10 @@ class TestDryRunArtifacts:
 
     def test_dry_run_manifest_has_required_keys(self, tmp_path):
         """MANIFEST.json must contain dataset_version and commit_hash."""
-        from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-        from exabench.runners.runner import BenchmarkRunner
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
-        from exabench.utils.ids import make_run_id
+        from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+        from aobench.runners.runner import BenchmarkRunner
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.utils.ids import make_run_id
 
         run_id = make_run_id()
         run_dir = tmp_path / run_id
@@ -271,14 +271,14 @@ class TestDryRunArtifacts:
         data = json.loads((run_dir / "MANIFEST.json").read_text(encoding="utf-8"))
         assert "dataset_version" in data
         assert "commit_hash" in data
-        assert data["dataset_version"] == "exabench-v0.2.0"
+        assert data["dataset_version"] == "aobench-v0.2.0"
 
     def test_dry_run_compute_has_required_keys(self, tmp_path):
         """COMPUTE.json must contain total_tokens_in and total_usd."""
-        from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-        from exabench.runners.runner import BenchmarkRunner
-        from exabench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
-        from exabench.utils.ids import make_run_id
+        from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+        from aobench.runners.runner import BenchmarkRunner
+        from aobench.runners.run_artifacts import write_run_manifest, finalize_run_artifacts
+        from aobench.utils.ids import make_run_id
 
         run_id = make_run_id()
         run_dir = tmp_path / run_id

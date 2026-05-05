@@ -9,16 +9,16 @@ from unittest.mock import patch
 
 import pytest
 
-from exabench.schemas.task import (
+from aobench.schemas.task import (
     ComponentSpec,
     HybridScoringConfig,
     TaskSpec,
 )
-from exabench.schemas.trace import Trace
-from exabench.scorers.deterministic import deterministic_score
-from exabench.scorers.gsb_scorer import gsb_score
-from exabench.scorers.hybrid_scorer import HybridScorer
-from exabench.scorers.rubric_scorer import load_rubric, rubric_score
+from aobench.schemas.trace import Trace
+from aobench.scorers.deterministic import deterministic_score
+from aobench.scorers.gsb_scorer import gsb_score
+from aobench.scorers.hybrid_scorer import HybridScorer
+from aobench.scorers.rubric_scorer import load_rubric, rubric_score
 
 
 # ---------------------------------------------------------------------------

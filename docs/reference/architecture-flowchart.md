@@ -1,6 +1,6 @@
-# ExaBench Architecture Flowchart
+# AOBench Architecture Flowchart
 
-This document contains architecture diagrams reflecting the **implemented** ExaBench system (Alpha-0 / v0.1).
+This document contains architecture diagrams reflecting the **implemented** AOBench system (Alpha-0 / v0.1).
 
 ---
 
@@ -8,12 +8,12 @@ This document contains architecture diagrams reflecting the **implemented** ExaB
 
 ```mermaid
 graph TB
-    subgraph CLI["CLI Layer (exabench)"]
-        RUN["exabench run task/all"]
-        VAL["exabench validate benchmark"]
-        REP["exabench report json/html/slices"]
-        CMP["exabench compare runs"]
-        ROB["exabench robustness task"]
+    subgraph CLI["CLI Layer (aobench)"]
+        RUN["aobench run task/all"]
+        VAL["aobench validate benchmark"]
+        REP["aobench report json/html/slices"]
+        CMP["aobench compare runs"]
+        ROB["aobench robustness task"]
     end
 
     subgraph BENCH["Benchmark Dataset (benchmark/)"]
@@ -22,7 +22,7 @@ graph TB
         CFGS["configs/\nscoring_profiles.yaml\ntool_registry.yaml"]
     end
 
-    subgraph CORE["Core Pipeline (src/exabench/)"]
+    subgraph CORE["Core Pipeline (src/aobench/)"]
         LOADER["Loaders\nTaskLoader · EnvLoader\nBenchmarkRegistry"]
         RUNNER["BenchmarkRunner"]
         ADAPTER["Adapter\ndirect_qa | openai"]
@@ -63,7 +63,7 @@ graph TB
 
 ```mermaid
 flowchart TD
-    A([CLI: exabench run task]) --> B[BenchmarkRunner.run]
+    A([CLI: aobench run task]) --> B[BenchmarkRunner.run]
 
     B --> C1[TaskLoader.load_task\ntask_id → TaskSpec]
     B --> C2[EnvironmentLoader.load_environment\nenv_id → EnvironmentBundle]
@@ -282,7 +282,7 @@ flowchart TD
 
 ```mermaid
 graph TD
-    CLI([exabench]) --> RUN[run]
+    CLI([aobench]) --> RUN[run]
     CLI --> VAL[validate]
     CLI --> REP[report]
     CLI --> CMP[compare]

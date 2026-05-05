@@ -1,10 +1,10 @@
 # Background — Motivation & Related Work
 
-This page summarizes why ExaBench exists and how it relates to the broader benchmark landscape.
+This page summarizes why AOBench exists and how it relates to the broader benchmark landscape.
 
 ---
 
-## 1. Why ExaBench Is Needed
+## 1. Why AOBench Is Needed
 
 AI agents are increasingly proposed for HPC support, operations, and monitoring. There is currently **no benchmark** that evaluates such agents under HPC constraints: scheduler-aware reasoning, telemetry interpretation, role-conditioned answers, permission-sensitive behavior, and reproducible operational-state evaluation.
 
@@ -39,7 +39,7 @@ No existing benchmark, to our knowledge, simultaneously provides:
 
 ---
 
-## 4. ExaBench's Contribution
+## 4. AOBench's Contribution
 
 1. **New benchmark domain:** HPC agent systems
 2. **Role-aware task model:** evaluation conditioned on stakeholder role
@@ -51,5 +51,5 @@ No existing benchmark, to our knowledge, simultaneously provides:
 
 ## 5. Positioning
 
-> **ExaBench is a benchmark framework for evaluating AI agents in HPC environments using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
+> **AOBench is a benchmark framework for evaluating AI agents in HPC environments using role-aware tasks, deterministic HPC state snapshots, and trace-based scoring.**
 

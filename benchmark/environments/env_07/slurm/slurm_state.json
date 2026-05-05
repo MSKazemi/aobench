@@ -1,5 +1,5 @@
 {
-  "cluster": "exabench-cluster-a",
+  "cluster": "aobench-cluster-a",
   "snapshot_time": "2026-03-12T10:00:00Z",
   "nodes": [
     {

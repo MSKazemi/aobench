@@ -2,19 +2,19 @@
 
 ---
 
-## 1. ExaBench App — Component Map
+## 1. AOBench App — Component Map
 
 ```
-src/exabench/
+src/aobench/
 ├── cli/               CLI commands (typer app)
 │   ├── main.py        Entry point — registers all sub-commands
-│   ├── run_cmd.py     exabench run task / run all
-│   ├── validate_cmd.py exabench validate benchmark
-│   ├── report_cmd.py  exabench report json / html / slices
-│   ├── compare_cmd.py exabench compare
-│   ├── robustness_cmd.py exabench robustness task / all
-│   ├── clear_cmd.py   exabench clear run
-│   └── lite_cmd.py    exabench lite select
+│   ├── run_cmd.py     aobench run task / run all
+│   ├── validate_cmd.py aobench validate benchmark
+│   ├── report_cmd.py  aobench report json / html / slices
+│   ├── compare_cmd.py aobench compare
+│   ├── robustness_cmd.py aobench robustness task / all
+│   ├── clear_cmd.py   aobench clear run
+│   └── lite_cmd.py    aobench lite select
 │
 ├── schemas/           Pydantic data models (no logic)
 │   ├── task.py        TaskSpec, HPCTaskSpec, HPCRoleVariant, EvalCriteria, HybridScoringConfig
@@ -101,7 +101,7 @@ benchmark/
 │   ├── task_set_v3.json  v3 task index (80 tasks)
 │   ├── dataset_splits.py 62 dev / 18 test split (~22% held-out, frozen 2026-05-02)
 │   ├── guidelines/     6 domain guideline files for task set v1
-│   └── lite_manifest_v1.json  ExaBench-Lite task subset
+│   └── lite_manifest_v1.json  AOBench-Lite task subset
 │
 ├── environments/
 │   └── env_01/ … env_26/   26 snapshot bundles, each with:
@@ -115,7 +115,7 @@ benchmark/
 │   ├── scoring_profiles.yaml    Named weight profiles
 │   └── error_taxonomy.yaml      Score-based error categories (14)
 │
-└── qa/                  Embedded ExaBench-QA dataset (~95 queries)
+└── qa/                  Embedded AOBench-QA dataset (~95 queries)
 ```
 
 **Delivered scope:**
@@ -134,7 +134,7 @@ benchmark/
 
 ## 3. End-to-End Execution Flow
 
-`exabench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o`
+`aobench run task --task JOB_USR_001 --env env_01 --adapter openai:gpt-4o`
 
 ```
 CLI (run_cmd.py)
@@ -387,17 +387,17 @@ Full reference: `docs/reference/commands.md`
 
 | Command | Description |
 |---------|-------------|
-| `exabench validate benchmark` | Validate all task specs and environment bundles |
-| `exabench run task TASK_ID` | Run one task with given adapter and environment |
-| `exabench run all` | Run all dev-split tasks |
-| `exabench report json` | Generate JSON summary report for a run |
-| `exabench report html` | Generate self-contained HTML report |
-| `exabench report slices` | Role × QCAT stratification report |
-| `exabench compare RUN_A RUN_B` | Diff two run directories |
-| `exabench robustness task TASK_ID` | Compute pass^k for one task |
-| `exabench robustness all` | Compute pass^k across all tasks |
-| `exabench clear run RUN_DIR` | Compute CLEAR scorecard for a run |
-| `exabench lite select` | Run ExaBench-Lite 3-stage task selection |
+| `aobench validate benchmark` | Validate all task specs and environment bundles |
+| `aobench run task TASK_ID` | Run one task with given adapter and environment |
+| `aobench run all` | Run all dev-split tasks |
+| `aobench report json` | Generate JSON summary report for a run |
+| `aobench report html` | Generate self-contained HTML report |
+| `aobench report slices` | Role × QCAT stratification report |
+| `aobench compare RUN_A RUN_B` | Diff two run directories |
+| `aobench robustness task TASK_ID` | Compute pass^k for one task |
+| `aobench robustness all` | Compute pass^k across all tasks |
+| `aobench clear run RUN_DIR` | Compute CLEAR scorecard for a run |
+| `aobench lite select` | Run AOBench-Lite 3-stage task selection |
 
 ---
 
@@ -409,12 +409,12 @@ Visual companion to sections 1–11 above. All diagrams reflect the implemented 
 
 ```mermaid
 graph TB
-    subgraph CLI["CLI Layer (exabench)"]
-        RUN["exabench run task/all"]
-        VAL["exabench validate benchmark"]
-        REP["exabench report json/html/slices"]
-        CMP["exabench compare runs"]
-        ROB["exabench robustness task"]
+    subgraph CLI["CLI Layer (aobench)"]
+        RUN["aobench run task/all"]
+        VAL["aobench validate benchmark"]
+        REP["aobench report json/html/slices"]
+        CMP["aobench compare runs"]
+        ROB["aobench robustness task"]
     end
 
     subgraph BENCH["Benchmark Dataset (benchmark/)"]
@@ -423,7 +423,7 @@ graph TB
         CFGS["configs/\nscoring_profiles.yaml\ntool_registry.yaml"]
     end
 
-    subgraph CORE["Core Pipeline (src/exabench/)"]
+    subgraph CORE["Core Pipeline (src/aobench/)"]
         LOADER["Loaders\nTaskLoader · EnvLoader\nBenchmarkRegistry"]
         RUNNER["BenchmarkRunner"]
         ADAPTER["Adapter\ndirect_qa | openai"]
@@ -464,7 +464,7 @@ graph TB
 
 ```mermaid
 flowchart TD
-    A([CLI: exabench run task]) --> B[BenchmarkRunner.run]
+    A([CLI: aobench run task]) --> B[BenchmarkRunner.run]
 
     B --> C1[TaskLoader.load_task\ntask_id → TaskSpec]
     B --> C2[EnvironmentLoader.load_environment\nenv_id → EnvironmentBundle]
@@ -683,7 +683,7 @@ flowchart TD
 
 ```mermaid
 graph TD
-    CLI([exabench]) --> RUN[run]
+    CLI([aobench]) --> RUN[run]
     CLI --> VAL[validate]
     CLI --> REP[report]
     CLI --> CMP[compare]

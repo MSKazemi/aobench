@@ -1,6 +1,6 @@
 # Evaluation Protocol, Metrics & Trace Schema
 
-This page is the canonical specification of **how ExaBench judges a run**. It
+This page is the canonical specification of **how AOBench judges a run**. It
 covers the evaluation workflow, the twelve scorers and six dimensions, the
 hard-fail rules, the canonical trace and result schemas, the CLEAR scorecard,
 and the reproducibility metadata required of every run.
@@ -13,7 +13,7 @@ layout, see [System Architecture §5](../reference/system-architecture.md).
 
 ## 1. Evaluation philosophy
 
-ExaBench evaluates **interactive agent behaviour in HPC environments**, not
+AOBench evaluates **interactive agent behaviour in HPC environments**, not
 just final-text answers. A run is considered strong only if the agent:
 
 - solves the task correctly,
@@ -24,7 +24,7 @@ just final-text answers. A run is considered strong only if the agent:
 - and does so with acceptable runtime and cost.
 
 A correct-looking final answer that violates RBAC, fabricates evidence, or
-relies on out-of-scope tool calls is not a valid solution. ExaBench therefore
+relies on out-of-scope tool calls is not a valid solution. AOBench therefore
 uses a **multi-dimensional scorecard** with **hard-fail semantics**, not a
 single accuracy metric.
 
@@ -43,7 +43,7 @@ The smallest evaluable instance is:
 - **Result** — the scored artifact.
 
 The full data model is defined in [Architecture §4](architecture.md)
-and the implemented Pydantic schemas live in `src/exabench/schemas/`.
+and the implemented Pydantic schemas live in `src/aobench/schemas/`.
 
 ---
 
@@ -91,7 +91,7 @@ cases are in [scoring-dimensions.md](scoring-dimensions.md).
 
 ## 5. The twelve implemented scorers
 
-Twelve scorer classes live under `src/exabench/scorers/`. Some replace others
+Twelve scorer classes live under `src/aobench/scorers/`. Some replace others
 (e.g. `HybridScorer` replaces `OutcomeScorer` when set), some are conditional
 (`CheckpointScorer`), and some are run only via dedicated CLI commands.
 
@@ -144,7 +144,7 @@ diagnostic reporting, but `aggregate_score = 0.0` and `cup_score = 0.0`.
 
 ## 7. The CLEAR scorecard
 
-`exabench clear run <run_dir>` aggregates every `BenchmarkResult` in a run
+`aobench clear run <run_dir>` aggregates every `BenchmarkResult` in a run
 into a five-dimension scorecard.
 
 ```
@@ -337,7 +337,7 @@ the trace `<task_id>_trace.json`. The run manifest at
 
 Every run is required to record:
 
-- `commit_hash` of the ExaBench checkout that produced it.
+- `commit_hash` of the AOBench checkout that produced it.
 - `python_version` and resolved package versions (frozen in
   `requirements.lock` when produced via `make repro-lock`).
 - `scoring_profile` name.
@@ -355,11 +355,11 @@ byte-identical traces.
 
 ## 11. Slicing reports
 
-`exabench report slices <run_dir>` produces a Role × QCAT × Difficulty
+`aobench report slices <run_dir>` produces a Role × QCAT × Difficulty
 breakdown of every dimension and the aggregate. It is the canonical input to
 the paper's analysis tables.
 
-`exabench report html <run_dir>` produces a self-contained
+`aobench report html <run_dir>` produces a self-contained
 `report.html` with colour-coded score rows per task; no internet access
 required.
 

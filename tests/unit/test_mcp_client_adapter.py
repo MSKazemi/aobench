@@ -20,15 +20,15 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from exabench.adapters.mcp_client_adapter import (
+from aobench.adapters.mcp_client_adapter import (
     MCPClientAdapter,
     _extract_text,
     _mcp_tool_to_openai_schema,
     _run_async,
 )
-from exabench.schemas.environment import EnvironmentBundle, EnvironmentMetadata
-from exabench.schemas.task import EvalCriteria, TaskSpec
-from exabench.schemas.trace import Trace
+from aobench.schemas.environment import EnvironmentBundle, EnvironmentMetadata
+from aobench.schemas.task import EvalCriteria, TaskSpec
+from aobench.schemas.trace import Trace
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
@@ -67,8 +67,8 @@ def _make_env() -> EnvironmentBundle:
 
 
 def _make_context():
-    from exabench.runners.context import ExecutionContext
-    from exabench.tools.registry import ToolRegistry
+    from aobench.runners.context import ExecutionContext
+    from aobench.tools.registry import ToolRegistry
 
     tools = ToolRegistry(tools={}, allowed_tool_names=["slurm"])
     return ExecutionContext(task=_make_task(), env=_make_env(), tools=tools, run_id="run_test")
@@ -211,10 +211,10 @@ def _run(coro):
     return asyncio.run(coro)
 
 
-@patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI")
-@patch("exabench.adapters.mcp_client_adapter.ClientSession")
-@patch("exabench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
-@patch("exabench.adapters.mcp_client_adapter.stdio_client")
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
 def test_run_async_single_tool_call_then_final(mock_stdio, mock_cs_cls, mock_oai_cls):
     context = _make_context()
     tools = [_mcp_tool("slurm__query_jobs", "Query jobs")]
@@ -251,9 +251,9 @@ def test_run_async_single_tool_call_then_final(mock_stdio, mock_cs_cls, mock_oai
     assert trace.steps[1].reasoning == "Job 891234 failed due to OOM."
 
 
-@patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI")
-@patch("exabench.adapters.mcp_client_adapter.ClientSession")
-@patch("exabench.adapters.mcp_client_adapter.sse_client")
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.sse_client")
 def test_run_async_sse_transport(mock_sse, mock_cs_cls, mock_oai_cls):
     context = _make_context()
     transport_cm, session_cm, _ = _make_transport_mock([], [])
@@ -271,9 +271,9 @@ def test_run_async_sse_transport(mock_sse, mock_cs_cls, mock_oai_cls):
     assert trace.final_answer == "No tools available, here is my answer."
 
 
-@patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI")
-@patch("exabench.adapters.mcp_client_adapter.ClientSession")
-@patch("exabench.adapters.mcp_client_adapter.sse_client")
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.sse_client")
 def test_run_async_http_shorthand(mock_sse, mock_cs_cls, mock_oai_cls):
     """http:// prefix should also route to sse_client."""
     context = _make_context()
@@ -292,16 +292,16 @@ def test_run_async_http_shorthand(mock_sse, mock_cs_cls, mock_oai_cls):
 
 def test_run_async_invalid_server():
     context = _make_context()
-    with patch("exabench.adapters.mcp_client_adapter.ClientSession", MagicMock()):
-        with patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI", MagicMock()):
+    with patch("aobench.adapters.mcp_client_adapter.ClientSession", MagicMock()):
+        with patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI", MagicMock()):
             with pytest.raises(ValueError, match="Cannot parse MCP server spec"):
                 _run(_run_async("bad_spec", context, "gpt-4o", ""))
 
 
-@patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI")
-@patch("exabench.adapters.mcp_client_adapter.ClientSession")
-@patch("exabench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
-@patch("exabench.adapters.mcp_client_adapter.stdio_client")
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
 def test_run_async_permission_denied_sets_hard_fail(mock_stdio, mock_cs_cls, mock_oai_cls):
     context = _make_context()
     tools = [_mcp_tool("admin_tool", "Admin only")]
@@ -328,10 +328,10 @@ def test_run_async_permission_denied_sets_hard_fail(mock_stdio, mock_cs_cls, moc
     assert trace.steps[0].observation.permission_denied is True
 
 
-@patch("exabench.adapters.mcp_client_adapter.AsyncOpenAI")
-@patch("exabench.adapters.mcp_client_adapter.ClientSession")
-@patch("exabench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
-@patch("exabench.adapters.mcp_client_adapter.stdio_client")
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
 def test_run_async_no_answer_when_no_reasoning_step(mock_stdio, mock_cs_cls, mock_oai_cls):
     """If the loop exhausts max rounds without a plain text step, final_answer is None."""
     context = _make_context()
@@ -357,7 +357,7 @@ def test_run_async_no_answer_when_no_reasoning_step(mock_stdio, mock_cs_cls, moc
 
 # ── run() sync wrapper ─────────────────────────────────────────────────────────
 
-@patch("exabench.adapters.mcp_client_adapter.asyncio.run")
+@patch("aobench.adapters.mcp_client_adapter.asyncio.run")
 def test_adapter_run_calls_asyncio_run(mock_asyncio_run):
     """MCPClientAdapter.run() delegates to asyncio.run(...)."""
     mock_asyncio_run.return_value = MagicMock(spec=Trace)
@@ -373,6 +373,6 @@ def test_missing_mcp_package_raises_import_error():
     """When the module-level ClientSession is None, _run_async raises ImportError."""
     context = _make_context()
     # Simulate mcp not installed by setting module-level symbol to None
-    with patch("exabench.adapters.mcp_client_adapter.ClientSession", None):
+    with patch("aobench.adapters.mcp_client_adapter.ClientSession", None):
         with pytest.raises(ImportError, match="mcp package required"):
             _run(_run_async("stdio:python server.py", context, "gpt-4o", ""))

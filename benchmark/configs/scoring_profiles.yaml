@@ -1,4 +1,4 @@
-# ExaBench scoring weight profiles
+# AOBench scoring weight profiles
 # All weights per profile must sum to 1.0
 
 profiles:
@@ -41,14 +41,14 @@ profiles:
   clear_v1:
     version: "0.1"
     # CLEAR-aligned weight profile (Mehta 2025, arXiv:2511.14136).
-    # Maps ExaBench dimensions to CLEAR's five axes:
+    # Maps AOBench dimensions to CLEAR's five axes:
     #   E (Efficacy)   → outcome   0.20
     #   A (Assurance)  → governance 0.20
     #   R (Reliability)→ robustness 0.20
     #   C+L proxy      → efficiency 0.40  (step-count proxy for cost + latency combined)
     #   tool_use / grounding are HPC-specific; no CLEAR equivalent → 0.00
     # Note: the real CLEAR composite (requiring cross-model normalisation of
-    # cost and latency) is computed by `exabench clear`, not this profile.
+    # cost and latency) is computed by `aobench clear`, not this profile.
     weights:
       outcome: 0.20
       tool_use: 0.00

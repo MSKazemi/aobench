@@ -10,10 +10,10 @@ BENCHMARK_ROOT = Path(__file__).parent.parent.parent / "benchmark"
 
 def _run_all_tasks(output_root: Path) -> str:
     """Run all 10 tasks with direct_qa and return the run_id."""
-    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
-    from exabench.loaders.registry import BenchmarkRegistry
-    from exabench.runners.runner import BenchmarkRunner
-    from exabench.utils.ids import make_run_id
+    from aobench.adapters.direct_qa_adapter import DirectQAAdapter
+    from aobench.loaders.registry import BenchmarkRegistry
+    from aobench.runners.runner import BenchmarkRunner
+    from aobench.utils.ids import make_run_id
 
     run_id = make_run_id()
     adapter = DirectQAAdapter(answer="OOM kill detected on node03")
@@ -33,7 +33,7 @@ def _run_all_tasks(output_root: Path) -> str:
 
 
 def test_json_report_summary(tmp_path):
-    from exabench.reports.json_report import build_run_summary
+    from aobench.reports.json_report import build_run_summary
 
     run_id = _run_all_tasks(tmp_path)
     run_dir = tmp_path / run_id
@@ -54,7 +54,7 @@ def test_json_report_summary(tmp_path):
 
 
 def test_json_report_written_to_disk(tmp_path):
-    from exabench.reports.json_report import write_run_summary
+    from aobench.reports.json_report import write_run_summary
 
     run_id = _run_all_tasks(tmp_path)
     run_dir = tmp_path / run_id
@@ -67,7 +67,7 @@ def test_json_report_written_to_disk(tmp_path):
 
 
 def test_html_report_written_to_disk(tmp_path):
-    from exabench.reports.html_report import write_html_report
+    from aobench.reports.html_report import write_html_report
 
     run_id = _run_all_tasks(tmp_path)
     run_dir = tmp_path / run_id
@@ -76,6 +76,6 @@ def test_html_report_written_to_disk(tmp_path):
     assert html_path.exists()
 
     content = html_path.read_text()
-    assert "ExaBench" in content
+    assert "AOBench" in content
     assert run_id in content
     assert "<table" in content

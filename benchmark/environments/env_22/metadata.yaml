@@ -1,7 +1,7 @@
 environment_id: env_22
 snapshot_name: Cooling Alarm Response
 scenario_type: facility_incident
-cluster_name: exabench-cluster-b
+cluster_name: aobench-cluster-b
 snapshot_timestamp: 2026-03-20T14:30:00Z
 bundle_root: environments/env_22
 supported_roles:

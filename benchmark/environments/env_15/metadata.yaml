@@ -1,5 +1,5 @@
 bundle_root: environments/env_15
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: 'Two jobs share node01: job A requested 180GB and job B requested 200GB,
   totalling 380GB on a 256GB node. Swap activity is causing severe performance degradation.
   Sysadmin must identify the oversubscription and decide which job to terminate or

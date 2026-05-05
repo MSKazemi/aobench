@@ -1,5 +1,5 @@
 {
-  "cluster": "exabench-cluster-c",
+  "cluster": "aobench-cluster-c",
   "snapshot_time": "2026-04-01T10:00:00Z",
   "login_nodes": [
     {"name": "login01", "ip": "10.0.0.1", "network_uplink_gbps": 25},

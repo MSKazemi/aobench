@@ -1,5 +1,5 @@
 bundle_root: environments/env_16
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: After a SLURM reconfiguration, the default partition was accidentally
   changed to 'gpu'. CPU-only jobs are now landing on GPU nodes, wasting GPUs and blocking
   GPU workloads. Sysadmin must identify and fix the misconfiguration.

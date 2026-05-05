@@ -13,7 +13,7 @@ ENVS_ROOT = Path(__file__).parent.parent / "benchmark" / "environments"
 TODAY = datetime.date.today().isoformat()
 
 TEMPLATE = """\
-# ExaBench HPC Facility — RBAC and Access Policy
+# AOBench HPC Facility — RBAC and Access Policy
 
 **Policy version:** 1.0
 **Effective date:** {effective_date}

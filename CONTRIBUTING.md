@@ -1,10 +1,10 @@
-# Contributing to ExaBench
+# Contributing to AOBench
 
 ## Setup
 
 ```bash
-git clone https://github.com/MSKazemi/ExaBench
-cd ExaBench
+git clone https://github.com/MSKazemi/aobench
+cd AOBench
 make install        # creates .venv and installs all deps
 make validate       # verifies benchmark data loads cleanly
 make test           # 58 tests should pass
@@ -113,15 +113,15 @@ Validate after creating: `make validate`
 
 ## How to Add an Adapter
 
-An adapter wraps an LLM (or any agent) and translates ExaBench's `ExecutionContext` into a `Trace`.
+An adapter wraps an LLM (or any agent) and translates AOBench's `ExecutionContext` into a `Trace`.
 
 **Step 1 — Create the adapter file:**
 
 ```python
-# src/exabench/adapters/my_adapter.py
-from exabench.adapters.base import BaseAdapter
-from exabench.runners.context import ExecutionContext
-from exabench.schemas.trace import Trace
+# src/aobench/adapters/my_adapter.py
+from aobench.adapters.base import BaseAdapter
+from aobench.runners.context import ExecutionContext
+from aobench.schemas.trace import Trace
 
 class MyAdapter(BaseAdapter):
     name = "my_adapter"
@@ -137,20 +137,20 @@ Key objects:
 - `context.task` — `TaskSpec` (query, role, allowed_tools, gold_evidence_refs)
 - `context.tools` — `ToolRegistry` (call tools, check permissions)
 - `context.tools.available_tool_names` — list of tool names available for this task/role
-- Return a `Trace` — see `src/exabench/schemas/trace.py`
+- Return a `Trace` — see `src/aobench/schemas/trace.py`
 
 **Step 2 — Register in `run_cmd.py`:**
 
 ```python
-# src/exabench/cli/run_cmd.py  — _build_adapter()
+# src/aobench/cli/run_cmd.py  — _build_adapter()
 if name == "my_adapter":
-    from exabench.adapters.my_adapter import MyAdapter
+    from aobench.adapters.my_adapter import MyAdapter
     return MyAdapter()
 ```
 
 **Step 3 — Add OpenAI-style tool schemas** (if the adapter uses function calling):
 
-Add your tool's JSON schema to `src/exabench/adapters/openai_adapter.py:_TOOL_SCHEMAS` — or generate it from the tool class if it exposes a `schema()` method.
+Add your tool's JSON schema to `src/aobench/adapters/openai_adapter.py:_TOOL_SCHEMAS` — or generate it from the tool class if it exposes a `schema()` method.
 
 **Step 4 — Test:**
 
@@ -165,10 +165,10 @@ make run TASK=JOB_USR_001 ENV=env_01 ADAPTER=my_adapter
 A scorer evaluates one dimension of agent quality from a `TaskSpec` and `Trace`.
 
 ```python
-# src/exabench/scorers/my_scorer.py
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Trace
-from exabench.scorers.base import BaseScorer, ScorerOutput
+# src/aobench/scorers/my_scorer.py
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Trace
+from aobench.scorers.base import BaseScorer, ScorerOutput
 
 class MyScorer(BaseScorer):
     dimension = "my_dimension"
@@ -181,7 +181,7 @@ class MyScorer(BaseScorer):
         return ScorerOutput(dimension=self.dimension, score=score, notes="...")
 ```
 
-Register in `src/exabench/scorers/aggregate.py:_SCORERS` and add the dimension to `DimensionScores` in `src/exabench/schemas/result.py`. Add a weight entry to each profile in `benchmark/configs/scoring_profiles.yaml`.
+Register in `src/aobench/scorers/aggregate.py:_SCORERS` and add the dimension to `DimensionScores` in `src/aobench/schemas/result.py`. Add a weight entry to each profile in `benchmark/configs/scoring_profiles.yaml`.
 
 Write tests in `tests/unit/test_my_scorer.py`.
 
@@ -191,7 +191,7 @@ Write tests in `tests/unit/test_my_scorer.py`.
 
 - Python 3.11+, Pydantic v2, Typer CLI
 - `uv run ruff check src/ tests/` must pass (no errors)
-- `uv run mypy src/exabench/` must pass
+- `uv run mypy src/aobench/` must pass
 - Every new module needs at least basic unit tests
 - Run `make check` before opening a PR
 

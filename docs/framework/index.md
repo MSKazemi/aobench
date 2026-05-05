@@ -1,6 +1,6 @@
-# ExaBench Framework Documentation
+# AOBench Framework Documentation
 
-**ExaBench** is a benchmark framework for evaluating AI agent systems in
+**AOBench** is a benchmark framework for evaluating AI agent systems in
 High-Performance Computing (HPC) environments. It uses role-aware tasks,
 deterministic HPC state snapshots, and trace-based scoring across six
 dimensions.
@@ -37,7 +37,7 @@ For a complete component map, end-to-end data flow, and scoring pipeline details
 | [`docs/reference/system-architecture.md`](../reference/system-architecture.md) | System architecture + Mermaid diagrams |
 | [`docs/guides/langfuse-integration.md`](../guides/langfuse-integration.md) | Observability backend |
 | [`CONTRIBUTING.md`](../about/contributing.md) | How to contribute tasks, adapters, scorers |
-| [GitHub README](https://github.com/MSKazemi/ExaBench#readme) | Repository entry point and quick start |
+| [GitHub README](https://github.com/MSKazemi/aobench#readme) | Repository entry point and quick start |
 | [`CHANGELOG.md`](../about/changelog.md) | Release notes |
 | [`CONTRIBUTING.md`](../about/contributing.md) | Contribution guide |
 | [`SECURITY.md`](../about/security.md) | Vulnerability reporting and threat model |

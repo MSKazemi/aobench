@@ -1,10 +1,10 @@
-"""Unit tests for exabench.judge.config."""
+"""Unit tests for aobench.judge.config."""
 
 from __future__ import annotations
 
 import pytest
 
-from exabench.judge.config import JudgeConfig, make_judge_config_id
+from aobench.judge.config import JudgeConfig, make_judge_config_id
 
 
 RUBRIC_TEXT = "# Rubric prompt\nSystem: score the response."

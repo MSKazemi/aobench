@@ -1,8 +1,8 @@
-"""Unit tests for src/exabench/scoring/exact_match.py."""
+"""Unit tests for src/aobench/scoring/exact_match.py."""
 
 import pytest
 
-from exabench.scoring.exact_match import (
+from aobench.scoring.exact_match import (
     expand_slurm_nodelist,
     match_answers,
     parse_float,

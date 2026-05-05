@@ -4,7 +4,7 @@
   "title": "Capacity planning: CPU utilisation approaching saturation",
   "opened_at": "2026-03-19T00:00:00Z",
   "status": "open",
-  "affected_resource": "cluster:exabench-cluster-a",
+  "affected_resource": "cluster:aobench-cluster-a",
   "affected_job": null,
   "summary": "Average CPU utilisation has grown from 62% (Oct 2025) to 89% (Mar 2026), a rate of ~4.7 pp/month. At this rate, 95% saturation will be reached in approximately 6 weeks. Expansion planning lead time is 12 weeks.",
   "timeline": [

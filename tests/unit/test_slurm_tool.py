@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from exabench.tools.slurm_tool import MockSlurmTool
+from aobench.tools.slurm_tool import MockSlurmTool
 
 ENV_ROOT = str(Path(__file__).parent.parent / "data" / "environments" / "test_env_01")
 

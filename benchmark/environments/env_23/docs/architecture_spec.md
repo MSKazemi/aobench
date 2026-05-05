@@ -1,4 +1,4 @@
-# Cluster Architecture Specification — ExaBench Cluster C
+# Cluster Architecture Specification — AOBench Cluster C
 
 ## Acceptance Test Criteria for New Nodes
 New nodes must pass ALL of the following before entering production:

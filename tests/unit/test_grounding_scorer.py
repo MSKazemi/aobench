@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Observation, ToolCall, Trace, TraceStep
-from exabench.scorers.grounding_scorer import GroundingScorer
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Observation, ToolCall, Trace, TraceStep
+from aobench.scorers.grounding_scorer import GroundingScorer
 
 
 def _task() -> TaskSpec:

@@ -6,12 +6,12 @@ from datetime import datetime, timezone
 
 import pytest
 
-from exabench.reports.clear_report import (
+from aobench.reports.clear_report import (
     build_clear_report,
     compute_clear_scores,
     compute_cps,
 )
-from exabench.schemas.result import BenchmarkResult, CheckpointResult, DimensionScores
+from aobench.schemas.result import BenchmarkResult, CheckpointResult, DimensionScores
 
 
 # ---------------------------------------------------------------------------

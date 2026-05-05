@@ -1,7 +1,7 @@
 """Unit tests for task loader."""
 
-from exabench.loaders.task_loader import load_task, load_tasks_from_dir
-from exabench.schemas.task import TaskSpec
+from aobench.loaders.task_loader import load_task, load_tasks_from_dir
+from aobench.schemas.task import TaskSpec
 
 
 def test_load_single_task(test_task_path):

@@ -18,7 +18,7 @@ from pathlib import Path
 # Allow running from the project root without installing
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from exabench.tools.catalog_loader import generate_docs_page, load_catalog
+from aobench.tools.catalog_loader import generate_docs_page, load_catalog
 
 _DEFAULT_BENCHMARK = Path(__file__).parent.parent / "benchmark"
 _ENV_DIR_NAME = "environments"

@@ -1,4 +1,4 @@
-# ExaBench unified service stack.
+# AOBench unified service stack.
 # Starts Langfuse (observability) + leaderboard API.
 # Usage: make stack-up
 #

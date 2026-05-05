@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pytest
 
-from exabench.scorers.rubric_scorer import (
+from aobench.scorers.rubric_scorer import (
     RubricReliabilityError,
     compute_icc,
     validate_rubric_reliability,
@@ -119,7 +119,7 @@ class TestRubricScoreICCGate:
         """n_judges=1 should never trigger the ICC gate."""
         import json
         from pathlib import Path
-        from exabench.scorers.rubric_scorer import rubric_score
+        from aobench.scorers.rubric_scorer import rubric_score
 
         rubric_id = "test_icc_rubric"
         rubric = {
@@ -149,7 +149,7 @@ class TestRubricScoreICCGate:
     def test_multi_judge_high_agreement_passes(self, tmp_path):
         """n_judges>=2 with agreeing judges should pass the ICC gate."""
         import yaml
-        from exabench.scorers.rubric_scorer import rubric_score
+        from aobench.scorers.rubric_scorer import rubric_score
 
         rubric_id = "test_icc_rubric2"
         rubric = {"rubric_id": rubric_id, "dimensions": {f"d{i}": {"max_score": 1} for i in range(5)}}
@@ -182,7 +182,7 @@ class TestRubricScoreICCGate:
         """n_judges>=2 with strongly disagreeing judges should raise RubricReliabilityError."""
         import random
         import yaml
-        from exabench.scorers.rubric_scorer import rubric_score
+        from aobench.scorers.rubric_scorer import rubric_score
 
         rubric_id = "test_icc_rubric3"
         rubric = {"rubric_id": rubric_id, "dimensions": {f"d{i}": {"max_score": 1} for i in range(6)}}

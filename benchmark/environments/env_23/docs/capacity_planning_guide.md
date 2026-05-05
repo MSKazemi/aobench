@@ -1,4 +1,4 @@
-# Capacity Planning Guide — ExaBench Cluster C
+# Capacity Planning Guide — AOBench Cluster C
 
 ## Utilization Thresholds
 | Threshold | Action |

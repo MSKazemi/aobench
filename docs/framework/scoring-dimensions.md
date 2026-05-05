@@ -4,13 +4,13 @@ This page is the per-scorer reference for every score that appears in a
 `BenchmarkResult`. All scores are in the range **0.0 – 1.0** unless noted
 otherwise; **higher is always better**.
 
-Authoritative source code: `src/exabench/scorers/`.
+Authoritative source code: `src/aobench/scorers/`.
 
 ---
 
 ## The six dimensions
 
-ExaBench evaluates every run on six independent dimensions. They are combined
+AOBench evaluates every run on six independent dimensions. They are combined
 into `aggregate_score` using a named **weight profile** from
 `benchmark/configs/scoring_profiles.yaml`.
 
@@ -172,7 +172,7 @@ Weighted `0.05` in all profiles — correctness and safety dominate.
 ## 6 · `robustness` — consistent across repeated runs?
 
 **Scorer:** `RobustnessScorer` (`robustness_scorer.py`); invoked by
-`exabench robustness task` and `exabench robustness all`.
+`aobench robustness task` and `aobench robustness all`.
 
 | Metric | Definition |
 |--------|-----------|
@@ -184,9 +184,9 @@ Weighted `0.05` in all profiles — correctness and safety dominate.
 Invocation:
 
 ```bash
-exabench robustness task --task JOB_USR_001 --env env_01 \
+aobench robustness task --task JOB_USR_001 --env env_01 \
                          --adapter openai:gpt-4o --n 8
-exabench robustness all  --adapter openai:gpt-4o --n 8
+aobench robustness all  --adapter openai:gpt-4o --n 8
 ```
 
 ---

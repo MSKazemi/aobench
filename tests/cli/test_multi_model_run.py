@@ -15,8 +15,8 @@ import typer
 
 
 def test_resolve_model_direct_qa():
-    from exabench.cli.run_cmd import resolve_model
-    from exabench.adapters.direct_qa_adapter import DirectQAAdapter
+    from aobench.cli.run_cmd import resolve_model
+    from aobench.adapters.direct_qa_adapter import DirectQAAdapter
 
     adapter_class, model_name = resolve_model("direct_qa")
     assert adapter_class is DirectQAAdapter
@@ -24,8 +24,8 @@ def test_resolve_model_direct_qa():
 
 
 def test_resolve_model_gpt4o():
-    from exabench.cli.run_cmd import resolve_model
-    from exabench.adapters.openai_adapter import OpenAIAdapter
+    from aobench.cli.run_cmd import resolve_model
+    from aobench.adapters.openai_adapter import OpenAIAdapter
 
     adapter_class, model_name = resolve_model("gpt-4o")
     assert adapter_class is OpenAIAdapter
@@ -33,8 +33,8 @@ def test_resolve_model_gpt4o():
 
 
 def test_resolve_model_gpt4o_mini():
-    from exabench.cli.run_cmd import resolve_model
-    from exabench.adapters.openai_adapter import OpenAIAdapter
+    from aobench.cli.run_cmd import resolve_model
+    from aobench.adapters.openai_adapter import OpenAIAdapter
 
     adapter_class, model_name = resolve_model("gpt-4o-mini")
     assert adapter_class is OpenAIAdapter
@@ -42,8 +42,8 @@ def test_resolve_model_gpt4o_mini():
 
 
 def test_resolve_model_llama():
-    from exabench.cli.run_cmd import resolve_model
-    from exabench.adapters.openai_adapter import OpenAIAdapter
+    from aobench.cli.run_cmd import resolve_model
+    from aobench.adapters.openai_adapter import OpenAIAdapter
 
     adapter_class, model_name = resolve_model("llama-3.3-70b")
     assert adapter_class is OpenAIAdapter
@@ -52,7 +52,7 @@ def test_resolve_model_llama():
 
 def test_resolve_model_unknown_exits():
     """Unknown token must raise typer.Exit (exit code 1)."""
-    from exabench.cli.run_cmd import resolve_model
+    from aobench.cli.run_cmd import resolve_model
 
     with pytest.raises(typer.Exit):
         resolve_model("totally-unknown-model-xyz")
@@ -60,7 +60,7 @@ def test_resolve_model_unknown_exits():
 
 def test_resolve_model_unknown_prints_valid_tokens(capsys):
     """Unknown token should print the list of valid tokens."""
-    from exabench.cli.run_cmd import resolve_model, _MODEL_REGISTRY
+    from aobench.cli.run_cmd import resolve_model, _MODEL_REGISTRY
 
     with pytest.raises(typer.Exit):
         resolve_model("totally-unknown-model-xyz")
@@ -78,7 +78,7 @@ def test_resolve_model_unknown_prints_valid_tokens(capsys):
 
 def test_run_all_models_creates_subdir_output_paths(tmp_path):
     """run all --models direct_qa,direct_qa should route to two separate token subdirs."""
-    from exabench.cli.run_cmd import _MODEL_REGISTRY, resolve_model
+    from aobench.cli.run_cmd import _MODEL_REGISTRY, resolve_model
 
     tokens = ["direct_qa", "direct_qa"]
     expected_dirs = [str(tmp_path / token) for token in tokens]
@@ -95,7 +95,7 @@ def test_models_flag_iterates_all_tokens(tmp_path):
     tokens = ["direct_qa", "gpt-4o", "llama-3.3-70b"]
     output_root = str(tmp_path)
 
-    from exabench.cli.run_cmd import resolve_model
+    from aobench.cli.run_cmd import resolve_model
 
     seen_outputs = []
     for token in tokens:
@@ -114,7 +114,7 @@ def test_models_flag_iterates_all_tokens(tmp_path):
 
 def test_load_system_prompt_prefix_substitution(tmp_path):
     """Prefix file with {{role}}, {{permitted_tools_csv}}, {{forbidden_tools_csv}} must be filled."""
-    from exabench.cli.run_cmd import _load_system_prompt_prefix
+    from aobench.cli.run_cmd import _load_system_prompt_prefix
 
     prefix_file = tmp_path / "prefix.txt"
     prefix_file.write_text(
@@ -140,7 +140,7 @@ def test_load_system_prompt_prefix_substitution(tmp_path):
 
 def test_load_system_prompt_prefix_none_returns_empty():
     """When path is None, _load_system_prompt_prefix must return an empty string."""
-    from exabench.cli.run_cmd import _load_system_prompt_prefix
+    from aobench.cli.run_cmd import _load_system_prompt_prefix
 
     task = MagicMock()
     result = _load_system_prompt_prefix(None, task)
@@ -149,7 +149,7 @@ def test_load_system_prompt_prefix_none_returns_empty():
 
 def test_load_system_prompt_prefix_empty_lists(tmp_path):
     """Task with no allowed_tools or hard_fail_conditions should produce empty CSV fields."""
-    from exabench.cli.run_cmd import _load_system_prompt_prefix
+    from aobench.cli.run_cmd import _load_system_prompt_prefix
 
     prefix_file = tmp_path / "prefix.txt"
     prefix_file.write_text(
@@ -168,8 +168,8 @@ def test_load_system_prompt_prefix_empty_lists(tmp_path):
 
 def test_system_prompt_prefix_prepended_to_adapter_system_prompt(tmp_path):
     """Verify that the resolved prefix appears at the start of the adapter system prompt."""
-    from exabench.adapters.openai_adapter import OpenAIAdapter
-    from exabench.cli.run_cmd import _load_system_prompt_prefix
+    from aobench.adapters.openai_adapter import OpenAIAdapter
+    from aobench.cli.run_cmd import _load_system_prompt_prefix
 
     prefix_file = tmp_path / "prefix.txt"
     prefix_file.write_text("RBAC PREAMBLE: role={{role}}", encoding="utf-8")

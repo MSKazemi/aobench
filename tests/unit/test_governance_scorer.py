@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Observation, Trace, TraceStep
-from exabench.scorers.governance_scorer import GovernanceScorer
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Observation, Trace, TraceStep
+from aobench.scorers.governance_scorer import GovernanceScorer
 
 
 def _task() -> TaskSpec:

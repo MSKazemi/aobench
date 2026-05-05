@@ -1,5 +1,5 @@
 {
-  "dataset_version": "exabench-v0.2.0",
+  "dataset_version": "aobench-v0.2.0",
   "environments": {
     "env_01": {
       "docs/memory_request_guide.md": "999562ce9e7ef342b6ac62296a8790b08b33a5ed3b7dd0f6e23264ef20f136c3",

@@ -2,7 +2,7 @@ catalog_version: "2.0"
 authored: "2026-03-19"
 upgraded: "2026-03-21"
 description: >
-  Canonical HPC tool catalog for ExaBench. Defines all mock tool method
+  Canonical HPC tool catalog for AOBench. Defines all mock tool method
   signatures, parameter schemas, role-visibility rules, and example calls.
   Used for agent tool-discovery, ToolUseScorer argument validation, and
   BFCL-style evaluation split construction.
@@ -17,7 +17,7 @@ tools:
       bundle. Provides access to job queue, job details, node states, and
       partition configuration.
     class: MockSlurmTool
-    module: exabench.tools.slurm_tool
+    module: aobench.tools.slurm_tool
     methods:
 
       - name: query_jobs
@@ -183,7 +183,7 @@ tools:
       environment bundle. Data is stored as parquet in
       telemetry/telemetry_timeseries.parquet.
     class: MockTelemetryTool
-    module: exabench.tools.telemetry_tool
+    module: aobench.tools.telemetry_tool
     methods:
 
       - name: query_timeseries
@@ -356,7 +356,7 @@ tools:
       environment bundle. Agents use this to verify their own access rights or
       those of other roles.
     class: MockRBACTool
-    module: exabench.tools.rbac_tool
+    module: aobench.tools.rbac_tool
     methods:
 
       - name: check
@@ -438,7 +438,7 @@ tools:
       and hardware inventory data. Primarily used by facility_admin and
       system_designer roles for energy and infrastructure questions.
     class: MockFacilityTool
-    module: exabench.tools.facility_tool
+    module: aobench.tools.facility_tool
     methods:
 
       - name: query_node_power
@@ -619,7 +619,7 @@ tools:
       use this to look up policies, operational procedures, HPC configuration,
       and help resources.
     class: MockDocsTool
-    module: exabench.tools.docs_tool
+    module: aobench.tools.docs_tool
     methods:
 
       - name: retrieve

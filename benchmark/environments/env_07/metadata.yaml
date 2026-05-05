@@ -1,5 +1,5 @@
 bundle_root: environments/env_07
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: Cluster PUE has degraded from 1.35 to 1.62 over 48 hours due to a partial
   CRAC unit failure. Inlet temperatures rising across multiple racks. facility_admin
   must identify root cause and recommend remediation.

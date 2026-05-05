@@ -23,11 +23,11 @@ from __future__ import annotations
 import pytest
 from datetime import datetime, timezone
 
-from exabench.schemas.result import BenchmarkResult, DimensionScores
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Observation, Trace, TraceStep, ToolCall
-from exabench.scorers.governance_scorer import GovernanceScorer
-from exabench.scoring.cup_scorer import (
+from aobench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Observation, Trace, TraceStep, ToolCall
+from aobench.scorers.governance_scorer import GovernanceScorer
+from aobench.scoring.cup_scorer import (
     CuPScorer,
     ViolationVector,
     all_pass_at_k,

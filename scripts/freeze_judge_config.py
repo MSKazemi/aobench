@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
-from exabench.judge.config import JudgeConfig, make_judge_config_id
+from aobench.judge.config import JudgeConfig, make_judge_config_id
 
 RUBRIC_PATH = Path("prompts/judge/rubric_v2.md")
 TAXONOMY_PATH = Path("prompts/judge/taxonomy_v2.md")

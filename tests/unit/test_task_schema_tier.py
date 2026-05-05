@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from exabench.schemas.task import HPCTaskSpec, TaskSpec
+from aobench.schemas.task import HPCTaskSpec, TaskSpec
 
 
 # ---------------------------------------------------------------------------

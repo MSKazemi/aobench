@@ -1,4 +1,4 @@
-# Storage User Guide — ExaBench Cluster A
+# Storage User Guide — AOBench Cluster A
 
 ## Checking Your Quota
 Run `lfs quota -u $USER /lustre/scratch` to see your current usage and quota limits.

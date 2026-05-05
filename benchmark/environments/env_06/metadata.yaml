@@ -1,5 +1,5 @@
 bundle_root: environments/env_06
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: Power draw on gpu01 spiked to 650W (baseline ~380W) during a large training
   job. The spike triggered a facility power alert. Sysadmin must identify the offending
   job and node, and facility_admin must assess PDU capacity margin.

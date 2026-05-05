@@ -1,7 +1,7 @@
 environment_id: env_23
 snapshot_name: Capacity Expansion Planning
 scenario_type: architecture_review
-cluster_name: exabench-cluster-c
+cluster_name: aobench-cluster-c
 snapshot_timestamp: 2026-04-01T10:00:00Z
 bundle_root: environments/env_23
 supported_roles:

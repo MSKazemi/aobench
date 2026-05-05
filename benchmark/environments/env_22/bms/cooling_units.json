@@ -1,6 +1,6 @@
 {
   "snapshot_time": "2026-03-20T14:30:00Z",
-  "facility": "exabench-cluster-b datacenter",
+  "facility": "aobench-cluster-b datacenter",
   "crac_units": [
     {"unit_id": "CRAC-01", "row": "A", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 17.8, "return_temp_c": 28.4, "capacity_kw": 30.0, "load_kw": 14.2, "fault": null},
     {"unit_id": "CRAC-02", "row": "A", "status": "nominal",  "setpoint_c": 18.0, "supply_temp_c": 18.1, "return_temp_c": 29.1, "capacity_kw": 30.0, "load_kw": 16.8, "fault": null},

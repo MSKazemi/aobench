@@ -183,7 +183,7 @@ def build_env_06(root: Path) -> None:
         "environment_id": "env_06",
         "snapshot_name": "GPU Power Spike",
         "scenario_type": "energy_anomaly",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_06",
         "supported_roles": ["sysadmin", "facility_admin"],
@@ -207,7 +207,7 @@ def build_env_06(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 512000,
@@ -296,7 +296,7 @@ def build_env_07(root: Path) -> None:
         "environment_id": "env_07",
         "snapshot_name": "PUE Degradation Cooling Issue",
         "scenario_type": "energy_anomaly",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_07",
         "supported_roles": ["facility_admin"],
@@ -319,7 +319,7 @@ def build_env_07(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 256000,
@@ -428,7 +428,7 @@ def build_env_08(root: Path) -> None:
         "environment_id": "env_08",
         "snapshot_name": "Thermal Throttling on node03",
         "scenario_type": "node_degradation",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_08",
         "supported_roles": ["sysadmin"],
@@ -451,7 +451,7 @@ def build_env_08(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node01", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["standard"]},
@@ -560,7 +560,7 @@ def build_env_09(root: Path) -> None:
         "environment_id": "env_09",
         "snapshot_name": "Memory ECC Errors Flapping Node",
         "scenario_type": "node_degradation",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_09",
         "supported_roles": ["sysadmin"],
@@ -583,7 +583,7 @@ def build_env_09(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node05", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["standard"]},
@@ -671,7 +671,7 @@ def build_env_10(root: Path) -> None:
         "environment_id": "env_10",
         "snapshot_name": "Policy Violation Restricted Partition",
         "scenario_type": "policy_violation",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_10",
         "supported_roles": ["scientific_user", "sysadmin"],
@@ -695,7 +695,7 @@ def build_env_10(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node01",      "state": "allocated", "cpus": 64, "memory_mb": 256000, "partitions": ["standard"]},
@@ -783,7 +783,7 @@ def build_env_11(root: Path) -> None:
         "environment_id": "env_11",
         "snapshot_name": "Account Over Allocation Limit",
         "scenario_type": "policy_violation",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_11",
         "supported_roles": ["sysadmin", "facility_admin"],
@@ -806,7 +806,7 @@ def build_env_11(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 256000,
@@ -896,7 +896,7 @@ def build_env_12(root: Path) -> None:
         "environment_id": "env_12",
         "snapshot_name": "Fairshare Starvation Priority Inversion",
         "scenario_type": "queue_congestion",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_12",
         "supported_roles": ["sysadmin"],
@@ -920,7 +920,7 @@ def build_env_12(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 256000,
@@ -1013,7 +1013,7 @@ def build_env_13(root: Path) -> None:
         "environment_id": "env_13",
         "snapshot_name": "Six Month CPU Utilisation Trend",
         "scenario_type": "capacity_planning",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_13",
         "supported_roles": ["facility_admin", "system_designer"],
@@ -1036,7 +1036,7 @@ def build_env_13(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 256000,
@@ -1086,7 +1086,7 @@ def build_env_13(root: Path) -> None:
         "title": "Capacity planning: CPU utilisation approaching saturation",
         "opened_at": "2026-03-19T00:00:00Z",
         "status": "open",
-        "affected_resource": "cluster:exabench-cluster-a",
+        "affected_resource": "cluster:aobench-cluster-a",
         "affected_job": None,
         "summary": (
             "Average CPU utilisation has grown from 62% (Oct 2025) to 89% (Mar 2026), "
@@ -1139,7 +1139,7 @@ def build_env_14(root: Path) -> None:
         "environment_id": "env_14",
         "snapshot_name": "GPU Demand Forecast Expansion",
         "scenario_type": "capacity_planning",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_14",
         "supported_roles": ["system_designer"],
@@ -1162,7 +1162,7 @@ def build_env_14(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 512000,
@@ -1265,7 +1265,7 @@ def build_env_15(root: Path) -> None:
         "environment_id": "env_15",
         "snapshot_name": "Multi-Job Memory Interference",
         "scenario_type": "multi_job_interference",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_15",
         "supported_roles": ["sysadmin", "researcher"],
@@ -1289,7 +1289,7 @@ def build_env_15(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node01", "state": "allocated", "cpus": 64, "memory_mb": 256000, "partitions": ["standard"]},
@@ -1393,7 +1393,7 @@ def build_env_16(root: Path) -> None:
         "environment_id": "env_16",
         "snapshot_name": "Wrong Default Partition Misconfiguration",
         "scenario_type": "scheduler_misconfiguration",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_16",
         "supported_roles": ["sysadmin"],
@@ -1417,7 +1417,7 @@ def build_env_16(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node01", "state": "idle",      "cpus": 64, "memory_mb": 256000, "partitions": ["standard"]},
@@ -1511,7 +1511,7 @@ def build_env_17(root: Path) -> None:
         "environment_id": "env_17",
         "snapshot_name": "MPI Communication Timeout Network Fault",
         "scenario_type": "job_failure",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_17",
         "supported_roles": ["sysadmin"],
@@ -1535,7 +1535,7 @@ def build_env_17(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node10", "state": "idle", "cpus": 64, "memory_mb": 256000, "partitions": ["standard"]},
@@ -1636,7 +1636,7 @@ def build_env_18(root: Path) -> None:
         "environment_id": "env_18",
         "snapshot_name": "Checkpoint File Missing Restart Fails",
         "scenario_type": "job_failure",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_18",
         "supported_roles": ["scientific_user"],
@@ -1660,7 +1660,7 @@ def build_env_18(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "node05", "state": "idle", "cpus": 64, "memory_mb": 512000, "partitions": ["standard"]},
@@ -1767,7 +1767,7 @@ def build_env_19(root: Path) -> None:
         "environment_id": "env_19",
         "snapshot_name": "GPU Idle Energy Waste Not Released",
         "scenario_type": "energy_anomaly",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_19",
         "supported_roles": ["facility_admin"],
@@ -1791,7 +1791,7 @@ def build_env_19(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": "gpu01", "state": "allocated", "cpus": 64, "memory_mb": 512000, "partitions": ["gpu"]},
@@ -1899,7 +1899,7 @@ def build_env_20(root: Path) -> None:
         "environment_id": "env_20",
         "snapshot_name": "Lustre IO Contention Multi-Job Interference",
         "scenario_type": "multi_job_interference",
-        "cluster_name": "exabench-cluster-a",
+        "cluster_name": "aobench-cluster-a",
         "snapshot_timestamp": snap_time,
         "bundle_root": "environments/env_20",
         "supported_roles": ["sysadmin"],
@@ -1923,7 +1923,7 @@ def build_env_20(root: Path) -> None:
     })
 
     _write_json(env / "slurm" / "slurm_state.json", {
-        "cluster": "exabench-cluster-a",
+        "cluster": "aobench-cluster-a",
         "snapshot_time": snap_time,
         "nodes": [
             {"name": n, "state": "allocated", "cpus": 64, "memory_mb": 256000,
@@ -2065,7 +2065,7 @@ BUILDERS = [
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate ExaBench snapshot bundles env_06–env_20")
+    parser = argparse.ArgumentParser(description="Generate AOBench snapshot bundles env_06–env_20")
     parser.add_argument(
         "--benchmark-root",
         default="benchmark",

@@ -1,8 +1,8 @@
-site_name: ExaBench
-site_description: Benchmark framework for evaluating AI agents in HPC environments
-site_url: https://mskazemi.github.io/ExaBench/
-repo_url: https://github.com/MSKazemi/ExaBench
-repo_name: MSKazemi/ExaBench
+site_name: AOBench
+site_description: "AOBench: A Trace-Driven, Role-Aware Benchmark for Agent Operations in Realistic Environments"
+site_url: https://mskazemi.github.io/aobench/
+repo_url: https://github.com/MSKazemi/aobench
+repo_name: MSKazemi/aobench
 edit_uri: edit/main/docs/
 
 theme:

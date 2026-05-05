@@ -1,6 +1,6 @@
 {
   "snapshot_time": "2026-04-01T10:00:00Z",
-  "cluster": "exabench-cluster-c",
+  "cluster": "aobench-cluster-c",
   "node_types": [
     {
       "type": "standard_compute",

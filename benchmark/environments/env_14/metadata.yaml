@@ -1,5 +1,5 @@
 bundle_root: environments/env_14
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: GPU partition utilisation has averaged 97% for the past 30 days. Average
   queue wait for GPU jobs is 18 hours. system_designer must quantify the demand gap
   and produce an expansion recommendation.

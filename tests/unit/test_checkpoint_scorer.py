@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import pytest
 
-from exabench.schemas.result import CheckpointResult
-from exabench.schemas.trace import Observation, ToolCall, TraceStep
-from exabench.scorers.checkpoint_scorer import (
+from aobench.schemas.result import CheckpointResult
+from aobench.schemas.trace import Observation, ToolCall, TraceStep
+from aobench.scorers.checkpoint_scorer import (
     CheckpointSpec,
     compute_s_partial,
     evaluate_checkpoints,

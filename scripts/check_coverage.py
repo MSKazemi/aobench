@@ -9,8 +9,8 @@ from pathlib import Path
 # Allow running as a script without installing the package
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from exabench.loaders.task_loader import load_tasks_from_dir
-from exabench.schemas.task import TaskSpec
+from aobench.loaders.task_loader import load_tasks_from_dir
+from aobench.schemas.task import TaskSpec
 
 BENCHMARK_ROOT = Path(__file__).parent.parent / "benchmark"
 ROLES   = ["scientific_user", "sysadmin", "facility_admin", "researcher", "system_designer"]
@@ -34,7 +34,7 @@ def main() -> None:
 
     # ── Role × Category matrix ────────────────────────────────────────────────
     print(f"\n{'─'*56}")
-    print(f"  ExaBench Coverage Matrix   ({total} tasks total)")
+    print(f"  AOBench Coverage Matrix   ({total} tasks total)")
     print(f"{'─'*56}")
 
     # Header

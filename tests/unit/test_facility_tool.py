@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from exabench.tools.facility_tool import MockFacilityTool
+from aobench.tools.facility_tool import MockFacilityTool
 
 ENV_ROOT = str(Path(__file__).parent.parent.parent / "benchmark" / "environments" / "env_03")
 

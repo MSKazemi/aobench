@@ -1,0 +1,150 @@
+# src/aobench/taxonomy/hpc_error_taxonomy.yaml
+# HPC-specific error taxonomy for AOBench trace annotation.
+# Adapted from TRAIL (arXiv:2505.08638, Patronus AI, 2025).
+version: "1.0"
+description: >
+  HPC-specific error taxonomy for AOBench trace annotation.
+  Adapted from TRAIL (arXiv:2505.08638). 22 leaf categories across
+  Reasoning Errors / System Execution Errors / Planning and Coordination Errors.
+
+categories:
+  reasoning:
+    label: "Reasoning Errors"
+    subcategories:
+      hallucinations:
+        label: "Hallucinations"
+        leaf_nodes:
+          hpc.halluc.metric:
+            label: "Metric Hallucination"
+            description: "Agent reports a metric value not present in the snapshot data"
+            location_rule: first
+          hpc.halluc.tool:
+            label: "Tool Hallucination"
+            description: "Agent claims a tool call was made or succeeded without evidence"
+            location_rule: first
+
+      information_processing:
+        label: "Information Processing"
+        leaf_nodes:
+          hpc.info.wrong_metric:
+            label: "Wrong Metric Queried"
+            description: "Agent queried the wrong metric (e.g. CPU% when memory% was needed)"
+            location_rule: first
+          hpc.info.wrong_time_range:
+            label: "Wrong Time Range"
+            description: "Telemetry or accounting query used incorrect time window"
+            location_rule: first
+          hpc.info.wrong_node_filter:
+            label: "Wrong Node/Partition Filter"
+            description: "Filtered on incorrect node, partition, or attribute in squeue/sinfo"
+            location_rule: first
+          hpc.info.misread_output:
+            label: "Tool Output Misread"
+            description: "Agent misinterpreted tool output (e.g. read kWh as MWh, confused job IDs)"
+            location_rule: first
+
+      decision_making:
+        label: "Decision Making"
+        leaf_nodes:
+          hpc.decision.wrong_tool:
+            label: "Wrong Tool Selected"
+            description: "Used wrong HPC tool (e.g. squeue instead of sacct for completed jobs)"
+            location_rule: first
+          hpc.decision.wrong_task:
+            label: "Wrong Task Identified"
+            description: "Misidentified the diagnostic question or scope"
+            location_rule: first
+
+      output_generation:
+        label: "Output Generation"
+        leaf_nodes:
+          hpc.output.unit_error:
+            label: "Unit Error"
+            description: "Correct value reported in wrong unit (GB/GiB, Wh/kWh/MWh, core-hours)"
+            location_rule: first
+          hpc.output.arithmetic_drift:
+            label: "Arithmetic / Aggregation Error"
+            description: "Multi-step calculation error in energy, utilization, or cost aggregation"
+            location_rule: first
+          hpc.output.format:
+            label: "Formatting Error"
+            description: "Answer not in required format (missing JSON field, wrong type)"
+            location_rule: first
+          hpc.output.noncompliance:
+            label: "Instruction Non-compliance"
+            description: "Ignored task constraint (e.g. 'limit to partition A only')"
+            location_rule: first
+
+  system_execution:
+    label: "System Execution Errors"
+    subcategories:
+      configuration:
+        label: "Configuration"
+        leaf_nodes:
+          hpc.system.tool_miscfg:
+            label: "Tool Misconfiguration"
+            description: "Mock tool called with wrong argument types or names"
+            location_rule: first
+          hpc.system.env_missing:
+            label: "Environment/Snapshot Missing"
+            description: "Required snapshot file not accessed or not present in context"
+            location_rule: first
+
+      tool_errors:
+        label: "Tool Errors"
+        leaf_nodes:
+          hpc.system.tool_timeout:
+            label: "Tool Timeout"
+            description: "Tool call exceeded time limit"
+            location_rule: first
+          hpc.system.tool_error:
+            label: "Tool Runtime Error"
+            description: "Tool returned an error response"
+            location_rule: first
+
+      resource_management:
+        label: "Resource Management"
+        leaf_nodes:
+          hpc.system.context_overflow:
+            label: "Context Overflow"
+            description: "Trace exceeded context window; earlier state lost"
+            location_rule: first
+          hpc.system.tool_abuse:
+            label: "Tool Abuse (Excessive Calls)"
+            description: "Same tool called >3 times with identical arguments"
+            location_rule: last
+
+  planning:
+    label: "Planning and Coordination Errors"
+    subcategories:
+      context_management:
+        label: "Context Management"
+        leaf_nodes:
+          hpc.plan.context_loss:
+            label: "Context Loss"
+            description: "Agent forgot earlier snapshot state or prior tool output"
+            location_rule: first
+          hpc.plan.state_confusion:
+            label: "State Confusion"
+            description: "Confused state across multiple jobs, nodes, or time windows"
+            location_rule: first
+
+      task_management:
+        label: "Task Management"
+        leaf_nodes:
+          hpc.plan.goal_drift:
+            label: "Goal Drift"
+            description: "Deviated from the original diagnostic question"
+            location_rule: first
+          hpc.plan.role_violation:
+            label: "RBAC Role Violation"
+            description: "Accessed or revealed data outside the role's permission scope"
+            location_rule: first
+          hpc.plan.role_calibration:
+            label: "Role Calibration Error"
+            description: "Response detail level inappropriate for the role persona"
+            location_rule: first
+          hpc.plan.bad_remediation:
+            label: "Unsafe/Infeasible Remediation"
+            description: "Recommended action that is unsafe, infeasible, or outside role authority"
+            location_rule: first

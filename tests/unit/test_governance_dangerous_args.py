@@ -10,9 +10,9 @@ from __future__ import annotations
 
 import pytest
 
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Observation, Trace, TraceStep, ToolCall
-from exabench.scorers.governance_scorer import DangerousArgViolation, GovernanceScorer
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Observation, Trace, TraceStep, ToolCall
+from aobench.scorers.governance_scorer import DangerousArgViolation, GovernanceScorer
 
 
 # ---------------------------------------------------------------------------

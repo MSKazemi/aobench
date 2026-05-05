@@ -1,4 +1,4 @@
-"""Tests for ExaBenchEnv gymnasium-compatible environment (gymnasium_env_spec §11)."""
+"""Tests for AOBenchEnv gymnasium-compatible environment (gymnasium_env_spec §11)."""
 
 from __future__ import annotations
 
@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from exabench.gym.exabench_env import ExaBenchEnv
-from exabench.gym.spaces import ACTION_SPACE, OBSERVATION_SPACE, DictSpace
+from aobench.gym.aobench_env import AOBenchEnv
+from aobench.gym.spaces import ACTION_SPACE, OBSERVATION_SPACE, DictSpace
 
 
 # ---- Space tests ----
@@ -27,16 +27,16 @@ def test_action_space_is_dict():
     assert "finish_answer" in ACTION_SPACE.spaces
 
 
-# ---- ExaBenchEnv attribute tests (no reset needed) ----
+# ---- AOBenchEnv attribute tests (no reset needed) ----
 
 def test_env_has_spaces():
-    env = ExaBenchEnv()
+    env = AOBenchEnv()
     assert env.observation_space is OBSERVATION_SPACE
     assert env.action_space is ACTION_SPACE
 
 
 def test_step_before_reset_raises():
-    env = ExaBenchEnv()
+    env = AOBenchEnv()
     with pytest.raises(RuntimeError, match="reset"):
         env.step({"type": "finish", "finish_answer": "done"})
 
@@ -73,7 +73,7 @@ def test_reset_returns_obs_and_info():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         obs, info = env.reset(task_id="TEST_GYM_001", seed=42)
 
     assert isinstance(obs, dict)
@@ -92,7 +92,7 @@ def test_finish_action_terminates():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         env.reset(task_id="TEST_GYM_001", seed=0)
 
         action = {"type": "finish", "finish_answer": "OOM kill"}
@@ -108,7 +108,7 @@ def test_step_after_terminate_raises():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         env.reset(task_id="TEST_GYM_001", seed=0)
         env.step({"type": "finish", "finish_answer": "done"})
         with pytest.raises(RuntimeError, match="terminated"):
@@ -119,7 +119,7 @@ def test_message_action_increments_step():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         env.reset(task_id="TEST_GYM_001", seed=0)
 
         obs, reward, terminated, truncated, info = env.step({"type": "message", "message": "hello"})
@@ -134,7 +134,7 @@ def test_engaged_flag_set_when_expected_tool_called():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir, expected_tool_calls=["slurm"])
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         obs, info = env.reset(task_id="TEST_GYM_001", seed=0)
         assert info["engaged"] is False
 
@@ -152,7 +152,7 @@ def test_not_engaged_when_no_expected_tool_calls():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir, expected_tool_calls=None)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         env.reset(task_id="TEST_GYM_001", seed=0)
         _, _, _, _, info = env.step({"type": "tool_call", "tool_name": "slurm", "method": "query_jobs", "arguments": "{}"})
         assert info["engaged"] is False
@@ -163,7 +163,7 @@ def test_seed_determinism():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         obs1, _ = env.reset(task_id="TEST_GYM_001", seed=99)
         obs2, _ = env.reset(task_id="TEST_GYM_001", seed=99)
         assert obs1 == obs2
@@ -173,7 +173,7 @@ def test_close_clears_state():
     with tempfile.TemporaryDirectory() as tmp:
         task_dir = Path(tmp)
         _make_minimal_task(task_dir)
-        env = ExaBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
         env.reset(task_id="TEST_GYM_001", seed=0)
         env.close()
         assert env._task is None

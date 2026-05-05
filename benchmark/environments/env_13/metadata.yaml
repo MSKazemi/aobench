@@ -1,5 +1,5 @@
 bundle_root: environments/env_13
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: Six-month CPU utilisation telemetry showing a steady growth trend from
   62% average in October 2025 to 89% in March 2026. system_designer must forecast
   when the cluster will reach saturation and recommend expansion.

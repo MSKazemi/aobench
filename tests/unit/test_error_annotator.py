@@ -9,10 +9,10 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from exabench.schemas.task import EvalCriteria, TaskSpec
-from exabench.schemas.trace import Observation, Trace, TraceStep, ToolCall
-from exabench.schemas.trace_annotation import ErrorAnnotation, HolisticScores, TraceAnnotation
-from exabench.scorers.error_annotator import (
+from aobench.schemas.task import EvalCriteria, TaskSpec
+from aobench.schemas.trace import Observation, Trace, TraceStep, ToolCall
+from aobench.schemas.trace_annotation import ErrorAnnotation, HolisticScores, TraceAnnotation
+from aobench.scorers.error_annotator import (
     _args_hash,
     _span_id,
     _try_parse_float,

@@ -1,5 +1,5 @@
 bundle_root: environments/env_08
-cluster_name: exabench-cluster-a
+cluster_name: aobench-cluster-a
 description: node03 is experiencing thermal throttling due to a blocked cooling duct.
   CPU frequency is reduced by 40%. Jobs on node03 are running ~30% slower than on
   peer nodes. Sysadmin must identify the degraded node and drain it.

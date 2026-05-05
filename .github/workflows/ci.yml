@@ -31,10 +31,10 @@ jobs:
         run: uv run ruff check src/ tests/
 
       - name: Type check
-        run: uv run mypy src/exabench/
+        run: uv run mypy src/aobench/
 
       - name: Tests
         run: uv run pytest tests/ -q
 
       - name: Validate benchmark data
-        run: uv run exabench validate benchmark
+        run: uv run aobench validate benchmark

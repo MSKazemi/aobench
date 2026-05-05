@@ -1,6 +1,6 @@
-# ExaBench HPC Error Taxonomy
+# AOBench HPC Error Taxonomy
 # Defines error categories, detection heuristics, and descriptions.
-# Used by src/exabench/reports/error_taxonomy.py to classify task results.
+# Used by src/aobench/reports/error_taxonomy.py to classify task results.
 #
 # Detection logic is score-based (BenchmarkResult dimensions + task_id parsing).
 # Categories marked trace_required: true need trace inspection for full accuracy;

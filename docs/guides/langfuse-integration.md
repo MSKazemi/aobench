@@ -1,9 +1,9 @@
 # Langfuse Integration Guide
 
-Step-by-step plan for adding Langfuse observability to ExaBench.
+Step-by-step plan for adding Langfuse observability to AOBench.
 Follow the phases in order; each phase is independently testable.
 
-This page is the single Langfuse reference for ExaBench. It covers what Langfuse is, the local docker-compose stack under `docker/langfuse/`, and the runtime exporter wired through the `--langfuse` flag.
+This page is the single Langfuse reference for AOBench. It covers what Langfuse is, the local docker-compose stack under `docker/langfuse/`, and the runtime exporter wired through the `--langfuse` flag.
 
 ---
 
@@ -79,13 +79,13 @@ make langfuse-logs
 
 1. Open **http://localhost:3000** in a browser
 2. Click **Sign up** — the first user becomes admin
-3. Create a new project — name it `exabench`
+3. Create a new project — name it `aobench`
 4. Go to **Settings → API Keys → Create new key**
 5. Copy the **Public Key** (`pk-lf-...`) and **Secret Key** (`sk-lf-...`)
 
 ### Step 1.4 — Add credentials to `.env`
 
-In the ExaBench repo root, copy `.env.example` to `.env` (if you haven't already) and fill in:
+In the AOBench repo root, copy `.env.example` to `.env` (if you haven't already) and fill in:
 
 ```bash
 LANGFUSE_PUBLIC_KEY=pk-lf-...
@@ -93,7 +93,7 @@ LANGFUSE_SECRET_KEY=sk-lf-...
 LANGFUSE_HOST=http://localhost:3000
 ```
 
-**Verify**: open http://localhost:3000 — you should see your `exabench` project dashboard.
+**Verify**: open http://localhost:3000 — you should see your `aobench` project dashboard.
 
 ### Useful commands
 
@@ -141,7 +141,7 @@ CREATE TABLE schema_migrations ON CLUSTER default ... Engine=ReplicatedMergeTree
 **Cause:** Langfuse v3 creates tables using `ReplicatedMergeTree ON CLUSTER default`,
 which requires ZooKeeper or ClickHouse Keeper. A plain ClickHouse image has neither by default.
 
-**Fix:** The ExaBench compose mounts `docker/langfuse/clickhouse-config.xml` into ClickHouse,
+**Fix:** The AOBench compose mounts `docker/langfuse/clickhouse-config.xml` into ClickHouse,
 which enables the **built-in ClickHouse Keeper** (no ZooKeeper container needed) and defines
 the `default` single-node cluster. This file is already in the repo and mounted automatically.
 
@@ -203,15 +203,15 @@ python -c "import langfuse; print(langfuse.__version__)"
 
 ## Phase 3 — Create `BaseExporter` ABC
 
-**New file**: `src/exabench/exporters/base_exporter.py`
+**New file**: `src/aobench/exporters/base_exporter.py`
 
 The base class defines the contract all exporters must implement:
 
 ```python
 from abc import ABC, abstractmethod
-from exabench.schemas.result import BenchmarkResult
-from exabench.schemas.task import TaskSpec
-from exabench.schemas.trace import Trace
+from aobench.schemas.result import BenchmarkResult
+from aobench.schemas.task import TaskSpec
+from aobench.schemas.trace import Trace
 
 class BaseExporter(ABC):
     @abstractmethod
@@ -222,21 +222,21 @@ class BaseExporter(ABC):
         """Flush any buffered data (optional)."""
 ```
 
-Also create `src/exabench/exporters/__init__.py` (empty or re-export `BaseExporter`).
+Also create `src/aobench/exporters/__init__.py` (empty or re-export `BaseExporter`).
 
-**Verify**: `python -c "from exabench.exporters.base_exporter import BaseExporter"` succeeds.
+**Verify**: `python -c "from aobench.exporters.base_exporter import BaseExporter"` succeeds.
 
 ---
 
 ## Phase 4 — Implement `LangfuseExporter`
 
-**New file**: `src/exabench/exporters/langfuse_exporter.py`
+**New file**: `src/aobench/exporters/langfuse_exporter.py`
 
 ### Data mapping
 
-| ExaBench field | Langfuse call | Notes |
+| AOBench field | Langfuse call | Notes |
 |----------------|---------------|-------|
-| `trace.trace_id` | `lf.trace(id=...)` | Reuses ExaBench ID |
+| `trace.trace_id` | `lf.trace(id=...)` | Reuses AOBench ID |
 | `trace.task_id` | `trace.name` | Human-readable name in UI |
 | `trace.run_id` | `trace.session_id` | Groups all tasks in one run |
 | `trace.role` | `trace.user_id` | Role as user identifier |
@@ -296,7 +296,7 @@ class LangfuseExporter(BaseExporter):
 
 ## Phase 5 — Wire exporter into `BenchmarkRunner`
 
-**File to change**: `src/exabench/runners/runner.py`
+**File to change**: `src/aobench/runners/runner.py`
 
 Add optional `exporter` parameter to `BenchmarkRunner.__init__`:
 
@@ -322,7 +322,7 @@ Call `exporter.flush()` after all tasks in `run_all`.
 
 ## Phase 6 — Add `--langfuse` CLI flag
 
-**File to change**: `src/exabench/cli/run_cmd.py`
+**File to change**: `src/aobench/cli/run_cmd.py`
 
 Add to both `run_task` and `run_all` command signatures:
 
@@ -336,7 +336,7 @@ In the command body, before constructing `BenchmarkRunner`:
 ```python
 exporter = None
 if langfuse:
-    from exabench.exporters.langfuse_exporter import LangfuseExporter
+    from aobench.exporters.langfuse_exporter import LangfuseExporter
     import os
     exporter = LangfuseExporter(
         public_key=os.environ["LANGFUSE_PUBLIC_KEY"],
@@ -357,7 +357,7 @@ if exporter:
 **Verify**:
 
 ```bash
-exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa --langfuse
+aobench run task --task JOB_USR_001 --env env_01 --adapter direct_qa --langfuse
 # Trace should appear in Langfuse UI
 ```
 
@@ -369,7 +369,7 @@ exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa --langfuse
 
 ```makefile
 run-langfuse: ## Run a task and export to Langfuse
-	exabench run task \
+	aobench run task \
 		--task $(TASK) \
 		--env $(ENV) \
 		--adapter $(ADAPTER) \
@@ -388,12 +388,12 @@ Checklist:
 - [ ] `docker compose ps` — all Langfuse services healthy
 - [ ] `.env` contains the three Langfuse variables
 - [ ] `pip install -e ".[langfuse]"` succeeds
-- [ ] `exabench run task --task JOB_USR_001 --env env_01 --adapter direct_qa --langfuse`
+- [ ] `aobench run task --task JOB_USR_001 --env env_01 --adapter direct_qa --langfuse`
 - [ ] Trace appears in Langfuse UI (`http://localhost:3000`)
 - [ ] Trace has correct `session_id` = run_id, `name` = task_id
 - [ ] Spans visible for each agent step
 - [ ] Six dimension scores attached to trace
-- [ ] `exabench run all --adapter openai --langfuse` — all tasks appear under one session
+- [ ] `aobench run all --adapter openai --langfuse` — all tasks appear under one session
 - [ ] Unit tests pass: `make test`
 
 ---
@@ -416,11 +416,11 @@ Files created or modified by this integration:
 |------|--------|-------|
 | `docker/langfuse/docker-compose.yml` | Create | Full v3 stack: postgres, clickhouse, redis, minio, web, worker |
 | `docker/langfuse/clickhouse-config.xml` | Create | Enables ClickHouse Keeper + single-node cluster for Langfuse migrations |
-| `src/exabench/exporters/__init__.py` | Create | Package init |
-| `src/exabench/exporters/base_exporter.py` | Create | `BaseExporter` ABC |
-| `src/exabench/exporters/langfuse_exporter.py` | Create | Langfuse implementation |
-| `src/exabench/runners/runner.py` | Modify | Added `exporter=` param, step 8 calls `exporter.export()` |
-| `src/exabench/cli/run_cmd.py` | Modify | `--langfuse/--no-langfuse` flag on `run task` and `run all` |
+| `src/aobench/exporters/__init__.py` | Create | Package init |
+| `src/aobench/exporters/base_exporter.py` | Create | `BaseExporter` ABC |
+| `src/aobench/exporters/langfuse_exporter.py` | Create | Langfuse implementation |
+| `src/aobench/runners/runner.py` | Modify | Added `exporter=` param, step 8 calls `exporter.export()` |
+| `src/aobench/cli/run_cmd.py` | Modify | `--langfuse/--no-langfuse` flag on `run task` and `run all` |
 | `pyproject.toml` | Modify | `langfuse = ["langfuse>=2.0"]` optional dep |
 | `Makefile` | Modify | `langfuse-up/down/logs/reset` + `run-langfuse` + `run-all-langfuse` targets |
 | `.env.example` | Modify | Added Langfuse env var template |

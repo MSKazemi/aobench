@@ -1,4 +1,4 @@
-"""Integration tests for `exabench compare runs`."""
+"""Integration tests for `aobench compare runs`."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from typer.testing import CliRunner
 
-from exabench.cli.main import app
+from aobench.cli.main import app
 
 
 def _build_result_json(task_id, role, score, hard_fail, run_id, env_id="env01"):

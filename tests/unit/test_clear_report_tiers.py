@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-from exabench.reports.clear_report import build_clear_report, compute_tier_accuracy
-from exabench.schemas.result import BenchmarkResult, DimensionScores
+from aobench.reports.clear_report import build_clear_report, compute_tier_accuracy
+from aobench.schemas.result import BenchmarkResult, DimensionScores
 
 
 def _make_result(
