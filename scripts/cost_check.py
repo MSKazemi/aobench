@@ -3,7 +3,7 @@
 
 Hard-coded v0.2 budget breakdown (informational):
   E1 = $65, E2 = $5, E6 = $11, total = $81, limit = $100
-The limit is configurable via EXABENCH_BUDGET_USD (default: 100).
+The limit is configurable via AOBENCH_BUDGET_USD (default: 100).
 """
 import json
 import os
@@ -37,7 +37,7 @@ def scan_compute_files(runs_dir: pathlib.Path) -> tuple[float, int]:
 
 
 def main() -> int:
-    limit = float(os.environ.get("EXABENCH_BUDGET_USD", "100"))
+    limit = float(os.environ.get("AOBENCH_BUDGET_USD", "100"))
     spent, num_runs = scan_compute_files(RUNS_DIR)
     remaining = limit - spent
 

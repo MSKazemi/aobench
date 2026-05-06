@@ -255,9 +255,9 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
         sys.path.pop(0)
 
     if split == "test":
-        if not _os.environ.get("EXABENCH_UNLOCK_TEST"):
+        if not _os.environ.get("AOBENCH_UNLOCK_TEST"):
             typer.echo(
-                "Error: Test split is locked. Set EXABENCH_UNLOCK_TEST=1 to unlock "
+                "Error: Test split is locked. Set AOBENCH_UNLOCK_TEST=1 to unlock "
                 "(one-shot only — results must not be used to inform further tuning).",
                 err=True,
             )

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# check_versions.sh — Verify ExaBench version pins for a reproducible run.
+# check_versions.sh — Verify AOBench version pins for a reproducible run.
 # Usage: ./scripts/check_versions.sh [--dataset VERSION] [--engine VERSION] [--judge CONFIG_ID]
 
 set -euo pipefail
@@ -19,9 +19,9 @@ done
 
 ERRORS=0
 
-# Check engine version via exabench package
+# Check engine version via aobench package
 if [[ -n "$ENGINE_VERSION" ]]; then
-    actual=$(python3 -c "import importlib.metadata; print(importlib.metadata.version('exabench'))" 2>/dev/null || echo "unknown")
+    actual=$(python3 -c "import importlib.metadata; print(importlib.metadata.version('aobench'))" 2>/dev/null || echo "unknown")
     if [[ "$actual" != "$ENGINE_VERSION" ]]; then
         echo "WARNING: engine version mismatch: expected=$ENGINE_VERSION actual=$actual"
         ERRORS=$((ERRORS+1))

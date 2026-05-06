@@ -42,7 +42,7 @@ def load_environment(env_dir: str | Path) -> EnvironmentBundle:
 
     # V0 fidelity gate
     import os
-    if os.environ.get("EXABENCH_SKIP_FIDELITY") != "1":
+    if os.environ.get("AOBENCH_SKIP_FIDELITY") != "1":
         from aobench.environment.fidelity_report import FidelityReport
         report = FidelityReport(env_id=metadata.environment_id, env_dir=env_dir)
         report.run_all()
@@ -52,7 +52,7 @@ def load_environment(env_dir: str | Path) -> EnvironmentBundle:
                 f"Fidelity check failed for {metadata.environment_id}: "
                 f"checks {failed} did not pass. "
                 f"Run 'aobench validate fidelity' to see details. "
-                f"Set EXABENCH_SKIP_FIDELITY=1 to bypass (development only)."
+                f"Set AOBENCH_SKIP_FIDELITY=1 to bypass (development only)."
             )
 
     return EnvironmentBundle(metadata=metadata, root_path=str(env_dir))

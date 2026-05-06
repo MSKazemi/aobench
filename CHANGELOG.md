@@ -18,7 +18,7 @@
 
 ### Validation
 
-- `aobench validate benchmark` → 80/80 tasks, 26/26 environments, passes without `EXABENCH_SKIP_FIDELITY`
+- `aobench validate benchmark` → 80/80 tasks, 26/26 environments, passes without `AOBENCH_SKIP_FIDELITY`
 - Added three new stub environments (env_24 CUDA/OpenMPI conflict, env_25 privilege escalation, env_26 IB link flapping) with complete bundles
 
 ---

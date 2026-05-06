@@ -1,7 +1,7 @@
 FROM python:3.12.10-slim
 
-RUN groupadd --gid 1001 exabench \
- && useradd --uid 1001 --gid exabench --no-create-home --shell /bin/false exabench
+RUN groupadd --gid 1001 aobench \
+ && useradd --uid 1001 --gid aobench --no-create-home --shell /bin/false aobench
 
 WORKDIR /app
 
@@ -20,9 +20,9 @@ COPY benchmark/ ./benchmark/
 
 RUN uv sync --frozen --no-dev --extra openai --extra anthropic
 
-RUN chown -R exabench:exabench /app
+RUN chown -R aobench:aobench /app
 
-USER exabench
+USER aobench
 
-ENTRYPOINT ["/app/.venv/bin/exabench"]
+ENTRYPOINT ["/app/.venv/bin/aobench"]
 CMD ["--help"]

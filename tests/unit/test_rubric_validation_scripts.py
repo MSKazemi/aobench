@@ -283,7 +283,7 @@ class TestStochasticStability:
         import pandas as pd
 
         out_path = tmp_path / "stability.csv"
-        env = {**os.environ, "EXABENCH_DRY_RUN": "1"}
+        env = {**os.environ, "AOBENCH_DRY_RUN": "1"}
         result = subprocess.run(
             [sys.executable, str(SCRIPTS_DIR / "stochastic_stability.py"),
              "--responses", str(RESPONSES_DIR),
@@ -315,7 +315,7 @@ class TestStochasticStability:
         )
         mod = importlib.util.load_from_spec = None
         # Use subprocess to invoke with a single response
-        env = {**os.environ, "EXABENCH_DRY_RUN": "1"}
+        env = {**os.environ, "AOBENCH_DRY_RUN": "1"}
         result = subprocess.run(
             [sys.executable, str(SCRIPTS_DIR / "stochastic_stability.py"),
              "--responses", str(RESPONSES_DIR),
@@ -359,7 +359,7 @@ class TestCrossJudgeRanking:
         import pandas as pd
 
         out_path = tmp_path / "ranking.csv"
-        env = {**os.environ, "EXABENCH_DRY_RUN": "1"}
+        env = {**os.environ, "AOBENCH_DRY_RUN": "1"}
         result = subprocess.run(
             [sys.executable, str(SCRIPTS_DIR / "cross_judge_ranking.py"),
              "--responses", str(RESPONSES_DIR),

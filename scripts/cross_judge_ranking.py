@@ -49,9 +49,9 @@ def load_all_responses(responses_dir: Path) -> list[dict]:
 def call_judge(response: dict, judge_model: str) -> float:
     """Call the rubric judge and return normalized score [0, 1].
 
-    Set EXABENCH_DRY_RUN=1 for synthetic scores (testing).
+    Set AOBENCH_DRY_RUN=1 for synthetic scores (testing).
     """
-    if os.environ.get("EXABENCH_DRY_RUN") == "1":
+    if os.environ.get("AOBENCH_DRY_RUN") == "1":
         import hashlib
         import random
         # Use response_id as the primary seed so both judges produce correlated rankings.
@@ -69,7 +69,7 @@ def call_judge(response: dict, judge_model: str) -> float:
     except ImportError:
         sys.exit(
             "Cannot import aobench.scoring.rubric_scorer. "
-            "Run from project root with 'uv run' or set EXABENCH_DRY_RUN=1."
+            "Run from project root with 'uv run' or set AOBENCH_DRY_RUN=1."
         )
 
     scorer = RubricScorer(model=judge_model)

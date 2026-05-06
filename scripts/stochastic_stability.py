@@ -65,10 +65,10 @@ def load_response(responses_dir: Path, response_id: str) -> dict:
 def call_judge(response: dict, judge_model: str) -> float:
     """Call the rubric judge and return the normalized total score [0, 1].
 
-    This integrates with the AOBench RubricScorer.  When EXABENCH_DRY_RUN=1
+    This integrates with the AOBench RubricScorer.  When AOBENCH_DRY_RUN=1
     is set, returns a synthetic score for testing.
     """
-    if os.environ.get("EXABENCH_DRY_RUN") == "1":
+    if os.environ.get("AOBENCH_DRY_RUN") == "1":
         # Deterministic-ish synthetic scores for testing
         import hashlib
         import random
@@ -84,7 +84,7 @@ def call_judge(response: dict, judge_model: str) -> float:
     except ImportError:
         sys.exit(
             "Cannot import aobench.scoring.rubric_scorer. "
-            "Run from the project root with 'uv run' or set EXABENCH_DRY_RUN=1 for a dry run."
+            "Run from the project root with 'uv run' or set AOBENCH_DRY_RUN=1 for a dry run."
         )
 
     scorer = RubricScorer(model=judge_model)

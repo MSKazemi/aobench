@@ -1,6 +1,6 @@
 """Optional Flowcept provenance emitter.
 
-Enabled by setting EXABENCH_FLOWCEPT=1 in the environment.
+Enabled by setting AOBENCH_FLOWCEPT=1 in the environment.
 Requires: pip install flowcept  (only at runtime, not at import time)
 
 When enabled, every tool call and reasoning step is emitted as a
@@ -35,7 +35,7 @@ class ProvenanceEmitter:
 
     Usage::
 
-        emitter = ProvenanceEmitter.from_env()  # None if EXABENCH_FLOWCEPT not set
+        emitter = ProvenanceEmitter.from_env()  # None if AOBENCH_FLOWCEPT not set
         if emitter:
             emitter.emit_step(trace, step)
             emitter.emit_run_complete(trace)
@@ -48,18 +48,18 @@ class ProvenanceEmitter:
 
     @classmethod
     def from_env(cls, run_dir: Optional[str | Path] = None) -> Optional["ProvenanceEmitter"]:
-        """Return an emitter if EXABENCH_FLOWCEPT=1, else None.
+        """Return an emitter if AOBENCH_FLOWCEPT=1, else None.
 
         Args:
             run_dir: Base run directory. If not provided, uses
-                     EXABENCH_FLOWCEPT_DIR env var.
+                     AOBENCH_FLOWCEPT_DIR env var.
         """
-        if os.environ.get("EXABENCH_FLOWCEPT") != "1":
+        if os.environ.get("AOBENCH_FLOWCEPT") != "1":
             return None
         if run_dir is not None:
             output_dir = Path(run_dir) / "provenance"
         else:
-            flowcept_dir = os.environ.get("EXABENCH_FLOWCEPT_DIR")
+            flowcept_dir = os.environ.get("AOBENCH_FLOWCEPT_DIR")
             if flowcept_dir:
                 output_dir = Path(flowcept_dir)
             else:
