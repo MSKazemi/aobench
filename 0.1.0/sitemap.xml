@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/about/changelog/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/about/changelog/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/about/contributing/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/about/contributing/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/about/security/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/about/security/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/architecture/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/architecture/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/background/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/background/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/environments/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/environments/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/evaluation/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/evaluation/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/implementation/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/implementation/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/overview/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/overview/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/scoring-dimensions/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/scoring-dimensions/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/system-architecture/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/system-architecture/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/framework/taxonomy/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/framework/taxonomy/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/guides/adapters-and-tools/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/guides/adapters-and-tools/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/guides/langfuse-integration/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/guides/langfuse-integration/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/reference/architecture-flowchart/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/reference/architecture-flowchart/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/reference/commands/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/reference/commands/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/reference/environments-overview/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/reference/environments-overview/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
     <url>
-         <loc>https://mskazemi.github.io/aobench/dev/reference/system-architecture/</loc>
+         <loc>https://mskazemi.github.io/aobench/0.1.0/reference/system-architecture/</loc>
          <lastmod>2026-05-06</lastmod>
     </url>
 </urlset>
