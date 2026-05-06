@@ -34,9 +34,9 @@ jobs:
           git config user.name "Mohsen Seyedkazemi Ardebili"
           git config user.email "mohsen.seyedkazemi@gmail.com"
 
-      - name: Deploy dev (on push to main)
+      - name: Deploy 0.1.0 (on push to main)
         if: github.ref == 'refs/heads/main'
-        run: uv run mike deploy --push dev
+        run: uv run mike deploy --push --update-aliases 0.1.0 latest
 
       - name: Deploy version + update latest (on tag)
         if: startsWith(github.ref, 'refs/tags/')
