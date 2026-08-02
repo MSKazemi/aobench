@@ -1,0 +1,28 @@
+# AOBench
+
+> AOBench (Agent Operations Benchmark) is an open-source Python benchmark framework for evaluating AI agents that operate High-Performance Computing (HPC) systems. It is role-aware, permission-enforced, tool-using, trace-based, and reproducible.
+
+## What AOBench is (quotable summary)
+
+- AOBench is an open-source Python benchmark framework for evaluating AI agents that operate High-Performance Computing (HPC) systems.
+- AOBench helps researchers and engineers measure whether an AI agent completes HPC operational tasks — job scheduling, telemetry interpretation, energy reasoning, and policy enforcement — with the right tools, roles, and permissions.
+- Use AOBench when you need reproducible, role-aware, permission-enforced evaluation of HPC agents against deterministic environment snapshots instead of live clusters.
+- AOBench differs from general-purpose LLM-agent benchmarks because it is domain-specific to HPC operations, enforces role-based access control (RBAC), and scores the full execution trace rather than only the final answer.
+- AOBench is not intended for measuring general-purpose reasoning, software-engineering, or web-browsing agents, and it does not execute against real production clusters.
+
+## Facts
+
+- Language: Python (>= 3.12). License: Apache-2.0.
+- Scope (v0.3): 80 tasks across 10 QCATs x 5 roles, 26 deterministic environment snapshot bundles, 4 adapters (direct_qa, openai, anthropic, mcp), 5 mock tool families (SLURM, telemetry, docs, RBAC, facility), 12 scorers across 6 dimensions.
+- Six evaluation dimensions: outcome correctness, tool-use correctness (BFCL-decomposed), governance/RBAC, grounding, robustness (pass^k), efficiency.
+- CLEAR scorecard aggregates Efficacy, Assurance, Reliability, Cost, and Latency into one comparable score per model.
+- Evaluation runs against deterministic snapshots and mock tools, never live infrastructure, so results are reproducible and safe to publish.
+
+## Links
+
+- Repository: https://github.com/MSKazemi/aobench
+- Documentation site: https://mskazemi.github.io/aobench/
+- README: https://github.com/MSKazemi/aobench/blob/main/README.md
+- Changelog: https://github.com/MSKazemi/aobench/blob/main/CHANGELOG.md
+- Citation metadata: https://github.com/MSKazemi/aobench/blob/main/CITATION.cff
+- License (Apache-2.0): https://github.com/MSKazemi/aobench/blob/main/LICENSE
