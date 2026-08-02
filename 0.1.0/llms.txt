@@ -21,7 +21,7 @@
 ## Links
 
 - Repository: https://github.com/MSKazemi/aobench
-- Documentation site: https://mskazemi.github.io/aobench/
+- Documentation site: https://mskazemi.com/aobench/
 - README: https://github.com/MSKazemi/aobench/blob/main/README.md
 - Changelog: https://github.com/MSKazemi/aobench/blob/main/CHANGELOG.md
 - Citation metadata: https://github.com/MSKazemi/aobench/blob/main/CITATION.cff
