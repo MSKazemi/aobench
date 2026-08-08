@@ -12,8 +12,9 @@
 
 ## Facts
 
-- Language: Python (>= 3.12). License: Apache-2.0.
-- Scope (v0.3): 80 tasks across 10 QCATs x 5 roles, 26 deterministic environment snapshot bundles, 4 adapters (direct_qa, openai, anthropic, mcp), 5 mock tool families (SLURM, telemetry, docs, RBAC, facility), 12 scorers across 6 dimensions.
+- Language: Python (>= 3.10; 3.12 recommended, CI covers 3.12-3.14). License: Apache-2.0.
+- Six of the 29 environments and eight of the 88 tasks are grounded in real operational data from CINECA's 980-node Marconi100 Tier-0 supercomputer (the public M100 ExaData release), not synthesised.
+- Scope (v0.4): 88 tasks (80 synthetic core across 10 QCATs x 5 roles, plus 8 grounded in the public Marconi100 ExaData dataset), 29 deterministic environment snapshot bundles (23 synthetic + 6 built from real Marconi100 Slurm and telemetry records), 4 adapters (direct_qa, openai, anthropic, mcp), 5 mock tool families (SLURM, telemetry, docs, RBAC, facility), 12 scorers across 6 dimensions.
 - Six evaluation dimensions: outcome correctness, tool-use correctness (BFCL-decomposed), governance/RBAC, grounding, robustness (pass^k), efficiency.
 - CLEAR scorecard aggregates Efficacy, Assurance, Reliability, Cost, and Latency into one comparable score per model.
 - Evaluation runs against deterministic snapshots and mock tools, never live infrastructure, so results are reproducible and safe to publish.
