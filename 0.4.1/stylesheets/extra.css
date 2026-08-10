@@ -1,39 +1,90 @@
-/* Deep navy primary — overrides Material indigo */
+/* ── Palette ──────────────────────────────────────────────────────────────
+   Deep navy primary with an amber accent, matching the logo and the README
+   banner. Both schemes are defined so the light/dark toggle stays coherent. */
+
 :root {
-  --md-primary-fg-color: #1a237e;
+  --md-primary-fg-color:        #1a237e;
   --md-primary-fg-color--light: #3949ab;
-  --md-primary-fg-color--dark: #0d1452;
-  --md-accent-fg-color: #3f51b5;
+  --md-primary-fg-color--dark:  #0d1452;
+  --md-accent-fg-color:         #3f51b5;
+
+  /* Brand tokens used by the hero and stat strip. */
+  --aob-amber:      #ff8f00;
+  --aob-hero-from:  #eef0fc;
+  --aob-hero-to:    #e3e6f7;
+  --aob-hero-edge:  #c5cae9;
+  --aob-hero-title: #1a237e;
+  --aob-hero-body:  #3949ab;
+  --aob-hero-muted: #5c6bc0;
+  --aob-card-bg:    #ffffff;
 }
 
-/* Homepage hero block */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #3949ab;
+  --md-primary-fg-color--light: #5c6bc0;
+  --md-primary-fg-color--dark:  #1a237e;
+  --md-accent-fg-color:         #7986cb;
+
+  --aob-hero-from:  #171d3d;
+  --aob-hero-to:    #10152f;
+  --aob-hero-edge:  #2c3566;
+  --aob-hero-title: #ffffff;
+  --aob-hero-body:  #c5cae9;
+  --aob-hero-muted: #9fa8da;
+  --aob-card-bg:    var(--md-default-bg-color);
+}
+
+/* ── Homepage hero ────────────────────────────────────────────────────────
+   Every colour is a token above, so the block follows the theme toggle
+   instead of baking in a light background that goes unreadable in slate. */
+
 .hero {
-  background: #e8eaf6;
-  border-bottom: 2px solid #c5cae9;
-  margin: -1.2rem -1.6rem 2rem;
-  padding: 2.4rem 1.6rem 1.8rem;
+  background: linear-gradient(135deg, var(--aob-hero-from) 0%, var(--aob-hero-to) 100%);
+  border: 1px solid var(--aob-hero-edge);
+  border-radius: 14px;
+  margin: 0 0 2.4rem;
+  padding: 2.6rem 2rem 2.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Amber-to-indigo accent rule along the top edge — the logo's trace colour. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--aob-amber), var(--md-primary-fg-color--light) 60%, transparent);
+}
+
+.hero .hero-logo {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 1rem;
 }
 
 .hero .hero-label {
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #5c6bc0;
+  letter-spacing: 0.1em;
+  color: var(--aob-hero-muted);
   margin-bottom: 0.4rem;
 }
 
 .hero h1 {
-  color: #1a237e !important;
-  font-size: 2rem;
+  color: var(--aob-hero-title) !important;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin-bottom: 0.6rem;
 }
 
 .hero .hero-sub {
-  color: #3949ab;
-  font-size: 1rem;
-  max-width: 600px;
-  line-height: 1.6;
+  color: var(--aob-hero-body);
+  font-size: 1.02rem;
+  max-width: 640px;
+  line-height: 1.65;
   margin-bottom: 1rem;
 }
 
@@ -41,48 +92,118 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin: 0.8rem 0;
+  margin: 0.9rem 0;
   align-items: center;
 }
 
 .hero .btn-row {
   display: flex;
   gap: 10px;
-  margin-top: 1rem;
+  margin-top: 1.2rem;
   flex-wrap: wrap;
 }
 
 .hero .btn {
-  padding: 0.5rem 1.2rem;
-  border-radius: 4px;
+  padding: 0.62rem 1.4rem;
+  border-radius: 6px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none !important;
   display: inline-block;
-  transition: opacity 0.15s;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.hero .btn:hover { opacity: 0.85; }
+.hero .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 35, 126, 0.28);
+}
 
 .hero .btn-primary {
-  background: #1a237e;
-  color: white !important;
+  background: linear-gradient(135deg, var(--md-primary-fg-color--light), var(--md-primary-fg-color));
+  color: #ffffff !important;
 }
 
 .hero .btn-secondary {
-  background: white;
-  color: #1a237e !important;
-  border: 1px solid #9fa8da;
+  background: var(--aob-card-bg);
+  color: var(--md-primary-fg-color) !important;
+  border: 1px solid var(--aob-hero-edge);
 }
 
-/* Principles table: navy header row */
+[data-md-color-scheme="slate"] .hero .btn-secondary {
+  color: var(--aob-hero-body) !important;
+}
+
+/* ── Stat strip ───────────────────────────────────────────────────────────
+   The four numbers that describe the corpus, echoing the README banner. */
+
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 0 0 2.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.stat-strip li {
+  margin: 0;
+  padding: 1.1rem 0.9rem;
+  text-align: center;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  background: var(--aob-card-bg);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.stat-strip li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-2px);
+}
+
+.stat-strip .stat-value {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--md-primary-fg-color);
+}
+
+.stat-strip li.stat-accent .stat-value { color: var(--aob-amber); }
+
+.stat-strip .stat-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+}
+
+/* ── Grid cards ───────────────────────────────────────────────────────────
+   Material's built-in cards, lifted slightly on hover. */
+
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+  border-radius: 10px;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+}
+
+/* Table header row — tokenised so it survives the dark toggle, which the
+   previous hard-coded #e8eaf6 on #1a237e did not. */
 .md-typeset table:not([class]) th {
-  background: #e8eaf6;
-  color: #1a237e;
+  background: var(--aob-hero-from);
+  color: var(--aob-hero-title);
+  font-weight: 700;
 }
 
 .md-typeset table:not([class]) tr:hover td {
-  background: #f5f5ff;
+  background: var(--md-default-fg-color--lightest);
 }
 
 /* ── Contributor wall ─────────────────────────────────────────────────────
