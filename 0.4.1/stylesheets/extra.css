@@ -288,6 +288,46 @@
   font-weight: 700;
 }
 
+/* Avatar wrapper — exists only so the emoji badge has something to anchor to.
+   The badge marks what the person contributed; the text tag below spells it out,
+   so the meaning never depends on reading an emoji. */
+.md-typeset .wall .wall-avatar {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto 0.6rem;
+  line-height: 0;
+}
+
+.md-typeset .wall .wall-avatar img,
+.md-typeset .wall .wall-avatar .wall-initials {
+  margin: 0;
+}
+
+.md-typeset .wall .wall-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  line-height: 1;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.md-typeset .wall .wall-tag {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+
 /* The empty-state card shown while a section is still waiting for its first name. */
 .md-typeset .wall li.wall-empty {
   border-style: dashed;
