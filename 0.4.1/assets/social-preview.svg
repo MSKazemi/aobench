@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#141a3a"/>
+      <stop offset="100%" stop-color="#0b1030"/>
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5c6bc0"/>
+      <stop offset="100%" stop-color="#283593"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff8f00"/>
+      <stop offset="60%" stop-color="#7986cb"/>
+      <stop offset="100%" stop-color="#7986cb" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1280" height="6" fill="url(#rule)"/>
+
+  <!-- Node lattice -->
+  <g fill="#9fa8da" fill-opacity="0.09">
+    <circle cx="1120" cy="360" r="5"/><circle cx="1180" cy="360" r="5"/><circle cx="1240" cy="360" r="5"/>
+    <circle cx="1120" cy="420" r="5"/><circle cx="1180" cy="420" r="5"/><circle cx="1240" cy="420" r="5"/>
+    <circle cx="1120" cy="480" r="5"/><circle cx="1180" cy="480" r="5"/><circle cx="1240" cy="480" r="5"/>
+    <circle cx="1120" cy="540" r="5"/><circle cx="1180" cy="540" r="5"/><circle cx="1240" cy="540" r="5"/>
+  </g>
+
+  <!-- Mark -->
+  <g transform="translate(72, 58)">
+    <rect width="104" height="104" rx="24" fill="url(#tile)"/>
+    <g transform="translate(6.5, 6.5) scale(0.719)">
+      <g fill="#ffffff" fill-opacity="0.28">
+        <circle cx="36" cy="36" r="7"/><circle cx="64" cy="36" r="7"/><circle cx="92" cy="36" r="7"/>
+        <circle cx="36" cy="64" r="7"/><circle cx="64" cy="64" r="7"/><circle cx="92" cy="64" r="7"/>
+        <circle cx="36" cy="92" r="7"/><circle cx="64" cy="92" r="7"/><circle cx="92" cy="92" r="7"/>
+      </g>
+      <polyline points="36,92 36,64 64,64 64,36 92,36" fill="none" stroke="#ff8f00"
+                stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="36" cy="92" r="8" fill="#ff8f00"/>
+      <circle cx="64" cy="64" r="8" fill="#ff8f00"/>
+      <circle cx="92" cy="36" r="12" fill="#ffffff"/>
+      <circle cx="92" cy="36" r="6" fill="#ff8f00"/>
+    </g>
+  </g>
+
+  <text x="200" y="128" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="62" font-weight="700" fill="#ffffff" letter-spacing="-1.2">AOBench</text>
+
+  <!-- Provenance pill -->
+  <g>
+    <rect x="784" y="70" width="424" height="54" rx="27" fill="none" stroke="#ff8f00" stroke-width="2"/>
+    <text x="996" y="104" text-anchor="middle" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+          font-size="19" fill="#ffb74d">Grounded in real Marconi100 telemetry</text>
+  </g>
+
+  <!-- Headline -->
+  <text x="72" y="252" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="600" fill="#e8eaf6">Can an LLM agent operate a supercomputer</text>
+  <text x="72" y="308" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="44" font-weight="600" fill="#e8eaf6">without breaking its access policy?</text>
+
+  <!-- Finding -->
+  <text x="72" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="38" font-weight="700" fill="#ffffff">16 systems tested.</text>
+  <text x="490" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="38" font-weight="700" fill="#ff8f00">None deployment-ready.</text>
+
+  <!-- Stats -->
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="72"  y="490" font-size="46" font-weight="700" fill="#7986cb">88</text>
+    <text x="72"  y="524" font-size="20" fill="#9fa8da">tasks</text>
+    <text x="212" y="490" font-size="46" font-weight="700" fill="#7986cb">29</text>
+    <text x="212" y="524" font-size="20" fill="#9fa8da">environments</text>
+    <text x="432" y="490" font-size="46" font-weight="700" fill="#7986cb">5</text>
+    <text x="432" y="524" font-size="20" fill="#9fa8da">roles</text>
+    <text x="552" y="490" font-size="46" font-weight="700" fill="#7986cb">12</text>
+    <text x="552" y="524" font-size="20" fill="#9fa8da">scorers</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="72" y="586" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="21" fill="#9fa8da">Role-aware · RBAC-enforced · trace-based · reproducible on a laptop</text>
+  <text x="1208" y="586" text-anchor="end" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="21" font-weight="600" fill="#ffffff">mskazemi.com/aobench</text>
+</svg>

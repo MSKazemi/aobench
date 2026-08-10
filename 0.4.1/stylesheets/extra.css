@@ -7,6 +7,9 @@
   --md-primary-fg-color--light: #3949ab;
   --md-primary-fg-color--dark:  #0d1452;
   --md-accent-fg-color:         #3f51b5;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-typeset-a-color:         #303f9f;
 
   /* Brand tokens used by the hero and stat strip. */
   --aob-amber:      #ff8f00;
@@ -24,6 +27,9 @@
   --md-primary-fg-color--light: #5c6bc0;
   --md-primary-fg-color--dark:  #1a237e;
   --md-accent-fg-color:         #7986cb;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-typeset-a-color:         #9fa8da;
 
   --aob-hero-from:  #171d3d;
   --aob-hero-to:    #10152f;
@@ -136,7 +142,7 @@
 /* ── Stat strip ───────────────────────────────────────────────────────────
    The four numbers that describe the corpus, echoing the README banner. */
 
-.stat-strip {
+.md-typeset ul.stat-strip:not([hidden]) {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 1rem;
@@ -145,8 +151,9 @@
   list-style: none;
 }
 
-.stat-strip li {
+.md-typeset .stat-strip li {
   margin: 0;
+  list-style: none;
   padding: 1.1rem 0.9rem;
   text-align: center;
   border: 1px solid var(--md-default-fg-color--lightest);
@@ -155,12 +162,12 @@
   transition: border-color 0.15s ease, transform 0.15s ease;
 }
 
-.stat-strip li:hover {
+.md-typeset .stat-strip li:hover {
   border-color: var(--md-primary-fg-color);
   transform: translateY(-2px);
 }
 
-.stat-strip .stat-value {
+.md-typeset .stat-strip .stat-value {
   display: block;
   font-size: 1.9rem;
   font-weight: 800;
@@ -168,15 +175,18 @@
   color: var(--md-primary-fg-color);
 }
 
-.stat-strip li.stat-accent .stat-value { color: var(--aob-amber); }
+.md-typeset .stat-strip li.stat-accent .stat-value { color: var(--aob-amber); }
 
-.stat-strip .stat-label {
+.md-typeset .stat-strip .stat-label {
   display: block;
   margin-top: 0.2rem;
   font-size: 0.7rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   opacity: 0.8;
+  /* Keep "Environments" on one line rather than hyphen-breaking mid-word. */
+  overflow-wrap: normal;
+  hyphens: none;
 }
 
 /* ── Grid cards ───────────────────────────────────────────────────────────
@@ -210,7 +220,7 @@
    Theme-aware: every colour comes from a Material CSS variable, so the wall
    follows the light/slate toggle instead of hard-coding navy on white. */
 
-.wall {
+.md-typeset ul.wall:not([hidden]) {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 1rem;
@@ -219,8 +229,9 @@
   list-style: none;
 }
 
-.wall li {
+.md-typeset .wall li {
   margin: 0;
+  list-style: none;
   padding: 1rem 0.75rem;
   text-align: center;
   border: 1px solid var(--md-default-fg-color--lightest);
@@ -229,13 +240,13 @@
   transition: border-color 0.15s, transform 0.15s;
 }
 
-.wall li:hover {
+.md-typeset .wall li:hover {
   border-color: var(--md-primary-fg-color);
   transform: translateY(-2px);
 }
 
-.wall img,
-.wall .wall-initials {
+.md-typeset .wall img,
+.md-typeset .wall .wall-initials {
   width: 72px;
   height: 72px;
   border-radius: 50%;
@@ -244,7 +255,7 @@
   object-fit: cover;
 }
 
-.wall .wall-initials {
+.md-typeset .wall .wall-initials {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -254,20 +265,20 @@
   background: var(--md-primary-fg-color);
 }
 
-.wall .wall-name {
+.md-typeset .wall .wall-name {
   display: block;
   font-weight: 600;
   font-size: 0.78rem;
   line-height: 1.3;
 }
 
-.wall .wall-handle {
+.md-typeset .wall .wall-handle {
   display: block;
   font-size: 0.7rem;
   opacity: 0.75;
 }
 
-.wall .wall-role {
+.md-typeset .wall .wall-role {
   display: block;
   margin-top: 0.35rem;
   font-size: 0.65rem;
@@ -278,7 +289,7 @@
 }
 
 /* The empty-state card shown while a section is still waiting for its first name. */
-.wall li.wall-empty {
+.md-typeset .wall li.wall-empty {
   border-style: dashed;
   display: flex;
   align-items: center;
