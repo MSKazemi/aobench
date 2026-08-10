@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="AOBench logo: a grid of compute nodes with an agent trace running through it">
+  <title>AOBench</title>
+  <defs>
+    <linearGradient id="aob-tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3949ab"/>
+      <stop offset="100%" stop-color="#1a237e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Tile: the cluster -->
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="url(#aob-tile)"/>
+
+  <!-- 3x3 node grid: the compute nodes of a snapshot -->
+  <g fill="#ffffff" fill-opacity="0.28">
+    <circle cx="36" cy="36" r="7"/>
+    <circle cx="64" cy="36" r="7"/>
+    <circle cx="92" cy="36" r="7"/>
+    <circle cx="36" cy="64" r="7"/>
+    <circle cx="64" cy="64" r="7"/>
+    <circle cx="92" cy="64" r="7"/>
+    <circle cx="36" cy="92" r="7"/>
+    <circle cx="64" cy="92" r="7"/>
+    <circle cx="92" cy="92" r="7"/>
+  </g>
+
+  <!-- The trace: the ordered path an agent actually took through the cluster -->
+  <polyline points="36,92 36,64 64,64 64,36 92,36"
+            fill="none" stroke="#ff8f00" stroke-width="7"
+            stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Visited nodes, and the scored end state -->
+  <circle cx="36" cy="92" r="7.5" fill="#ff8f00"/>
+  <circle cx="64" cy="64" r="7.5" fill="#ff8f00"/>
+  <circle cx="92" cy="36" r="11" fill="#ffffff"/>
+  <circle cx="92" cy="36" r="5.5" fill="#ff8f00"/>
+</svg>
