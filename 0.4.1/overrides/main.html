@@ -19,6 +19,15 @@
   {%- set page_desc = (page.meta and page.meta.description) or config.site_description -%}
 
   <meta name="author" content="Mohsen Seyedkazemi Ardebili">
+
+  {#- Material's social plugin emits the og:* tags but no twitter:* ones, so X,
+      LinkedIn and several chat clients fell back to a bare link instead of a card.
+      og:image is generated per page by that plugin; reuse it so the two agree. -#}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_title }}">
+  <meta name="twitter:description" content="{{ page_desc }}">
+  <meta name="twitter:image" content="{{ config.site_url }}assets/social-preview.png">
+
   {%- if page.meta and page.meta.keywords %}
   <meta name="keywords" content="{{ page.meta.keywords | join(', ') }}">
   {%- else %}
@@ -97,6 +106,7 @@
           "name": "University of Bologna"
         },
         "sameAs": [
+          "https://orcid.org/0000-0002-1166-6559",
           "https://github.com/MSKazemi",
           "https://gitlab.com/mskazemi",
           "https://mskazemi.github.io"
