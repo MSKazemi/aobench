@@ -1,5 +1,176 @@
 {% extends "base.html" %}
+
+{#
+  AOBench documentation overrides.
+
+  Two jobs beyond the Material default:
+
+  1. `extrahead` injects the structured data and scholarly metadata that search
+     engines and AI answer engines use to identify the project as a citable piece
+     of research software rather than an anonymous docs site. Material already
+     emits canonical, Open Graph, and Twitter card tags from `site_url` plus the
+     social plugin, so we do not duplicate those here.
+  2. `announce` carries the current release. Keep the version in step with
+     `pyproject.toml` — `scripts/check_facts.py` will not catch prose here.
+#}
+
+{% block extrahead %}
+  {%- set page_title = (page.meta and page.meta.title) or page.title or config.site_name -%}
+  {%- set page_desc = (page.meta and page.meta.description) or config.site_description -%}
+
+  <meta name="author" content="Mohsen Seyedkazemi Ardebili">
+  {%- if page.meta and page.meta.keywords %}
+  <meta name="keywords" content="{{ page.meta.keywords | join(', ') }}">
+  {%- else %}
+  <meta name="keywords" content="HPC agent benchmark, AI agent evaluation, LLM benchmark, SLURM, RBAC, AIOps, agent operations, reproducible evaluation">
+  {%- endif %}
+
+  {#- Google Scholar / Zotero highly-cited metadata. Makes the docs site
+      resolvable as a scholarly artifact and pre-fills reference managers. -#}
+  <meta name="citation_title" content="AOBench: A Trace-Driven, Role-Aware Benchmark for Agent Operations in Realistic Environments">
+  <meta name="citation_author" content="Seyedkazemi Ardebili, Mohsen">
+  <meta name="citation_author" content="Bartolini, Andrea">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_doi" content="10.5281/zenodo.21854862">
+  <meta name="citation_public_url" content="https://mskazemi.com/aobench/">
+  <meta name="citation_abstract_html_url" content="https://mskazemi.com/aobench/">
+
+  <link rel="alternate" type="text/plain" href="{{ config.site_url }}llms.txt" title="llms.txt — factual project map for AI answer engines">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareSourceCode",
+        "@id": "https://mskazemi.com/aobench/#software",
+        "name": "AOBench",
+        "alternateName": "Agent Operations Benchmark",
+        "disambiguatingDescription": "Not to be confused with aobench, the ambient-occlusion ray-tracing microbenchmark by Syoyo Fujita. AOBench here is the Agent Operations Benchmark for AI agents that operate HPC systems.",
+        "description": "Open-source Python benchmark framework for evaluating AI agents that operate High-Performance Computing (HPC) systems. Role-aware, permission-enforced, tool-using, trace-based, and reproducible.",
+        "url": "https://mskazemi.com/aobench/",
+        "codeRepository": "https://github.com/MSKazemi/aobench",
+        "programmingLanguage": "Python",
+        "runtimePlatform": "Python 3.10+",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "applicationCategory": "DeveloperApplication",
+        "keywords": "HPC, AI agents, benchmark, evaluation, SLURM, RBAC, AIOps, reproducibility, LLM agents, tool use",
+        "identifier": "https://doi.org/10.5281/zenodo.21854862",
+        "author": { "@id": "https://mskazemi.com/#person" },
+        "maintainer": { "@id": "https://mskazemi.com/#person" },
+        "isAccessibleForFree": true,
+        "downloadUrl": "https://github.com/MSKazemi/aobench/releases",
+        "issueTracker": "https://github.com/MSKazemi/aobench/issues"
+      },
+      {
+        "@type": "Dataset",
+        "@id": "https://mskazemi.com/aobench/#dataset",
+        "name": "AOBench benchmark corpus",
+        "description": "88 HPC operational task specifications across 10 question categories and 5 operator roles, paired with 29 deterministic environment snapshot bundles. Six environments and eight tasks are grounded in the public Marconi100 ExaData release from CINECA.",
+        "url": "https://mskazemi.com/aobench/reference/task-catalog/",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "identifier": "https://doi.org/10.5281/zenodo.21854862",
+        "creator": { "@id": "https://mskazemi.com/#person" },
+        "isAccessibleForFree": true,
+        "measurementTechnique": "Trace-based scoring across outcome correctness, tool-use correctness, governance/RBAC, grounding, robustness (pass^k), and efficiency",
+        "variableMeasured": [
+          "outcome correctness",
+          "tool-use correctness",
+          "governance / RBAC compliance",
+          "grounding",
+          "robustness (pass^k)",
+          "efficiency"
+        ],
+        "distribution": {
+          "@type": "DataDownload",
+          "encodingFormat": "application/json",
+          "contentUrl": "https://github.com/MSKazemi/aobench/tree/main/benchmark"
+        }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://mskazemi.com/#person",
+        "name": "Mohsen Seyedkazemi Ardebili",
+        "url": "https://mskazemi.com",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "University of Bologna"
+        },
+        "sameAs": [
+          "https://github.com/MSKazemi",
+          "https://gitlab.com/mskazemi",
+          "https://mskazemi.github.io"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://mskazemi.com/aobench/#website",
+        "url": "https://mskazemi.com/aobench/",
+        "name": "AOBench documentation",
+        "description": "Documentation for AOBench, the open-source benchmark for AI agents that operate HPC systems.",
+        "inLanguage": "en",
+        "publisher": { "@id": "https://mskazemi.com/#person" },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://mskazemi.com/aobench/?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "TechArticle",
+        "@id": "{{ page.canonical_url }}#article",
+        "headline": {{ page_title | tojson }},
+        "description": {{ page_desc | tojson }},
+        "url": "{{ page.canonical_url }}",
+        "inLanguage": "en",
+        "isPartOf": { "@id": "https://mskazemi.com/aobench/#website" },
+        "about": { "@id": "https://mskazemi.com/aobench/#software" },
+        "author": { "@id": "https://mskazemi.com/#person" },
+        "license": "https://www.apache.org/licenses/LICENSE-2.0"
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": "{{ page.canonical_url }}#breadcrumb",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "AOBench",
+            "item": "https://mskazemi.com/aobench/"
+          }
+          {%- if page and page.ancestors %}
+          {%- for ancestor in page.ancestors | reverse %}
+          ,{
+            "@type": "ListItem",
+            "position": {{ loop.index + 1 }},
+            "name": {{ ancestor.title | string | tojson }}
+          }
+          {%- endfor %}
+          ,{
+            "@type": "ListItem",
+            "position": {{ page.ancestors | length + 2 }},
+            "name": {{ page_title | tojson }},
+            "item": "{{ page.canonical_url }}"
+          }
+          {%- elif page and page.canonical_url != config.site_url %}
+          ,{
+            "@type": "ListItem",
+            "position": 2,
+            "name": {{ page_title | tojson }},
+            "item": "{{ page.canonical_url }}"
+          }
+          {%- endif %}
+        ]
+      }
+    ]
+  }
+  </script>
+{% endblock %}
+
 {% block announce %}
-  🎉 <strong>AOBench v0.1.0</strong> released — first HPC AI agent benchmark.
-  &nbsp;<a href="/AOBench/about/changelog/">Read the changelog →</a>
+  <strong>AOBench v0.4.1</strong> — 88 tasks · 29 environments · 6 grounded in real Marconi100 data.
+  &nbsp;<a href="{{ config.site_url }}about/changelog/">Read the changelog →</a>
 {% endblock %}

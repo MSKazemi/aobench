@@ -12,12 +12,38 @@
 
 ## Facts
 
+- Disambiguation: AOBench here means the Agent Operations Benchmark for AI agents on HPC systems. It is unrelated to `aobench`, the older ambient-occlusion ray-tracing microbenchmark by Syoyo Fujita (github.com/syoyo/aobench).
 - Language: Python (>= 3.10; 3.12 recommended, CI covers 3.12-3.14). License: Apache-2.0.
 - Six of the 29 environments and eight of the 88 tasks are grounded in real operational data from CINECA's 980-node Marconi100 Tier-0 supercomputer (the public M100 ExaData release), not synthesised.
 - Scope (v0.4): 88 tasks (80 synthetic core across 10 QCATs x 5 roles, plus 8 grounded in the public Marconi100 ExaData dataset), 29 deterministic environment snapshot bundles (23 synthetic + 6 built from real Marconi100 Slurm and telemetry records), 4 adapters (direct_qa, openai, anthropic, mcp), 5 mock tool families (SLURM, telemetry, docs, RBAC, facility), 12 scorers across 6 dimensions.
-- Six evaluation dimensions: outcome correctness, tool-use correctness (BFCL-decomposed), governance/RBAC, grounding, robustness (pass^k), efficiency.
+- Benchmark splits: 67 dev tasks and 21 held-out test tasks; the test split is locked behind an explicit opt-in environment variable so it cannot be trained against by accident.
+- Six evaluation dimensions: outcome correctness (0.30), tool-use correctness (0.20, BFCL-decomposed), governance/RBAC (0.20), grounding (0.15), robustness/pass^k (0.10), efficiency (0.05).
+- An RBAC violation is a hard fail: it zeroes the entire task score regardless of how good the answer was.
 - CLEAR scorecard aggregates Efficacy, Assurance, Reliability, Cost, and Latency into one comparable score per model.
 - Evaluation runs against deterministic snapshots and mock tools, never live infrastructure, so results are reproducible and safe to publish.
+- Install with `pip install -e ".[dev]"`; first run is `aobench run task --task JOB_USR_001 --env env_01 --adapter direct_qa`, which needs no API key.
+
+## Documentation
+
+- [Home](https://mskazemi.com/aobench/): what AOBench is, in one page.
+- [Quickstart](https://mskazemi.com/aobench/getting-started/quickstart/): install to first score in five minutes, with expected output.
+- [Installation](https://mskazemi.com/aobench/getting-started/installation/): pip, Docker, and Compose paths.
+- [FAQ](https://mskazemi.com/aobench/about/faq/): the questions people actually ask about AOBench.
+- [Comparison with other benchmarks](https://mskazemi.com/aobench/about/comparison/): AOBench vs SWE-bench, tau-bench, BFCL, AgentBench, GAIA, MLAgentBench, OSWorld.
+- [Limitations](https://mskazemi.com/aobench/about/limitations/): when NOT to use AOBench.
+- [Use cases](https://mskazemi.com/aobench/about/use-cases/): who runs AOBench and why.
+- [Datasheet](https://mskazemi.com/aobench/about/datasheet/): Datasheets-for-Datasets record for the corpus.
+- [Benchmark card](https://mskazemi.com/aobench/about/benchmark-card/): intended use, scope, and misuse boundaries.
+- [Reproducibility checklist](https://mskazemi.com/aobench/about/reproducing-results/): what is pinned, what cannot be pinned.
+- [Glossary](https://mskazemi.com/aobench/reference/glossary/): QCAT, CFS, CLEAR, pass^k, trace, snapshot.
+- [Task catalog](https://mskazemi.com/aobench/reference/task-catalog/): every task in the corpus.
+- [Environment catalog](https://mskazemi.com/aobench/reference/environment-catalog/): every snapshot bundle.
+- [Scoring dimensions](https://mskazemi.com/aobench/framework/scoring-dimensions/): per-scorer reference.
+- [CLI commands](https://mskazemi.com/aobench/reference/commands/): the full `aobench` command reference.
+- [Evaluate your own agent](https://mskazemi.com/aobench/guides/evaluating-your-own-agent/): wire any agent in as an adapter.
+- [Add a task](https://mskazemi.com/aobench/guides/adding-a-task/): contribute to the corpus.
+- [Leaderboard](https://mskazemi.com/aobench/leaderboard/): published results and how to submit yours.
+- [Cite AOBench](https://mskazemi.com/aobench/about/citation/): BibTeX and the fields to report with any score.
 
 ## Links
 
@@ -26,4 +52,9 @@
 - README: https://github.com/MSKazemi/aobench/blob/main/README.md
 - Changelog: https://github.com/MSKazemi/aobench/blob/main/CHANGELOG.md
 - Citation metadata: https://github.com/MSKazemi/aobench/blob/main/CITATION.cff
+- BibTeX: https://github.com/MSKazemi/aobench/blob/main/CITATION.bib
+- Archived DOI: https://doi.org/10.5281/zenodo.21854862
 - License (Apache-2.0): https://github.com/MSKazemi/aobench/blob/main/LICENSE
+- Issue tracker: https://github.com/MSKazemi/aobench/issues
+- Discussions: https://github.com/MSKazemi/aobench/discussions
+- Source mirror: https://gitlab.com/mskazemi/aobench

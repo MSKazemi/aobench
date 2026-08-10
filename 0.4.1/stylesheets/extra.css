@@ -84,3 +84,84 @@
 .md-typeset table:not([class]) tr:hover td {
   background: #f5f5ff;
 }
+
+/* ── Contributor wall ─────────────────────────────────────────────────────
+   Theme-aware: every colour comes from a Material CSS variable, so the wall
+   follows the light/slate toggle instead of hard-coding navy on white. */
+
+.wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.wall li {
+  margin: 0;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  background: var(--md-default-bg-color);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.wall li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-2px);
+}
+
+.wall img,
+.wall .wall-initials {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 0.6rem;
+  object-fit: cover;
+}
+
+.wall .wall-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--md-primary-bg-color);
+  background: var(--md-primary-fg-color);
+}
+
+.wall .wall-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.wall .wall-handle {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+
+.wall .wall-role {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--md-primary-fg-color);
+  font-weight: 700;
+}
+
+/* The empty-state card shown while a section is still waiting for its first name. */
+.wall li.wall-empty {
+  border-style: dashed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
