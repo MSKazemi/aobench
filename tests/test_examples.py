@@ -22,6 +22,7 @@ STANDALONE = [
     "01_hello_aobench.py",
     "02_score_a_trace.py",
     "03_custom_adapter.py",
+    "05_compare_two_adapters.py",
 ]
 
 

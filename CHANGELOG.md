@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Added — comparison example
+
+- **`examples/05_compare_two_adapters.py`** runs the same offline task through two
+  `direct_qa` configurations and reuses `aobench compare runs` to show their
+  per-dimension deltas, including governance. It gives new users a runnable starting
+  point for the core workflow: compare two systems before trusting an aggregate score.
+
 ### Added — `--json` for `report json` and `compare runs`
 
 - **`aobench report json <run_dir> --json`** and **`aobench compare runs <a> <b>
