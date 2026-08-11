@@ -113,3 +113,51 @@ def test_report_json_default_output_unchanged(tmp_path):
     assert result.exit_code == 0, result.output
     assert "Report written:" in result.output
     assert f"Run ID  : {run_id}" in result.output
+
+
+def test_missing_run_dir_has_an_actionable_error(tmp_path):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    available_run = tmp_path / "existing-run"
+    available_run.mkdir()
+    missing_run = tmp_path / "missing-run"
+
+    result = CliRunner().invoke(app, ["report", "json", str(missing_run)])
+
+    assert result.exit_code == 2
+    assert "Traceback" not in result.output
+    assert f"run directory '{missing_run}' does not exist" in result.output
+    assert "Available runs:" in result.output
+    assert str(available_run) in result.output
+
+
+def test_missing_run_dir_caps_the_available_runs_list(tmp_path):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    for index in range(11):
+        (tmp_path / f"run-{index}").mkdir()
+
+    result = CliRunner().invoke(app, ["report", "json", str(tmp_path / "missing-run")])
+
+    assert result.exit_code == 2
+    assert "… and 1 more" in result.output
+
+
+def test_empty_run_has_an_actionable_error(tmp_path):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    empty_run = tmp_path / "empty-run"
+    empty_run.mkdir()
+
+    result = CliRunner().invoke(app, ["report", "json", str(empty_run)])
+
+    assert result.exit_code == 2
+    assert "Traceback" not in result.output
+    assert f"run '{empty_run}' contains no results" in result.output
+    assert "aobench run all --adapter direct_qa --split dev" in result.output

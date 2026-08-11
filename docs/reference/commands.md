@@ -487,6 +487,8 @@ aobench report json [OPTIONS] RUN_DIR
 | `--json` | | `False` | Emit JSON instead of a table. Prints the summary dict to stdout with no banner and no human-readable lines — the file is still written as usual. Useful for wiring into CI. |
 | `-h`, `--help` | | | Show help and exit |
 
+If `RUN_DIR` does not exist, the command names the path and lists up to ten sibling run directories. If it exists but has no completed result files, the command explains that separately and prints an offline re-run command. Both cases exit with code 2 and do not print a traceback.
+
 **Output file:** `run_summary.json` with:
 - `run_id`, `task_count`, `mean_aggregate_score`, `hard_fail_count`
 - `total_cost_usd`, `total_tokens`, `mean_latency_seconds`
