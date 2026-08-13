@@ -19,7 +19,10 @@ def _available_run_dirs(run_dir: Path) -> list[Path]:
 
 def _report_missing_run_dir(run_dir: Path) -> None:
     """Print an actionable error for a run directory that does not exist."""
-    typer.echo(f"Error: run directory '{run_dir}' does not exist.", err=True)
+    if run_dir.exists():
+        typer.echo(f"Error: run directory '{run_dir}' is not a directory.", err=True)
+    else:
+        typer.echo(f"Error: run directory '{run_dir}' does not exist.", err=True)
     available_runs = _available_run_dirs(run_dir)
     if available_runs:
         typer.echo("\nAvailable runs:", err=True)
@@ -39,6 +42,21 @@ def _report_empty_run(run_dir: Path) -> None:
     raise typer.Exit(code=2)
 
 
+def _require_completed_run(run_dir: str | Path) -> None:
+    """Guard shared by every ``report`` subcommand; exit 2 if the run is unusable.
+
+    The report builders raise ``FileNotFoundError`` for both cases, which Typer
+    renders as a traceback. Checking here keeps the two situations distinct and
+    exits 2 the way the other run-directory commands do (see ``rescore_cmd``).
+    """
+    run_path = Path(run_dir)
+    if not run_path.is_dir():
+        _report_missing_run_dir(run_path)
+    results_dir = run_path / "results"
+    if not results_dir.is_dir() or not any(results_dir.glob("*_result.json")):
+        _report_empty_run(run_path)
+
+
 @report_app.command("json")
 def report_json(
     run_dir: Annotated[
@@ -55,12 +73,7 @@ def report_json(
     """Write a JSON summary of all results in a run directory."""
     from aobench.reports.json_report import write_run_summary
 
-    run_path = Path(run_dir)
-    if not run_path.is_dir():
-        _report_missing_run_dir(run_path)
-    results_dir = run_path / "results"
-    if not results_dir.is_dir() or not any(results_dir.glob("*_result.json")):
-        _report_empty_run(run_path)
+    _require_completed_run(run_dir)
 
     out_path = write_run_summary(run_dir)
     if output:
@@ -94,6 +107,8 @@ def report_html(
     """Write a self-contained HTML report for a run directory."""
     from aobench.reports.html_report import write_html_report
 
+    _require_completed_run(run_dir)
+
     out_path = write_html_report(run_dir)
     typer.echo(f"HTML report written: {out_path}")
 
@@ -121,6 +136,8 @@ def report_governance(
     """
     from aobench.reports.governance_report import write_governance_report
 
+    _require_completed_run(run_dir)
+
     out_path = write_governance_report(
         run_dir,
         output=output,
@@ -137,6 +154,8 @@ def report_slices(
     """Print a role × category score table for a run."""
     from aobench.reports.json_report import build_run_summary
     from aobench.reports.slices import format_table_text, role_category_table
+
+    _require_completed_run(run_dir)
 
     summary = build_run_summary(run_dir)
     table = role_category_table(summary)

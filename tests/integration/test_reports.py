@@ -5,6 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 BENCHMARK_ROOT = Path(__file__).parent.parent.parent / "benchmark"
 
 
@@ -161,3 +163,50 @@ def test_empty_run_has_an_actionable_error(tmp_path):
     assert "Traceback" not in result.output
     assert f"run '{empty_run}' contains no results" in result.output
     assert "aobench run all --adapter direct_qa --split dev" in result.output
+
+
+def test_run_dir_that_is_a_file_says_so(tmp_path):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    not_a_dir = tmp_path / "run.json"
+    not_a_dir.write_text("{}")
+
+    result = CliRunner().invoke(app, ["report", "json", str(not_a_dir)])
+
+    assert result.exit_code == 2
+    assert "Traceback" not in result.output
+    assert f"run directory '{not_a_dir}' is not a directory" in result.output
+
+
+@pytest.mark.parametrize("subcommand", ["json", "html", "slices", "governance"])
+def test_every_report_subcommand_explains_a_missing_run(tmp_path, subcommand):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    (tmp_path / "existing-run").mkdir()
+
+    result = CliRunner().invoke(app, ["report", subcommand, str(tmp_path / "missing-run")])
+
+    assert result.exit_code == 2, result.output
+    assert "Traceback" not in result.output
+    assert "does not exist" in result.output
+    assert "Available runs:" in result.output
+
+
+@pytest.mark.parametrize("subcommand", ["json", "html", "slices", "governance"])
+def test_every_report_subcommand_explains_an_empty_run(tmp_path, subcommand):
+    from typer.testing import CliRunner
+
+    from aobench.cli.main import app
+
+    empty_run = tmp_path / "empty-run"
+    (empty_run / "results").mkdir(parents=True)
+
+    result = CliRunner().invoke(app, ["report", subcommand, str(empty_run)])
+
+    assert result.exit_code == 2, result.output
+    assert "Traceback" not in result.output
+    assert f"run '{empty_run}' contains no results" in result.output
