@@ -57,7 +57,7 @@ def check_shortcut_prevention(
             detail=f"Corpus too small ({n_tasks} tasks) for shortcut check.",
         )
 
-    value_counts: dict[str, Counter] = {field: Counter() for field in _SHORTCUT_FIELDS}
+    value_counts: dict[str, Counter[str]] = {field: Counter() for field in _SHORTCUT_FIELDS}
 
     for t in task_corpus:
         if t.ground_truth is None:

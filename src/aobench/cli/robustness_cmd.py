@@ -4,9 +4,12 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Annotated, Any
+from typing import TYPE_CHECKING, Annotated, Any
 
 import typer
+
+if TYPE_CHECKING:
+    from aobench.adapters.base import BaseAdapter
 
 robustness_app = typer.Typer(help="Measure score consistency across repeated runs.")
 
@@ -77,7 +80,7 @@ def robustness_task(  # noqa: PLR0913
 
     # Build adapter
     if adapter == "direct_qa":
-        _adapter = DirectQAAdapter()
+        _adapter: BaseAdapter = DirectQAAdapter()
     elif adapter.startswith("openai"):
         from aobench.adapters.openai_adapter import OpenAIAdapter  # noqa: PLC0415
         model = adapter.split(":", 1)[1] if ":" in adapter else "gpt-4o"
@@ -106,7 +109,10 @@ def robustness_task(  # noqa: PLR0913
         run_id = make_run_id()
         result = runner.run(task, env, run_id=run_id)
         results.append(result)
-        passed = "✓" if result.aggregate_score >= pass_threshold else "✗"
+        # aggregate_score is Optional[float]; a None here would raise at runtime
+        # exactly as mypy flags below. Real bug, filed separately as #49 — not
+        # fixed here per the mypy-paydown scope rules on #37.
+        passed = "✓" if result.aggregate_score >= pass_threshold else "✗"  # type: ignore[operator]  # see #49
         typer.echo(f"  Run {i + 1}/{n}  score={result.aggregate_score:.4f}  {passed}")
 
     stats = compute_robustness(results, pass_threshold=pass_threshold)
@@ -145,7 +151,7 @@ def _print_suite_stats(suite: dict[str, Any]) -> None:
 def _robustness_all_for_adapter(
     *,
     adapter_label: str,
-    _adapter,
+    _adapter: "BaseAdapter",
     tasks: list[Any],
     n: int,
     pass_threshold: float,

@@ -12,7 +12,7 @@ compare_app = typer.Typer(help="Compare two benchmark run directories.")
 _DIMS = ["outcome", "tool_use", "grounding", "governance", "efficiency", "aggregate_score"]
 
 
-def filter_tasks(rows: list[dict[str, Any]], qcat: str | None, role: str | None) -> list[dict]:
+def filter_tasks(rows: list[dict[str, Any]], qcat: str | None, role: str | None) -> list[dict[str, Any]]:
     if qcat:
         rows = [r for r in rows if r["task_id"].startswith(qcat + "_")]
     if role:

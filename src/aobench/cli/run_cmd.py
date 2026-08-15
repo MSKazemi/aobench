@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, Callable, cast
 from pathlib import Path
 from typing import Annotated, Optional
 
 import typer
 
 from aobench.utils.logging import configure_logging
+
+if TYPE_CHECKING:
+    from aobench.adapters.base import BaseAdapter
+    from aobench.exporters.langfuse_exporter import LangfuseExporter
+    from aobench.schemas.result import BenchmarkResult
+    from aobench.schemas.task import TaskSpec
 
 run_app = typer.Typer(help="Run benchmark tasks.")
 
@@ -64,14 +70,19 @@ _AZURE_DEPLOYMENT_MAP: dict[str, str] = {
 
 
 def resolve_model(token: str) -> tuple[type, str]:
-    """Map a model token to (AdapterClass, model_name).
+    """Map a token to (AdapterClass, model_name).
 
     Raises SystemExit with a helpful message for unknown tokens.
+
+    The returned class is deliberately untyped (bare ``type``): callers pick
+    constructor kwargs (``model=``, ``provider=``, or none) based on which
+    concrete adapter came back, and no single static signature covers all of
+    them — see ``_build_adapter_from_token`` below.
     """
     from aobench.adapters.direct_qa_adapter import DirectQAAdapter
     from aobench.adapters.openai_adapter import OpenAIAdapter
 
-    _CLASS_MAP = {
+    _CLASS_MAP: dict[str, type] = {
         "DirectQAAdapter": DirectQAAdapter,
         "OpenAIAdapter": OpenAIAdapter,
     }
@@ -89,7 +100,7 @@ def resolve_model(token: str) -> tuple[type, str]:
     return _CLASS_MAP[class_name], model_name
 
 
-def _build_adapter_from_token(token: str):
+def _build_adapter_from_token(token: str) -> "BaseAdapter":
     """Instantiate an adapter from a model registry token.
 
     For Azure deployments, gpt-4o and gpt-4o-mini resolve to the names in
@@ -103,7 +114,7 @@ def _build_adapter_from_token(token: str):
         pass
     adapter_class, model_name = resolve_model(token)
     if adapter_class.__name__ == "DirectQAAdapter":
-        return adapter_class()
+        return cast("BaseAdapter", adapter_class())
     # Resolve Azure deployment name override if on Azure (skip for Ollama tokens)
     is_ollama = (
         os.environ.get("LLM_PROVIDER", "").lower() == "ollama"
@@ -113,11 +124,11 @@ def _build_adapter_from_token(token: str):
     if not is_ollama and os.environ.get("AZURE_OPENAI_ENDPOINT"):
         model_name = _AZURE_DEPLOYMENT_MAP.get(token, model_name)
     if is_ollama:
-        return adapter_class(model=model_name, provider="ollama")
-    return adapter_class(model=model_name)
+        return cast("BaseAdapter", adapter_class(model=model_name, provider="ollama"))
+    return cast("BaseAdapter", adapter_class(model=model_name))
 
 
-def _load_system_prompt_prefix(path: str | None, task) -> str:
+def _load_system_prompt_prefix(path: str | None, task: "TaskSpec") -> str:
     """Load and render the system-prompt prefix file for a given task.
 
     Substitutes {{role}}, {{permitted_tools_csv}}, {{forbidden_tools_csv}}.
@@ -145,31 +156,31 @@ def _load_system_prompt_prefix(path: str | None, task) -> str:
     return prefix_text
 
 
-def _build_adapter(name: str):
+def _build_adapter(name: str) -> "BaseAdapter":
     """Instantiate an adapter by name using the prefix registry."""
     from aobench.adapters.direct_qa_adapter import DirectQAAdapter
     from aobench.adapters.openai_adapter import OpenAIAdapter
     from aobench.adapters.mcp_client_adapter import MCPClientAdapter
 
-    def _make_direct_qa(_n: str):
+    def _make_direct_qa(_n: str) -> "BaseAdapter":
         return DirectQAAdapter()
 
-    def _make_openai(n: str):
+    def _make_openai(n: str) -> "BaseAdapter":
         model = n.split(":", 1)[1] if ":" in n else "gpt-4o"
         return OpenAIAdapter(model=model)
 
-    def _make_anthropic(n: str):
+    def _make_anthropic(n: str) -> "BaseAdapter":
         from aobench.adapters.anthropic_adapter import AnthropicAdapter
         model = n.split(":", 1)[1] if ":" in n else "claude-sonnet-4-6"
         return AnthropicAdapter(model=model)
 
-    def _make_mcp(n: str):
+    def _make_mcp(n: str) -> "BaseAdapter":
         # "mcp:stdio:python server.py" → server_spec = "stdio:python server.py"
         # "mcp:sse:http://..."         → server_spec = "sse:http://..."
         server_spec = n[len("mcp:"):] if ":" in n else ""
         return MCPClientAdapter(server=server_spec)
 
-    _REGISTRY = {
+    _REGISTRY: dict[str, Callable[[str], "BaseAdapter"]] = {
         "direct_qa": _make_direct_qa,
         "openai": _make_openai,
         "anthropic": _make_anthropic,
@@ -184,7 +195,7 @@ def _build_adapter(name: str):
     return factory(name)
 
 
-def _build_exporter(langfuse: bool):
+def _build_exporter(langfuse: bool) -> "LangfuseExporter | None":
     """Instantiate a LangfuseExporter when --langfuse is set, else return None."""
     if not langfuse:
         return None
@@ -301,7 +312,7 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
 def _run_all_for_model(
     *,
     adapter_label: str,
-    adapter_obj,
+    adapter_obj: "BaseAdapter",
     tasks: list[Any],
     benchmark_root: str,
     output_root: str,
@@ -333,7 +344,7 @@ def _run_all_for_model(
         split=split,
     )
 
-    results = []
+    results: list[tuple[str, "BenchmarkResult | None"]] = []
     with Progress(
         SpinnerColumn(),
         TextColumn("[bold blue]{task.description}"),

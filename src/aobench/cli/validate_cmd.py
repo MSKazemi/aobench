@@ -174,14 +174,14 @@ def _print_t1_t10_summary(
     pass_count = warn_count = fail_count = 0
     for row in rows:
         cells = "".join(f"{row.get(c, '-'):>{col_w}}" for c in _ALL)
-        overall = row["overall"]
-        if overall == "PASS":
+        row_overall = row["overall"]
+        if row_overall == "PASS":
             pass_count += 1
-        elif overall == "WARN":
+        elif row_overall == "WARN":
             warn_count += 1
         else:
             fail_count += 1
-        typer.echo(f"{row['task_id']:<20}{cells}  {overall}")
+        typer.echo(f"{row['task_id']:<20}{cells}  {row_overall}")
     typer.echo("-" * len(header))
     typer.echo(f"TOTAL: {len(rows)}  PASS={pass_count}  WARN={warn_count}  FAIL={fail_count}")
     typer.echo("")
