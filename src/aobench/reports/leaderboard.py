@@ -191,7 +191,8 @@ def _safe_pass_k(results: list[BenchmarkResult], k: int, threshold: float) -> fl
     if k > n:
         return None
     c = sum(
-        True for r in results
+        1  # type: ignore[misc]  # mypy selects the bool overload for this generator.
+        for r in results
         if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
         and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= threshold  # type: ignore[operator]
     )

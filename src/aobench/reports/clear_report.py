@@ -55,7 +55,7 @@ def compute_cps(
         return None
     total_cost = sum(costs)
     n_successful = sum(
-                True
+                1  # type: ignore[misc]  # mypy selects the bool overload for this generator.
         for r in results
         if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
         and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
@@ -292,7 +292,7 @@ def compute_clear_scores(
                 R = round(passing / n, 4) if n > 0 else None
 
         n_successful = sum(
-            True
+            1 # type: ignore[misc]  # mypy selects the bool overload for this generator.
             for r in results
             if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
             and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
@@ -531,7 +531,7 @@ def compute_pass_k_by_category(
     out: dict[str, float] = {}
     for category, cat_results in by_category.items():
         passing = sum(
-            True
+            1  # type: ignore[misc]  # mypy selects the bool overload for this generator.
             for r in cat_results
             if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
             and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
