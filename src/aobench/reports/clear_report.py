@@ -55,7 +55,7 @@ def compute_cps(
         return None
     total_cost = sum(costs)
     n_successful = sum(
-        1
+                True
         for r in results
         if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
         and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
@@ -145,11 +145,13 @@ def compute_clear_scores(
         n = len(results)
 
         # E — Efficacy: mean S_partial when available, else mean binary outcome
-        efficacy_values = [
-            r.s_partial if r.s_partial is not None else r.dimension_scores.outcome
-            for r in results
-            if (r.s_partial if r.s_partial is not None else r.dimension_scores.outcome) is not None
-        ]
+        efficacy_values = []
+
+        for r in results:
+            value = (r.s_partial if r.s_partial is not None else r.dimension_scores.outcome)
+            if value is not None:
+                efficacy_values.append(value)
+
         E = round(sum(efficacy_values) / len(efficacy_values), 4) if efficacy_values else None
 
         # CuP metrics
@@ -194,7 +196,7 @@ def compute_clear_scores(
                     sum(1 for r in vv_results if _vv_flag(r.violation_vector, dim))
                     / len(results),
                     4,
-                )
+                )   
 
         # A — Assurance: engagement-aware graded Governance (§15, Eq. gov-eng).
         # Mean GovernanceScorer score over engaged runs; a run is engaged when it
@@ -290,7 +292,7 @@ def compute_clear_scores(
                 R = round(passing / n, 4) if n > 0 else None
 
         n_successful = sum(
-            1
+            True
             for r in results
             if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
             and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
@@ -373,7 +375,7 @@ def compute_clear_scores(
 
         if all(v is not None for v in (c_norm, l_norm, E_for_clear, A, R)):
             clear = round(
-                0.2 * c_norm + 0.2 * l_norm + 0.2 * E_for_clear + 0.2 * A + 0.2 * R,
+                0.2 * c_norm + 0.2 * l_norm + 0.2 * E_for_clear + 0.2 * A + 0.2 * R, # type: ignore[operator]  # Operands were checked for None above.
                 4,
             )
         else:
@@ -529,7 +531,7 @@ def compute_pass_k_by_category(
     out: dict[str, float] = {}
     for category, cat_results in by_category.items():
         passing = sum(
-            1
+            True
             for r in cat_results
             if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
             and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
