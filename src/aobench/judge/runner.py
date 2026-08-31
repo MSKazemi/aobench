@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 import hashlib
 import json
@@ -9,6 +10,7 @@ import logging
 import time
 from pathlib import Path
 from typing import Optional
+from openai.types.chat import ChatCompletionMessageParam
 
 from .config import JudgeConfig, make_judge_config_id
 
@@ -50,10 +52,14 @@ def _parse_json_response(text: str) -> Optional[dict[str, Any]]:
         end = len(lines) - 1 if lines[-1].strip() == "```" else len(lines)
         text = "\n".join(lines[start:end])
     try:
-        return json.loads(text)
+        parsed: object = json.loads(text)
     except json.JSONDecodeError:
         return None
-
+    if isinstance(parsed, dict):
+        return parsed
+    else: 
+        return None
+    
 
 class JudgeRunner:
     """Runs LLM-based rubric scoring and error taxonomy annotation.
@@ -176,7 +182,7 @@ class JudgeRunner:
         user_content: str,
         max_tokens: int,
         seed: int,
-        parse_fn,
+        parse_fn: Callable[[str], Optional[dict[str, Any]]],
         call_type: str,
     ) -> dict[str, Any]:
         """Attempt the API call with retry logic.
@@ -234,7 +240,7 @@ class JudgeRunner:
         max_tokens: int,
         temperature: float,
         seed: int,
-        parse_fn,
+        parse_fn: Callable[[str], Optional[dict[str, Any]]],
         call_type: str,
     ) -> Optional[dict[str, Any]]:
         """Try to call the OpenAI API. Returns parsed result dict or None."""
@@ -244,7 +250,7 @@ class JudgeRunner:
             logger.debug("openai package not installed; skipping OpenAI judge")
             return None
 
-        messages = [
+        messages: list[ChatCompletionMessageParam] = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": user_content},
         ]
@@ -316,7 +322,7 @@ class JudgeRunner:
         system_content: str,
         user_content: str,
         max_tokens: int,
-        parse_fn,
+        parse_fn:  Callable[[str], Optional[dict[str, Any]]],
         call_type: str,
     ) -> Optional[dict[str, Any]]:
         """Try Anthropic claude-sonnet-4-6 as fallback judge."""
@@ -335,7 +341,13 @@ class JudgeRunner:
                 max_tokens=max_tokens,
                 temperature=self.config.temperature,
             )
-            text = resp.content[0].text if resp.content else ""
+            block = resp.content[0] if resp.content else None
+
+            if block is not None and block.type == "text":
+                text = block.text
+            else:
+                text = ""
+
             parsed = parse_fn(text)
             if parsed is None:
                 logger.warning(
@@ -418,7 +430,7 @@ class JudgeRunner:
     def _error_result(
         self, call_type: str, *, jitter: bool, status: str
     ) -> dict[str, Any]:
-        base = {
+        base: dict[str, Any] = {
             "judge_status": status,
             "judge_quality": None,
             "judge_config_id": self._config_id,
