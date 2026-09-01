@@ -3,16 +3,20 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 import hashlib
 import json
 import logging
 import time
 from pathlib import Path
 from typing import Optional
-from openai.types.chat import ChatCompletionMessageParam
 
 from .config import JudgeConfig, make_judge_config_id
+
+if TYPE_CHECKING:
+    # openai is an optional extra; keep this import type-only so that
+    # importing this module does not require it at runtime.
+    from openai.types.chat import ChatCompletionMessageParam
 
 logger = logging.getLogger(__name__)
 
@@ -57,9 +61,8 @@ def _parse_json_response(text: str) -> Optional[dict[str, Any]]:
         return None
     if isinstance(parsed, dict):
         return parsed
-    else: 
-        return None
-    
+    return None
+
 
 class JudgeRunner:
     """Runs LLM-based rubric scoring and error taxonomy annotation.
@@ -322,7 +325,7 @@ class JudgeRunner:
         system_content: str,
         user_content: str,
         max_tokens: int,
-        parse_fn:  Callable[[str], Optional[dict[str, Any]]],
+        parse_fn: Callable[[str], Optional[dict[str, Any]]],
         call_type: str,
     ) -> Optional[dict[str, Any]]:
         """Try Anthropic claude-sonnet-4-6 as fallback judge."""
