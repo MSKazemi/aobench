@@ -138,3 +138,18 @@ module = [
     "langfuse.*",
 ]
 ignore_missing_imports = true
+
+# Installed in the dev environment, but ships no py.typed marker, so mypy reports
+# `import-untyped` rather than a missing import. `ignore_missing_imports` does not
+# cover that case — it only applies to modules mypy cannot find at all.
+#
+# pingouin is deliberately NOT listed here. Following into it turns the
+# `import-untyped` at its import site into a `no-untyped-call` on
+# `pg.intraclass_corr` instead, which is no better and sits on the ICC(A,1) path
+# that issue #46 corrected. Left as-is rather than churn that code for a wash.
+[[tool.mypy.overrides]]
+module = [
+    "sklearn",
+    "sklearn.*",
+]
+follow_untyped_imports = true
