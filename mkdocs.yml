@@ -109,6 +109,7 @@ extra:
 nav:
   - Home: index.md
   - Getting Started:
+    - Your First 10 Minutes: getting-started/first-10-minutes.md
     - Quickstart: getting-started/quickstart.md
     - Installation & Running: getting-started/installation.md
   - Framework:
