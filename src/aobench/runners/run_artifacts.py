@@ -61,7 +61,8 @@ def _load_judge_config_id(repo_root: Path | None = None) -> str | None:
         if p.exists():
             try:
                 data = json.loads(p.read_text(encoding="utf-8"))
-                return data.get("judge_config_id")
+                config_id = data.get("judge_config_id") if isinstance(data, dict) else None
+                return config_id if isinstance(config_id, str) else None
             except Exception:
                 pass
     return None

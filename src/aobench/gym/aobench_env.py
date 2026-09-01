@@ -46,6 +46,7 @@ from aobench.loaders.task_loader import load_task
 from aobench.environment.snapshot_loader import build_tool_registry
 from aobench.schemas.task import TaskSpec
 from aobench.schemas.trace import TraceStep, ToolCall
+from aobench.tools.registry import ToolRegistry
 
 
 class AOBenchEnv:
@@ -73,7 +74,7 @@ class AOBenchEnv:
 
         # State set by reset()
         self._task: Optional[TaskSpec] = None
-        self._registry = None
+        self._registry: Optional[ToolRegistry] = None
         self._step_count: int = 0
         self._terminated: bool = False
         self._trace_steps: list[TraceStep] = []
@@ -187,9 +188,10 @@ class AOBenchEnv:
         tool_name = action.get("tool_name", "")
         method = action.get("method", "")
         try:
-            args = json.loads(action.get("arguments", "{}"))
+            parsed = json.loads(action.get("arguments", "{}"))
         except (json.JSONDecodeError, TypeError):
-            args = {}
+            parsed = None
+        args = parsed if isinstance(parsed, dict) else {}
 
         # Emit trace step
         tc = ToolCall(tool_name=tool_name, method=method, arguments=args)
@@ -207,11 +209,9 @@ class AOBenchEnv:
                 self._engaged = True
 
         # Invoke the tool
-        if self._registry is not None and tool_name in (
-            getattr(self._registry, "allowed_tools", None) or []
-        ):
+        if self._registry is not None and tool_name in self._registry.available_tool_names:
             try:
-                result = self._registry.invoke(tool_name, method, args)
+                result = self._registry.call(tool_name, method, **args)
                 obs_content = str(result)
                 if getattr(result, "permission_denied", False):
                     self._violations.append(f"permission_denied:{tool_name}.{method}")

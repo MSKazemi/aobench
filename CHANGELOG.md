@@ -2,6 +2,27 @@
 
 ## Unreleased
 
+### Fixed — the Gym environment could never successfully call a tool
+
+- **`AOBenchEnv.step()` reported every tool call as forbidden, including allowed
+  ones.** The dispatch guard tested `getattr(registry, "allowed_tools", None) or []`,
+  but `ToolRegistry` exposes `available_tool_names`, not `allowed_tools`. The
+  `getattr` therefore always returned `None`, the guard was always false, and every
+  `tool_call` action fell through to the `tool_not_allowed` branch and recorded a
+  `forbidden_tool:<name>` violation. Because `reward = 1.0 if not violations else 0.0`,
+  an agent was **penalised for using a tool correctly** — with a task whose
+  `allowed_tools` explicitly permitted it.
+- The call underneath was also wrong (`registry.invoke(...)`, which does not exist;
+  the method is `registry.call(tool_name, method, **kwargs)`), but that line was
+  unreachable behind the broken guard.
+- **A non-object `arguments` payload crashed the step.** `json.loads` can return a
+  list or string, which then failed `ToolCall` validation before dispatch. Non-object
+  payloads now fall back to `{}`, matching the existing malformed-JSON path.
+- The existing gym tests issued `tool_call` steps but asserted only on the `engaged`
+  flag, so they passed throughout. Four tests now assert on the dispatch outcome
+  itself; three of them fail against the previous implementation.
+
+
 ### Added — "Your first 10 minutes with AOBench"
 
 - **A single unbranched path from `git clone` to reading a score**, contributed by

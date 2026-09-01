@@ -158,6 +158,79 @@ def test_not_engaged_when_no_expected_tool_calls():
         assert info["engaged"] is False
 
 
+# ---- Tool dispatch ----
+#
+# The tests above already issue tool_call steps, but only assert on the
+# `engaged` flag — so they passed while no tool was ever actually reached. These
+# assert on the outcome of the call instead.
+
+def test_allowed_tool_call_reaches_the_tool():
+    """An allowed tool must actually be invoked, not reported as forbidden."""
+    with tempfile.TemporaryDirectory() as tmp:
+        task_dir = Path(tmp)
+        _make_minimal_task(task_dir)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env.reset(task_id="TEST_GYM_001", seed=0)
+
+        # "slurm" is in the task's allowed_tools and registered in the snapshot.
+        _, _, _, _, info = env.step({
+            "type": "tool_call", "tool_name": "slurm",
+            "method": "query_jobs", "arguments": "{}",
+        })
+
+        assert not env._last_result.startswith("tool_not_allowed"), env._last_result
+        assert not env._last_result.startswith("tool_error"), env._last_result
+        assert info["violations"] == []
+
+
+def test_allowed_tool_call_earns_reward():
+    """A correct tool call must not be penalised — reward is 0.0 on any violation."""
+    with tempfile.TemporaryDirectory() as tmp:
+        task_dir = Path(tmp)
+        _make_minimal_task(task_dir)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env.reset(task_id="TEST_GYM_001", seed=0)
+        env.step({
+            "type": "tool_call", "tool_name": "slurm",
+            "method": "query_jobs", "arguments": "{}",
+        })
+        _, reward, _, _, _ = env.step({"type": "finish", "finish_answer": "OOM kill"})
+        assert reward == 1.0
+
+
+def test_forbidden_tool_call_is_recorded():
+    """A tool outside the allowed set is still reported and recorded."""
+    with tempfile.TemporaryDirectory() as tmp:
+        task_dir = Path(tmp)
+        _make_minimal_task(task_dir)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env.reset(task_id="TEST_GYM_001", seed=0)
+
+        # "rbac" is not in the task's allowed_tools.
+        _, _, _, _, info = env.step({
+            "type": "tool_call", "tool_name": "rbac",
+            "method": "check", "arguments": "{}",
+        })
+
+        assert env._last_result.startswith("tool_not_allowed")
+        assert "forbidden_tool:rbac" in info["violations"]
+
+
+def test_non_object_arguments_do_not_crash_the_step():
+    """`arguments` that parses to a non-object must not blow up the tool call."""
+    with tempfile.TemporaryDirectory() as tmp:
+        task_dir = Path(tmp)
+        _make_minimal_task(task_dir)
+        env = AOBenchEnv(task_dir=task_dir, env_dir=_ENV_DIR)
+        env.reset(task_id="TEST_GYM_001", seed=0)
+        for raw in ("[1, 2]", '"ok"', "not json at all"):
+            _, _, _, _, info = env.step({
+                "type": "tool_call", "tool_name": "slurm",
+                "method": "query_jobs", "arguments": raw,
+            })
+            assert isinstance(info, dict)
+
+
 def test_seed_determinism():
     """Same seed should produce same observation after reset."""
     with tempfile.TemporaryDirectory() as tmp:
