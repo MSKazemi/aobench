@@ -64,7 +64,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
     scores = [r.aggregate_score for r in results if r.aggregate_score is not None]
     mean_score = round(sum(scores) / len(scores), 4) if scores else None
 
-    task_rows = [
+    task_rows: list[dict[str, Any]] = [
         {
             "task_id": r.task_id,
             "role": r.role,
@@ -95,7 +95,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
     category_counts: dict[str, int] = {}
     for row in task_rows:
         cat = row["error_category"]
-        category_counts[cat] = category_counts.get(cat, 0) + 1 # type: ignore[index, arg-type]  # error_category is always str from classify_error
+        category_counts[cat] = category_counts.get(cat, 0) + 1
 
     total_cost = sum(r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None)
     total_tokens = sum(r.total_tokens for r in results if r.total_tokens is not None)

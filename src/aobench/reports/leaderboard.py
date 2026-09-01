@@ -191,10 +191,11 @@ def _safe_pass_k(results: list[BenchmarkResult], k: int, threshold: float) -> fl
     if k > n:
         return None
     c = sum(
-        1  # type: ignore[misc]  # mypy selects the bool overload for this generator.
-        for r in results
-        if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
-        and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= threshold  # type: ignore[operator]
+        1
+        for score in (
+            (r.cup_score if r.cup_score is not None else r.aggregate_score) for r in results
+        )
+        if score is not None and score >= threshold
     )
     if c < k:
         return 0.0
@@ -256,13 +257,14 @@ def write_heatmap_csv(
         results = by_task_model[(task_id, model)]
         meta = task_meta.get(task_id, {})
 
-        scores = []
-        for r in results:
-            value = (r.cup_score if r.cup_score is not None else r.aggregate_score)
-            if value is not None:
-                scores.append(value)
-
-        n_passed = sum(1 for s in scores if s >= pass_threshold)  
+        scores = [
+            score
+            for score in (
+                (r.cup_score if r.cup_score is not None else r.aggregate_score) for r in results
+            )
+            if score is not None
+        ]
+        n_passed = sum(1 for s in scores if s >= pass_threshold)
         tier = meta.get("difficulty_tier")
         difficulty_str = str(tier) if tier is not None else ""
 
