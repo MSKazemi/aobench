@@ -2,6 +2,25 @@
 
 ## Unreleased
 
+### Fixed — Langfuse traces were missing session, user and tags
+
+- **Every exported trace silently lost its `session_id`, `user_id` and tags.**
+  `LangfuseExporter.export()` reached for `root_span._span` to get the underlying
+  OpenTelemetry span, but Langfuse v4's `LangfuseSpan` stores it as `_otel_span`;
+  the attribute did not exist, and the surrounding bare `except Exception` turned
+  the resulting `AttributeError` into a debug log. The run ID (exported as
+  `session_id`) is how a run's traces are correlated in the Langfuse UI, so this
+  removed the main way of navigating them.
+- The exporter now takes the span from `opentelemetry.trace.get_current_span()`.
+  Inside `start_as_current_observation`, that returns the identical object —
+  verified by identity — through public API rather than an SDK internal, so an
+  SDK rename cannot silently break it again.
+- The existing tests mocked the root span with a bare `MagicMock`, which invents
+  any attribute on access; `mock_root_span._span` therefore "worked" throughout.
+  Two tests now assert on the span the exporter actually writes to, and both fail
+  against the previous implementation.
+
+
 ### Fixed — the Gym environment could never successfully call a tool
 
 - **`AOBenchEnv.step()` reported every tool call as forbidden, including allowed

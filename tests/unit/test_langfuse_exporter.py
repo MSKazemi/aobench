@@ -248,6 +248,49 @@ class TestLangfuseExporterExport:
         assert "trace_context" not in call_kwargs
         assert call_kwargs["metadata"]["aobench_trace_id"] == "trace-abc"
 
+    def test_export_sets_session_user_and_tags_on_the_otel_span(self):
+        """session_id / user_id / tags must actually reach the OTel span.
+
+        These are set as OTel span attributes because Langfuse v4 exposes no
+        public API for them on the wrapper. A previous implementation read a
+        private attribute (`root_span._span`) that does not exist on
+        `LangfuseSpan`; the bare `except Exception` swallowed the AttributeError,
+        so every exported trace silently lost its session, user and tags.
+
+        `MagicMock` invents any attribute on access, which is exactly why the
+        mocked suite never noticed. This test asserts on the span the exporter
+        really writes to instead.
+        """
+        exporter, _, _ = _build_mock_exporter()
+
+        otel_span = MagicMock()
+        with patch("opentelemetry.trace.get_current_span", return_value=otel_span):
+            exporter.export(_make_trace(), _make_result(), _make_task())
+
+        # Read the attribute keys from Langfuse itself rather than hard-coding
+        # them — the constants are the SDK's to name, and they have changed.
+        from langfuse import LangfuseOtelSpanAttributes as A
+
+        set_attrs = {
+            call.args[0]: call.args[1] for call in otel_span.set_attribute.call_args_list
+        }
+        assert set_attrs[A.TRACE_SESSION_ID] == "run-xyz"
+        assert set_attrs[A.TRACE_USER_ID] == "scientific_user"
+        assert "JOB" in set_attrs[A.TRACE_TAGS]
+
+    def test_export_does_not_reach_for_a_private_span_attribute(self):
+        """The exporter must not depend on Langfuse internals to find the span."""
+        exporter, _, mock_root = _build_mock_exporter()
+
+        otel_span = MagicMock()
+        with patch("opentelemetry.trace.get_current_span", return_value=otel_span):
+            exporter.export(_make_trace(), _make_result(), _make_task())
+
+        # `_span` was the private attribute the old implementation used; nothing
+        # should be setting attributes through any span but the OTel one.
+        assert not mock_root._span.set_attribute.called
+        assert otel_span.set_attribute.called
+
     def test_export_creates_child_spans_per_step(self):
         exporter, _, mock_root = _build_mock_exporter()
         exporter.export(_make_trace(), _make_result(), _make_task())

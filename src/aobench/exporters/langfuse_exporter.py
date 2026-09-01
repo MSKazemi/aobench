@@ -8,7 +8,7 @@ context-manager observations backed by OpenTelemetry spans.
 from __future__ import annotations
 
 import os
-from typing import Any
+from typing import Any, Literal
 
 from aobench.exporters.base_exporter import BaseExporter
 from aobench.schemas.result import BenchmarkResult
@@ -86,6 +86,7 @@ class LangfuseExporter(BaseExporter):
     def export(self, trace: Trace, result: BenchmarkResult, task: TaskSpec) -> None:
         """Push one completed task run to Langfuse using the SDK v4 API."""
         from langfuse import LangfuseOtelSpanAttributes
+        from opentelemetry import trace as otel_trace
 
         logger.debug("langfuse export trace_id=%s task_id=%s", trace.trace_id, trace.task_id)
 
@@ -117,9 +118,15 @@ class LangfuseExporter(BaseExporter):
             metadata=metadata,
         ) as root_span:
 
-            # Set session_id, user_id, tags via OTel span attributes (v4 native)
+            # Set session_id, user_id, tags via OTel span attributes (v4 native).
+            #
+            # `root_span` wraps the OTel span privately (`_otel_span`), but
+            # `start_as_current_observation` also makes it the *current* OTel span,
+            # so the public OTel API returns the identical object. Reaching for a
+            # private attribute here previously raised AttributeError into the
+            # `except` below, silently dropping session/user/tags from every trace.
             try:
-                otel_span = root_span._span
+                otel_span = otel_trace.get_current_span()
                 otel_span.set_attribute(LangfuseOtelSpanAttributes.TRACE_SESSION_ID, trace.run_id)
                 otel_span.set_attribute(LangfuseOtelSpanAttributes.TRACE_USER_ID, trace.role)
                 if tags:
@@ -129,7 +136,7 @@ class LangfuseExporter(BaseExporter):
 
             # --- one child span per agent step ---------------------------
             for step in trace.steps:
-                as_type = "tool" if step.tool_call else "span"
+                as_type: Literal["tool", "span"] = "tool" if step.tool_call else "span"
                 step_name = f"step-{step.step_id}"
                 if step.tool_call:
                     step_name += f":{step.tool_call.tool_name}"
