@@ -56,9 +56,10 @@ def compute_cps(
     total_cost = sum(costs)
     n_successful = sum(
         1
-        for r in results
-        if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
-        and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
+        for score in (
+            (r.s_partial if r.s_partial is not None else r.aggregate_score) for r in results
+        )
+        if score is not None and score >= pass_threshold
     )
     if n_successful == 0:
         return None
@@ -146,9 +147,12 @@ def compute_clear_scores(
 
         # E — Efficacy: mean S_partial when available, else mean binary outcome
         efficacy_values = [
-            r.s_partial if r.s_partial is not None else r.dimension_scores.outcome
-            for r in results
-            if (r.s_partial if r.s_partial is not None else r.dimension_scores.outcome) is not None
+            score
+            for score in (
+                (r.s_partial if r.s_partial is not None else r.dimension_scores.outcome)
+                for r in results
+            )
+            if score is not None
         ]
         E = round(sum(efficacy_values) / len(efficacy_values), 4) if efficacy_values else None
 
@@ -291,9 +295,10 @@ def compute_clear_scores(
 
         n_successful = sum(
             1
-            for r in results
-            if (r.s_partial if r.s_partial is not None else r.aggregate_score) is not None
-            and (r.s_partial if r.s_partial is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
+            for score in (
+                (r.s_partial if r.s_partial is not None else r.aggregate_score) for r in results
+            )
+            if score is not None and score >= pass_threshold
         )
 
         # CNA: mean CNA across all results that have both outcome and cost
@@ -371,7 +376,13 @@ def compute_clear_scores(
         # Use CuP-gated efficacy when available; fall back to raw E
         E_for_clear = cup if cup is not None else E
 
-        if all(v is not None for v in (c_norm, l_norm, E_for_clear, A, R)):
+        if (
+            c_norm is not None
+            and l_norm is not None
+            and E_for_clear is not None
+            and A is not None
+            and R is not None
+        ):
             clear = round(
                 0.2 * c_norm + 0.2 * l_norm + 0.2 * E_for_clear + 0.2 * A + 0.2 * R,
                 4,
@@ -530,9 +541,11 @@ def compute_pass_k_by_category(
     for category, cat_results in by_category.items():
         passing = sum(
             1
-            for r in cat_results
-            if (r.cup_score if r.cup_score is not None else r.aggregate_score) is not None
-            and (r.cup_score if r.cup_score is not None else r.aggregate_score) >= pass_threshold  # type: ignore[operator]
+            for score in (
+                (r.cup_score if r.cup_score is not None else r.aggregate_score)
+                for r in cat_results
+            )
+            if score is not None and score >= pass_threshold
         )
         out[category] = round(passing / len(cat_results), 4)
     return out

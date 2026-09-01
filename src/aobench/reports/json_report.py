@@ -64,7 +64,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
     scores = [r.aggregate_score for r in results if r.aggregate_score is not None]
     mean_score = round(sum(scores) / len(scores), 4) if scores else None
 
-    task_rows = [
+    task_rows: list[dict[str, Any]] = [
         {
             "task_id": r.task_id,
             "role": r.role,
