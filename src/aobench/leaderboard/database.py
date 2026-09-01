@@ -7,6 +7,7 @@ from typing import Any
 import sqlite3
 from pathlib import Path
 from typing import Union
+
 from .models import CLEARRow, ModelEntry
 
 DB_PATH = Path("data/leaderboard/leaderboard.db")
@@ -87,6 +88,7 @@ def create_tables(conn: sqlite3.Connection) -> None:
     """)
     conn.commit()
 
+
 def insert_model(conn: sqlite3.Connection, entry: ModelEntry) -> None:
     """Insert or replace a ModelEntry into model_entries."""
     conn.execute(
@@ -131,6 +133,7 @@ def insert_result_rows(conn: sqlite3.Connection, rows: list[Any]) -> None:
         ],
     )
     conn.commit()
+
 
 def upsert_clear_row(conn: sqlite3.Connection, row: CLEARRow) -> None:
     """Insert or replace a CLEARRow into clear_rows."""

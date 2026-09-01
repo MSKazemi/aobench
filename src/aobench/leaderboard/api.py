@@ -67,7 +67,7 @@ except Exception:  # pydantic not available
 # App factory
 # ---------------------------------------------------------------------------
 
-def create_app() -> FastAPI | None:  # noqa: ANN201
+def create_app() -> FastAPI | None:
     """Return a FastAPI application, or None if FastAPI is not available."""
     if not _FASTAPI_AVAILABLE:
         return None  # FastAPI is required — install it with: uv add fastapi uvicorn
