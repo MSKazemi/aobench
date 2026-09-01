@@ -37,7 +37,16 @@ Added when a first PR merges, newest last.
   ([PR #47](https://github.com/MSKazemi/aobench/pull/47)) — and, told not to parse
   filenames, worked out for herself *why*: the `M100_` tasks carry an extra ID segment
   that shifts every position after it. The design call on how to count those tasks was
-  hers, made and defended before anyone asked.
+  hers, made and defended before anyone asked. Came back a third time for
+  [issue #37](https://github.com/MSKazemi/aobench/issues/37) and cleared `mypy --strict`
+  across the whole of `cli/` ([PR #50](https://github.com/MSKazemi/aobench/pull/50)) —
+  and did it by *narrowing* the types rather than silencing them, which is the harder
+  and more useful half. The `validate_cmd` fix in it is a small piece of real reading:
+  one function reused the name `overall` for two different types across two loops, and
+  mypy pins a name to its first assignment for the whole function. She also found a
+  latent `None`-comparison crash in `robustness_cmd` while in there, and filed it as
+  [#49](https://github.com/MSKazemi/aobench/issues/49) instead of quietly widening the
+  PR — the scope discipline that makes a typing PR reviewable at all.
 
 - **LeoZhaoo** ([@LobsterQBA](https://github.com/LobsterQBA)) — took
   [issue #31](https://github.com/MSKazemi/aobench/issues/31) and wrote
@@ -66,6 +75,28 @@ Added when a first PR merges, newest last.
   statistics under one name ([PR #46](https://github.com/MSKazemi/aobench/pull/46)). The
   gate is dormant until multi-judge scoring is switched on, which makes this the cheapest
   moment it could possibly have been caught.
+
+- **Dream** ([@TrueFurina](https://github.com/TrueFurina)) — wrote
+  [Your first 10 minutes with AOBench](https://mskazemi.com/aobench/latest/getting-started/first-10-minutes/),
+  the one page the documentation did not have
+  ([PR #52](https://github.com/MSKazemi/aobench/pull/52)). Everything a newcomer needed
+  existed already, spread across five pages; the contribution was noticing that the
+  *route* through them was the missing artifact, and writing a single unbranched path
+  from `git clone` to reading a score. That is a documentation judgement, not a
+  documentation chore.
+
+- **lorenzo-benites** ([@lorenzo-benites](https://github.com/lorenzo-benites)) — took the
+  `mypy --strict` paydown across three packages in three PRs: `reports/`
+  ([PR #53](https://github.com/MSKazemi/aobench/pull/53)), `leaderboard/`
+  ([PR #54](https://github.com/MSKazemi/aobench/pull/54)) and `judge/`
+  ([PR #55](https://github.com/MSKazemi/aobench/pull/55)), closing
+  [issues #38 and #39](https://github.com/MSKazemi/aobench/issues/38). Two of those
+  carried real correctness work rather than annotations: `_parse_json_response` in the
+  judge now verifies that a parsed payload is actually an object before returning it as
+  one — a judge reply of `[1, 2]` or `"ok"` used to sail through as a dict — and the
+  Anthropic branch now checks the content block's type instead of assuming the first
+  block has `.text`. Reported honestly, and usefully, that he develops on Windows and so
+  could not run `make check`, naming exactly which checks he had run instead.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 

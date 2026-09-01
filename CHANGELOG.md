@@ -2,6 +2,44 @@
 
 ## Unreleased
 
+### Added — "Your first 10 minutes with AOBench"
+
+- **A single unbranched path from `git clone` to reading a score**, contributed by
+  [@TrueFurina](https://github.com/TrueFurina) ([PR #52](https://github.com/MSKazemi/aobench/pull/52)).
+  Everything a newcomer needed was already documented across five pages; what was missing
+  was the route through them. The page walks the install, the quickstart, the five scored
+  dimensions, and why `governance` 1.0 sitting next to `tool_use` 0.0 is the interesting
+  reading rather than a contradiction.
+
+### Changed — `mypy --strict` is now clean across `cli/`, `reports/`, `leaderboard/` and `judge/`
+
+- **Repo-wide `mypy --strict` errors drop from 104 to 51**, with those four packages at
+  zero. `cli/` (17 errors) by [@Barshana24](https://github.com/Barshana24)
+  ([PR #50](https://github.com/MSKazemi/aobench/pull/50), issue #37); `reports/`,
+  `leaderboard/` and `judge/` by [@lorenzo-benites](https://github.com/lorenzo-benites)
+  ([PRs #53](https://github.com/MSKazemi/aobench/pull/53),
+  [#54](https://github.com/MSKazemi/aobench/pull/54) and
+  [#55](https://github.com/MSKazemi/aobench/pull/55), issues #38 and #39). No behaviour
+  change in any of them.
+- **The optional-score comparisons are narrowed rather than suppressed.** mypy cannot
+  narrow `(r.x if r.x is not None else r.y)` across two occurrences of the same ternary,
+  which is what made these sites look unfixable; binding the effective score once and
+  filtering on the bound name removes every `type: ignore` in `reports/`.
+
+### Fixed — a judge reply that is not a JSON object is no longer treated as one
+
+- **`_parse_json_response` now verifies the parsed payload is a `dict`** before returning
+  it ([PR #55](https://github.com/MSKazemi/aobench/pull/55), by
+  [@lorenzo-benites](https://github.com/lorenzo-benites)). A judge that replied `[1, 2]`
+  or `"ok"` previously had that value returned as if it were a scoring object. The
+  Anthropic fallback also checks the content block's type instead of assuming the first
+  block carries `.text`.
+- **`aobench.judge.runner` imports again without the optional `openai` extra.** The
+  annotation added for the OpenAI message list is now type-only; a module-level import of
+  `openai.types.chat` had made the module unimportable on a base install, defeating the
+  lazy import one function below it. Covered by a regression test that simulates the extra
+  being absent, since the development environment installs it.
+
 ### Fixed — `aobench report` explains missing or empty runs
 
 - **`aobench report <sub> <run_dir>` no longer wraps common run-directory mistakes in a traceback** (issue #3). A path that does not exist now names the missing directory, lists up to ten sibling run directories when available, and exits 2. A run directory with no completed result files now explains that it contains no results and gives the offline `direct_qa` re-run command. The guard covers `json`, `html`, `slices` and `governance` alike, so `make report` fails the same way at every step. Valid report output is unchanged.

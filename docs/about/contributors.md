@@ -58,7 +58,7 @@ they worked on; the line underneath says it in words.
   <span class="wall-name">Barshana Chatterjee</span>
   <span class="wall-handle"><a href="https://github.com/Barshana24">@Barshana24</a></span>
   <span class="wall-role">Contributor</span>
-  <span class="wall-tag">Machine-readable output · coverage matrix</span>
+  <span class="wall-tag">Machine-readable output · coverage matrix · typed CLI</span>
 </li>
 <li>
   <span class="wall-avatar">
@@ -80,6 +80,26 @@ they worked on; the line underneath says it in words.
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">Lint gate for scripts/ · ICC(A,1) fix</span>
 </li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/TrueFurina.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">📖</span>
+  </span>
+  <span class="wall-name">Dream</span>
+  <span class="wall-handle"><a href="https://github.com/TrueFurina">@TrueFurina</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">The first-10-minutes path</span>
+</li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/lorenzo-benites.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">lorenzo-benites</span>
+  <span class="wall-handle"><a href="https://github.com/lorenzo-benites">@lorenzo-benites</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">Typed reports, leaderboard &amp; judge</span>
+</li>
 </ul>
 
 | Contributor | What they added | |
@@ -91,6 +111,9 @@ they worked on; the line underneath says it in words.
 | [@LobsterQBA](https://github.com/LobsterQBA) | `aobench report` now names a missing run directory and lists the runs that exist, instead of raising a traceback | [#48](https://github.com/MSKazemi/aobench/pull/48) |
 | [@atiqur-rahman-pro](https://github.com/atiqur-rahman-pro) | `ruff check` over `scripts/` — the 55 generators behind the catalogs, RBAC pages and paper tables, previously outside every gate | [#45](https://github.com/MSKazemi/aobench/pull/45) |
 | [@atiqur-rahman-pro](https://github.com/atiqur-rahman-pro) | The rubric reliability gate now computes `ICC(A,1)`, the statistic it had always documented, instead of `ICC1` | [#46](https://github.com/MSKazemi/aobench/pull/46) |
+| [@Barshana24](https://github.com/Barshana24) | `mypy --strict` clean across `cli/` — narrowed, not silenced — plus a latent `None`-comparison crash found and filed rather than folded in | [#50](https://github.com/MSKazemi/aobench/pull/50) |
+| [@TrueFurina](https://github.com/TrueFurina) | *Your first 10 minutes with AOBench* — one unbranched path from `git clone` to reading a score, the route the five existing pages never drew | [#52](https://github.com/MSKazemi/aobench/pull/52) |
+| [@lorenzo-benites](https://github.com/lorenzo-benites) | `mypy --strict` clean across `reports/`, `leaderboard/` and `judge/`, and a judge that now rejects a non-object JSON reply instead of returning it as a dict | [#53](https://github.com/MSKazemi/aobench/pull/53), [#54](https://github.com/MSKazemi/aobench/pull/54), [#55](https://github.com/MSKazemi/aobench/pull/55) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
