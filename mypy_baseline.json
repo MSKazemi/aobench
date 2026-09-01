@@ -1,0 +1,14 @@
+{
+  "_comment": "Per-package `mypy --strict` error budgets. A package absent from this map must report zero errors. Budgets may only shrink \u2014 regenerate with `python scripts/mypy_ratchet.py --write` after paying debt down.",
+  "total": 51,
+  "budgets": {
+    "adapters": 1,
+    "environment": 4,
+    "exporters": 2,
+    "gym": 1,
+    "runners": 1,
+    "scorers": 27,
+    "scoring": 5,
+    "tools": 10
+  }
+}

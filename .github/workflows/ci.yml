@@ -33,12 +33,18 @@ jobs:
       - name: Lint
         run: uv run ruff check src/ tests/ scripts/
 
-      - name: Type check (advisory)
-        # mypy runs in --strict mode and currently reports pre-existing type
-        # debt across ~29 files. Kept as an advisory signal (annotations still
-        # surface) so it does not gate CI while the debt is paid down separately.
+      - name: Type check (advisory — full tree)
+        # mypy --strict still reports pre-existing debt in 8 of 25 packages, so
+        # the full run stays advisory; the ratchet below is the actual gate.
         continue-on-error: true
         run: uv run mypy src/aobench/
+
+      - name: Type debt ratchet
+        # Fails only if debt GREW: a package listed in mypy_baseline.json may not
+        # exceed its budget, and any package absent from it must stay at zero.
+        # Paying debt down also fails, with the one command that records it —
+        # see CONTRIBUTING.md, "Type checking".
+        run: uv run python scripts/mypy_ratchet.py
 
       - name: Tests
         run: uv run pytest tests/ -q

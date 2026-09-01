@@ -44,6 +44,11 @@ uv run mypy src/aobench       # advisory — not all findings block a PR
 - **If an issue turns out to be already done, say so.** It happens — three of ours
   were. Flagging it is a real contribution and gets credited in `AUTHORS.md`; it is
   never something you should feel awkward about raising.
+- **CI does not run on your first PR until a maintainer approves it.** GitHub
+  holds workflow runs on pull requests from first-time contributors, so
+  `gh pr checks` says *"no checks reported"* and the PR page shows nothing at
+  all. That is not a failure and not something you can fix from your side —
+  it means we have not pressed the button yet. Ping the PR if it stays that way.
 
 ---
 
@@ -246,9 +251,66 @@ Write tests in `tests/unit/test_my_scorer.py`.
 
 - Python 3.10+ (3.12 in CI and Docker), Pydantic v2, Typer CLI
 - `uv run ruff check src/ tests/ scripts/` must pass (no errors)
-- `uv run mypy src/aobench/` must pass
 - Every new module needs at least basic unit tests
-- Run `make check` before opening a PR
+- Run `make check` before opening a PR — it is green on `main`, so anything it
+  reports is yours
+
+### Type checking
+
+**`uv run mypy src/aobench/` does not pass, and you are not expected to make it
+pass.** `--strict` still reports pre-existing debt in 8 of 25 packages. Do not
+try to clear it as a side effect of your PR, and do not add `# type: ignore` to
+quieten something you did not touch.
+
+The gate is a **ratchet**, not a clean tree:
+
+```bash
+make typecheck-ratchet      # the real gate — also part of `make check`
+make typecheck              # advisory: the full list, debt included
+```
+
+It fails only when debt *grows* — a package listed in `mypy_baseline.json` may
+not exceed its budget, and any package absent from that file must stay at zero.
+Seventeen packages are already at zero and are held there.
+
+**If you pay debt down, the ratchet also fails** — deliberately, because an
+unrecorded improvement is a budget nobody ever lowers. It prints the one command
+that records it:
+
+```bash
+make typecheck-accept       # updates mypy_baseline.json — commit that file
+```
+
+That is good news, not a problem with your PR.
+
+## Editing the Documentation Site
+
+The site under `docs/` is MkDocs Material, published to
+<https://mskazemi.com/aobench/>. Two things about it have caught contributors
+out, and neither is your fault if it does:
+
+**1. Links are relative to the page's own directory, not to `docs/`.**
+From `docs/getting-started/first-10-minutes.md`, the sibling install page is
+`installation.md` — *not* `getting-started/installation.md`, which resolves to
+`docs/getting-started/getting-started/installation.md` and breaks the build. To
+reach another directory, go up: `../guides/adapters-and-tools.md`,
+`../leaderboard.md`.
+
+**2. A new page must be added to `nav:` in `mkdocs.yml`.** Without it the page
+builds but nothing links to it, so nobody will ever find it.
+
+Both are caught by the same command, which is what CI runs:
+
+```bash
+uv run mkdocs build --strict    # broken links and orphan pages fail the build
+uv run mkdocs serve             # live preview at http://127.0.0.1:8000
+```
+
+**Check any command you document by running it.** Several pages have drifted
+from the CLI over time; `aobench --help` and `aobench <cmd> --help` are the
+authority, and run output belongs in the page as the CLI actually prints it.
+
+---
 
 ## Branch and PR Conventions
 

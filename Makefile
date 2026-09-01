@@ -82,11 +82,19 @@ format:  ## Auto-format code with ruff
 	$(RUFF) format src/ tests/
 
 .PHONY: typecheck
-typecheck:  ## Run mypy type checker
+typecheck:  ## Run mypy over the whole tree (advisory — pre-existing debt remains)
 	$(MYPY) src/aobench/
 
+.PHONY: typecheck-ratchet
+typecheck-ratchet:  ## Fail if mypy type debt GREW in any package (this is the real gate)
+	$(PYTHON) scripts/mypy_ratchet.py
+
+.PHONY: typecheck-accept
+typecheck-accept:  ## Record the current mypy counts after paying debt down
+	$(PYTHON) scripts/mypy_ratchet.py --write
+
 .PHONY: check
-check: lint typecheck facts-check catalog-check test  ## Run lint + typecheck + fact/catalog drift + tests
+check: lint typecheck-ratchet facts-check catalog-check test  ## Run lint + type ratchet + fact/catalog drift + tests
 
 ##@ Documentation
 
