@@ -126,7 +126,7 @@ aobench clear run data/runs/<run_id>
 ```
 
 See the **[Quickstart](quickstart.md)** for a narrated walkthrough of that first run
-and how to read the six-dimension scorecard.
+and how to read the seven-dimension scorecard.
 
 ### Where the benchmark corpus comes from
 

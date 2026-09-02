@@ -321,7 +321,7 @@ replaces $s_{\text{outcome}}$ in the aggregate computation.
 #### 3.4.1 BenchmarkResult
 
 Each scored run produces one `BenchmarkResult` record (`schemas/result.py`)
-containing: the six dimension scores, the aggregate score $\in [0, 1]$,
+containing: the seven dimension scores, the aggregate score $\in [0, 1]$,
 the `hard_fail` flag and reason, the CuP-gated efficacy score
 (`scoring/cup_scorer.py`), the `ViolationVector` (six flags), estimated
 cost in USD, wall-clock latency in seconds, and token counts. Results are

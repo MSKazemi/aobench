@@ -41,7 +41,7 @@ AOBench is designed to evaluate behaviours that ordinary QA benchmarks miss.
 | **Trace-based** | Evaluation considers the execution trace — tool selection, arguments, sequence, evidence pathway — not only the final answer. |
 | **Reproducible** | Runs target deterministic environment snapshots packaged under `benchmark/environments/`, not live infrastructure. |
 
-These principles are checked by twelve scorers organised into six dimensions
+These principles are checked by twelve scorers organised into seven dimensions
 (see [Evaluation](evaluation.md) and
 [scoring-dimensions.md](scoring-dimensions.md)).
 

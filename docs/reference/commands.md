@@ -1040,7 +1040,7 @@ Query guidelines live in `benchmark/tasks/guidelines/` — one file per data typ
 
 ## Scoring Dimensions
 
-AOBench scores every run on six dimensions.  See `docs/framework/scoring-dimensions.md`
+AOBench scores every run on seven dimensions.  See `docs/framework/scoring-dimensions.md`
 for full definitions.  Quick reference:
 
 | Dimension | What it measures | Scorer |

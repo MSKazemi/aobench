@@ -1,7 +1,7 @@
 # Evaluation Protocol, Metrics & Trace Schema
 
 This page is the canonical specification of **how AOBench judges a run**. It
-covers the evaluation workflow, the twelve scorers and six dimensions, the
+covers the evaluation workflow, the twelve scorers and seven dimensions, the
 hard-fail rules, the canonical trace and result schemas, the CLEAR scorecard,
 and the reproducibility metadata required of every run.
 

@@ -26,7 +26,7 @@ tool-free reference baseline, so it runs entirely offline.
 
 ## 3. Read the score
 
-The quickstart prints one aggregate score and then the five dimensions behind it:
+The quickstart prints one aggregate score and then five of the seven scored dimensions behind it:
 
 ```
 Aggregate score: 0.3340   (0 = worst, 1 = best)

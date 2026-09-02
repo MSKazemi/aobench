@@ -255,7 +255,7 @@ are:
 - deterministic environment snapshots
 - a controlled tool surface with explicit RBAC
 - a normative trace schema and structured result artifact
-- a six-dimension multi-scorer pipeline with hard-fail semantics
+- a seven-dimension multi-scorer pipeline with hard-fail semantics
 - a reproducible execution architecture
 
 The detailed evaluation protocol is defined in [Evaluation](evaluation.md).

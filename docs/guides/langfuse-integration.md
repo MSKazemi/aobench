@@ -234,19 +234,30 @@ Also create `src/aobench/exporters/__init__.py` (empty or re-export `BaseExporte
 
 ### Data mapping
 
-| AOBench field | Langfuse call | Notes |
-|----------------|---------------|-------|
-| `trace.trace_id` | `lf.trace(id=...)` | Reuses AOBench ID |
-| `trace.task_id` | `trace.name` | Human-readable name in UI |
-| `trace.run_id` | `trace.session_id` | Groups all tasks in one run |
-| `trace.role` | `trace.user_id` | Role as user identifier |
-| `trace.adapter_name`, `model_name` | `trace.metadata` | Key-value dict |
-| Each `TraceStep` | `trace.span(...)` | One span per step |
-| `step.tool_call` | span `metadata` | Tool name + arguments |
-| `step.observation` | span `output` | Tool result or error |
-| LLM tokens (from Trace) | `trace.generation(...)` | One generation per run |
-| `result.dimension_scores.*` | `trace.score(name, value)` | 6 scores |
-| `result.aggregate_score` | `trace.score("aggregate", value)` | Summary score |
+The exporter targets **Langfuse Python SDK v4**, which replaced the stateful
+`lf.trace()` / `.span()` API of v2 and v3 with context-manager observations backed by
+OpenTelemetry spans. The mapping below is what `LangfuseExporter` actually does.
+
+| AOBench field | Langfuse v4 | Notes |
+|----------------|-------------|-------|
+| `trace.trace_id` | `metadata["aobench_trace_id"]` | **Not** reused as the Langfuse trace ID: v4 requires 32 lowercase hex characters, and `trace_YYYYMMDD_HHMMSS_HEX8` is not one. Langfuse generates its own; correlate on this metadata key. |
+| `trace.task_id` | root observation `name` | Human-readable name in the UI |
+| `trace.run_id` | OTel attr `TRACE_SESSION_ID` | Groups every task of one run |
+| `trace.role` | OTel attr `TRACE_USER_ID` | Role as user identifier |
+| role, qcat, difficulty | OTel attr `TRACE_TAGS` | Filterable tags |
+| `trace.adapter_name`, `model_name` | root observation `metadata` | Key-value dict |
+| Each `TraceStep` | `root_span.start_as_current_observation(...)` | One child per step, `as_type="tool"` when the step is a tool call |
+| `step.tool_call` | child `metadata` | Tool name + arguments |
+| `step.observation` | child `output` | Tool result, error, or `permission_denied` |
+| LLM tokens (from Trace) | one `as_type="generation"` child | One generation per run |
+| `result.dimension_scores.*` | `root_span.score_trace(name, value)` | **7** dimensions — see [scoring dimensions](../framework/scoring-dimensions.md) |
+| `result.aggregate_score` | `root_span.score_trace("aggregate", value)` | Summary score |
+
+`session_id`, `user_id` and tags have no public setter on the v4 wrapper, so they are
+written as OpenTelemetry span attributes using `LangfuseOtelSpanAttributes`. The span is
+taken from `opentelemetry.trace.get_current_span()` — inside
+`start_as_current_observation` that is the same object the wrapper holds, reached through
+public API rather than an SDK internal.
 
 ### Implementation outline
 
@@ -257,32 +268,43 @@ class LangfuseExporter(BaseExporter):
         self._lf = Langfuse(public_key=public_key, secret_key=secret_key, host=host)
 
     def export(self, trace, result, task):
-        lf_trace = self._lf.trace(
-            id=trace.trace_id,
+        from langfuse import LangfuseOtelSpanAttributes
+        from opentelemetry import trace as otel_trace
+
+        metadata = {..., "aobench_trace_id": trace.trace_id}
+
+        with self._lf.start_as_current_observation(
             name=trace.task_id,
-            session_id=trace.run_id,
-            user_id=trace.role,
-            metadata={...},
-            tags=[trace.role, task.qcat, task.difficulty],
-        )
+            as_type="span",
+            input={"query": task.query_text, "role": trace.role},
+            output=trace.final_answer,
+            metadata=metadata,
+        ) as root_span:
+            # session_id / user_id / tags have no public setter on the v4
+            # wrapper, so they go on the OTel span backing this observation.
+            otel_span = otel_trace.get_current_span()
+            otel_span.set_attribute(LangfuseOtelSpanAttributes.TRACE_SESSION_ID, trace.run_id)
+            otel_span.set_attribute(LangfuseOtelSpanAttributes.TRACE_USER_ID, trace.role)
 
-        # One span per agent step
-        for step in trace.steps:
-            span = lf_trace.span(name=f"step-{step.step_id}", ...)
-            span.end(output=..., metadata=...)
+            # One child observation per agent step
+            for step in trace.steps:
+                as_type = "tool" if step.tool_call else "span"
+                with root_span.start_as_current_observation(
+                    name=f"step-{step.step_id}", as_type=as_type, ...
+                ):
+                    pass
 
-        # One generation for the overall LLM call
-        if trace.total_tokens:
-            lf_trace.generation(
-                name="llm",
-                model=trace.model_name,
-                usage={"input": trace.prompt_tokens, "output": trace.completion_tokens},
-            )
+            # One generation for the overall LLM token usage
+            if trace.total_tokens:
+                with root_span.start_as_current_observation(
+                    name="llm", as_type="generation", ...
+                ):
+                    pass
 
-        # Attach scores
-        for dim, value in result.dimension_scores.model_dump().items():
-            if value is not None:
-                lf_trace.score(name=dim, value=value)
+            # Attach scores — 7 dimensions plus the aggregate
+            for dim, value in result.dimension_scores.model_dump().items():
+                if value is not None:
+                    root_span.score_trace(name=dim, value=float(value))
         if result.aggregate_score is not None:
             lf_trace.score(name="aggregate", value=result.aggregate_score)
 
@@ -392,7 +414,7 @@ Checklist:
 - [ ] Trace appears in Langfuse UI (`http://localhost:3000`)
 - [ ] Trace has correct `session_id` = run_id, `name` = task_id
 - [ ] Spans visible for each agent step
-- [ ] Six dimension scores attached to trace
+- [ ] Seven dimension scores plus the aggregate attached to the trace
 - [ ] `aobench run all --adapter openai --langfuse` — all tasks appear under one session
 - [ ] Unit tests pass: `make test`
 

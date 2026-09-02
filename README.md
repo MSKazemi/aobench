@@ -324,7 +324,7 @@ tools.
 **How does AOBench evaluate HPC agents?**
 Each task runs an agent (via an adapter) against a deterministic snapshot with
 mock SLURM, telemetry, docs, RBAC, and facility tools. AOBench records the full
-execution trace and scores it across six dimensions — outcome correctness,
+execution trace and scores it across seven dimensions — outcome correctness,
 tool-use correctness, governance/RBAC, grounding, robustness (pass^k), and
 efficiency — then aggregates results into a CLEAR scorecard (Efficacy,
 Assurance, Reliability, Cost, Latency).

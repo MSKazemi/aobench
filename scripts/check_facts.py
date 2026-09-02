@@ -184,6 +184,60 @@ def _verify_weight_tables() -> list[str]:
     return failures
 
 
+#: Number words that can spell a wrong scoring-dimension count in prose.
+_NUMBER_WORDS = {
+    "two": 2, "three": 3, "four": 4, "five": 5, "six": 6,
+    "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+}
+
+#: "dimension" is overloaded in these docs: CLEAR has five (E/A/R/C/L) and the
+#: taxonomy has four, and neither is the weighted scoring profile. Only lines
+#: that are clearly about *scoring* are checked.
+_SCORING_CONTEXT = re.compile(r"scor|weighted|profile", re.IGNORECASE)
+_NOT_SCORING = re.compile(r"\bCLEAR\b|taxonom", re.IGNORECASE)
+
+#: A number word bound tightly to "dimension" — "six dimensions",
+#: "six-dimension scorecard". Bare digits are too noisy to gate on.
+_DIM_PHRASE = re.compile(
+    r"\b(" + "|".join(_NUMBER_WORDS) + r")[\s-]dimension", re.IGNORECASE
+)
+
+
+def check_dimension_counts(expected: int) -> list[str]:
+    """Fail on prose that states the wrong number of scoring dimensions.
+
+    The weight *table* is checked on two surfaces, but the count is quoted in
+    prose throughout the docs — `docs/guides/langfuse-integration.md` said "Six
+    dimension scores attached to trace" long after `workflow` became the seventh
+    weighted dimension. Documents drift one sentence at a time, so scan every
+    Markdown surface rather than a hand-maintained list.
+    """
+    failures: list[str] = []
+    roots = [ROOT / "docs", ROOT / "README.md", ROOT / "CONTRIBUTING.md"]
+    for root in roots:
+        paths = sorted(root.rglob("*.md")) if root.is_dir() else [root]
+        for path in paths:
+            if not path.exists():
+                continue
+            lines = path.read_text(encoding="utf-8").splitlines()
+            for lineno, line in enumerate(lines, 1):
+                # CLEAR and the taxonomy are often named in the heading above
+                # rather than on the sentence itself, so look back a little.
+                context = "\n".join(lines[max(0, lineno - 6):lineno])
+                if _NOT_SCORING.search(context) or not _SCORING_CONTEXT.search(line):
+                    continue
+                for match in _DIM_PHRASE.finditer(line):
+                    value = _NUMBER_WORDS[match.group(1).lower()]
+                    if value == expected:
+                        continue
+                    failures.append(
+                        f"{path.relative_to(ROOT)}:{lineno}: says "
+                        f"'{match.group(0)}' but the default profile weights "
+                        f"{expected}: {line.strip()[:90]}"
+                    )
+    return failures
+
+
 def verify(facts: dict[str, object]) -> list[str]:
     failures: list[str] = []
     for rel, pattern, explanation in _rules(facts):
@@ -210,6 +264,7 @@ def verify(facts: dict[str, object]) -> list[str]:
             )
 
     failures.extend(_verify_weight_tables())
+    failures.extend(check_dimension_counts(int(facts["scoring_dimensions"])))
 
     if FACTS_PATH.exists():
         stored = json.loads(FACTS_PATH.read_text())

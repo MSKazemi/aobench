@@ -422,7 +422,7 @@ flowchart TB
 **Scoring profiles** (`benchmark/configs/scoring_profiles.yaml`):
 - `alpha0_minimal`: outcome only (1.0)
 - `alpha1_grounding`: outcome + grounding (0.5/0.5)
-- `default_hpc_v01`: full six-dimension weighted profile
+- `default_hpc_v01`: full seven-dimension weighted profile
 
 **Tool catalog** (`benchmark/configs/hpc_tool_catalog.yaml`):
 - 16 tool methods across 5 tool families
