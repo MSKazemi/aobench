@@ -98,7 +98,7 @@ they worked on; the line underneath says it in words.
   <span class="wall-name">lorenzo-benites</span>
   <span class="wall-handle"><a href="https://github.com/lorenzo-benites">@lorenzo-benites</a></span>
   <span class="wall-role">Contributor</span>
-  <span class="wall-tag">Typed reports, leaderboard &amp; judge</span>
+  <span class="wall-tag">Typed reports, leaderboard, judge &amp; scorers</span>
 </li>
 </ul>
 
@@ -114,6 +114,7 @@ they worked on; the line underneath says it in words.
 | [@Barshana24](https://github.com/Barshana24) | `mypy --strict` clean across `cli/` — narrowed, not silenced — plus a latent `None`-comparison crash found and filed rather than folded in | [#50](https://github.com/MSKazemi/aobench/pull/50) |
 | [@TrueFurina](https://github.com/TrueFurina) | *Your first 10 minutes with AOBench* — one unbranched path from `git clone` to reading a score, the route the five existing pages never drew | [#52](https://github.com/MSKazemi/aobench/pull/52) |
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `mypy --strict` clean across `reports/`, `leaderboard/` and `judge/`, and a judge that now rejects a non-object JSON reply instead of returning it as a dict | [#53](https://github.com/MSKazemi/aobench/pull/53), [#54](https://github.com/MSKazemi/aobench/pull/54), [#55](https://github.com/MSKazemi/aobench/pull/55) |
+| [@lorenzo-benites](https://github.com/lorenzo-benites) | `scorers/` from 26 `mypy --strict` errors to 1, including the reachable Anthropic content-block bug in the rubric judge | [#59](https://github.com/MSKazemi/aobench/pull/59) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed

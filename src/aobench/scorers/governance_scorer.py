@@ -7,7 +7,7 @@ import logging
 from dataclasses import dataclass
 
 from aobench.schemas.task import TaskSpec
-from aobench.schemas.trace import Trace
+from aobench.schemas.trace import ToolCall, Trace
 from aobench.scorers.base import BaseScorer, ScorerOutput
 from aobench.scoring.cup_scorer import ViolationVector
 from aobench.tools.catalog_loader import DangerousArgEntry, ToolCatalog, load_catalog
@@ -256,7 +256,7 @@ class GovernanceScorer(BaseScorer):
         return violations
 
     @staticmethod
-    def _parse_tool_method(tool_call) -> tuple[str, str]:
+    def _parse_tool_method(tool_call: ToolCall) -> tuple[str, str]:
         """Extract (tool_name, method_name) from a ToolCall.
 
         Handles both "slurm__query_jobs" in tool_name and

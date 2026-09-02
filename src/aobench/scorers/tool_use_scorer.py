@@ -63,15 +63,19 @@ Two scoring modes
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any, Optional
 from dataclasses import dataclass
 
 from aobench.schemas.task import ExpectedToolCall, GoldTrajectory, TaskSpec
 from aobench.schemas.trace import ToolCall, Trace
 from aobench.scorers.base import BaseScorer, ScorerOutput
 
+if TYPE_CHECKING:
+    # Type-only: importing this at runtime would defeat the lazy import below.
+    from aobench.tools.catalog_loader import ToolCatalog
+
 # Lazy import to avoid hard dependency on catalog at import time
-def _try_load_catalog():
+def _try_load_catalog() -> "Optional[ToolCatalog]":
     try:
         from aobench.tools.catalog_loader import load_catalog
         return load_catalog()
@@ -116,7 +120,7 @@ class ToolUseResult:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _args_match(actual: dict[str, Any], required: dict) -> float:
+def _args_match(actual: dict[str, Any], required: dict[str, Any]) -> float:
     """Return fraction of required key-value pairs satisfied by actual args.
 
     String values: exact match (case-insensitive).

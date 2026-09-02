@@ -96,7 +96,14 @@ Added when a first PR merges, newest last.
   one — a judge reply of `[1, 2]` or `"ok"` used to sail through as a dict — and the
   Anthropic branch now checks the content block's type instead of assuming the first
   block has `.text`. Reported honestly, and usefully, that he develops on Windows and so
-  could not run `make check`, naming exactly which checks he had run instead.
+  could not run `make check`, naming exactly which checks he had run instead. Came back
+  for [issue #58](https://github.com/MSKazemi/aobench/issues/58) and cleared `scorers/`
+  ([PR #59](https://github.com/MSKazemi/aobench/pull/59)) — 26 errors to 1, the last one
+  deliberately out of scope. That one included the reachable half of the Anthropic
+  content-block bug: `rubric_scorer` assumed the first block carried `.text`, which is
+  false whenever extended thinking is on. He also worked out on his own that the broad
+  `float | None` on `raw_outcome` was the cause rather than a symptom, and said so
+  instead of widening the annotation.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 

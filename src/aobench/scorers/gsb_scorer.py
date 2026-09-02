@@ -169,9 +169,13 @@ def gsb_score(
 def _extract_json(text: str) -> dict[str, Any]:
     stripped = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`").strip()
     try:
-        return json.loads(stripped)
+        parsed_stripped: object = json.loads(stripped)
+        if isinstance(parsed_stripped, dict):
+            return parsed_stripped
     except json.JSONDecodeError:
         match = re.search(r"\{.*\}", stripped, re.DOTALL)
         if match:
-            return json.loads(match.group())
-        raise ValueError(f"Could not parse JSON from GSB judge response:\n{text[:500]}")
+            parsed_match: object = json.loads(match.group())
+            if isinstance(parsed_match, dict):
+                return parsed_match
+    raise ValueError(f"Could not parse JSON from GSB judge response:\n{text[:500]}")

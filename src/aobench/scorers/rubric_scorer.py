@@ -144,7 +144,10 @@ def load_rubric(rubric_id: str, rubric_dir: Path | None = None) -> dict[str, Any
             f"Available rubrics: {[p.stem for p in search_dir.glob('*.yaml')]}"
         )
     with path.open() as f:
-        data = yaml.safe_load(f)
+        loaded: object = yaml.safe_load(f)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Rubric '{rubric_id}' at {path} must contain a mapping.")
+    data: dict[str, Any] = loaded
     if data.get("rubric_id") != rubric_id:
         raise ValueError(
             f"rubric_id mismatch: file declares '{data.get('rubric_id')}', expected '{rubric_id}'"
@@ -231,13 +234,17 @@ def _extract_json(text: str) -> dict[str, Any]:
     # Strip markdown code fences if present
     stripped = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`").strip()
     try:
-        return json.loads(stripped)
+        parsed_stripped: object = json.loads(stripped)
+        if isinstance(parsed_stripped, dict):
+            return parsed_stripped
     except json.JSONDecodeError:
         # Try to find { ... } block
         match = re.search(r"\{.*\}", stripped, re.DOTALL)
         if match:
-            return json.loads(match.group())
-        raise ValueError(f"Could not parse JSON from judge response:\n{text[:500]}")
+            parsed_match: object = json.loads(match.group())
+            if isinstance(parsed_match, dict):
+                return parsed_match
+    raise ValueError(f"Could not parse JSON from judge response:\n{text[:500]}")
 
 
 # ---------------------------------------------------------------------------
@@ -439,6 +446,10 @@ def make_anthropic_judge(
             max_tokens=2048,
             messages=[{"role": "user", "content": prompt}],
         )
-        return msg.content[0].text if msg.content else ""
+        if not msg.content:
+            return ""
+        if msg.content[0].type == "text":
+            return msg.content[0].text
+        return ""
 
     return _call
