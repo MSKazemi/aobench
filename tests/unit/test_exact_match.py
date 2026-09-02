@@ -175,3 +175,30 @@ def test_strip_leading_zeros_single_zero():
 
 def test_strip_leading_zeros_no_zeros():
     assert strip_leading_zeros("987654") == "987654"
+
+
+# ---------------------------------------------------------------------------
+# Unexpected failures must stay visible
+# ---------------------------------------------------------------------------
+
+def test_unexpected_failure_is_logged_and_scores_non_match(caplog):
+    """A crash inside the comparison must not vanish.
+
+    `match_answers` wraps its whole body in `except Exception: return False`.
+    Each branch already handles its own parse failures narrowly, so reaching the
+    outer handler means a real bug — which then scores the answer as a non-match
+    and biases results downward with nothing in the logs. The verdict is kept
+    (raising would abort a run over one answer, and changing it would move
+    published scores), but the cause is now reported.
+    """
+    from unittest.mock import patch
+
+    from aobench.scoring import exact_match
+
+    with patch.object(exact_match, "_normalize_string", side_effect=RuntimeError("boom")):
+        with caplog.at_level("WARNING", logger="aobench.scoring.exact_match"):
+            result = exact_match.match_answers("alpha", "beta", "string")
+
+    assert result is False
+    assert "match_answers failed" in caplog.text
+    assert "RuntimeError" in caplog.text

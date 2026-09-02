@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Changed — a crash inside answer matching is now reported instead of scored as a miss
+
+- **`match_answers` wrapped its whole body in `except Exception: return False`.** Each
+  branch already handles its own parse failures with a narrow `except ValueError`, so
+  reaching the outer handler means a genuine bug — which then scored the answer as a
+  non-match, biasing results downward with nothing in the logs.
+- The verdict is deliberately unchanged: raising would abort a whole run over one
+  answer, and returning anything else would move published scores. The failure is now
+  logged at WARNING with the answer type, the truncated inputs, and a traceback.
+
+
 ### Security — the leaderboard admin endpoints no longer have a default password
 
 - **`LEADERBOARD_ADMIN_PASSWORD` had a built-in fallback of `changeme`**, and that value

@@ -17,6 +17,10 @@ from __future__ import annotations
 import re
 from collections.abc import Set as AbstractSet
 
+from aobench.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
 
 # ---------------------------------------------------------------------------
 # Helper utilities
@@ -280,4 +284,18 @@ def match_answers(
             return _normalize_string(candidate) == _normalize_string(ground_truth)
 
     except Exception:
+        # Every branch already handles its own parse failures with a narrow
+        # `except ValueError`. Reaching here means an unexpected error in the
+        # comparison itself, which scores the answer as a non-match — silently
+        # biasing results downward. Keep that verdict (raising would abort a whole
+        # run over one answer, and changing it would move published scores), but
+        # make the cause visible instead of swallowing it.
+        logger.warning(
+            "match_answers failed for answer_type=%r; scoring as non-match. "
+            "candidate=%r ground_truth=%r",
+            answer_type,
+            candidate[:120],
+            ground_truth[:120],
+            exc_info=True,
+        )
         return False
