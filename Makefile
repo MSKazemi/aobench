@@ -93,8 +93,16 @@ typecheck-ratchet:  ## Fail if mypy type debt GREW in any package (this is the r
 typecheck-accept:  ## Record the current mypy counts after paying debt down
 	$(PYTHON) scripts/mypy_ratchet.py --write
 
+.PHONY: silent-handlers-check
+silent-handlers-check:  ## Fail if a NEW broad `except` swallows a failure silently
+	$(PYTHON) scripts/check_silent_handlers.py
+
+.PHONY: silent-handlers-accept
+silent-handlers-accept:  ## Record the current silent handlers as reviewed and accepted
+	$(PYTHON) scripts/check_silent_handlers.py --write
+
 .PHONY: check
-check: lint typecheck-ratchet facts-check catalog-check test  ## Run lint + type ratchet + fact/catalog drift + tests
+check: lint typecheck-ratchet silent-handlers-check facts-check catalog-check test  ## Run lint + type ratchet + silent-handler ratchet + fact/catalog drift + tests
 
 ##@ Documentation
 

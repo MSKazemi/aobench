@@ -283,6 +283,33 @@ make typecheck-accept       # updates mypy_baseline.json — commit that file
 
 That is good news, not a problem with your PR.
 
+### Silent exception handlers
+
+`make check` also fails on a **new** broad `except` that does not surface the failure —
+one whose body is `pass`, or only logs below WARNING, or returns a plausible value like
+`None`/`False`/`[]`:
+
+```bash
+make silent-handlers-check     # part of `make check`
+make silent-handlers-accept    # record a reviewed handler — commit the baseline file
+```
+
+This is not a style rule. Six defects in this codebase have shared exactly that shape: a
+real error caught and turned into a valid-looking result, so nothing raised and no test
+went red. The gym environment reported every tool call as forbidden; the Langfuse
+exporter dropped the session ID from every trace; the fidelity gate passed a corrupt
+bundle; the leaderboard quietly dropped result files it could not read.
+
+Broad handlers are sometimes right, and ten of them are recorded in
+`silent_handlers_baseline.json` for that reason. If yours is one of them, accept it
+deliberately and say why in the PR. Before you do, check it cannot hide a change in
+something you do not control — a third-party API, a file format, an attribute name.
+That is how all six survived.
+
+A handler that returns a *failed* result carrying the error — the pattern in the F1–F7
+fidelity validators and the T1–T10 checks — is not flagged, because it surfaces the
+failure to whoever reads the report.
+
 ## Editing the Documentation Site
 
 The site under `docs/` is MkDocs Material, published to

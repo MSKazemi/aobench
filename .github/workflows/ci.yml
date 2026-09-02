@@ -46,6 +46,12 @@ jobs:
         # see CONTRIBUTING.md, "Type checking".
         run: uv run python scripts/mypy_ratchet.py
 
+      - name: Silent exception handlers
+        # Fails only on a NEW broad `except` that passes, logs below WARNING, or
+        # returns a plausible value. Six defects have hidden behind that shape;
+        # accepted sites live in silent_handlers_baseline.json.
+        run: uv run python scripts/check_silent_handlers.py
+
       - name: Tests
         run: uv run pytest tests/ -q
 

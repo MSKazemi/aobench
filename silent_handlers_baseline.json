@@ -1,0 +1,16 @@
+{
+  "_comment": "Broad `except` handlers that do not surface the failure, reviewed and accepted. A site not listed here fails `make silent-handlers-check`. Before adding one, check the handler cannot hide an API change: that is how the gym, langfuse, fidelity and leaderboard defects survived. Regenerate with `python scripts/check_silent_handlers.py --write`.",
+  "count": 10,
+  "accepted": {
+    "src/aobench/cli/run_cmd.py::_build_adapter_from_token": "pass",
+    "src/aobench/cli/run_cmd.py::_check_fidelity_gate": "pass",
+    "src/aobench/cli/validate_cmd.py::_print_t1_t10_summary": "pass",
+    "src/aobench/cli/validators/t2_tool_setup.py::_smoke_test_tool": "pass",
+    "src/aobench/exporters/langfuse_exporter.py::export": "only logger.debug()",
+    "src/aobench/leaderboard/auth.py::check_basic_auth": "return False",
+    "src/aobench/runners/run_artifacts.py::_git_output": "pass",
+    "src/aobench/runners/run_artifacts.py::_load_judge_config_id": "pass",
+    "src/aobench/scorers/tool_use_scorer.py::_try_load_catalog": "return None",
+    "src/aobench/tools/telemetry_tool.py::_get_allowed_nodes": "return None"
+  }
+}
