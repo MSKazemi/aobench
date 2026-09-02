@@ -21,6 +21,9 @@ from typing import Any
 
 from aobench.reports.clear_report import compute_pass_k_by_category
 from aobench.schemas.result import BenchmarkResult
+from aobench.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 _BASE_CSV_COLUMNS = [
     "rank",
@@ -155,8 +158,14 @@ def load_results_dir(
             try:
                 data = json.loads(json_file.read_text(encoding="utf-8"))
                 results.append(BenchmarkResult.model_validate(data))
-            except Exception:
-                pass
+            except Exception as exc:
+                # A dropped file silently shrinks n_runs and every pass@k
+                # computed from it, so the leaderboard would report a smaller
+                # run set than exists without saying so.
+                logger.warning(
+                    "leaderboard: skipping unreadable result %s (%s: %s)",
+                    json_file, type(exc).__name__, exc,
+                )
         if results:
             model_results[model_name] = results
 

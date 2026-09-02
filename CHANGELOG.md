@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Changed — the leaderboard says when it skips an unreadable result file
+
+- **`load_results_dir` dropped unparseable result JSON silently.** Every skipped file
+  shrinks `n_runs` and the `pass@k` values computed from it, so a partially corrupt run
+  directory produced a leaderboard over a smaller result set than existed, with nothing
+  to indicate it. The behaviour is unchanged — an unreadable file is still skipped — but
+  each one is now logged at WARNING with the path and the parse error.
+
+
 ### Changed — a crash inside answer matching is now reported instead of scored as a miss
 
 - **`match_answers` wrapped its whole body in `except Exception: return False`.** Each
