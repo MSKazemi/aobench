@@ -196,10 +196,11 @@ _NUMBER_WORDS = {
 _SCORING_CONTEXT = re.compile(r"scor|weighted|profile", re.IGNORECASE)
 _NOT_SCORING = re.compile(r"\bCLEAR\b|taxonom", re.IGNORECASE)
 
-#: A number word bound tightly to "dimension" — "six dimensions",
-#: "six-dimension scorecard". Bare digits are too noisy to gate on.
+#: A number bound tightly to "dimension" — "six dimensions", "6 dimensions",
+#: "six-dimension scorecard". Digits are included: `llms.txt` said "12 scorers
+#: across 6 dimensions", and that file exists to be quoted by answer engines.
 _DIM_PHRASE = re.compile(
-    r"\b(" + "|".join(_NUMBER_WORDS) + r")[\s-]dimension", re.IGNORECASE
+    r"\b(\d{1,2}|" + "|".join(_NUMBER_WORDS) + r")[\s-]dimension", re.IGNORECASE
 )
 
 
@@ -213,9 +214,13 @@ def check_dimension_counts(expected: int) -> list[str]:
     Markdown surface rather than a hand-maintained list.
     """
     failures: list[str] = []
-    roots = [ROOT / "docs", ROOT / "README.md", ROOT / "CONTRIBUTING.md"]
+    roots = [ROOT / "docs", ROOT / "README.md", ROOT / "CONTRIBUTING.md",
+             ROOT / "llms.txt", ROOT / "llms-full.txt"]
     for root in roots:
-        paths = sorted(root.rglob("*.md")) if root.is_dir() else [root]
+        if root.is_dir():
+            paths = sorted([*root.rglob("*.md"), *root.rglob("llms*.txt")])
+        else:
+            paths = [root]
         for path in paths:
             if not path.exists():
                 continue
@@ -227,7 +232,8 @@ def check_dimension_counts(expected: int) -> list[str]:
                 if _NOT_SCORING.search(context) or not _SCORING_CONTEXT.search(line):
                     continue
                 for match in _DIM_PHRASE.finditer(line):
-                    value = _NUMBER_WORDS[match.group(1).lower()]
+                    token = match.group(1).lower()
+                    value = _NUMBER_WORDS.get(token) or int(token)
                     if value == expected:
                         continue
                     failures.append(

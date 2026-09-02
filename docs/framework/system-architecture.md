@@ -127,7 +127,7 @@ benchmark/
 | Roles (scored) | 3 (`scientific_user`, `sysadmin`, `facility_admin`) | 5 (all roles, incl. `researcher`, `system_designer`) |
 | QCATs (scored) | 3 (`JOB`, `MON`, `ENERGY`) | 10 (all QCATs) |
 | Adapters | 4 implemented (`direct_qa`, `openai`, `anthropic`, `mcp`) | 4 |
-| Scorers | 12 scorers across 6 dimensions | 13 scorers (+ WorfEvalScorer) |
+| Scorers | 12 scorers across 7 dimensions | 13 scorers (+ WorfEvalScorer) |
 | CLI commands | 9+ commands | 9+ commands |
 
 ---

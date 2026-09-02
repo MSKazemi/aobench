@@ -245,7 +245,7 @@ walkthroughs, and [ROADMAP.md](ROADMAP.md) for surface status and what's next.
 | QCATs (scored) | 10 — `JOB`, `MON`, `ENERGY`, `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `benchmark/tasks/specs/` |
 | Adapters | 4 — `direct_qa`, `openai`, `anthropic`, `mcp` | `src/aobench/adapters/` |
 | Mock tool families | 5 — slurm, docs, rbac, telemetry, facility | `src/aobench/tools/` |
-| Scorers | 12 across 6 dimensions | `src/aobench/scorers/` |
+| Scorers | 12 across 7 dimensions | `src/aobench/scorers/` |
 | Scoring profiles | `alpha0_minimal`, `alpha1_grounding`, `default_hpc_v01` | `benchmark/configs/scoring_profiles.yaml` |
 | Tests | ~1470 passing | `tests/` |
 

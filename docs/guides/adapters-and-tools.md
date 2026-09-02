@@ -118,4 +118,4 @@ A quick guide to how adapters and tools work in AOBench.
 |-----------|------|
 | **Tools** | Simulate HPC APIs — read env data, enforce permissions |
 | **Adapters** | Connect to agent backends — drive the task loop, use tools when the agent requests them |
-| **Scorers** | Evaluate the trace on 5 dimensions and aggregate into one score |
+| **Scorers** | Evaluate the trace on 7 dimensions and aggregate into one score |

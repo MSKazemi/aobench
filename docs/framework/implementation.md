@@ -21,7 +21,7 @@ src/aobench/
 ├── tools/           Mock HPC tool families + tool catalog
 ├── adapters/        Agent backends: direct_qa / openai / anthropic / mcp
 ├── runners/         BenchmarkRunner, TraceWriter, ExecutionContext
-├── scorers/         12 scorers across 6 dimensions
+├── scorers/         12 scorers across 7 dimensions
 ├── scoring/         CuP gating + advanced scoring helpers
 ├── reports/         JSON, HTML, slice, CLEAR scorecard reports
 ├── exporters/       Optional observability (Langfuse)
