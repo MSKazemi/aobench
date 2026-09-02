@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+### Fixed — the rubric judge assumed the first Anthropic block was text
+
+- **`rubric_scorer` read `msg.content[0].text` unconditionally**, which raises
+  `AttributeError` whenever the first content block is not text — a `ThinkingBlock`
+  with extended thinking enabled, for instance. Contributed by
+  [@lorenzo-benites](https://github.com/lorenzo-benites)
+  ([PR #59](https://github.com/MSKazemi/aobench/pull/59)), the reachable twin of the
+  judge-runner fix in #55.
+- **`scorers/` goes from 26 `mypy --strict` errors to 1** in the same PR (the remaining
+  `pingouin` `import-untyped` is deliberately out of scope). Repo-wide debt is now 20.
+- The JSON extractors in `rubric_scorer`, `gsb_scorer` and `error_annotator` now verify
+  that a parsed judge reply is an object before returning it as one, and `load_rubric`
+  raises a named `ValueError` rather than an `AttributeError` when a rubric file holds a
+  list instead of a mapping.
+
+
 ### Fixed — `aobench lite select` crashed, and two other commands broke outside the repo root
 
 - **`aobench lite select` raised `ModuleNotFoundError: No module named 'benchmark'`.**
