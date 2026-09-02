@@ -55,7 +55,7 @@ def run_stage1(task_dir: str, validate_results: dict[str, Any]) -> list[TaskSpec
         Tasks that pass all Stage 1 filters, sorted by task_id.
     """
     from aobench.loaders.task_loader import load_tasks_from_dir
-    from benchmark.tasks.dataset_splits import TEST_TASK_IDS
+    from aobench.benchmark.tasks.dataset_splits import TEST_TASK_IDS
 
     all_tasks = load_tasks_from_dir(task_dir)
 
@@ -352,7 +352,7 @@ def select_lite(
     list[str]
         The final LITE_TASK_IDS (also written to the manifest).
     """
-    from benchmark.tasks.dataset_splits import TEST_TASK_IDS
+    from aobench.benchmark.tasks.dataset_splits import TEST_TASK_IDS
 
     stage1 = run_stage1(task_dir, validate_results)
     stage2 = run_stage2(stage1)

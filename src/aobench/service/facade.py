@@ -332,7 +332,7 @@ class BenchmarkService:
 
     def list_datasets(self) -> list[DatasetInfo]:
         """Report the versioned task corpus and per-split task counts (Feature 5)."""
-        from benchmark.tasks.dataset_splits import (
+        from aobench.benchmark.tasks.dataset_splits import (
             LITE_TASK_IDS,
             SPLIT_FROZEN_CORPUS_VERSION,
             SPLIT_FROZEN_DATE,

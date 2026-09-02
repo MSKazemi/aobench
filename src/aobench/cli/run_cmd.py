@@ -260,18 +260,22 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
     if split == "all":
         return None
 
-    import sys
-    sys.path.insert(0, str(Path(benchmark_root).parent))
+    # The split lists ship inside the package (``src/aobench/benchmark`` is the
+    # bundled corpus), so this resolves for a pip-installed user too. It
+    # previously imported a bare ``benchmark.*`` off a temporary sys.path entry,
+    # which only worked from a source checkout.
     try:
-        from benchmark.tasks.dataset_splits import (
+        from aobench.benchmark.tasks.dataset_splits import (
             TEST_TASK_IDS, LITE_TASK_IDS
         )
         from aobench.loaders.task_loader import load_tasks_from_dir
     except ImportError:
-        typer.echo("Could not import dataset_splits. Run from the repo root.", err=True)
+        typer.echo(
+            "Could not import the dataset splits from the bundled corpus. "
+            "Reinstall aobench, or run `aobench doctor` to diagnose the install.",
+            err=True,
+        )
         raise typer.Exit(1)
-    finally:
-        sys.path.pop(0)
 
     if split == "test":
         if not _os.environ.get("AOBENCH_UNLOCK_TEST"):
