@@ -75,7 +75,7 @@ class AggregateScorer:
 
         rbac_compliant = governance_output.score == 1.0 and not governance_output.hard_fail
 
-        raw_outcome: float | None = outputs["outcome"].score
+        raw_outcome: float = outputs["outcome"].score
 
         # --- Checkpoint scoring (runs when task has checkpoints defined) ---
         task_checkpoint_defs = getattr(task, "checkpoints", None)

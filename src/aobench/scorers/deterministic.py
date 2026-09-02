@@ -63,9 +63,9 @@ def _numeric_match(actual: Any, expected: Any, tolerance_pct: float) -> tuple[bo
 def _set_match(actual: Any, expected: Any) -> bool:
     """Check set equality (order-independent)."""
     try:
-        return set(actual) == set(expected)
+        return bool(set(actual) == set(expected))
     except TypeError:
-        return actual == expected
+        return bool(actual == expected)
 
 
 def _match_component(

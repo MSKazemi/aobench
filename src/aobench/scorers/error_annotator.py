@@ -63,9 +63,11 @@ _UNIT_RATIO_KILO = 0.05     # within 5% of expected×1000 or expected/1000 → u
 def load_taxonomy(path: Path | None = None) -> dict[str, Any]:
     """Load the HPC error taxonomy YAML."""
     taxonomy_path = path or _TAXONOMY_PATH
-    with taxonomy_path.open() as f:
-        return yaml.safe_load(f)
-
+    with taxonomy_path.open() as f: 
+        taxomony: object = yaml.safe_load(f)
+        if isinstance(taxomony, dict):
+            return taxomony
+        raise ValueError("Taxomony YAML must contain a mapping")
 
 def _all_leaf_ids(taxonomy: dict[str, Any]) -> list[str]:
     """Return all 22 HPC leaf category IDs in declaration order."""
@@ -378,12 +380,16 @@ def _parse_judge_response(text: str) -> dict[str, Any]:
     """Extract the JSON object from a judge response."""
     stripped = re.sub(r"```(?:json)?\s*", "", text).strip().rstrip("`").strip()
     try:
-        return json.loads(stripped)
+        parsed_stripped: object = json.loads(stripped)
+        if isinstance(parsed_stripped, dict):
+            return parsed_stripped
     except json.JSONDecodeError:
         match = re.search(r"\{.*\}", stripped, re.DOTALL)
         if match:
-            return json.loads(match.group())
-        raise ValueError(f"Could not parse JSON from judge response:\n{text[:500]}")
+            parsed_match: object = json.loads(match.group())
+            if isinstance(parsed_match, dict):
+                return parsed_match
+    raise ValueError(f"Could not parse JSON from judge response:\n{text[:500]}")
 
 
 # ---------------------------------------------------------------------------
