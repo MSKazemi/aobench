@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+### Fixed — a corrupt environment bundle passed the F1–F3 fidelity gate
+
+- **`slurm_state.json` present but unreadable was reported as absent, and passed.**
+  `_load_jobs()` returned `None` both when the file was missing and when it failed to
+  parse, so F1 (job duration), F2 (job size) and F3 (job state mix) all returned
+  `passed=True` with the message *"skipped (no slurm_state.json)"* — naming a file
+  that was in fact present. A bundle whose SLURM data had been truncated or
+  reshaped therefore cleared the fidelity gate while claiming the data was
+  intentionally omitted.
+- The two cases are now distinguished. A missing file remains a legitimate skip —
+  five bundles ship without SLURM state — while an unreadable one fails with the
+  parse error or the offending type. All 29 current bundles were checked: 25 parse
+  cleanly, 5 legitimately have no file, none are corrupt, so no existing bundle
+  changes verdict.
+
+
 ### Fixed — Langfuse traces were missing session, user and tags
 
 - **Every exported trace silently lost its `session_id`, `user_id` and tags.**

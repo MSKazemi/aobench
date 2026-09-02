@@ -57,20 +57,55 @@ def _parse_elapsed_seconds(elapsed) -> Optional[float]:
         return None
 
 
+class UnreadableBundleError(Exception):
+    """`slurm_state.json` exists but cannot be read as a job array.
+
+    Distinct from the file being absent. A bundle may legitimately ship without
+    SLURM state — five of them do — and the validators skip in that case. A file
+    that is present but unreadable is a broken bundle, and must not be reported
+    as an intentional omission.
+    """
+
+
 def _load_jobs(bundle_dir: Path) -> Optional[list[Any]]:
-    """Load the jobs array from slurm/slurm_state.json, or None if missing."""
+    """Load the jobs array from slurm/slurm_state.json.
+
+    Returns None when the file is absent (a legitimate skip). Raises
+    :class:`UnreadableBundleError` when it is present but malformed or of an
+    unexpected shape — previously both collapsed to None, so a corrupt bundle
+    passed F1/F2/F3 with the message "skipped (no slurm_state.json)".
+    """
     slurm_path = bundle_dir / "slurm" / "slurm_state.json"
     if not slurm_path.exists():
         return None
     try:
         data = json.loads(slurm_path.read_text())
-        if isinstance(data, dict):
-            return data.get("jobs", [])
-        if isinstance(data, list):
-            return data
-    except Exception:
-        pass
-    return None
+    except (OSError, json.JSONDecodeError) as exc:
+        raise UnreadableBundleError(f"slurm_state.json is not readable JSON: {exc}") from exc
+    if isinstance(data, dict):
+        jobs = data.get("jobs", [])
+        if not isinstance(jobs, list):
+            raise UnreadableBundleError(
+                f"slurm_state.json 'jobs' is {type(jobs).__name__}, expected a list"
+            )
+        return jobs
+    if isinstance(data, list):
+        return data
+    raise UnreadableBundleError(
+        f"slurm_state.json holds {type(data).__name__}, expected an object or array"
+    )
+
+
+def _unreadable_result(validator_id: str, metric: str, expected: str, exc: Exception) -> ValidatorResult:
+    """A present-but-broken bundle fails; it is not a skip."""
+    return ValidatorResult(
+        validator_id=validator_id,
+        passed=False,
+        metric=metric,
+        value=None,
+        expected=expected,
+        message=f"FAILED — {exc}",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -85,7 +120,10 @@ def validate_f1_job_duration(bundle_dir: Path) -> ValidatorResult:
       μ ∈ [6.3, 9.3]  (target 7.8 ± 1.5)
       σ ∈ [1.4, 2.4]  (target 1.9 ± 0.5)
     """
-    jobs = _load_jobs(bundle_dir)
+    try:
+        jobs = _load_jobs(bundle_dir)
+    except UnreadableBundleError as exc:
+        return _unreadable_result("F1", "lognormal_mu", "7.8±1.5σ", exc)
     if jobs is None:
         return ValidatorResult(
             validator_id="F1",
@@ -144,7 +182,10 @@ def validate_f2_job_size(bundle_dir: Path) -> ValidatorResult:
     Fits α using MLE: α ≈ 1 + n / Σ ln(x / xmin), xmin=1.
     Pass if α ∈ [1.4, 2.0].
     """
-    jobs = _load_jobs(bundle_dir)
+    try:
+        jobs = _load_jobs(bundle_dir)
+    except UnreadableBundleError as exc:
+        return _unreadable_result("F2", "powerlaw_alpha", "α∈[1.4,2.0]", exc)
     if jobs is None:
         return ValidatorResult(
             validator_id="F2",
@@ -212,7 +253,10 @@ def validate_f3_job_state_mix(bundle_dir: Path) -> ValidatorResult:
     Pass if COMPLETED ∈ [0.68, 0.88] and FAILED ∈ [-0.01, 0.19].
     Negative lower bound for FAILED is intentional (handles 0%).
     """
-    jobs = _load_jobs(bundle_dir)
+    try:
+        jobs = _load_jobs(bundle_dir)
+    except UnreadableBundleError as exc:
+        return _unreadable_result("F3", "completed_fraction", "COMPLETED∈[68%,88%] FAILED∈[0%,19%]", exc)
     if jobs is None:
         return ValidatorResult(
             validator_id="F3",
