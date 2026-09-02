@@ -102,11 +102,27 @@ def _openai_message(content: str | None = None, tool_calls: list | None = None) 
     return msg
 
 
-def _openai_tool_call(call_id: str, fn_name: str, arguments: dict) -> Any:
+def _openai_tool_call(call_id: str, fn_name: str, arguments: dict, kind: str = "function") -> Any:
+    """Mock an OpenAI tool call.
+
+    `tool_calls` is a union in the SDK — a function call or a custom tool call —
+    and only the function variant carries `.function`. The mock sets `.type`
+    because the adapter discriminates on it; a bare MagicMock would return a
+    truthy Mock for `.type` and silently pass a check it should not.
+    """
     tc = MagicMock()
     tc.id = call_id
+    tc.type = kind
     tc.function.name = fn_name
     tc.function.arguments = json.dumps(arguments)
+    return tc
+
+
+def _openai_custom_tool_call(call_id: str) -> Any:
+    """A non-function tool call, which has no `.function` to forward to MCP."""
+    tc = MagicMock(spec=["id", "type"])
+    tc.id = call_id
+    tc.type = "custom"
     return tc
 
 
@@ -208,6 +224,95 @@ def _make_transport_mock(tools: list, call_results: list[Any]):
 
 def _run(coro):
     return asyncio.run(coro)
+
+
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
+def test_custom_tool_call_is_skipped_not_crashed(mock_stdio, mock_cs_cls, mock_oai_cls):
+    """A non-function tool call has no `.function`; it must be skipped.
+
+    `msg.tool_calls` is a union of a function tool call and a custom tool call.
+    Reading `.function` unconditionally raises AttributeError on the latter.
+    """
+    context = _make_context()
+    transport_cm, session_cm, session = _make_transport_mock(
+        [_mcp_tool("slurm__query_jobs", "Query jobs")], []
+    )
+    mock_stdio.return_value = transport_cm
+    mock_cs_cls.return_value = session_cm
+
+    msg1 = _openai_message(tool_calls=[_openai_custom_tool_call("tc-custom")])
+    msg2 = _openai_message(content="Answered without tools.")
+
+    oai_instance = AsyncMock()
+    oai_instance.chat.completions.create = AsyncMock(
+        side_effect=[_openai_response(msg1, 10), _openai_response(msg2, 10)]
+    )
+    mock_oai_cls.return_value = oai_instance
+
+    trace = _run(_run_async("stdio:python agent.py", context, "gpt-4o", "You are helpful."))
+
+    # No MCP call was attempted for a tool call carrying no function payload.
+    session.call_tool.assert_not_called()
+    assert trace.final_answer == "Answered without tools."
+
+
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
+def test_no_tools_omits_tools_kwargs_entirely(mock_stdio, mock_cs_cls, mock_oai_cls):
+    """With no MCP tools, `tools`/`tool_choice` must be absent, not None.
+
+    The OpenAI SDK distinguishes an omitted argument (its `Omit` sentinel) from
+    an explicit None: passing None serialises `"tools": null` into the request
+    body instead of leaving the key out, which an OpenAI-compatible endpoint is
+    not obliged to accept.
+    """
+    context = _make_context()
+    transport_cm, session_cm, _ = _make_transport_mock([], [])
+    mock_stdio.return_value = transport_cm
+    mock_cs_cls.return_value = session_cm
+
+    oai_instance = AsyncMock()
+    oai_instance.chat.completions.create = AsyncMock(
+        side_effect=[_openai_response(_openai_message(content="No tools here."), 10)]
+    )
+    mock_oai_cls.return_value = oai_instance
+
+    _run(_run_async("stdio:python agent.py", context, "gpt-4o", "You are helpful."))
+
+    kwargs = oai_instance.chat.completions.create.call_args.kwargs
+    assert "tools" not in kwargs, f"tools was passed as {kwargs.get('tools')!r}"
+    assert "tool_choice" not in kwargs, f"tool_choice was passed as {kwargs.get('tool_choice')!r}"
+
+
+@patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")
+@patch("aobench.adapters.mcp_client_adapter.ClientSession")
+@patch("aobench.adapters.mcp_client_adapter.StdioServerParameters", MagicMock())
+@patch("aobench.adapters.mcp_client_adapter.stdio_client")
+def test_tools_are_passed_when_the_server_exposes_them(mock_stdio, mock_cs_cls, mock_oai_cls):
+    """The positive case must keep working."""
+    context = _make_context()
+    transport_cm, session_cm, _ = _make_transport_mock(
+        [_mcp_tool("slurm__query_jobs", "Query jobs")], []
+    )
+    mock_stdio.return_value = transport_cm
+    mock_cs_cls.return_value = session_cm
+
+    oai_instance = AsyncMock()
+    oai_instance.chat.completions.create = AsyncMock(
+        side_effect=[_openai_response(_openai_message(content="Done."), 10)]
+    )
+    mock_oai_cls.return_value = oai_instance
+
+    _run(_run_async("stdio:python agent.py", context, "gpt-4o", "You are helpful."))
+
+    kwargs = oai_instance.chat.completions.create.call_args.kwargs
+    assert kwargs["tool_choice"] == "auto"
+    assert len(kwargs["tools"]) == 1
 
 
 @patch("aobench.adapters.mcp_client_adapter.AsyncOpenAI")

@@ -15,6 +15,7 @@ Source: Mialon et al. (2023), GAIA: a benchmark for General AI Assistants,
 from __future__ import annotations
 
 import re
+from collections.abc import Set as AbstractSet
 
 
 # ---------------------------------------------------------------------------
@@ -193,7 +194,7 @@ def normalize_answer(
     answer: str,
     answer_type: str,
     tolerance_pct: float = 5.0,
-) -> str | int | float | set[str]:
+) -> str | int | float | AbstractSet[str]:
     """Dispatch to the correct HPC normalization rule and return a normalised value."""
     if answer_type in ("job_id", "integer"):
         return _normalize_job_id(answer)
@@ -225,11 +226,11 @@ def match_answers(
     try:
         if answer_type in ("job_id", "integer"):
             try:
-                c_val = _normalize_job_id(candidate)
-                gt_val = _normalize_job_id(ground_truth)
+                c_id = _normalize_job_id(candidate)
+                gt_id = _normalize_job_id(ground_truth)
             except ValueError:
                 return False
-            return c_val == gt_val
+            return c_id == gt_id
 
         elif answer_type == "node_list":
             c_set = expand_slurm_nodelist(candidate)

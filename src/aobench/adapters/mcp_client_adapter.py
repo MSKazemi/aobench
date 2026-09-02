@@ -33,7 +33,7 @@ import asyncio
 import json
 import shlex
 from datetime import datetime, timezone
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from aobench.adapters.base import BaseAdapter
 from aobench.runners.context import ExecutionContext
@@ -56,6 +56,10 @@ try:
     from openai import AsyncOpenAI
 except ImportError:
     AsyncOpenAI = None  # type: ignore[assignment,misc]
+
+if TYPE_CHECKING:
+    # Type-only: openai is an optional extra, imported defensively above.
+    from openai.types.chat import ChatCompletionMessageParam
 
 _MAX_ROUNDS = 10
 
@@ -139,17 +143,24 @@ async def _run_async(
 
             # ── Agentic loop via OpenAI function-calling ─────────────────────
             oai = AsyncOpenAI()
-            messages: list[dict[str, Any]] = [
+            messages: list[ChatCompletionMessageParam] = [
                 {"role": "system", "content": system_prompt},
                 {"role": "user",   "content": task.query_text},
             ]
+
+            # Omit `tools`/`tool_choice` entirely when the server exposes none.
+            # Passing None sends `"tools": null` in the request body rather than
+            # leaving the key out, which OpenAI-compatible endpoints need not accept.
+            tool_kwargs: dict[str, Any] = {}
+            if tool_schemas:
+                tool_kwargs["tools"] = tool_schemas
+                tool_kwargs["tool_choice"] = "auto"
 
             for _ in range(_MAX_ROUNDS):
                 response = await oai.chat.completions.create(
                     model=model,
                     messages=messages,
-                    tools=tool_schemas if tool_schemas else None,
-                    tool_choice="auto" if tool_schemas else None,
+                    **tool_kwargs,
                 )
                 msg = response.choices[0].message
                 total_tokens += response.usage.total_tokens if response.usage else 0
@@ -165,9 +176,15 @@ async def _run_async(
                 messages.append(msg.model_dump(exclude_unset=True))
 
                 for tc in msg.tool_calls:
-                    kwargs = json.loads(tc.function.arguments or "{}")
+                    # `tool_calls` is a union: only the function variant carries
+                    # `.function`. A custom tool call has no name or arguments to
+                    # forward to MCP, so skip it rather than raising AttributeError.
+                    if tc.type != "function":
+                        continue
+                    fn = tc.function
+                    kwargs = json.loads(fn.arguments or "{}")
 
-                    mcp_result = await session.call_tool(tc.function.name, kwargs)
+                    mcp_result = await session.call_tool(fn.name, kwargs)
 
                     content_text = _extract_text(mcp_result.content) if mcp_result.content else ""
                     is_error = bool(getattr(mcp_result, "isError", False))
@@ -180,12 +197,12 @@ async def _run_async(
 
                     if obs.permission_denied:
                         hard_fail = True
-                        hard_fail_reason = f"Permission denied calling {tc.function.name}"
+                        hard_fail_reason = f"Permission denied calling {fn.name}"
 
                     steps.append(TraceStep(
                         step_id=len(steps) + 1,
                         reasoning=None,
-                        tool_call=ToolCall(tool_name=tc.function.name, arguments=kwargs),
+                        tool_call=ToolCall(tool_name=fn.name, arguments=kwargs),
                         observation=obs,
                         timestamp=datetime.now(tz=timezone.utc),
                     ))

@@ -2,6 +2,34 @@
 
 ## Unreleased
 
+### Fixed — the MCP adapter sent `"tools": null` when a server exposed no tools
+
+- **`tools` and `tool_choice` were passed as `None` rather than omitted.** The OpenAI
+  SDK distinguishes an omitted argument (its `Omit` sentinel) from an explicit `None`:
+  verified against a mock transport, `tools=None` serialises `"tools": null` into the
+  request body, while omitting the argument leaves the key out entirely. An
+  OpenAI-compatible endpoint is under no obligation to accept an explicit null, so an
+  MCP server exposing no tools could fail the run. Both keys are now omitted in that case.
+- **A non-function tool call crashed the agentic loop.** `msg.tool_calls` is a union of a
+  function tool call and a custom tool call, and only the former carries `.function`;
+  the loop read `tc.function.arguments` unconditionally. Custom tool calls carry nothing
+  to forward to MCP and are now skipped.
+- The existing tests mocked tool calls without a `.type`, so a bare `MagicMock` returned
+  a truthy stand-in and the discriminator could not be exercised. The mock helper now
+  sets it, and three tests cover the omitted-kwargs, present-kwargs and custom-call paths.
+
+### Changed — `mypy --strict` debt down to 11
+
+- `scoring/`, `environment/` and `adapters/` reach zero; **23 of 25 packages are now held
+  there** by the ratchet. What remains is `tools/` (10) and the deliberately out-of-scope
+  `pingouin` import in `scorers/`.
+- `scoring/exact_match.py` reused `c_val`/`gt_val` across branches that return `int` in
+  one and `float` in another; mypy pins a bare name to its first assignment, so the
+  later branches read as bad assignments. Renamed the job-id branch's locals — no
+  behaviour change. `normalize_answer`'s return type now admits the `frozenset` its
+  partition branch actually returns.
+
+
 ### Fixed — the rubric judge assumed the first Anthropic block was text
 
 - **`rubric_scorer` read `msg.content[0].text` unconditionally**, which raises

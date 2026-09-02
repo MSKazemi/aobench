@@ -31,7 +31,7 @@ class ValidatorResult:
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _parse_elapsed_seconds(elapsed) -> Optional[float]:
+def _parse_elapsed_seconds(elapsed: Any) -> Optional[float]:
     """Convert elapsed field to seconds.
 
     Accepts:
@@ -567,7 +567,7 @@ def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
     # Collect all role names from any `roles:` key in the document
     role_names: set[str] = set()
 
-    def _collect_roles(obj) -> None:
+    def _collect_roles(obj: Any) -> None:
         if isinstance(obj, dict):
             for k, v in obj.items():
                 if k == "roles":
@@ -647,7 +647,7 @@ def validate_f7_tool_catalog(bundle_dir: Path) -> ValidatorResult:
     # Walk the catalog looking for method entries
     missing_desc: list[str] = []
 
-    def _check(obj, path: str = "") -> None:
+    def _check(obj: Any, path: str = "") -> None:
         if isinstance(obj, dict):
             # Detect a method entry: has a `description` key or is listed under `methods`
             desc = obj.get("description")
