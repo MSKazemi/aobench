@@ -63,11 +63,12 @@ _UNIT_RATIO_KILO = 0.05     # within 5% of expected×1000 or expected/1000 → u
 def load_taxonomy(path: Path | None = None) -> dict[str, Any]:
     """Load the HPC error taxonomy YAML."""
     taxonomy_path = path or _TAXONOMY_PATH
-    with taxonomy_path.open() as f: 
-        taxomony: object = yaml.safe_load(f)
-        if isinstance(taxomony, dict):
-            return taxomony
-        raise ValueError("Taxomony YAML must contain a mapping")
+    with taxonomy_path.open() as f:
+        loaded: object = yaml.safe_load(f)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Taxonomy YAML at {taxonomy_path} must contain a mapping.")
+    return loaded
+
 
 def _all_leaf_ids(taxonomy: dict[str, Any]) -> list[str]:
     """Return all 22 HPC leaf category IDs in declaration order."""

@@ -144,7 +144,10 @@ def load_rubric(rubric_id: str, rubric_dir: Path | None = None) -> dict[str, Any
             f"Available rubrics: {[p.stem for p in search_dir.glob('*.yaml')]}"
         )
     with path.open() as f:
-        data: dict[str, Any] = yaml.safe_load(f)
+        loaded: object = yaml.safe_load(f)
+    if not isinstance(loaded, dict):
+        raise ValueError(f"Rubric '{rubric_id}' at {path} must contain a mapping.")
+    data: dict[str, Any] = loaded
     if data.get("rubric_id") != rubric_id:
         raise ValueError(
             f"rubric_id mismatch: file declares '{data.get('rubric_id')}', expected '{rubric_id}'"
@@ -448,5 +451,5 @@ def make_anthropic_judge(
         if msg.content[0].type == "text":
             return msg.content[0].text
         return ""
-    
+
     return _call

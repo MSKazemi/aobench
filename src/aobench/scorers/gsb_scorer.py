@@ -176,6 +176,6 @@ def _extract_json(text: str) -> dict[str, Any]:
         match = re.search(r"\{.*\}", stripped, re.DOTALL)
         if match:
             parsed_match: object = json.loads(match.group())
-            if isinstance (parsed_match, dict):
+            if isinstance(parsed_match, dict):
                 return parsed_match
     raise ValueError(f"Could not parse JSON from GSB judge response:\n{text[:500]}")
