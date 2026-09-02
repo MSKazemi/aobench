@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Security — the leaderboard admin endpoints no longer have a default password
+
+- **`LEADERBOARD_ADMIN_PASSWORD` had a built-in fallback of `changeme`**, and that value
+  was published in the CLI reference. Any deployment that had not set the variable was
+  therefore protecting `POST /admin/rebuild` — which rewrites every CLEAR score — with a
+  documented credential.
+- **There is now no default.** While the variable is unset or empty, `check_basic_auth`
+  rejects every request and logs a warning naming the variable, so the admin endpoints
+  are unreachable rather than weakly reachable. This is a behaviour change: a deployment
+  relying on the old fallback must set the variable to keep those endpoints working.
+- **Credential comparison is now constant-time** (`hmac.compare_digest` for both the
+  username and the password). A plain `==` short-circuits on the first differing byte and
+  leaks how much of the secret matched through response timing.
+- Base64 decoding is strict, so a malformed header is rejected rather than silently
+  coerced. A test asserting that `changeme` *did* authenticate has been replaced by one
+  asserting that it does not.
+
+
 ### Fixed — the MCP adapter sent `"tools": null` when a server exposed no tools
 
 - **`tools` and `tool_choice` were passed as `None` rather than omitted.** The OpenAI

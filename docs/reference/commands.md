@@ -1203,7 +1203,7 @@ make run-all-anthropic MODEL=claude-sonnet-4-6
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `LEADERBOARD_ADMIN_PASSWORD` | `changeme` | Password for `POST /admin/rebuild` (HTTP Basic, username `admin`) |
+| `LEADERBOARD_ADMIN_PASSWORD` | *(none)* | Password for `POST /admin/rebuild` (HTTP Basic, username `admin`). **There is no default** — while this is unset, the admin endpoints reject every request. |
 
 **Endpoints (when FastAPI is installed):**
 

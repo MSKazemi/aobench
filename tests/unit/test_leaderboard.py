@@ -240,6 +240,37 @@ def test_check_basic_auth_wrong_username(monkeypatch):
     assert check_basic_auth(header) is False
 
 
+def test_admin_disabled_when_password_unset(monkeypatch):
+    """With no password configured, the admin endpoints must be unreachable.
+
+    `check_basic_auth` guards POST /admin/rebuild, which rewrites every CLEAR
+    score. It used to fall back to a built-in "changeme", which was also printed
+    in the public CLI reference — so any deployment that had not configured a
+    password shipped with a published admin credential.
+    """
+    monkeypatch.delenv("LEADERBOARD_ADMIN_PASSWORD", raising=False)
+    for user, pw in [("admin", "changeme"), ("admin", ""), ("admin", "anything")]:
+        assert check_basic_auth(_make_basic_header(user, pw)) is False
+
+
+def test_admin_disabled_when_password_is_empty(monkeypatch):
+    monkeypatch.setenv("LEADERBOARD_ADMIN_PASSWORD", "")
+    assert check_basic_auth(_make_basic_header("admin", "")) is False
+    assert check_basic_auth(_make_basic_header("admin", "changeme")) is False
+
+
+def test_former_default_password_is_not_accepted(monkeypatch):
+    """The old fallback must not authenticate against a configured password."""
+    monkeypatch.setenv("LEADERBOARD_ADMIN_PASSWORD", "secret123")
+    assert check_basic_auth(_make_basic_header("admin", "changeme")) is False
+
+
+def test_malformed_header_is_rejected(monkeypatch):
+    monkeypatch.setenv("LEADERBOARD_ADMIN_PASSWORD", "secret123")
+    for header in ("Basic !!!not-base64!!!", "Basic ", "Bearer secret123", "admin:secret123"):
+        assert check_basic_auth(header) is False
+
+
 def test_check_basic_auth_none():
     assert check_basic_auth(None) is False
 
@@ -252,12 +283,16 @@ def test_check_basic_auth_no_basic_prefix():
     assert check_basic_auth("Bearer sometoken") is False
 
 
-def test_check_basic_auth_default_password():
-    """Default password is 'changeme' when env var is not set."""
-    import os
-    os.environ.pop("LEADERBOARD_ADMIN_PASSWORD", None)
-    header = _make_basic_header("admin", "changeme")
-    assert check_basic_auth(header) is True
+def test_no_built_in_default_password(monkeypatch):
+    """There is no fallback credential when the env var is unset.
+
+    This test previously asserted the opposite — that "changeme" authenticated
+    when nothing was configured. That default was also published in the CLI
+    reference, so it was a known credential on a state-mutating admin endpoint.
+    It now fails closed.
+    """
+    monkeypatch.delenv("LEADERBOARD_ADMIN_PASSWORD", raising=False)
+    assert check_basic_auth(_make_basic_header("admin", "changeme")) is False
 
 
 def test_check_basic_auth_malformed_base64():
