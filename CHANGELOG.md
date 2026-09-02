@@ -2,6 +2,43 @@
 
 ## Unreleased
 
+### Fixed — `aobench lite select` crashed, and two other commands broke outside the repo root
+
+- **`aobench lite select` raised `ModuleNotFoundError: No module named 'benchmark'`.**
+  Four places imported the dataset splits as a bare `benchmark.tasks.dataset_splits`,
+  which only resolves when the repository root happens to be on `sys.path`. The corpus
+  ships inside the package (`src/aobench/benchmark`), so all four now import
+  `aobench.benchmark.tasks.dataset_splits`, which works from any working directory and
+  for a pip-installed user.
+- **`BenchmarkService.list_datasets()` raised the same error outside the repo root** —
+  it had no fallback at all, so the REST/service dataset listing was unusable when the
+  process was not started from a checkout.
+- **`aobench run --split` no longer manipulates `sys.path`.** It inserted the corpus
+  parent directory, imported, then popped it; on failure it advised "Run from the repo
+  root", which was not actionable for an installed user. The split lock is unchanged and
+  still refuses the `test` split without `AOBENCH_UNLOCK_TEST=1`.
+- **T1/T5 now report *why* the tool catalog failed to load.** A load failure downgrades
+  both checks to `SKIP`, and `aggregate_overall` counts `SKIP` as `PASS`, so a corrupt
+  catalog produced a clean-looking run whose cause had been swallowed by
+  `except Exception: pass`. The exception text now reaches the check detail.
+
+
+### Fixed — a corrupt environment bundle passed the F1–F3 fidelity gate
+
+- **`slurm_state.json` present but unreadable was reported as absent, and passed.**
+  `_load_jobs()` returned `None` both when the file was missing and when it failed to
+  parse, so F1 (job duration), F2 (job size) and F3 (job state mix) all returned
+  `passed=True` with the message *"skipped (no slurm_state.json)"* — naming a file
+  that was in fact present. A bundle whose SLURM data had been truncated or
+  reshaped therefore cleared the fidelity gate while claiming the data was
+  intentionally omitted.
+- The two cases are now distinguished. A missing file remains a legitimate skip —
+  five bundles ship without SLURM state — while an unreadable one fails with the
+  parse error or the offending type. All 29 current bundles were checked: 25 parse
+  cleanly, 5 legitimately have no file, none are corrupt, so no existing bundle
+  changes verdict.
+
+
 ### Fixed — Langfuse traces were missing session, user and tags
 
 - **Every exported trace silently lost its `session_id`, `user_id` and tags.**

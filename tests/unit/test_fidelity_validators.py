@@ -40,6 +40,65 @@ def _seconds_to_hhmmss(seconds: int) -> str:
     return f"{h:02d}:{m:02d}:{s:02d}"
 
 
+def _write_raw_slurm(tmp: Path, text: str) -> None:
+    slurm_dir = tmp / "slurm"
+    slurm_dir.mkdir(parents=True, exist_ok=True)
+    (slurm_dir / "slurm_state.json").write_text(text, encoding="utf-8")
+
+
+# ---------------------------------------------------------------------------
+# A present-but-unreadable bundle is not a skip
+# ---------------------------------------------------------------------------
+
+class TestUnreadableSlurmState:
+    """`slurm_state.json` present but broken must FAIL, not silently pass.
+
+    A bundle may legitimately ship without SLURM state, and the validators skip
+    in that case. Both outcomes used to collapse to `passed=True` with the
+    message "skipped (no slurm_state.json)" — so a corrupt bundle passed the
+    fidelity gate while reporting a file that was actually there as absent.
+    """
+
+    _VALIDATORS = [
+        ("F1", validate_f1_job_duration),
+        ("F2", validate_f2_job_size),
+        ("F3", validate_f3_job_state_mix),
+    ]
+
+    def test_truncated_json_fails(self):
+        for vid, fn in self._VALIDATORS:
+            with tempfile.TemporaryDirectory() as tmp:
+                _write_raw_slurm(Path(tmp), '{"jobs": [{"job_i')
+                result = fn(Path(tmp))
+            assert result.validator_id == vid
+            assert result.passed is False, f"{vid} passed on truncated JSON"
+            assert "skipped" not in result.message.lower()
+
+    def test_valid_json_of_the_wrong_shape_fails(self):
+        for vid, fn in self._VALIDATORS:
+            with tempfile.TemporaryDirectory() as tmp:
+                _write_raw_slurm(Path(tmp), '"not an object"')
+                result = fn(Path(tmp))
+            assert result.passed is False, f"{vid} passed on a bare string"
+            assert "expected an object or array" in result.message
+
+    def test_jobs_key_of_the_wrong_type_fails(self):
+        for vid, fn in self._VALIDATORS:
+            with tempfile.TemporaryDirectory() as tmp:
+                _write_raw_slurm(Path(tmp), '{"jobs": {"not": "a list"}}')
+                result = fn(Path(tmp))
+            assert result.passed is False, f"{vid} passed on a non-list 'jobs'"
+            assert "expected a list" in result.message
+
+    def test_absent_file_is_still_a_skip(self):
+        """The legitimate case must keep its previous behaviour."""
+        for vid, fn in self._VALIDATORS:
+            with tempfile.TemporaryDirectory() as tmp:
+                result = fn(Path(tmp))
+            assert result.passed is True, f"{vid} no longer skips a missing file"
+            assert "skipped" in result.message.lower()
+
+
 # ---------------------------------------------------------------------------
 # F1 — Job-duration log-normal fit
 # ---------------------------------------------------------------------------

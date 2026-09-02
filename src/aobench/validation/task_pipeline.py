@@ -24,6 +24,13 @@ from pathlib import Path
 from typing import Any, Optional
 
 
+def _catalog_skip_detail(catalog_error: str | None) -> str:
+    """Explain why T1/T5 were skipped, naming the failure when there was one."""
+    if catalog_error is None:
+        return "Catalog not loaded."
+    return f"Catalog not loaded — {catalog_error}"
+
+
 def run_validation_pipeline(
     task_file: str = "benchmark/tasks/task_set_v1.json",
     snapshot_dir: str = "benchmark/environments/",
@@ -75,14 +82,17 @@ def run_validation_pipeline(
 
     all_tasks = load_hpc_task_set(task_file_path)
 
-    # Load catalog for T1 and T5
+    # Load catalog for T1 and T5. A load failure downgrades both to SKIP, and
+    # `aggregate_overall` counts SKIP as PASS — so the reason must reach the
+    # report, or a corrupt catalog looks like a clean run.
     catalog = None
+    catalog_error: str | None = None
     if any(c in enabled for c in ("t1", "t5")):
         try:
             from aobench.tools.catalog_loader import load_catalog
             catalog = load_catalog(catalog_path_obj if catalog_path_obj.exists() else None)
-        except Exception:
-            pass
+        except Exception as exc:
+            catalog_error = f"{type(exc).__name__}: {exc}"
 
     # T6 is corpus-level — run once
     t6_result = None
@@ -99,7 +109,7 @@ def run_validation_pipeline(
                 task_checks["t1"] = check_tool_version_pinning(task, catalog)
             else:
                 from aobench.cli.validators.base import CheckResult
-                task_checks["t1"] = CheckResult(status="SKIP", detail="Catalog not loaded.")
+                task_checks["t1"] = CheckResult(status="SKIP", detail=_catalog_skip_detail(catalog_error))
 
         if "t2" in enabled:
             task_checks["t2"] = check_tool_setup(task, snapshot_dir_path)
@@ -115,7 +125,7 @@ def run_validation_pipeline(
                 task_checks["t5"] = check_ground_truth_isolation(task, catalog, snapshot_dir_path)
             else:
                 from aobench.cli.validators.base import CheckResult
-                task_checks["t5"] = CheckResult(status="SKIP", detail="Catalog not loaded.")
+                task_checks["t5"] = CheckResult(status="SKIP", detail=_catalog_skip_detail(catalog_error))
 
         if "t6" in enabled and t6_result is not None:
             task_checks["t6"] = t6_result
