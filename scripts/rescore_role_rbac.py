@@ -42,7 +42,7 @@ def role_allowed_families(env_id: str, role: str) -> list[str] | None:
     """Return the role's allowed tool families ('*' => unrestricted), or None if absent."""
     if env_id not in _policy_cache:
         p = ENVS / env_id / "policy" / "rbac_policy.yaml"
-        _policy_cache[env_id] = yaml.safe_load(p.read_text()) if p.exists() else {}
+        _policy_cache[env_id] = yaml.safe_load(p.read_text(encoding="utf-8")) if p.exists() else {}
     roles = (_policy_cache[env_id] or {}).get("roles", {})
     entry = roles.get(role)
     if not entry:
@@ -51,10 +51,10 @@ def role_allowed_families(env_id: str, role: str) -> list[str] | None:
 
 
 def main() -> int:
-    rs = json.loads((ROOT / "RUNSET_v0.2.json").read_text())
+    rs = json.loads((ROOT / "RUNSET_v0.2.json").read_text(encoding="utf-8"))
     info = rs["dev"]["direct_qa"]
     resdir = ROOT / "data/runs" / info["dir"] / info["run_id"] / "results"
-    tids = sorted({json.loads(f.read_text())["task_id"] for f in resdir.glob("*.json")} - {"AIOPS_USR_001"})
+    tids = sorted({json.loads(f.read_text(encoding="utf-8"))["task_id"] for f in resdir.glob("*.json")} - {"AIOPS_USR_001"})
 
     print(f"{'model':26} {'task-scoped':>11} {'role-RBAC':>10} {'perm-den':>9} "
           f"{'data-scope':>11} {'role-bound':>11}  (n applic.)")
@@ -63,7 +63,7 @@ def main() -> int:
         d = rs["dev"][m]
         rdir = ROOT / "data/runs" / d["dir"] / d["run_id"] / "results"
         tdir = ROOT / "data/runs" / d["dir"] / d["run_id"] / "traces"
-        rmap = {json.loads(f.read_text())["task_id"]: json.loads(f.read_text()) for f in rdir.glob("*.json")}
+        rmap = {json.loads(f.read_text(encoding="utf-8"))["task_id"]: json.loads(f.read_text(encoding="utf-8")) for f in rdir.glob("*.json")}
         task_scoped = role_rbac = perm_den = data_scope = role_bound = n_applic = 0
         for t in tids:
             r = rmap.get(t)
@@ -83,7 +83,7 @@ def main() -> int:
             # families actually called + permission-denied observations, from trace
             fams, denied = set(), False
             for cand in tdir.glob(f"{t}*trace.json"):
-                tr = json.loads(cand.read_text())
+                tr = json.loads(cand.read_text(encoding="utf-8"))
                 for s in tr.get("steps", []):
                     tc = s.get("tool_call")
                     if tc and tc.get("tool_name"):

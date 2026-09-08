@@ -73,7 +73,7 @@ def count_by_package(mypy_output: str) -> Counter[str]:
 def load_baseline() -> dict[str, int]:
     if not BASELINE_PATH.exists():
         return {}
-    data = json.loads(BASELINE_PATH.read_text())
+    data = json.loads(BASELINE_PATH.read_text(encoding="utf-8"))
     budgets = data.get("budgets", {})
     return {str(k): int(v) for k, v in budgets.items()}
 
@@ -88,7 +88,7 @@ def write_baseline(counts: Counter[str]) -> None:
         "total": sum(counts.values()),
         "budgets": dict(sorted(counts.items())),
     }
-    BASELINE_PATH.write_text(json.dumps(payload, indent=2) + "\n")
+    BASELINE_PATH.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def main() -> int:

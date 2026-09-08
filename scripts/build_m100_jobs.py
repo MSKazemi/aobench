@@ -187,7 +187,7 @@ def main() -> None:
                          for s in sorted({j["job_state"] for j in pool})},
         "jobs": pool,
     }
-    args.out.write_text(json.dumps(payload, indent=2))
+    args.out.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(f"Wrote {len(pool)} real job records ({args.year_month}) → {args.out}")
     print("state counts:", payload["state_counts"])
 

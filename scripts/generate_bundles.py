@@ -2028,18 +2028,18 @@ def build_env_20(root: Path) -> None:
 
 def _write_metadata(env: Path, data: dict) -> None:
     (env).mkdir(parents=True, exist_ok=True)
-    with (env / "metadata.yaml").open("w") as f:
+    with (env / "metadata.yaml").open("w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
 
 
 def _write_json(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=2, default=str))
+    path.write_text(json.dumps(data, indent=2, default=str), encoding="utf-8")
 
 
 def _write_yaml(path: Path, data: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w") as f:
+    with path.open("w", encoding="utf-8") as f:
         yaml.dump(data, f, default_flow_style=False, allow_unicode=True)
 
 
@@ -2050,7 +2050,7 @@ def _write_parquet(path: Path, df: pd.DataFrame) -> None:
 
 def _write_text(path: Path, text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(text)
+    path.write_text(text, encoding="utf-8")
 
 
 # ---------------------------------------------------------------------------

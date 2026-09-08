@@ -25,7 +25,7 @@ def fmt(v, decimals=3) -> str:
 
 rows = []
 for task_id in TASK_ORDER:
-    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text())
+    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text(encoding="utf-8"))
     qcat, diff = TASK_META[task_id]
     rows.append({
         "task_id":    task_id,

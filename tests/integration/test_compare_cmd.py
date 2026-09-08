@@ -48,7 +48,7 @@ def _make_run_dir(tmp_path, run_id, tasks):
             hard_fail=t.get("hard_fail", False),
             run_id=run_id,
         )
-        (results_dir / f"{t['task_id']}_result.json").write_text(json.dumps(data))
+        (results_dir / f"{t['task_id']}_result.json").write_text(json.dumps(data), encoding="utf-8")
     return run_dir
 
 
@@ -80,7 +80,7 @@ def test_compare_runs_full(tmp_path):
     result = runner.invoke(app, ["compare", "runs", str(run_dir_a), str(run_dir_b), "--output", str(out)])
     assert result.exit_code == 0, result.output
 
-    output_json = json.loads(out.read_text())
+    output_json = json.loads(out.read_text(encoding="utf-8"))
 
     assert output_json["summary"]["improved"] == 2
     assert output_json["summary"]["regressed"] == 2
@@ -119,7 +119,7 @@ def test_compare_runs_label_override(tmp_path):
     assert "GPT-4o" in result.output
     assert "Claude-Sonnet-4.6" in result.output
 
-    data = json.loads(out.read_text())
+    data = json.loads(out.read_text(encoding="utf-8"))
     assert data["run_a"] == "GPT-4o"
     assert data["run_b"] == "Claude-Sonnet-4.6"
 
@@ -138,7 +138,7 @@ def test_compare_runs_qcat_filter(tmp_path):
     ])
     assert result.exit_code == 0
 
-    data = json.loads(out.read_text())
+    data = json.loads(out.read_text(encoding="utf-8"))
     assert data["filter_qcat"] == "JOB"
     assert data["task_count_a"] == 5
     assert data["task_count_b"] == 5
@@ -199,7 +199,7 @@ def test_compare_runs_json_flag_matches_output_file(tmp_path):
     assert result.exit_code == 0
 
     stdout_data = json.loads(result.output)
-    file_data = json.loads(out.read_text())
+    file_data = json.loads(out.read_text(encoding="utf-8"))
     assert stdout_data == file_data
 
 

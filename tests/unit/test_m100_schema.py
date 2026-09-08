@@ -47,4 +47,4 @@ def test_existing_slurm_states_still_validate(env_dir):
     slurm_path = env_dir / "slurm" / "slurm_state.json"
     if not slurm_path.exists():
         pytest.skip("no slurm_state.json")
-    SlurmState.model_validate(json.loads(slurm_path.read_text()))
+    SlurmState.model_validate(json.loads(slurm_path.read_text(encoding="utf-8")))

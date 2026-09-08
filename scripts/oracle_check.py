@@ -8,7 +8,7 @@ import sys
 
 def check_task(task_path: pathlib.Path, env_dir: str) -> tuple[str, bool, str]:
     """Returns (task_id, passed, reason)."""
-    with open(task_path) as f:
+    with open(task_path, encoding="utf-8") as f:
         d = json.load(f)
     task_id = d.get("task_id", task_path.stem)
 

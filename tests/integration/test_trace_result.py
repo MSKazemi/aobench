@@ -28,12 +28,12 @@ def test_trace_and_result_files_written(tmp_path):
     assert trace_file.exists()
     assert result_file.exists()
 
-    trace_data = json.loads(trace_file.read_text())
+    trace_data = json.loads(trace_file.read_text(encoding="utf-8"))
     assert trace_data["task_id"] == "JOB_USR_001"
     assert "steps" in trace_data
     assert "final_answer" in trace_data
 
-    result_data = json.loads(result_file.read_text())
+    result_data = json.loads(result_file.read_text(encoding="utf-8"))
     assert result_data["task_id"] == "JOB_USR_001"
     assert "dimension_scores" in result_data
     assert result_data["dimension_scores"]["governance"] is not None

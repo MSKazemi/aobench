@@ -191,7 +191,7 @@ class TestRubricScoreICCGate:
         rubric_file = tmp_path / f"{rubric_id}.yaml"
         import yaml
 
-        rubric_file.write_text(yaml.dump(rubric))
+        rubric_file.write_text(yaml.dump(rubric), encoding="utf-8")
 
         response = self._make_judge_response({"dim_a": 0.5, "dim_b": 0.5}, 0.5)
         client = lambda _prompt: response  # noqa: E731
@@ -216,7 +216,7 @@ class TestRubricScoreICCGate:
             "rubric_id": rubric_id,
             "dimensions": {f"d{i}": {"max_score": 1} for i in range(5)},
         }
-        (tmp_path / f"{rubric_id}.yaml").write_text(yaml.dump(rubric))
+        (tmp_path / f"{rubric_id}.yaml").write_text(yaml.dump(rubric), encoding="utf-8")
 
         # High ICC requires high between-dimension variance AND low within-dimension
         # variance.  Use a wide score spread across dimensions with tiny per-judge jitter.
@@ -252,7 +252,7 @@ class TestRubricScoreICCGate:
             "rubric_id": rubric_id,
             "dimensions": {f"d{i}": {"max_score": 1} for i in range(6)},
         }
-        (tmp_path / f"{rubric_id}.yaml").write_text(yaml.dump(rubric))
+        (tmp_path / f"{rubric_id}.yaml").write_text(yaml.dump(rubric), encoding="utf-8")
 
         rng = random.Random(99)
         call_count = [0]

@@ -74,7 +74,7 @@ DIFFICULTY_TIER_MAP = {"easy": 1, "medium": 2, "hard": 3, "adversarial": 3}
 specs_dir = "benchmark/tasks/specs"
 updated = 0
 for path in sorted(glob.glob(f"{specs_dir}/*.json")):
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         t = json.load(f)
     role, qcat = t["role"], t["qcat"]
     changed = False
@@ -106,7 +106,7 @@ for path in sorted(glob.glob(f"{specs_dir}/*.json")):
         changed = True
 
     if changed:
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(t, f, indent=2)
             f.write("\n")
         updated += 1

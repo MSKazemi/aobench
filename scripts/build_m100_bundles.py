@@ -80,7 +80,7 @@ def load_reference_distributions(path: Path = _REFERENCE_JSON) -> dict[str, dict
             f"Missing M100 reference distributions: {path}\n"
             "Run: uv run python scripts/build_m100_reference.py"
         )
-    return json.loads(path.read_text())["metrics"]
+    return json.loads(path.read_text(encoding="utf-8"))["metrics"]
 
 
 def maybe_load_live_slice(dataset_path: str | None) -> pd.DataFrame | None:
@@ -327,7 +327,7 @@ def load_real_jobs(path: Path = _REAL_JOBS_JSON) -> list[dict]:
     if not path.exists():
         print(f"  [jobs] real job pool not found at {path}; using synthetic jobs only")
         return []
-    return json.loads(path.read_text()).get("jobs", [])
+    return json.loads(path.read_text(encoding="utf-8")).get("jobs", [])
 
 
 def real_background_jobs(nodes: list[str], snap_time: str, n: int,

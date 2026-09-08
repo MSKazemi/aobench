@@ -56,7 +56,7 @@ def main() -> None:
         "environments": environments,
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
+    OUTPUT.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"Wrote manifest: {len(environments)} envs, {manifest['total_files']} files")
 
 

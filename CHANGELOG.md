@@ -16,6 +16,11 @@
   `scripts/check_text_encoding.py` (`make encoding-check`, wired into `make check` and
   CI), fails on any text `open`/`read_text`/`write_text` that omits it — Linux CI cannot
   otherwise see this class of defect. Binary mode is exempt.
+- **A further 216 sites in `tests/` and `scripts/` had the same defect**, so a contributor
+  on Windows could not run the test suite either — as blocking as the failed run that
+  prompted the report. The gate now covers `src/aobench`, `tests` and `scripts`.
+- `scripts/seo_check.py` read `llms-full.txt` twice to build one assertion message; it now
+  reads once.
 
 
 ### Fixed — the run summary reported six of seven dimensions

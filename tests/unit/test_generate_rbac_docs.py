@@ -97,7 +97,7 @@ def test_generate_for_env_writes_file(tmp_path: Path) -> None:
     assert result is True
     out = env_dir / "docs" / "rbac_policy.md"
     assert out.exists()
-    content = out.read_text()
+    content = out.read_text(encoding="utf-8")
     assert "env_test" in content
     assert "scientific_user" in content
 

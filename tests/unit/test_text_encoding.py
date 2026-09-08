@@ -11,10 +11,9 @@ from pathlib import Path
 
 from aobench.runners.trace_writer import TraceWriter
 from aobench.schemas.trace import Trace
-from scripts.check_text_encoding import find_violations
+from scripts.check_text_encoding import SCANNED, find_violations
 
 ROOT = Path(__file__).resolve().parent.parent.parent
-SRC = ROOT / "src" / "aobench"
 
 # Emoji, an em-dash, and non-Latin script — all unencodable in cp1252.
 NON_ASCII = "job finished ✅ — узел node-042 是正常的"
@@ -36,8 +35,14 @@ def test_trace_writer_round_trips_non_ascii(tmp_path):
 
 
 def test_no_text_io_omits_an_encoding():
-    """Static gate: the whole package, not just the one call that was reported."""
-    violations = find_violations(SRC)
+    """Static gate over src, tests and scripts — not just the reported call.
+
+    ``tests/`` counts: a contributor who cannot run the suite on Windows is as
+    blocked as one whose benchmark run dies partway through.
+    """
+    violations: list[tuple[str, int, str]] = []
+    for tree in SCANNED:
+        violations.extend(find_violations(ROOT / tree))
     assert violations == [], (
         "text I/O without encoding= breaks on Windows (cp1252):\n"
         + "\n".join(f"  {rel}:{line}: {name}()" for rel, line, name in violations)

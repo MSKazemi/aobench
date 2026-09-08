@@ -51,7 +51,7 @@ manifest = {
     "test": build(TEST),
 }
 p = ROOT / "RUNSET_v0.2.json"
-p.write_text(json.dumps(manifest, indent=2) + "\n")
+p.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 print(f"wrote {p}")
 print(f"dev models: {len(manifest['dev'])}  test models: {len(manifest['test'])}")
 for k, v in list(manifest["dev"].items())[:3]:

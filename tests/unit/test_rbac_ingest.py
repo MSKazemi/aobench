@@ -31,7 +31,7 @@ def _make_mock_env(env_dir: Path, env_id: str = "env_test") -> None:
         "validation_status": "validated",
         "description": "Test environment",
     }
-    with (env_dir / "metadata.yaml").open("w") as f:
+    with (env_dir / "metadata.yaml").open("w", encoding="utf-8") as f:
         yaml.dump(metadata, f)
 
     # policy/rbac_policy.yaml
@@ -47,7 +47,7 @@ def _make_mock_env(env_dir: Path, env_id: str = "env_test") -> None:
             }
         },
     }
-    with (policy_dir / "rbac_policy.yaml").open("w") as f:
+    with (policy_dir / "rbac_policy.yaml").open("w", encoding="utf-8") as f:
         yaml.dump(policy, f)
 
     # manifest.txt
@@ -67,7 +67,7 @@ def _make_customer_policy(path: Path, *, extra_role: str | None = None) -> None:
     }
     if extra_role:
         policy["roles"][extra_role] = {"description": "Extra role", "permissions": [], "allowed_tools": []}
-    with path.open("w") as f:
+    with path.open("w", encoding="utf-8") as f:
         yaml.dump(policy, f)
 
 
@@ -128,7 +128,7 @@ def test_ingest_replaces_rbac_policy():
         )
         installed_policy = envs_dir / "env_rbac_test2" / "policy" / "rbac_policy.yaml"
         assert installed_policy.exists()
-        loaded = yaml.safe_load(installed_policy.read_text())
+        loaded = yaml.safe_load(installed_policy.read_text(encoding="utf-8"))
         assert "admin" in loaded["roles"]  # extra_role was carried through
 
 
@@ -153,7 +153,7 @@ def test_ingest_updates_metadata_env_id():
             catch_exceptions=False,
         )
         metadata = yaml.safe_load(
-            (envs_dir / "env_rbac_meta_test" / "metadata.yaml").read_text()
+            (envs_dir / "env_rbac_meta_test" / "metadata.yaml").read_text(encoding="utf-8")
         )
         assert metadata["environment_id"] == "env_rbac_meta_test"
         assert "env_rbac_meta_test" in metadata["bundle_root"]
@@ -227,7 +227,7 @@ def test_ingest_invalid_yaml_exits():
         _make_mock_env(envs_dir / "env_base", "env_base")
 
         bad_policy = tmpdir / "bad.yaml"
-        bad_policy.write_text(": : invalid yaml {{{{")
+        bad_policy.write_text(": : invalid yaml {{{{", encoding="utf-8")
 
         from typer.testing import CliRunner
         from aobench.cli.rbac_cmd import rbac_app

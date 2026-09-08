@@ -81,7 +81,7 @@ class Checker:
         self.check(path.is_file(), "robots.txt is published")
         if not path.is_file():
             return
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         self.check("Sitemap:" in text, "robots.txt declares a Sitemap")
         for agent in MUST_NOT_BLOCK:
             blocked = re.search(
@@ -113,7 +113,7 @@ class Checker:
         self.check(path.is_file(), "llms.txt is published")
         if not path.is_file():
             return
-        text = path.read_text()
+        text = path.read_text(encoding="utf-8")
         self.check(text.startswith("# "), "llms.txt starts with an H1")
         self.check("## Links" in text, "llms.txt has a Links section")
         self.check(
@@ -126,7 +126,7 @@ class Checker:
             docs_copy = ROOT / "docs" / name
             if root_copy.is_file() and docs_copy.is_file():
                 self.check(
-                    root_copy.read_text() == docs_copy.read_text(),
+                    root_copy.read_text(encoding="utf-8") == docs_copy.read_text(encoding="utf-8"),
                     f"root {name} matches docs/{name}",
                     "the two copies have drifted — they must stay identical",
                 )
@@ -134,10 +134,11 @@ class Checker:
         full = self.site / "llms-full.txt"
         self.check(full.is_file(), "llms-full.txt is published")
         if full.is_file():
+            n_bytes = len(full.read_text(encoding="utf-8"))
             self.check(
-                len(full.read_text()) > 50_000,
+                n_bytes > 50_000,
                 "llms-full.txt carries the full docs",
-                f"only {len(full.read_text()):,} bytes — did the concatenation break?",
+                f"only {n_bytes:,} bytes — did the concatenation break?",
             )
 
     def check_page(self, rel: str) -> None:
@@ -146,7 +147,7 @@ class Checker:
             self.check(False, f"{rel} exists")
             return
         self.passes += 1
-        html = path.read_text()
+        html = path.read_text(encoding="utf-8")
 
         # The minifier strips attribute quotes, so match loosely on purpose.
         self.check(re.search(r"rel=[\"']?canonical", html) is not None, f"{rel}: canonical link")

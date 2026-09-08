@@ -74,7 +74,7 @@ def load_plugin_map(catalog_path: Path) -> dict[str, str]:
     mapping: dict[str, str] = {}
     if not catalog_path.exists():
         return mapping
-    with catalog_path.open(newline="") as f:
+    with catalog_path.open(newline="", encoding="utf-8") as f:
         for row in csv.DictReader(f):
             metric = (row.get("metric") or "").strip()
             plugin = (row.get("plugin") or "").strip()
@@ -306,7 +306,7 @@ def write_metric_map(out_dir: Path, dists: dict[str, dict], sample_path: Path) -
             f"{d['mean']:g} | [{d['lo']:g}, {d['hi']:g}] |"
         )
     lines.append("")
-    (out_dir / "metric_map.md").write_text("\n".join(lines))
+    (out_dir / "metric_map.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 def main() -> None:
@@ -340,13 +340,13 @@ def main() -> None:
         new_metrics = build_distributions_from_long(
             args.long_metrics_dir, args.long_plugin, args.seed,
         )
-        base = json.loads(args.merge_into.read_text()) if args.merge_into else {
+        base = json.loads(args.merge_into.read_text(encoding="utf-8")) if args.merge_into else {
             "source": "CINECA Marconi100 ExaData", "sample_file": "long-format fit",
             "cadence_seconds": 900, "note": "long-format metrics", "metrics": {},
         }
         base["metrics"].update(new_metrics)
         out_json = args.out / "metric_distributions.json"
-        out_json.write_text(json.dumps(base, indent=2))
+        out_json.write_text(json.dumps(base, indent=2), encoding="utf-8")
         write_metric_map(args.out, base["metrics"], Path(base.get("sample_file", "merged")))
         print(f"Added {len(new_metrics)} {args.long_plugin} metrics "
               f"({sorted(new_metrics)}) → {out_json} (total {len(base['metrics'])})")
@@ -388,7 +388,7 @@ def main() -> None:
         "metrics": dists,
     }
     out_json = args.out / "metric_distributions.json"
-    out_json.write_text(json.dumps(payload, indent=2))
+    out_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     write_metric_map(args.out, dists, Path(source_label))
 
     print(f"Wrote {len(dists)} metric distributions ({source_label}) → {out_json}")

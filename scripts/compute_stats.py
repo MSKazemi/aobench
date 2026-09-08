@@ -112,7 +112,7 @@ print(header)
 print(sep)
 
 for task_id in TASK_ORDER:
-    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text())
+    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text(encoding="utf-8"))
     qcat, diff = TASK_META[task_id]
     scores = d["scores"]
     lo, hi = bootstrap_mean_ci(scores, rng=rng)
@@ -181,7 +181,7 @@ print(header)
 print(sep)
 
 for task_id in TASK_ORDER:
-    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text())
+    d = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text(encoding="utf-8"))
     qcat, diff = TASK_META[task_id]
     n_pass = d["n_passing"]
     n      = d["n_runs"]

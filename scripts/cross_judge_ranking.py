@@ -39,7 +39,7 @@ def load_all_responses(responses_dir: Path) -> list[dict]:
         sys.exit(f"No rv_*.json files found in {responses_dir}")
     responses = []
     for p in paths:
-        with open(p) as f:
+        with open(p, encoding="utf-8") as f:
             responses.append(json.load(f))
     return responses
 
@@ -133,13 +133,13 @@ def main(
     # Write CSV
     out_path = Path(output_path) if output_path else DEFAULT_OUT
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w", newline="") as f:
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         writer.writeheader()
         writer.writerows(rows)
 
     # Append summary
-    with open(out_path, "a", newline="") as f:
+    with open(out_path, "a", newline="", encoding="utf-8") as f:
         writer_r = csv.writer(f)
         writer_r.writerow([])
         writer_r.writerow(["SUMMARY", "kendall_tau_b", tau, "pvalue", p_value, "gate", status])

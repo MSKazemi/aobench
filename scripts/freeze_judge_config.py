@@ -16,8 +16,8 @@ def main() -> None:
         model="gpt-4o-2024-11-20",
         temperature=0.0,
     )
-    rubric_text = RUBRIC_PATH.read_text()
-    taxonomy_text = TAXONOMY_PATH.read_text()
+    rubric_text = RUBRIC_PATH.read_text(encoding="utf-8")
+    taxonomy_text = TAXONOMY_PATH.read_text(encoding="utf-8")
     config_id = make_judge_config_id(config, rubric_text, taxonomy_text)
 
     payload = {
@@ -32,7 +32,7 @@ def main() -> None:
         "taxonomy_path": str(TAXONOMY_PATH),
     }
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    OUTPUT.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(f"judge_config_id: {config_id}")
     print(f"Written to: {OUTPUT}")
 

@@ -58,7 +58,7 @@ def fmt_md(v: float | None, decimals: int = 3) -> str:
     return f"{v:.{decimals}f}"
 
 
-data = json.loads(CLEAR_PATH.read_text())
+data = json.loads(CLEAR_PATH.read_text(encoding="utf-8"))
 models_data = data["models"]
 
 # Build rows from leaderboard order (already sorted: API-CLEAR, then Ollama by E, baseline last)

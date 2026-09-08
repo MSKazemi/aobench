@@ -87,7 +87,7 @@ class TestResponseFiles:
 
     def _load_all(self) -> list[dict]:
         files = sorted(RESPONSES_DIR.glob("rv_*.json"))
-        return [json.loads(p.read_text()) for p in files]
+        return [json.loads(p.read_text(encoding="utf-8")) for p in files]
 
     def test_count_is_50(self):
         files = list(RESPONSES_DIR.glob("rv_*.json"))
@@ -304,7 +304,7 @@ class TestStochasticStability:
         assert out_path.exists()
 
         # Read up to the first blank/summary line
-        content = out_path.read_text()
+        content = out_path.read_text(encoding="utf-8")
         lines = [ln for ln in content.splitlines() if ln and not ln.startswith("SUMMARY")]
         df = pd.read_csv(StringIO("\n".join(lines)))
         assert "std_score" in df.columns
@@ -369,7 +369,7 @@ class TestCrossJudgeRanking:
         )
         assert out_path.exists(), f"Output not created. stdout:\n{result.stdout}\nstderr:\n{result.stderr}"
 
-        content = out_path.read_text()
+        content = out_path.read_text(encoding="utf-8")
         lines = [ln for ln in content.splitlines() if ln and not ln.startswith("SUMMARY")]
         df = pd.read_csv(StringIO("\n".join(lines)))
         assert len(df) == 50, f"Expected 50 rows, got {len(df)}"

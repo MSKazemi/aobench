@@ -160,7 +160,7 @@ def process_env(env_dir: Path) -> None:
         print(f"  SKIP — no rbac_policy.yaml: {env_dir.name}")
         return
 
-    with policy_path.open() as f:
+    with policy_path.open(encoding="utf-8") as f:
         policy = yaml.safe_load(f) or {}
 
     if policy.get("version") == "1.1":
@@ -169,7 +169,7 @@ def process_env(env_dir: Path) -> None:
 
     upgraded = upgrade_policy(policy)
 
-    with policy_path.open("w") as f:
+    with policy_path.open("w", encoding="utf-8") as f:
         yaml.dump(upgraded, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
 
     print(f"  UPGRADED: {env_dir.name}")

@@ -88,7 +88,7 @@ def test_json_report_written_to_disk(tmp_path):
     out_path = write_run_summary(run_dir)
     assert out_path.exists()
 
-    data = json.loads(out_path.read_text())
+    data = json.loads(out_path.read_text(encoding="utf-8"))
     assert data["task_count"] >= 10
 
 
@@ -101,7 +101,7 @@ def test_html_report_written_to_disk(tmp_path):
     html_path = write_html_report(run_dir)
     assert html_path.exists()
 
-    content = html_path.read_text()
+    content = html_path.read_text(encoding="utf-8")
     assert "AOBench" in content
     assert run_id in content
     assert "<table" in content
@@ -195,7 +195,7 @@ def test_run_dir_that_is_a_file_says_so(tmp_path):
     from aobench.cli.main import app
 
     not_a_dir = tmp_path / "run.json"
-    not_a_dir.write_text("{}")
+    not_a_dir.write_text("{}", encoding="utf-8")
 
     result = CliRunner().invoke(app, ["report", "json", str(not_a_dir)])
 

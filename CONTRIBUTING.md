@@ -329,6 +329,10 @@ em-dashes, so loading task specs and environment docs would have failed the same
 Always write `encoding="utf-8"`. Binary mode (`"rb"`/`"wb"`) is exempt, since encoding
 does not apply to it.
 
+The gate covers `src/aobench`, `tests/` **and** `scripts/`. Tests count: a contributor who
+cannot run the suite on Windows is as blocked as one whose benchmark run dies partway
+through, and 216 of the sites fixed were in those two trees.
+
 ## Editing the Documentation Site
 
 The site under `docs/` is MkDocs Material, published to

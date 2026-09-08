@@ -427,7 +427,7 @@ def test_render_leaderboard_html_contains_title(tmp_path):
     result_path = render_leaderboard_html(response, out)
 
     assert result_path == out
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     assert "AOBench Leaderboard" in html
 
 
@@ -435,7 +435,7 @@ def test_render_leaderboard_html_contains_model_ids(tmp_path):
     response = _make_leaderboard_response()
     out = tmp_path / "leaderboard.html"
     render_leaderboard_html(response, out)
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     assert "alpha" in html
     assert "beta" in html
 
@@ -444,7 +444,7 @@ def test_render_leaderboard_html_contains_scores(tmp_path):
     response = _make_leaderboard_response()
     out = tmp_path / "leaderboard.html"
     render_leaderboard_html(response, out)
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     # Scores formatted to 4 decimal places.
     assert "0.9000" in html
     assert "0.8000" in html
@@ -461,7 +461,7 @@ def test_render_leaderboard_html_valid_html_structure(tmp_path):
     response = _make_leaderboard_response()
     out = tmp_path / "lb.html"
     render_leaderboard_html(response, out)
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     assert "<!DOCTYPE html>" in html
     assert "<table>" in html
     assert "</table>" in html
@@ -472,7 +472,7 @@ def test_render_leaderboard_html_generated_at(tmp_path):
     response = _make_leaderboard_response()
     out = tmp_path / "lb.html"
     render_leaderboard_html(response, out)
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     assert "2025-01-01T12:00:00Z" in html
 
 
@@ -484,7 +484,7 @@ def test_render_leaderboard_html_empty_entries(tmp_path):
     )
     out = tmp_path / "lb.html"
     render_leaderboard_html(response, out)
-    html = out.read_text()
+    html = out.read_text(encoding="utf-8")
     assert "AOBench Leaderboard" in html
     assert "<table>" in html
 

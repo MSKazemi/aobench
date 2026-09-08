@@ -79,7 +79,7 @@ def test_clear_cmd_single_model(tmp_path):
     assert result.exit_code == 0, result.output
     assert output_path.exists()
 
-    report = json.loads(output_path.read_text())
+    report = json.loads(output_path.read_text(encoding="utf-8"))
     assert "models" in report
     assert "leaderboard" in report
     assert report["task_count"] == 5
@@ -100,7 +100,7 @@ def test_clear_cmd_output_contains_all_keys(tmp_path):
     )
     assert result.exit_code == 0, result.output
 
-    report = json.loads(output_path.read_text())
+    report = json.loads(output_path.read_text(encoding="utf-8"))
     required_keys = {
         "clear_score",
         "C_norm",
@@ -130,7 +130,7 @@ def test_clear_cmd_two_models(tmp_path):
     # run_b: higher accuracy but higher cost/latency
     run_b = _make_run_dir(tmp_path, model_name="model-slow", n_tasks=4, dir_name="run_b")
     for f in (run_b / "results").glob("*_result.json"):
-        r = BenchmarkResult.model_validate(json.loads(f.read_text()))
+        r = BenchmarkResult.model_validate(json.loads(f.read_text(encoding="utf-8")))
         r2 = r.model_copy(
             update={
                 "model_name": "model-slow",
@@ -157,7 +157,7 @@ def test_clear_cmd_two_models(tmp_path):
     )
 
     assert result.exit_code == 0, result.output
-    report = json.loads(output_path.read_text())
+    report = json.loads(output_path.read_text(encoding="utf-8"))
 
     assert len(report["models"]) == 2
     assert len(report["leaderboard"]) == 2
@@ -184,7 +184,7 @@ def test_clear_cmd_pass_threshold(tmp_path):
     run_dir = _make_run_dir(tmp_path, model_name="model-x", n_tasks=4)
     # All results have aggregate_score=0.8 → at threshold=0.9 none pass
     for f in (run_dir / "results").glob("*_result.json"):
-        r = BenchmarkResult.model_validate(json.loads(f.read_text()))
+        r = BenchmarkResult.model_validate(json.loads(f.read_text(encoding="utf-8")))
         r2 = r.model_copy(update={"aggregate_score": 0.8})
         f.write_text(r2.model_dump_json(indent=2), encoding="utf-8")
 
@@ -204,7 +204,7 @@ def test_clear_cmd_pass_threshold(tmp_path):
     )
     assert result.exit_code == 0, result.output
 
-    report = json.loads(output_path.read_text())
+    report = json.loads(output_path.read_text(encoding="utf-8"))
     assert report["models"]["model-x"]["n_successful"] == 0
     assert report["models"]["model-x"]["CPS"] is None
 
@@ -256,8 +256,8 @@ def test_clear_run_positional_and_option_are_equivalent(tmp_path: Path) -> None:
     assert r_pos.exit_code == 0, r_pos.output
     assert r_opt.exit_code == 0, r_opt.output
 
-    pos = json.loads(out_pos.read_text())
-    opt = json.loads(out_opt.read_text())
+    pos = json.loads(out_pos.read_text(encoding="utf-8"))
+    opt = json.loads(out_opt.read_text(encoding="utf-8"))
     # generated_at is a wall-clock stamp and differs between the two invocations.
     pos.pop("generated_at", None)
     opt.pop("generated_at", None)

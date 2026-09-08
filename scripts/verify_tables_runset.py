@@ -84,14 +84,14 @@ def r3(x: float) -> float:
 
 
 def recompute() -> tuple[dict, list[str]]:
-    rs = json.loads((ROOT / "RUNSET_v0.2.json").read_text())
-    profiles = yaml.safe_load((ROOT / "benchmark/configs/scoring_profiles.yaml").read_text())["profiles"]
+    rs = json.loads((ROOT / "RUNSET_v0.2.json").read_text(encoding="utf-8"))
+    profiles = yaml.safe_load((ROOT / "benchmark/configs/scoring_profiles.yaml").read_text(encoding="utf-8"))["profiles"]
 
     struct: list[str] = []
     # dev task set from direct_qa (authoritative), AIOPS_USR_001 excluded
     info = rs["dev"]["direct_qa"]
     resdir = ROOT / "data/runs" / info["dir"] / info["run_id"] / "results"
-    tids = sorted({json.loads(f.read_text())["task_id"] for f in resdir.glob("*.json")} - {"AIOPS_USR_001"})
+    tids = sorted({json.loads(f.read_text(encoding="utf-8"))["task_id"] for f in resdir.glob("*.json")} - {"AIOPS_USR_001"})
     if len(tids) != 58:
         struct.append(f"expected 58 dev tasks, got {len(tids)}")
     if "AIOPS_USR_001" in tids:
@@ -101,7 +101,7 @@ def recompute() -> tuple[dict, list[str]]:
     nm: dict[str, str] = {}
     difficulty: dict[str, str] = {}
     for t in tids:
-        spec = json.loads((SPECS / f"{t}.json").read_text())
+        spec = json.loads((SPECS / f"{t}.json").read_text(encoding="utf-8"))
         difficulty[t] = (spec.get("difficulty") or "").lower()
         s = TaskSpec.model_validate(spec)
         if s.eval_criteria and (s.eval_criteria.evaluation_mode or "").lower() == "numeric_match":
@@ -118,7 +118,7 @@ def recompute() -> tuple[dict, list[str]]:
         tdir = ROOT / "data/runs" / d["dir"] / d["run_id"] / "traces"
         rmap = {}
         for f in rdir.glob("*.json"):
-            r = json.loads(f.read_text())
+            r = json.loads(f.read_text(encoding="utf-8"))
             rmap[r["task_id"]] = r
         task_ids = sorted(rmap)
         if len(task_ids) != len(set(task_ids)):
@@ -140,7 +140,7 @@ def recompute() -> tuple[dict, list[str]]:
             if t in nm and not hf and o == 0.5:
                 ans = ""
                 for cand in tdir.glob(f"{t}*trace.json"):
-                    tr = json.loads(cand.read_text())
+                    tr = json.loads(cand.read_text(encoding="utf-8"))
                     ans = tr.get("final_answer") or ""
                     break
                 new_o = corrected_outcome(ans, nm[t])

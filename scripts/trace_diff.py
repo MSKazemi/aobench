@@ -74,8 +74,8 @@ def main():
     args = ap.parse_args()
 
     try:
-        a = json.loads(Path(args.trace_a).read_text())
-        b = json.loads(Path(args.trace_b).read_text())
+        a = json.loads(Path(args.trace_a).read_text(encoding="utf-8"))
+        b = json.loads(Path(args.trace_b).read_text(encoding="utf-8"))
     except FileNotFoundError as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(2)

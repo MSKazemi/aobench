@@ -53,7 +53,7 @@ def _write_results(run_dir: Path, results: list[BenchmarkResult]) -> None:
     results_dir.mkdir(parents=True)
     for r in results:
         out = results_dir / f"{r.task_id}_result.json"
-        out.write_text(r.model_dump_json())
+        out.write_text(r.model_dump_json(), encoding="utf-8")
 
 
 # ── _wilson_ci ────────────────────────────────────────────────────────────────

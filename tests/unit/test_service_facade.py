@@ -203,7 +203,7 @@ def test_get_run_skips_malformed_result_json(svc, a_task):
     h = svc.submit_run(tid, eid, "direct_qa", split="dev")
     # drop a garbage file into the results dir — must be skipped, not crash
     results_dir = svc._output_root / h.run_id / "results"
-    (results_dir / "junk_result.json").write_text("{ not valid json")
+    (results_dir / "junk_result.json").write_text("{ not valid json", encoding="utf-8")
     rec = svc.get_run(h.run_id)
     assert rec.n_tasks >= 1
 

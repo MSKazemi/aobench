@@ -319,7 +319,7 @@ class TestT3OracleSolvability:
         slurm_dir = env_dir / "slurm"
         slurm_dir.mkdir(parents=True)
         data = {"job_state": "FAILED", "job_id": 12345}
-        (slurm_dir / "job_987654.json").write_text(json.dumps(data))
+        (slurm_dir / "job_987654.json").write_text(json.dumps(data), encoding="utf-8")
         gt = HPCGroundTruth(
             job_state="FAILED",
             derivation_query="slurm/job_987654.json:job_state",
@@ -397,7 +397,7 @@ class TestT5GTIsolation:
         env_dir = tmp_path / "env_01"
         docs_dir = env_dir / "docs"
         docs_dir.mkdir(parents=True)
-        (docs_dir / "guide.json").write_text('{"topic": "SLURM guide"}')
+        (docs_dir / "guide.json").write_text('{"topic": "SLURM guide"}', encoding="utf-8")
         gt = HPCGroundTruth(job_state="FAILED")
         task = _make_task(snapshot_id="env_01", ground_truth=gt)
         catalog = _make_catalog_mock([])
@@ -491,7 +491,7 @@ class TestT7GTCorrectness:
         env_dir = tmp_path / "env_01"
         (env_dir / "slurm").mkdir(parents=True)
         data = {"job_state": "FAILED"}
-        (env_dir / "slurm" / "job.json").write_text(json.dumps(data))
+        (env_dir / "slurm" / "job.json").write_text(json.dumps(data), encoding="utf-8")
         gt = HPCGroundTruth(
             job_state="FAILED",
             derivation_query="slurm/job.json",
@@ -507,7 +507,7 @@ class TestT7GTCorrectness:
         env_dir = tmp_path / "env_01"
         (env_dir / "slurm").mkdir(parents=True)
         data = {"job_state": "COMPLETED"}  # GT says FAILED
-        (env_dir / "slurm" / "job.json").write_text(json.dumps(data))
+        (env_dir / "slurm" / "job.json").write_text(json.dumps(data), encoding="utf-8")
         gt = HPCGroundTruth(
             job_state="FAILED",
             derivation_query="slurm/job.json",
@@ -698,7 +698,7 @@ class TestT10Reporting:
         out_path = tmp_path / "report.json"
         generate_validity_report(results, output_path=out_path)
         assert out_path.exists()
-        data = json.loads(out_path.read_text())
+        data = json.loads(out_path.read_text(encoding="utf-8"))
         assert "summary" in data
 
     def test_text_format(self):

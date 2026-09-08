@@ -153,14 +153,14 @@ class TestAbleateClearWeights:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert isinstance(data, dict)
 
     def test_schema_keys(self, tmp_path, ablate_clear_weights):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert "generated_at" in data
         assert "variants" in data
         assert "models" in data
@@ -171,21 +171,21 @@ class TestAbleateClearWeights:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert set(data["variants"]) == {"equal", "e_heavy", "a_heavy", "default"}
 
     def test_models_detected(self, tmp_path, ablate_clear_weights):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert set(data["models"]) == {"model_alpha", "model_beta"}
 
     def test_scores_in_range(self, tmp_path, ablate_clear_weights):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for variant, model_scores in data["scores"].items():
             for model, score in model_scores.items():
                 assert 0.0 <= score <= 1.0, (
@@ -196,7 +196,7 @@ class TestAbleateClearWeights:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         rho = data["spearman_rho"]
         assert set(rho.keys()) == {"equal_vs_default", "e_heavy_vs_default", "a_heavy_vs_default"}
 
@@ -204,7 +204,7 @@ class TestAbleateClearWeights:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "clear_weights.json"
         ablate_clear_weights.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for key, rho in data["spearman_rho"].items():
             assert -1.0 <= rho <= 1.0, f"Spearman rho out of [-1, 1] for {key}: {rho}"
 
@@ -216,7 +216,7 @@ class TestAbleateClearWeights:
             "--output", str(out),
         ])
         assert ret == 0
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert data["models"] == []
         assert all(v == {} for v in data["scores"].values())
 
@@ -226,7 +226,7 @@ class TestAbleateClearWeights:
             "--runs", str(tmp_path / "no_such_dir"),
             "--output", str(out),
         ])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert "spearman_rho" in data
         assert set(data["spearman_rho"].keys()) == {
             "equal_vs_default", "e_heavy_vs_default", "a_heavy_vs_default"
@@ -250,14 +250,14 @@ class TestAblateCupThreshold:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "cup_threshold.json"
         ablate_cup_threshold.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert isinstance(data, dict)
 
     def test_schema_keys(self, tmp_path, ablate_cup_threshold):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "cup_threshold.json"
         ablate_cup_threshold.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert "generated_at" in data
         assert "variants" in data
         assert "models" in data
@@ -267,14 +267,14 @@ class TestAblateCupThreshold:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "cup_threshold.json"
         ablate_cup_threshold.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert set(data["variants"]) == {"strict", "tolerant_1", "tolerant_2"}
 
     def test_pass_rates_in_range(self, tmp_path, ablate_cup_threshold):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "cup_threshold.json"
         ablate_cup_threshold.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for variant, model_rates in data["pass_rates"].items():
             for model, rate in model_rates.items():
                 assert 0.0 <= rate <= 1.0, (
@@ -286,7 +286,7 @@ class TestAblateCupThreshold:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "cup_threshold.json"
         ablate_cup_threshold.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for model in data["models"]:
             strict = data["pass_rates"]["strict"][model]
             tol1 = data["pass_rates"]["tolerant_1"][model]
@@ -327,7 +327,7 @@ class TestAblateCupThreshold:
             "--runs", str(tmp_path / "custom_v02_dev"),
             "--output", str(out),
         ])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         # T1 has hard_fail=True so should NOT count as pass; only T2 passes
         # strict threshold=0.70: T2 (0.80) passes → 1/2 = 0.5
         assert data["pass_rates"]["strict"]["model_x"] == pytest.approx(0.5)
@@ -339,7 +339,7 @@ class TestAblateCupThreshold:
             "--output", str(out),
         ])
         assert ret == 0
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert data["models"] == []
         assert all(v == {} for v in data["pass_rates"].values())
 
@@ -361,14 +361,14 @@ class TestAblateDifficulty:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "difficulty.json"
         ablate_difficulty.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert isinstance(data, dict)
 
     def test_schema_keys(self, tmp_path, ablate_difficulty):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "difficulty.json"
         ablate_difficulty.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert "generated_at" in data
         assert "difficulties" in data
         assert "models" in data
@@ -379,14 +379,14 @@ class TestAblateDifficulty:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "difficulty.json"
         ablate_difficulty.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert data["difficulties"] == ["easy", "medium", "hard"]
 
     def test_mean_scores_in_range(self, tmp_path, ablate_difficulty):
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "difficulty.json"
         ablate_difficulty.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for diff, model_scores in data["mean_scores"].items():
             for model, score in model_scores.items():
                 if score is not None:
@@ -399,7 +399,7 @@ class TestAblateDifficulty:
         runs_dir = _write_synthetic_runs(tmp_path)
         out = tmp_path / "difficulty.json"
         ablate_difficulty.main(["--runs", str(runs_dir), "--output", str(out)])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         for diff in data["difficulties"]:
             for model in data["models"]:
                 mean = data["mean_scores"][diff].get(model)
@@ -440,7 +440,7 @@ class TestAblateDifficulty:
             "--runs", str(tmp_path / "diff_v02_dev"),
             "--output", str(out),
         ])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         # hard stratum should be null
         assert data["mean_scores"]["hard"]["model_easy_only"] is None
         assert data["ci_95"]["hard"]["model_easy_only"] == [None, None]
@@ -468,7 +468,7 @@ class TestAblateDifficulty:
             "--runs", str(tmp_path / "tier_v02_dev"),
             "--output", str(out),
         ])
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         # Should appear in "hard" stratum
         assert data["mean_scores"]["hard"]["model_tier"] == pytest.approx(0.7, abs=1e-4)
 
@@ -479,7 +479,7 @@ class TestAblateDifficulty:
             "--output", str(out),
         ])
         assert ret == 0
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         assert data["models"] == []
         assert all(v == {} for v in data["mean_scores"].values())
         assert all(v == {} for v in data["ci_95"].values())
@@ -512,6 +512,6 @@ class TestAblateDifficulty:
             "--output", str(out),
         ])
         assert ret == 0
-        data = json.loads(out.read_text())
+        data = json.loads(out.read_text(encoding="utf-8"))
         # Should have processed the 2 valid records (mean of 0.5 and 0.8)
         assert data["mean_scores"]["easy"]["model_m"] == pytest.approx(0.65, abs=1e-4)

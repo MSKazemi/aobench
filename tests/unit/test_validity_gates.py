@@ -33,7 +33,7 @@ def test_v0_pass_when_all_envs_pass(tmp_path: Path) -> None:
         {"env_id": "env_03", "passed": True},
     ]
     idx_file = tmp_path / "index.json"
-    idx_file.write_text(json.dumps(index))
+    idx_file.write_text(json.dumps(index), encoding="utf-8")
 
     result = cvg.gate_v0(idx_file)
     assert result["passed"] is True
@@ -48,7 +48,7 @@ def test_v0_fail_when_any_env_fails(tmp_path: Path) -> None:
         {"env_id": "env_02", "passed": False},
     ]
     idx_file = tmp_path / "index.json"
-    idx_file.write_text(json.dumps(index))
+    idx_file.write_text(json.dumps(index), encoding="utf-8")
 
     result = cvg.gate_v0(idx_file)
     assert result["passed"] is False
@@ -64,7 +64,7 @@ def test_v0_fail_multiple_envs(tmp_path: Path) -> None:
         {"env_id": "env_03", "passed": False},
     ]
     idx_file = tmp_path / "index.json"
-    idx_file.write_text(json.dumps(index))
+    idx_file.write_text(json.dumps(index), encoding="utf-8")
 
     result = cvg.gate_v0(idx_file)
     assert result["passed"] is False
@@ -75,7 +75,7 @@ def test_v0_fail_multiple_envs(tmp_path: Path) -> None:
 def test_v0_graceful_on_malformed_json(tmp_path: Path) -> None:
     """V0 returns warning_only=True and passed=False when index JSON is malformed."""
     idx_file = tmp_path / "index.json"
-    idx_file.write_text("this is not json")
+    idx_file.write_text("this is not json", encoding="utf-8")
 
     result = cvg.gate_v0(idx_file)
     assert result["warning_only"] is True
@@ -88,7 +88,7 @@ def test_v0_not_blocking_in_main_exit_code(tmp_path: Path) -> None:
     # Write a fidelity index with a failed env
     index = [{"env_id": "env_01", "passed": False}]
     idx_file = tmp_path / "index.json"
-    idx_file.write_text(json.dumps(index))
+    idx_file.write_text(json.dumps(index), encoding="utf-8")
 
     # Run main with no run dirs (models=0 → V1-V5 trivially pass or warn, V6 warns)
     # We only care that the exit code is 0 when V0 is the only failure.

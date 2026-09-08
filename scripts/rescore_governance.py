@@ -68,7 +68,7 @@ def _rescore_run(run_dir: Path, benchmark_root: Path) -> dict:
     per_task: list[dict] = []
     for tp in trace_files:
         task_id = tp.stem.removesuffix("_trace")
-        trace = Trace.model_validate_json(tp.read_text())
+        trace = Trace.model_validate_json(tp.read_text(encoding="utf-8"))
         task = load_task(specs_dir / f"{task_id}.json")
         out = scorer.score(task, trace)
         per_task.append(
@@ -131,7 +131,7 @@ def main(
 
     out_path = Path(output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    out_path.write_text(json.dumps(report, indent=2))
+    out_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
     typer.echo(f"\nReport written -> {out_path}")
 
 

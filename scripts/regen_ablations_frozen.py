@@ -52,7 +52,7 @@ def load_latest(token, sub):
         if runs:
             out = []
             for f in sorted((runs[-1] / "results").glob("*.json")):
-                r = json.loads(f.read_text())
+                r = json.loads(f.read_text(encoding="utf-8"))
                 if r.get("task_id") not in EXCLUDE:
                     out.append(r)
             return out
@@ -61,7 +61,7 @@ def load_latest(token, sub):
 # difficulty map from specs (dev split only for stratification denominators)
 diffmap = {}
 for f in SPECS.glob("*.json"):
-    s = json.loads(f.read_text())
+    s = json.loads(f.read_text(encoding="utf-8"))
     diffmap[s.get("task_id")] = s.get("difficulty") or {1:"easy",2:"medium",3:"hard"}.get(s.get("difficulty_tier"))
 
 def weighted(rec, w):
@@ -119,7 +119,7 @@ for v, thr in THRESHOLDS.items():
         assert passes == int(passes), tok
         pass_rates[v][tok] = round(passes/len(recs), 4)
 cup = {"generated_at": now, "variants": list(THRESHOLDS), "models": tokens, "pass_rates": pass_rates}
-(OUT/"cup_threshold.json").write_text(json.dumps(cup, indent=2))
+(OUT/"cup_threshold.json").write_text(json.dumps(cup, indent=2), encoding="utf-8")
 
 # ---- E5 difficulty ----
 tiers = ["easy","medium","hard"]
@@ -140,7 +140,7 @@ for tok in tokens:
             mean_scores[d][tok] = round(st.mean(by[d]), 4)
             ci_95[d][tok] = list(bootstrap_ci(by[d]))
 diff = {"generated_at": now, "difficulties": tiers, "models": tokens, "mean_scores": mean_scores, "ci_95": ci_95}
-(OUT/"difficulty.json").write_text(json.dumps(diff, indent=2))
+(OUT/"difficulty.json").write_text(json.dumps(diff, indent=2), encoding="utf-8")
 
 # ---- E3 clear_weights ----
 scores = {v: {} for v in WEIGHT_VARIANTS}
@@ -154,7 +154,7 @@ for v in ["equal","e_heavy","a_heavy"]:
     y = [scores["default"][t] for t in tokens]
     srho[f"{v}_vs_default"] = spearman(x, y)
 cw = {"generated_at": now, "variants": list(WEIGHT_VARIANTS), "models": tokens, "scores": scores, "spearman_rho": srho}
-(OUT/"clear_weights.json").write_text(json.dumps(cw, indent=2))
+(OUT/"clear_weights.json").write_text(json.dumps(cw, indent=2), encoding="utf-8")
 
 # ---- assertions vs Table 7 (headline aggregate) ----
 print("=== regenerated. consistency check: difficulty-tier weighted mean vs headline aggregate ===")

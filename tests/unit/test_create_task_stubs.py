@@ -20,7 +20,7 @@ def test_stub_json_generic(tmp_path: Path) -> None:
     p = tmp_path / "foo.json"
     cts.create_stub(p)
     assert p.exists()
-    data = json.loads(p.read_text())
+    data = json.loads(p.read_text(encoding="utf-8"))
     assert data["__stub__"] is True
 
 
@@ -28,7 +28,7 @@ def test_stub_slurm_state(tmp_path: Path) -> None:
     p = tmp_path / "slurm" / "slurm_state.json"
     cts.create_stub(p)
     assert p.exists()
-    data = json.loads(p.read_text())
+    data = json.loads(p.read_text(encoding="utf-8"))
     assert "partitions" in data
     assert isinstance(data["partitions"], list)
 
@@ -37,7 +37,7 @@ def test_stub_job_details(tmp_path: Path) -> None:
     p = tmp_path / "slurm" / "job_details.json"
     cts.create_stub(p)
     assert p.exists()
-    data = json.loads(p.read_text())
+    data = json.loads(p.read_text(encoding="utf-8"))
     assert "jobs" in data
     assert len(data["jobs"]) >= 1
     assert "job_id" in data["jobs"][0]
@@ -75,7 +75,7 @@ def test_stub_csv(tmp_path: Path) -> None:
     p = tmp_path / "power" / "node_power_gpu_24h.csv"
     cts.create_stub(p)
     assert p.exists()
-    content = p.read_text()
+    content = p.read_text(encoding="utf-8")
     assert "timestamp" in content
 
 
@@ -83,14 +83,14 @@ def test_stub_text(tmp_path: Path) -> None:
     p = tmp_path / "slurm" / "sacct_12345.txt"
     cts.create_stub(p)
     assert p.exists()
-    assert p.read_text().strip() != ""
+    assert p.read_text(encoding="utf-8").strip() != ""
 
 
 def test_stub_markdown(tmp_path: Path) -> None:
     p = tmp_path / "docs" / "aiops_thresholds.md"
     cts.create_stub(p)
     assert p.exists()
-    content = p.read_text()
+    content = p.read_text(encoding="utf-8")
     assert content.startswith("#")
 
 
@@ -118,7 +118,7 @@ def _write_task(task_dir: Path, task_id: str, env_id: str, refs: list[str]) -> N
         "allowed_tools": ["slurm"],
         "gold_evidence_refs": refs,
     }
-    (task_dir / f"{task_id}.json").write_text(json.dumps(spec))
+    (task_dir / f"{task_id}.json").write_text(json.dumps(spec), encoding="utf-8")
 
 
 def test_run_creates_missing_stubs(tmp_path: Path) -> None:
@@ -145,10 +145,10 @@ def test_run_skips_existing_files(tmp_path: Path) -> None:
     env_dir = tmp_path / "environments"
     (env_dir / "env_t2" / "slurm").mkdir(parents=True)
     existing = env_dir / "env_t2" / "slurm" / "job_details.json"
-    existing.write_text('{"real": true}')
+    existing.write_text('{"real": true}', encoding="utf-8")
 
     _write_task(task_dir, "TEST_002", "env_t2", ["slurm/job_details.json"])
 
     cts.run(task_dir, env_dir, dry_run=False)
     # File should remain unchanged
-    assert json.loads(existing.read_text())["real"] is True
+    assert json.loads(existing.read_text(encoding="utf-8"))["real"] is True

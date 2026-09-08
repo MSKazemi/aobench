@@ -25,7 +25,7 @@ def scan_compute_files(runs_dir: pathlib.Path) -> tuple[float, int]:
 
     for compute_file in runs_dir.glob("*/COMPUTE.json"):
         try:
-            with open(compute_file) as f:
+            with open(compute_file, encoding="utf-8") as f:
                 data = json.load(f)
             value = data.get("total_usd", 0.0)
             total += float(value)

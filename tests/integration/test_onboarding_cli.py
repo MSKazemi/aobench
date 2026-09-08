@@ -201,7 +201,7 @@ def test_list_coverage_counts_tasks_with_an_unknown_qcat_or_role(
     ]:
         (spec_dir / f"{task_id}.json").write_text(
             json.dumps({"task_id": task_id, "qcat": qcat, "role": role})
-        )
+        , encoding="utf-8")
 
     monkeypatch.setenv("AOBENCH_BENCHMARK_ROOT", str(tmp_path))
     payload = json.loads(runner.invoke(app, ["list", "coverage", "--json"]).output)

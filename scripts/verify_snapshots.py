@@ -22,7 +22,7 @@ def main() -> int:
         print(f"ERROR: manifest not found: {MANIFEST_PATH}", file=sys.stderr)
         return 1
 
-    with open(MANIFEST_PATH) as f:
+    with open(MANIFEST_PATH, encoding="utf-8") as f:
         manifest = json.load(f)
 
     environments: dict[str, dict[str, str]] = manifest.get("environments", {})

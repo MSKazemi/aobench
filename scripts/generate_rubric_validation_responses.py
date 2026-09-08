@@ -1180,13 +1180,13 @@ all_responses = JOB_RESPONSES + ENERGY_RESPONSES + RBAC_RESPONSES
 def write_responses() -> None:
     for resp in all_responses:
         path = OUT_DIR / f"{resp['response_id']}.json"
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             json.dump(resp, f, indent=2)
         print(f"  wrote {path.name}")
 
     # README
     readme_path = OUT_DIR / "README.md"
-    with open(readme_path, "w") as f:
+    with open(readme_path, "w", encoding="utf-8") as f:
         f.write("# Rubric Validation Responses\n\n")
         f.write("50 synthetic HPC response files for rubric judge validation.\n\n")
         f.write("## File naming\n\n")

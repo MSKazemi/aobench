@@ -57,7 +57,7 @@ def load_response(responses_dir: Path, response_id: str) -> dict:
     path = responses_dir / f"{response_id}.json"
     if not path.exists():
         sys.exit(f"Response file not found: {path}")
-    with open(path) as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -145,7 +145,7 @@ def main(
     # Write CSV
     out_path = Path(output_path) if output_path else DEFAULT_OUT
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    with open(out_path, "w", newline="") as f:
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=["response_id", "rubric_id", "quality_tier", "mean_score", "std_score", "runs"],
@@ -155,7 +155,7 @@ def main(
             writer.writerow({k: r[k] for k in writer.fieldnames})
 
     # Append summary row
-    with open(out_path, "a", newline="") as f:
+    with open(out_path, "a", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow([])
         writer.writerow(["SUMMARY", "", "", mean_std, max_std, n_runs])

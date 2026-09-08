@@ -49,7 +49,7 @@ QCAT_DESCRIPTIONS = {
 
 def _load_tasks() -> list[dict[str, Any]]:
     spec_dir = ROOT / "benchmark" / "tasks" / "specs"
-    return [json.loads(p.read_text()) for p in sorted(spec_dir.glob("*.json"))]
+    return [json.loads(p.read_text(encoding="utf-8")) for p in sorted(spec_dir.glob("*.json"))]
 
 
 def _load_envs() -> list[dict[str, Any]]:
@@ -59,7 +59,7 @@ def _load_envs() -> list[dict[str, Any]]:
         meta: dict[str, Any] = {"environment_id": path.name}
         meta_path = path / "metadata.yaml"
         if meta_path.is_file():
-            loaded = yaml.safe_load(meta_path.read_text()) or {}
+            loaded = yaml.safe_load(meta_path.read_text(encoding="utf-8")) or {}
             if isinstance(loaded, dict):
                 meta.update(loaded)
         envs.append(meta)
@@ -274,7 +274,7 @@ def main() -> int:
 
     stale = []
     for path, content in outputs.items():
-        if not path.exists() or path.read_text() != content:
+        if not path.exists() or path.read_text(encoding="utf-8") != content:
             stale.append(path)
 
     if args.check:
@@ -289,7 +289,7 @@ def main() -> int:
 
     for path, content in outputs.items():
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content)
+        path.write_text(content, encoding="utf-8")
         print(f"wrote {path.relative_to(ROOT)}")
     return 0
 

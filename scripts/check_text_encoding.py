@@ -29,7 +29,11 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-SRC = ROOT / "src" / "aobench"
+
+#: Every tree that ships or runs. ``tests/`` and ``scripts/`` are included
+#: deliberately: a contributor on Windows who cannot run the test suite is as
+#: blocked as one whose benchmark run dies, and that is the case that was reported.
+SCANNED = ("src/aobench", "tests", "scripts")
 
 #: Calls that open a file and therefore take an ``encoding`` in text mode.
 _OPENERS = {"open", "read_text", "write_text"}
@@ -65,7 +69,16 @@ def _call_name(call: ast.Call) -> str | None:
     return None
 
 
+def _rel(path: Path) -> str:
+    """Path relative to the repo root when possible, else as given."""
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
 def find_violations(root: Path) -> list[tuple[str, int, str]]:
+    """Return ``(relative_path, lineno, call_name)`` for each unencoded text open."""
     found: list[tuple[str, int, str]] = []
     for path in sorted(root.rglob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -79,14 +92,17 @@ def find_violations(root: Path) -> list[tuple[str, int, str]]:
                 continue
             if _is_binary_mode(node, name):
                 continue
-            found.append((str(path.relative_to(ROOT)), node.lineno, name))
+            found.append((_rel(path), node.lineno, name))
     return found
 
 
 def main() -> int:
-    violations = find_violations(SRC)
+    violations: list[tuple[str, int, str]] = []
+    for tree in SCANNED:
+        violations.extend(find_violations(ROOT / tree))
     if not violations:
-        print("check_text_encoding: OK — all text I/O declares an explicit encoding.")
+        scanned = ", ".join(SCANNED)
+        print(f"check_text_encoding: OK — all text I/O declares an explicit encoding ({scanned}).")
         return 0
 
     print(f"check_text_encoding: {len(violations)} call(s) open text without an encoding.\n")

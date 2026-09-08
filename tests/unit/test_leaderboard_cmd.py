@@ -71,10 +71,10 @@ def test_load_results_dir_groups_by_model(tmp_path: Path) -> None:
 def test_load_results_dir_skips_invalid_json(tmp_path: Path) -> None:
     model_dir = tmp_path / "model_x"
     model_dir.mkdir()
-    (model_dir / "bad.json").write_text("not json")
+    (model_dir / "bad.json").write_text("not json", encoding="utf-8")
     (model_dir / "TASK_001_result.json").write_text(
         _make_result("TASK_001", "model_x").model_dump_json()
-    )
+    , encoding="utf-8")
 
     result = load_results_dir(tmp_path)
     assert "model_x" in result
@@ -87,7 +87,7 @@ def test_load_results_dir_empty_dir(tmp_path: Path) -> None:
 
 
 def test_load_results_dir_skips_non_dirs(tmp_path: Path) -> None:
-    (tmp_path / "readme.txt").write_text("ignore me")
+    (tmp_path / "readme.txt").write_text("ignore me", encoding="utf-8")
     _write_results(tmp_path / "model_a", [_make_result("TASK_001", "model_a")])
     result = load_results_dir(tmp_path)
     assert "readme.txt" not in result
@@ -120,7 +120,7 @@ def test_write_heatmap_csv_has_required_columns(tmp_path: Path) -> None:
     }
     out = tmp_path / "heatmap.csv"
     write_heatmap_csv(model_results, out)
-    content = out.read_text()
+    content = out.read_text(encoding="utf-8")
     for col in ("task_id", "qcat", "role", "difficulty", "model", "n_runs", "n_passed",
                 "pass_at_1", "pass_at_8", "mean", "std"):
         assert col in content, f"Column '{col}' missing from heatmap CSV"
@@ -140,7 +140,7 @@ def test_write_heatmap_csv_pass_at_k_none_when_k_gt_n(tmp_path: Path) -> None:
     }
     out = tmp_path / "heatmap.csv"
     write_heatmap_csv(model_results, out, k_values=[1, 8])
-    content = out.read_text()
+    content = out.read_text(encoding="utf-8")
     lines = content.strip().splitlines()
     assert len(lines) == 2  # header + 1 data row
     data_row = lines[1]

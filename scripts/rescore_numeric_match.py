@@ -13,18 +13,18 @@ from aobench.scorers.outcome_scorer import _fuzzy_score, _numeric_match
 
 ROOT=Path(__file__).resolve().parents[1]
 SPECS=ROOT/"benchmark/tasks/specs"
-rs=json.loads((ROOT/"RUNSET_v0.2.json").read_text())
-profiles=yaml.safe_load((ROOT/"benchmark/configs/scoring_profiles.yaml").read_text())["profiles"]
+rs=json.loads((ROOT/"RUNSET_v0.2.json").read_text(encoding="utf-8"))
+profiles=yaml.safe_load((ROOT/"benchmark/configs/scoring_profiles.yaml").read_text(encoding="utf-8"))["profiles"]
 
 # dev task set (58)
 info=rs["dev"]["direct_qa"]
 resdir=ROOT/"data/runs"/info["dir"]/info["run_id"]/"results"
-tids=[t for t in (json.loads(f.read_text())["task_id"] for f in sorted(resdir.glob("*.json"))) if t!="AIOPS_USR_001"]
+tids=[t for t in (json.loads(f.read_text(encoding="utf-8"))["task_id"] for f in sorted(resdir.glob("*.json"))) if t!="AIOPS_USR_001"]
 
 # numeric_match tasks + golds
 nm={}
 for t in tids:
-    s=TaskSpec.model_validate(json.loads((SPECS/f"{t}.json").read_text()))
+    s=TaskSpec.model_validate(json.loads((SPECS/f"{t}.json").read_text(encoding="utf-8")))
     if s.eval_criteria and (s.eval_criteria.evaluation_mode or "").lower()=="numeric_match":
         nm[t]=s.eval_criteria.gold_answer.strip()
 print(f"numeric_match tasks: {list(nm)}")
@@ -49,7 +49,7 @@ for m in models:
     # map task->result file
     rmap={}
     for f in rdir.glob("*.json"):
-        r=json.loads(f.read_text())
+        r=json.loads(f.read_text(encoding="utf-8"))
         rmap[r["task_id"]]=r
     aggs_old=[]
     aggs_new=[]
@@ -65,7 +65,7 @@ for m in models:
                 break
             ans=""
             if tf:
-                tr=json.loads(tf.read_text())
+                tr=json.loads(tf.read_text(encoding="utf-8"))
                 ans=tr.get("final_answer") or ""
             new_out=corrected_outcome(ans, nm[t])
             prof=profiles[r["weight_profile_name"]]["weights"]

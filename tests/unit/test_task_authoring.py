@@ -39,7 +39,7 @@ class TestOracleCheck:
 
     def _write_task(self, tmp_path: pathlib.Path, data: dict) -> pathlib.Path:
         task_file = tmp_path / f"{data['task_id']}.json"
-        task_file.write_text(json.dumps(data))
+        task_file.write_text(json.dumps(data), encoding="utf-8")
         return task_file
 
     def test_missing_env_dir_fails(self, tmp_path: pathlib.Path):
@@ -133,7 +133,7 @@ class TestOracleCheck:
         env_dir = tmp_path / "environments"
         env_test = env_dir / "env_test"
         (env_test / "slurm").mkdir(parents=True)
-        (env_test / "slurm" / "job_details.json").write_text("{}")
+        (env_test / "slurm" / "job_details.json").write_text("{}", encoding="utf-8")
 
         task_data = {
             "task_id": "TEST_006",
@@ -264,7 +264,7 @@ class TestIndependenceCheck:
             "query_text": "Simple job lookup",
             "eval_criteria": {"gold_answer": "Running"},
             "allowed_tools": ["slurm"],
-        }))
+        }), encoding="utf-8")
         (specs_dir / "TASK_B.json").write_text(json.dumps({
             "task_id": "TASK_B",
             "difficulty": "hard",
@@ -272,7 +272,7 @@ class TestIndependenceCheck:
             "query_text": "x" * 400,
             "eval_criteria": {"gold_answer": "y" * 900},
             "allowed_tools": ["docs"],
-        }))
+        }), encoding="utf-8")
 
         rc = self.ic.main(["--task-dir", str(specs_dir)])
         assert rc == 0
@@ -290,8 +290,8 @@ class TestIndependenceCheck:
             "allowed_tools": ["slurm"],
         }
 
-        (specs_dir / "TASK_X.json").write_text(json.dumps({**same_task_data, "task_id": "TASK_X"}))
-        (specs_dir / "TASK_Y.json").write_text(json.dumps({**same_task_data, "task_id": "TASK_Y"}))
+        (specs_dir / "TASK_X.json").write_text(json.dumps({**same_task_data, "task_id": "TASK_X"}), encoding="utf-8")
+        (specs_dir / "TASK_Y.json").write_text(json.dumps({**same_task_data, "task_id": "TASK_Y"}), encoding="utf-8")
 
         rc = self.ic.main(["--task-dir", str(specs_dir), "--threshold", "0.95"])
         assert rc == 1

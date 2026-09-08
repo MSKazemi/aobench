@@ -14,7 +14,7 @@ from aobench.environment.replay_determinism import (
 
 def _write_csv(path: Path, timestamps: list[float]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="") as f:
+    with path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["timestamp", "value"])
         for ts in timestamps:
@@ -64,7 +64,7 @@ def test_mismatched_hash_fails():
         env_dir = Path(tmp)
         slurm_dir = env_dir / "slurm"
         slurm_dir.mkdir()
-        (slurm_dir / "slurm_state.json").write_text('{"cluster":"modified"}')
+        (slurm_dir / "slurm_state.json").write_text('{"cluster":"modified"}', encoding="utf-8")
 
         fixture_hashes = {"slurm/slurm_state.json": "deadbeef" * 8}
 

@@ -37,7 +37,7 @@ def test_dimension_scores_accepts_workflow_value():
 # ---------------------------------------------------------------------------
 
 def _load_profiles() -> dict:
-    with SCORING_PROFILES.open() as f:
+    with SCORING_PROFILES.open(encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

@@ -152,7 +152,7 @@ def _make_run_dir(tmp_path, run_id, tasks):
             hard_fail=t.get("hard_fail", False),
             run_id=run_id,
         )
-        (results_dir / f"{t['task_id']}_result.json").write_text(json.dumps(data))
+        (results_dir / f"{t['task_id']}_result.json").write_text(json.dumps(data), encoding="utf-8")
     return run_dir
 
 
@@ -178,7 +178,7 @@ def test_output_json_schema(tmp_path):
     result = runner.invoke(app, ["compare", "runs", str(run_dir_a), str(run_dir_b), "--output", str(out)])
     assert result.exit_code == 0, result.output
 
-    data = json.loads(out.read_text())
+    data = json.loads(out.read_text(encoding="utf-8"))
     assert "summary" in data
     assert "new_hard_fails" in data["summary"]
     assert data["tasks"][0]["hard_fail_changed"] is not None or data["tasks"][0]["hard_fail_changed"] is None
@@ -204,6 +204,6 @@ def test_label_override_in_json(tmp_path):
     ])
     assert result.exit_code == 0, result.output
 
-    data = json.loads(out.read_text())
+    data = json.loads(out.read_text(encoding="utf-8"))
     assert data["run_a"] == "GPT-4o"
     assert data["run_b"] == "Claude"

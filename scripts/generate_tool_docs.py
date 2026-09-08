@@ -40,7 +40,7 @@ def _detect_role(env_dir: Path) -> str | None:
         return None
     try:
         import yaml
-        with metadata.open() as fh:
+        with metadata.open(encoding="utf-8") as fh:
             meta = yaml.safe_load(fh)
     except (OSError, yaml.YAMLError):
         return None

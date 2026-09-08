@@ -45,10 +45,10 @@ def test_alpha0_run(tmp_path):
 
     # Trace file is valid JSON
     import json
-    trace_data = json.loads(trace_file.read_text())
+    trace_data = json.loads(trace_file.read_text(encoding="utf-8"))
     assert trace_data["task_id"] == "JOB_USR_001"
     assert "steps" in trace_data
 
-    result_data = json.loads(result_file.read_text())
+    result_data = json.loads(result_file.read_text(encoding="utf-8"))
     assert result_data["task_id"] == "JOB_USR_001"
     assert "dimension_scores" in result_data

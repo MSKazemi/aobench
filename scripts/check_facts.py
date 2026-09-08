@@ -35,7 +35,7 @@ def derive_facts() -> dict[str, object]:
     qcats: set[str] = set()
     roles: set[str] = set()
     for spec_path in specs:
-        spec = json.loads(spec_path.read_text())
+        spec = json.loads(spec_path.read_text(encoding="utf-8"))
         splits[str(spec.get("benchmark_split", "unspecified"))] += 1
         if qcat := spec.get("qcat"):
             qcats.add(str(qcat))
@@ -81,7 +81,7 @@ def _scoring_dimensions() -> int:
     exists to prevent — derive it from the YAML like every other fact here.
     """
     profiles_path = ROOT / "benchmark" / "configs" / "scoring_profiles.yaml"
-    text = profiles_path.read_text()
+    text = profiles_path.read_text(encoding="utf-8")
     # Match the default profile's `weights:` block: indented `name: number` lines.
     block = re.search(
         r"^  default_hpc_v01:.*?^    weights:\n((?:      \w+:\s*[0-9.]+\n)+)",
@@ -95,13 +95,13 @@ def _scoring_dimensions() -> int:
 
 
 def _project_version() -> str:
-    text = (ROOT / "pyproject.toml").read_text()
+    text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
     return match.group(1) if match else "unknown"
 
 
 def _python_requires() -> str:
-    text = (ROOT / "pyproject.toml").read_text()
+    text = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     match = re.search(r'^requires-python\s*=\s*"([^"]+)"', text, re.MULTILINE)
     return match.group(1) if match else "unknown"
 
@@ -154,7 +154,7 @@ def _verify_weight_tables() -> list[str]:
     if not config.is_file():
         return [f"{config.relative_to(ROOT)}: missing — cannot verify weight tables"]
 
-    profiles = (yaml.safe_load(config.read_text()) or {}).get("profiles", {})
+    profiles = (yaml.safe_load(config.read_text(encoding="utf-8")) or {}).get("profiles", {})
     failures: list[str] = []
 
     for name, profile in profiles.items():
@@ -175,7 +175,7 @@ def _verify_weight_tables() -> list[str]:
         path = ROOT / rel
         if not path.exists():
             failures.append(f"{rel}: missing file")
-        elif expected_row not in path.read_text():
+        elif expected_row not in path.read_text(encoding="utf-8"):
             failures.append(
                 f"{rel}: no default_hpc_v01 weight row matching the YAML. "
                 f"Expected a table row containing: {expected_row}"
@@ -251,13 +251,13 @@ def verify(facts: dict[str, object]) -> list[str]:
         if not path.exists():
             failures.append(f"{rel}: missing file")
             continue
-        if not re.search(pattern, path.read_text()):
+        if not re.search(pattern, path.read_text(encoding="utf-8")):
             failures.append(f"{rel}: {explanation} (no match for /{pattern}/)")
 
     # The package version must not drift from the project version. Deriving it from
     # installed distribution metadata makes drift structurally impossible, so that
     # form is accepted without comparing literals.
-    init_text = (ROOT / "src" / "aobench" / "__init__.py").read_text()
+    init_text = (ROOT / "src" / "aobench" / "__init__.py").read_text(encoding="utf-8")
     if "importlib.metadata" not in init_text:
         match = re.search(r'__version__\s*=\s*"([^"]+)"', init_text)
         if not match:
@@ -273,7 +273,7 @@ def verify(facts: dict[str, object]) -> list[str]:
     failures.extend(check_dimension_counts(int(facts["scoring_dimensions"])))
 
     if FACTS_PATH.exists():
-        stored = json.loads(FACTS_PATH.read_text())
+        stored = json.loads(FACTS_PATH.read_text(encoding="utf-8"))
         drifted = [k for k, v in facts.items() if k != "_comment" and stored.get(k) != v]
         if drifted:
             failures.append(
@@ -295,7 +295,7 @@ def main() -> int:
     facts = derive_facts()
 
     if args.write:
-        FACTS_PATH.write_text(json.dumps(facts, indent=2) + "\n")
+        FACTS_PATH.write_text(json.dumps(facts, indent=2) + "\n", encoding="utf-8")
         print(f"wrote {FACTS_PATH.relative_to(ROOT)}")
 
     failures = verify(facts)

@@ -57,7 +57,7 @@ def test_ci_gate_example_passes_and_fails(tmp_path: Path) -> None:
     results_dir.mkdir(parents=True)
     (results_dir / "TASK_001_result.json").write_text(
         '{"task_id": "TASK_001", "aggregate_score": 0.75, "hard_fail": false}'
-    )
+    , encoding="utf-8")
 
     gate = str(EXAMPLES_DIR / "04_ci_gate.py")
 
@@ -81,7 +81,7 @@ def test_ci_gate_example_fails_on_hard_fail(tmp_path: Path) -> None:
     results_dir.mkdir(parents=True)
     (results_dir / "TASK_001_result.json").write_text(
         '{"task_id": "TASK_001", "aggregate_score": 0.99, "hard_fail": true}'
-    )
+    , encoding="utf-8")
 
     result = _run(
         [str(EXAMPLES_DIR / "04_ci_gate.py"), str(run_dir), "--min-score", "0.10"],
@@ -93,7 +93,7 @@ def test_ci_gate_example_fails_on_hard_fail(tmp_path: Path) -> None:
 
 def test_examples_readme_lists_every_script() -> None:
     """The examples README must mention every script in the directory."""
-    readme = (EXAMPLES_DIR / "README.md").read_text()
+    readme = (EXAMPLES_DIR / "README.md").read_text(encoding="utf-8")
     scripts = sorted(p.name for p in EXAMPLES_DIR.glob("*.py"))
     missing = [name for name in scripts if name not in readme]
     assert not missing, f"examples/README.md does not mention: {missing}"

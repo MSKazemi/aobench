@@ -11,20 +11,20 @@ from aobench.scorers.outcome_scorer import OutcomeScorer
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = ROOT / "benchmark/tasks/specs"
-rs = json.loads((ROOT/"RUNSET_v0.2.json").read_text())
+rs = json.loads((ROOT/"RUNSET_v0.2.json").read_text(encoding="utf-8"))
 info = rs["dev"]["direct_qa"]
 resdir = ROOT/"data/runs"/info["dir"]/info["run_id"]/"results"
 
 # 58 scored dev task ids (exclude AIOPS_USR_001)
 task_ids = []
 for f in sorted(resdir.glob("*.json")):
-    tid = json.loads(f.read_text())["task_id"]
+    tid = json.loads(f.read_text(encoding="utf-8"))["task_id"]
     if tid != "AIOPS_USR_001":
         task_ids.append(tid)
 print(f"dev tasks: {len(task_ids)}")
 
 scorer = OutcomeScorer()
-specs = {t: TaskSpec.model_validate(json.loads((SPECS/f"{t}.json").read_text())) for t in task_ids}
+specs = {t: TaskSpec.model_validate(json.loads((SPECS/f"{t}.json").read_text(encoding="utf-8"))) for t in task_ids}
 
 def mk_trace(task, answer):
     return Trace(trace_id="t", run_id="r", task_id=task.task_id, role=task.role,

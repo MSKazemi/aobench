@@ -74,7 +74,7 @@ def main(argv: list[str] | None = None) -> int:
     # Load all specs
     specs: list[tuple[str, list[float]]] = []
     for f in sorted(task_dir.glob("*.json")):
-        with open(f) as fh:
+        with open(f, encoding="utf-8") as fh:
             d = json.load(fh)
         task_id = d.get("task_id", f.stem)
         vec = _build_vector(d)

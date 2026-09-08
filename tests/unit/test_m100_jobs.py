@@ -76,5 +76,5 @@ def test_committed_pool_records_are_valid_slurmjobs():
 
 def test_pool_has_real_failure_states():
     """The real job table carries genuine failure states (incl. OUT_OF_MEMORY)."""
-    pool = json.loads(_POOL_JSON.read_text())
+    pool = json.loads(_POOL_JSON.read_text(encoding="utf-8"))
     assert "OUT_OF_MEMORY" in pool["state_counts"]

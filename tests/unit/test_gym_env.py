@@ -65,7 +65,7 @@ def _make_minimal_task(tmp_dir: Path, task_id: str = "TEST_GYM_001",
     if expected_tool_calls is not None:
         spec["expected_tool_calls"] = expected_tool_calls
     task_path = tmp_dir / f"{task_id}.json"
-    task_path.write_text(json.dumps(spec))
+    task_path.write_text(json.dumps(spec), encoding="utf-8")
     return tmp_dir
 
 

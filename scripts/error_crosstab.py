@@ -80,7 +80,7 @@ print("Tier: `fail` = pass^8 of 0.0 — `pass` = pass^8 of 1.0\n")
 
 rob_rows = []
 for task_id in TASK_ORDER:
-    d    = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text())
+    d    = json.loads((ROB_DIR / f"gpt-4o_{task_id}.json").read_text(encoding="utf-8"))
     p8   = d["pass_k"]["8"]
     tier = "pass" if p8 >= 1.0 else "fail"
     qcat, diff = TASK_META[task_id]
