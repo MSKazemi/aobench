@@ -52,6 +52,12 @@ jobs:
         # accepted sites live in silent_handlers_baseline.json.
         run: uv run python scripts/check_silent_handlers.py
 
+      - name: Text encoding
+        # Text I/O without encoding= uses cp1252 on Windows and raises
+        # UnicodeEncodeError on the first non-ASCII byte. Linux CI cannot see it,
+        # so this is gated statically rather than by running the suite.
+        run: uv run python scripts/check_text_encoding.py
+
       - name: Tests
         run: uv run pytest tests/ -q
 

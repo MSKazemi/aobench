@@ -22,7 +22,7 @@ class MockRBACTool(BaseTool):
         p = Path(self._env_root) / "policy" / "rbac_policy.yaml"
         if not p.exists():
             return {}
-        with p.open() as f:
+        with p.open(encoding="utf-8") as f:
             return yaml.safe_load(f) or {}
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:

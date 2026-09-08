@@ -80,7 +80,7 @@ class Cassette:
     @classmethod
     def load(cls, path: str | Path) -> "Cassette":
         p = Path(path)
-        entries = json.loads(p.read_text()) if p.exists() else {}
+        entries = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
         return cls(entries=entries, path=p)
 
     def save(self, path: Optional[str | Path] = None) -> Path:
@@ -88,7 +88,7 @@ class Cassette:
         if target is None:
             raise ValueError("no path provided to save cassette")
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(self._entries, sort_keys=True, indent=2, default=str))
+        target.write_text(json.dumps(self._entries, sort_keys=True, indent=2, default=str), encoding="utf-8")
         self._path = target
         return target
 

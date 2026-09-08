@@ -20,7 +20,7 @@ def load_environment(env_dir: str | Path) -> EnvironmentBundle:
     if not metadata_path.exists():
         raise FileNotFoundError(f"Missing metadata.yaml in {env_dir}")
 
-    with metadata_path.open() as f:
+    with metadata_path.open(encoding="utf-8") as f:
         raw = yaml.safe_load(f)
 
     metadata = EnvironmentMetadata.model_validate(raw)

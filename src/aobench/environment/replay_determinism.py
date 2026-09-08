@@ -43,7 +43,7 @@ def _parse_timestamps(csv_path: Path) -> list[float]:
     from datetime import datetime
 
     timestamps: list[float] = []
-    with csv_path.open(newline="") as f:
+    with csv_path.open(newline="", encoding="utf-8") as f:
         reader = csv_mod.DictReader(f)
         if reader.fieldnames is None or "timestamp" not in reader.fieldnames:
             return []

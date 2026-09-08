@@ -42,7 +42,7 @@ class AggregateScorer:
         return list(_SCORERS)
 
     def __init__(self, scoring_config_path: str | Path) -> None:
-        with Path(scoring_config_path).open() as f:
+        with Path(scoring_config_path).open(encoding="utf-8") as f:
             raw: dict[str, Any] = yaml.safe_load(f)
         profiles = {
             name: WeightProfile(name=name, **data)

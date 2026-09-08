@@ -2,6 +2,81 @@
 
 ## Unreleased
 
+### Fixed — text I/O now declares UTF-8, so runs no longer die on Windows
+
+- **43 call sites opened text files without an `encoding=`.** Python then falls back to
+  the platform preferred encoding: UTF-8 on Linux and macOS, **cp1252 on Windows**. A
+  benchmarking run reported in [#60](https://github.com/MSKazemi/aobench/issues/60) died
+  at task 6 of 67 with a `UnicodeEncodeError` when `TraceWriter` wrote model output
+  containing an emoji. Thanks to **@hari760** for the report and the correct diagnosis.
+- The read path was equally exposed and had simply not been hit yet: the corpus contains
+  em-dashes, so loading task specs, environment docs and RBAC policy would have failed
+  the same way on the same machine.
+- All 43 sites now pass `encoding="utf-8"`. A new clean-tree gate,
+  `scripts/check_text_encoding.py` (`make encoding-check`, wired into `make check` and
+  CI), fails on any text `open`/`read_text`/`write_text` that omits it — Linux CI cannot
+  otherwise see this class of defect. Binary mode is exempt.
+
+
+### Fixed — the run summary reported six of seven dimensions
+
+- **`workflow` was missing from every task row in `run_summary.json`**, and from the
+  OTel export and `aobench compare runs --show-dims`. It carries 0.10 weight in
+  `default_hpc_v01`, so the published breakdown could not be reconciled against the
+  aggregate it was supposed to explain. `compare runs --show-dims` was also rendering
+  `robustness` as a permanent `n/a`, because its delta list omitted that key too.
+- **`mean_dimension_scores` is new** in the run summary: the run-level mean for each of
+  the seven dimensions. The leaderboard form asks submitters for this breakdown and the
+  tooling did not emit it, which is what surfaced the bug — thanks again to **@hari760**.
+- The four hard-coded dimension lists are replaced by a single `DIMENSION_NAMES` derived
+  from `DimensionScores` itself, with `tests/unit/test_dimension_coverage.py` failing if
+  any consumer — or any scoring profile — drops a dimension again.
+
+
+### Fixed — the leaderboard docs told submitters to redirect a command that prints no JSON
+
+- **`aobench report json <run> > my_result.json` was documented as the way to produce a
+  submission file.** That command *writes* `<run>/run_summary.json` and prints a short
+  human summary to stdout, so following the documented step captured the summary text
+  rather than the JSON. Every command on the leaderboard page has been corrected and run
+  against a real run directory.
+- **The submission form asked for a single scoring profile.** The profile is set per task
+  by each spec's `aggregate_weight_profile` — 60 tasks use `alpha1_grounding` and 28 use
+  `default_hpc_v01` — so a full-split run has no single profile, and submitters were being
+  asked an unanswerable question. The form and the docs now say `corpus default` and
+  explain the split. Raised by **@hari760** in
+  [#60](https://github.com/MSKazemi/aobench/issues/60), who worked it out unaided.
+- Each task row now carries `weight_profile_name`, and the summary carries a
+  `weight_profiles` tally, so the weights behind a published row are recoverable from the
+  attached file alone.
+
+
+### Fixed — `aobench robustness task` no longer crashes on an unscored run
+
+- **A `None` `aggregate_score` raised `TypeError` mid-sweep**, discarding every run
+  completed up to that point. The comparison carried a `# type: ignore[operator]` and a
+  reference to the filed issue, so the crash was known and live. The format string on the
+  next line would have failed on `None` too, including on the `robustness all` path where
+  the comparison had already been guarded. Both sites now report `n/a` for an unscored
+  run and carry on. Reported by **@Barshana24** in
+  [#49](https://github.com/MSKazemi/aobench/issues/49).
+
+
+### Fixed — docs retrieval returned snippets that did not contain the match
+
+- **`MockDocsTool._retrieve` returned the first 500 characters of each matching
+  document**, regardless of where the match was. In `env_21` the entire compliance
+  section of `data_management_policy.md` sits past character 900 of a 1090-character
+  file, so queries for `patient`, `PII`, `tier4_sensitive` or `immediate account
+  suspension` matched the document and then returned a snippet containing none of them —
+  an agent could be scored on grounding against evidence the tool would never surface.
+  Found by **@userfypp** while writing a second `DOCS_USR` task for
+  [#26](https://github.com/MSKazemi/aobench/issues/26).
+- Snippets are now a window centred on the match, snapped to line boundaries, anchored on
+  the most selective query term so a stopword or a title word cannot pull the window away
+  from the subject. Scan order is unchanged, so retrieval stays deterministic.
+
+
 ### Changed — the leaderboard says when it skips an unreadable result file
 
 - **`load_results_dir` dropped unparseable result JSON silently.** Every skipped file

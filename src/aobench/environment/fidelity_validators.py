@@ -79,7 +79,7 @@ def _load_jobs(bundle_dir: Path) -> Optional[list[Any]]:
     if not slurm_path.exists():
         return None
     try:
-        data = json.loads(slurm_path.read_text())
+        data = json.loads(slurm_path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
         raise UnreadableBundleError(f"slurm_state.json is not readable JSON: {exc}") from exc
     if isinstance(data, dict):
@@ -553,7 +553,7 @@ def validate_f6_rbac(bundle_dir: Path) -> ValidatorResult:
 
     try:
         import yaml
-        policy = yaml.safe_load(rbac_path.read_text())
+        policy = yaml.safe_load(rbac_path.read_text(encoding="utf-8"))
     except Exception as e:
         return ValidatorResult(
             validator_id="F6",
@@ -633,7 +633,7 @@ def validate_f7_tool_catalog(bundle_dir: Path) -> ValidatorResult:
 
     try:
         import yaml
-        catalog = yaml.safe_load(catalog_path.read_text())
+        catalog = yaml.safe_load(catalog_path.read_text(encoding="utf-8"))
     except Exception as e:
         return ValidatorResult(
             validator_id="F7",

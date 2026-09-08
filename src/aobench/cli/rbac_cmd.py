@@ -41,7 +41,7 @@ def rbac_ingest(
 
     # Validate the policy YAML is parseable
     try:
-        with policy_path.open() as f:
+        with policy_path.open(encoding="utf-8") as f:
             policy_data = yaml.safe_load(f)
         if not isinstance(policy_data, dict):
             typer.echo("Error: RBAC policy must be a YAML mapping.", err=True)
@@ -82,7 +82,7 @@ def rbac_ingest(
 
     # Update metadata.yaml with new environment ID
     metadata_path = new_env_dir / "metadata.yaml"
-    with metadata_path.open() as f:
+    with metadata_path.open(encoding="utf-8") as f:
         metadata = yaml.safe_load(f)
 
     metadata["environment_id"] = new_env_id
@@ -97,7 +97,7 @@ def rbac_ingest(
         "Use AOBENCH_SKIP_FIDELITY=1 when running benchmark tasks against this bundle."
     )
 
-    with metadata_path.open("w") as f:
+    with metadata_path.open("w", encoding="utf-8") as f:
         yaml.dump(metadata, f, default_flow_style=False, allow_unicode=True)
 
     typer.echo(f"Metadata updated: environment_id = {new_env_id}")

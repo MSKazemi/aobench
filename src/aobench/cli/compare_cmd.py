@@ -7,9 +7,13 @@ from typing import Annotated
 
 import typer
 
+from aobench.schemas.result import DIMENSION_NAMES
+
 compare_app = typer.Typer(help="Compare two benchmark run directories.")
 
-_DIMS = ["outcome", "tool_use", "grounding", "governance", "efficiency", "aggregate_score"]
+#: Dimensions to diff, plus the headline score. Sourced from the schema so a new
+#: dimension shows up here automatically instead of rendering as a silent "n/a".
+_DIMS = [*DIMENSION_NAMES, "aggregate_score"]
 
 
 def filter_tasks(rows: list[dict[str, Any]], qcat: str | None, role: str | None) -> list[dict[str, Any]]:
@@ -165,7 +169,7 @@ def compare_runs(
 
     if as_json:
         if output:
-            Path(output).write_text(json.dumps(result, indent=2))
+            Path(output).write_text(json.dumps(result, indent=2), encoding="utf-8")
         typer.echo(json.dumps(result))
         return
 
@@ -201,7 +205,7 @@ def compare_runs(
 
     # --show-dims table
     if show_dims:
-        dim_cols = ["outcome", "tool_use", "grounding", "governance", "efficiency", "robustness"]
+        dim_cols = list(DIMENSION_NAMES)
         col_w = 12
         header = f"\n{'Per-dimension deltas (run_b − run_a):'}"
         typer.echo(header)
@@ -251,5 +255,5 @@ def compare_runs(
             typer.echo(row_str)
 
     if output:
-        Path(output).write_text(json.dumps(result, indent=2))
+        Path(output).write_text(json.dumps(result, indent=2), encoding="utf-8")
         typer.echo(f"\nDiff written: {output}")

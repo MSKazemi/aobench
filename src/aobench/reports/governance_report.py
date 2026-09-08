@@ -48,7 +48,7 @@ def _load_results(run_dir: Path) -> list[BenchmarkResult]:
         raise FileNotFoundError(f"No *_result.json files found in {results_dir}")
     results = []
     for f in files:
-        with f.open() as fh:
+        with f.open(encoding="utf-8") as fh:
             results.append(BenchmarkResult.model_validate(json.load(fh)))
     return results
 

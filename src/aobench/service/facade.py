@@ -14,7 +14,7 @@ import statistics
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-from aobench.schemas.result import BenchmarkResult
+from aobench.schemas.result import DIMENSION_NAMES, BenchmarkResult
 from aobench.schemas.trace import Trace
 from aobench.service.errors import (
     AdapterError,
@@ -261,7 +261,7 @@ class BenchmarkService:
         if results_dir.is_dir():
             for f in sorted(results_dir.glob("*_result.json")):
                 try:
-                    results.append(BenchmarkResult.model_validate_json(f.read_text()))
+                    results.append(BenchmarkResult.model_validate_json(f.read_text(encoding="utf-8")))
                 except Exception:  # noqa: BLE001 — skip unrelated artifacts
                     continue
         scores = [r.aggregate_score for r in results if r.aggregate_score is not None]
@@ -283,7 +283,7 @@ class BenchmarkService:
         if not candidates:
             raise RunNotFound(f"no trace for run {run_id}"
                               + (f" task {task_id}" if task_id else ""))
-        return Trace.model_validate_json(candidates[0].read_text())
+        return Trace.model_validate_json(candidates[0].read_text(encoding="utf-8"))
 
     def get_report(self, run_id: str, fmt: str = "json") -> ReportModel:
         d = self._run_dir(run_id)
@@ -368,7 +368,7 @@ class BenchmarkService:
             manifest = d / "manifest.txt"
             n_files = None
             if manifest.exists():
-                n_files = sum(1 for _ in manifest.read_text().splitlines() if _.strip())
+                n_files = sum(1 for _ in manifest.read_text(encoding="utf-8").splitlines() if _.strip())
             out.append(
                 EnvSummary(
                     env_id=d.name,
@@ -392,7 +392,7 @@ class BenchmarkService:
             ]
             return statistics.fmean(vals) if vals else None
 
-        dims = ["outcome", "tool_use", "grounding", "governance", "robustness", "efficiency"]
+        dims = list(DIMENSION_NAMES)
         per_dim: dict[str, Optional[float]] = {}
         for dim in dims:
             a, b = _dim_mean(ra, dim), _dim_mean(rb, dim)

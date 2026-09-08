@@ -23,7 +23,7 @@ class MockSlurmTool(BaseTool):
         p = Path(self._env_root) / rel_path
         if not p.exists():
             return {}
-        with p.open() as f:
+        with p.open(encoding="utf-8") as f:
             return json.load(f)
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:

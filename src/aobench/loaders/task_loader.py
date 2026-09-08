@@ -13,7 +13,7 @@ def load_task(path: str | Path) -> TaskSpec:
     path = Path(path)
     if not path.exists():
         raise FileNotFoundError(f"Task spec not found: {path}")
-    with path.open() as f:
+    with path.open(encoding="utf-8") as f:
         data = json.load(f)
     return TaskSpec.model_validate(data)
 

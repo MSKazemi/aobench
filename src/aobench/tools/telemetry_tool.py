@@ -149,7 +149,7 @@ class MockTelemetryTool(BaseTool):
         if not slurm_path.exists():
             return None
         try:
-            state = json.loads(slurm_path.read_text())
+            state = json.loads(slurm_path.read_text(encoding="utf-8"))
         except Exception:
             return None
 

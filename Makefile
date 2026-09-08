@@ -101,8 +101,12 @@ silent-handlers-check:  ## Fail if a NEW broad `except` swallows a failure silen
 silent-handlers-accept:  ## Record the current silent handlers as reviewed and accepted
 	$(PYTHON) scripts/check_silent_handlers.py --write
 
+.PHONY: encoding-check
+encoding-check:  ## Fail if any text I/O omits encoding= (cp1252 breaks on Windows)
+	$(PYTHON) scripts/check_text_encoding.py
+
 .PHONY: check
-check: lint typecheck-ratchet silent-handlers-check facts-check catalog-check test  ## Run lint + type ratchet + silent-handler ratchet + fact/catalog drift + tests
+check: lint typecheck-ratchet silent-handlers-check encoding-check facts-check catalog-check test  ## Run lint + type ratchet + silent-handler ratchet + encoding gate + fact/catalog drift + tests
 
 ##@ Documentation
 

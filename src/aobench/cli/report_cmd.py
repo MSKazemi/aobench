@@ -84,7 +84,7 @@ def report_json(
 
     import json
 
-    with out_path.open() as fh:
+    with out_path.open(encoding="utf-8") as fh:
         summary = json.load(fh)
 
     if as_json:

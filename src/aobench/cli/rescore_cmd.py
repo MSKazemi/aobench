@@ -81,11 +81,11 @@ def rescore(
     for trace_path in trace_files:
         task_id = trace_path.stem.removesuffix("_trace")
         try:
-            trace = Trace.model_validate_json(trace_path.read_text())
+            trace = Trace.model_validate_json(trace_path.read_text(encoding="utf-8"))
             task = load_task(specs_dir / f"{task_id}.json")
             result = scorer.score(task, trace, run_id=trace.run_id)
             out_file = results_dir / f"{task_id}_result.json"
-            out_file.write_text(result.model_dump_json(indent=2))
+            out_file.write_text(result.model_dump_json(indent=2), encoding="utf-8")
             n_ok += 1
         except Exception as exc:
             typer.echo(f"  ERROR {task_id}: {exc}", err=True)

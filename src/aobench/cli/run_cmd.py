@@ -237,7 +237,7 @@ def _check_fidelity_gate(env_id: str, fidelity_root: str = "data/fidelity") -> N
     try:
         import json
 
-        entries = json.loads(index_path.read_text())
+        entries = json.loads(index_path.read_text(encoding="utf-8"))
         for entry in entries:
             if entry.get("env_id") == env_id:
                 if not entry.get("passed", True):

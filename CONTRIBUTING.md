@@ -310,6 +310,25 @@ A handler that returns a *failed* result carrying the error — the pattern in t
 fidelity validators and the T1–T10 checks — is not flagged, because it surfaces the
 failure to whoever reads the report.
 
+### Text encoding
+
+`make check` fails if any text file is opened without an explicit `encoding=`:
+
+```bash
+make encoding-check            # part of `make check`
+```
+
+Python text mode falls back to the platform's preferred encoding — UTF-8 on Linux and
+macOS, **cp1252 on Windows**. A missing `encoding=` is therefore invisible in CI and
+raises `UnicodeEncodeError` on a contributor's Windows machine at the first non-ASCII
+byte. That is not hypothetical: a benchmarking run died at task 6 of 67 because
+`TraceWriter` wrote model output containing an emoji through an encoding-less
+`write_text`, and the read path was equally exposed — the corpus itself contains
+em-dashes, so loading task specs and environment docs would have failed the same way.
+
+Always write `encoding="utf-8"`. Binary mode (`"rb"`/`"wb"`) is exempt, since encoding
+does not apply to it.
+
 ## Editing the Documentation Site
 
 The site under `docs/` is MkDocs Material, published to

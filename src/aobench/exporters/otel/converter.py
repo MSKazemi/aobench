@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from typing import Any, Optional
 
 from aobench.exporters.otel import semconv as sc
-from aobench.schemas.result import BenchmarkResult
+from aobench.schemas.result import DIMENSION_NAMES, BenchmarkResult
 from aobench.schemas.trace import Trace
 
 
@@ -41,7 +41,8 @@ def _provider_from_adapter(adapter_name: str) -> str:
     return a or "unknown"
 
 
-_DIMENSIONS = ("outcome", "tool_use", "grounding", "governance", "robustness", "efficiency")
+#: Every scored dimension, from the schema — see aobench.schemas.result.DIMENSION_NAMES.
+_DIMENSIONS = DIMENSION_NAMES
 
 
 def trace_to_spans(

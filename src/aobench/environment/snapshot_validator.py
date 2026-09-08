@@ -25,7 +25,7 @@ def validate_bundle(bundle_root: str | Path) -> list[str]:
     slurm_path = root / "slurm" / "slurm_state.json"
     if slurm_path.exists():
         try:
-            SlurmState.model_validate(json.loads(slurm_path.read_text()))
+            SlurmState.model_validate(json.loads(slurm_path.read_text(encoding="utf-8")))
         except Exception as e:
             errors.append(f"slurm/slurm_state.json: {e}")
 
@@ -33,7 +33,7 @@ def validate_bundle(bundle_root: str | Path) -> list[str]:
     inc_path = root / "incidents" / "incident_metadata.json"
     if inc_path.exists():
         try:
-            IncidentMetadata.model_validate(json.loads(inc_path.read_text()))
+            IncidentMetadata.model_validate(json.loads(inc_path.read_text(encoding="utf-8")))
         except Exception as e:
             errors.append(f"incidents/incident_metadata.json: {e}")
 
@@ -41,7 +41,7 @@ def validate_bundle(bundle_root: str | Path) -> list[str]:
     rbac_path = root / "policy" / "rbac_policy.yaml"
     if rbac_path.exists():
         try:
-            policy = yaml.safe_load(rbac_path.read_text())
+            policy = yaml.safe_load(rbac_path.read_text(encoding="utf-8"))
             if not isinstance(policy, dict):
                 errors.append("policy/rbac_policy.yaml: top-level must be a mapping")
             elif "roles" not in policy:

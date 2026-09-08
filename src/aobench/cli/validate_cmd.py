@@ -278,7 +278,7 @@ def validate_snapshots(
 
 def _oracle_check_task(task_path: Path, env_dir: str) -> tuple[str, bool, str]:
     """Return (task_id, passed, reason) for a single task spec file."""
-    with open(task_path) as f:
+    with open(task_path, encoding="utf-8") as f:
         d = json.load(f)
     task_id = d.get("task_id", task_path.stem)
 
@@ -373,7 +373,7 @@ def validate_authoring(
 
     specs: list[tuple[str, list[float]]] = []
     for f in task_files:
-        with open(f) as fh:
+        with open(f, encoding="utf-8") as fh:
             d = json.load(fh)
         specs.append((d.get("task_id", f.stem), _vec(d)))
 

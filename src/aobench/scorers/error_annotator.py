@@ -63,7 +63,7 @@ _UNIT_RATIO_KILO = 0.05     # within 5% of expected×1000 or expected/1000 → u
 def load_taxonomy(path: Path | None = None) -> dict[str, Any]:
     """Load the HPC error taxonomy YAML."""
     taxonomy_path = path or _TAXONOMY_PATH
-    with taxonomy_path.open() as f:
+    with taxonomy_path.open(encoding="utf-8") as f:
         loaded: object = yaml.safe_load(f)
     if not isinstance(loaded, dict):
         raise ValueError(f"Taxonomy YAML at {taxonomy_path} must contain a mapping.")

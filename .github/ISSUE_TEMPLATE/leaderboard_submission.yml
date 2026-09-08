@@ -45,7 +45,11 @@ body:
     id: profile
     attributes:
       label: Scoring profile
-      placeholder: "default_hpc_v01"
+      description: >-
+        The profile is set **per task** by each spec's `aggregate_weight_profile`, so a
+        full-split run is normally a mix. Write `corpus default` unless you overrode it,
+        and state the override here if you did.
+      placeholder: "corpus default (per-task), or: default_hpc_v01 forced on every task"
     validations:
       required: true
 
@@ -126,7 +130,10 @@ body:
     attributes:
       label: Confirmations
       options:
-        - label: I used a **dated** model snapshot, not a moving alias like `gpt-4o`
+        - label: >-
+            I used an **immutable** model snapshot, not a moving alias like `gpt-4o`.
+            A dated ID is the usual form, but any ID the provider guarantees will not
+            change behind you qualifies.
           required: true
         - label: Someone else could re-derive this result from the information above
           required: true

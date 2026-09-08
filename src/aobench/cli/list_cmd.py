@@ -86,7 +86,7 @@ def _load_specs(root: Path) -> list[dict[str, Any]]:
     specs = []
     for path in sorted(spec_dir.glob("*.json")):
         try:
-            specs.append(json.loads(path.read_text()))
+            specs.append(json.loads(path.read_text(encoding="utf-8")))
         except json.JSONDecodeError as exc:
             typer.echo(f"Skipping malformed spec {path.name}: {exc}", err=True)
     return specs
@@ -104,7 +104,7 @@ def _load_env_metadata(root: Path) -> list[dict[str, Any]]:
         meta_path = path / "metadata.yaml"
         meta: dict[str, Any] = {"environment_id": path.name}
         if meta_path.is_file():
-            loaded = yaml.safe_load(meta_path.read_text()) or {}
+            loaded = yaml.safe_load(meta_path.read_text(encoding="utf-8")) or {}
             if isinstance(loaded, dict):
                 meta.update(loaded)
         envs.append(meta)
@@ -281,7 +281,7 @@ def list_profiles(
     if not config.is_file():
         typer.echo(f"No scoring profiles at {config}", err=True)
         raise typer.Exit(code=2)
-    profiles = (yaml.safe_load(config.read_text()) or {}).get("profiles", {})
+    profiles = (yaml.safe_load(config.read_text(encoding="utf-8")) or {}).get("profiles", {})
 
     rows = []
     for name, profile in sorted(profiles.items()):

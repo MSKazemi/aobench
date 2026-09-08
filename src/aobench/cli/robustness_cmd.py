@@ -109,11 +109,13 @@ def robustness_task(  # noqa: PLR0913
         run_id = make_run_id()
         result = runner.run(task, env, run_id=run_id)
         results.append(result)
-        # aggregate_score is Optional[float]; a None here would raise at runtime
-        # exactly as mypy flags below. Real bug, filed separately as #49 — not
-        # fixed here per the mypy-paydown scope rules on #37.
-        passed = "✓" if result.aggregate_score >= pass_threshold else "✗"  # type: ignore[operator]  # see #49
-        typer.echo(f"  Run {i + 1}/{n}  score={result.aggregate_score:.4f}  {passed}")
+        # aggregate_score is Optional[float]: a scorer that hard-failed or bailed
+        # leaves it None. Report that as its own outcome rather than crashing the
+        # whole robustness sweep on the first unscored run.
+        score = result.aggregate_score
+        passed = "n/a" if score is None else ("✓" if score >= pass_threshold else "✗")
+        shown = "  n/a  " if score is None else f"{score:.4f}"
+        typer.echo(f"  Run {i + 1}/{n}  score={shown}  {passed}")
 
     stats = compute_robustness(results, pass_threshold=pass_threshold)
     _print_stats(stats)
@@ -185,8 +187,10 @@ def _robustness_all_for_adapter(
             try:
                 result = runner.run(task.task_id, task.environment_id, run_id=run_id)
                 results_by_task[task.task_id].append(result)
-                passed = "✓" if (result.aggregate_score or 0) >= pass_threshold else "✗"
-                typer.echo(f"    run {i + 1}/{n}  score={result.aggregate_score:.4f}  {passed}", nl=False)
+                score = result.aggregate_score
+                passed = "n/a" if score is None else ("✓" if score >= pass_threshold else "✗")
+                shown = "  n/a  " if score is None else f"{score:.4f}"
+                typer.echo(f"    run {i + 1}/{n}  score={shown}  {passed}", nl=False)
                 if result.cost_estimate_usd is not None:
                     typer.echo(f"  ${result.cost_estimate_usd:.4f}", nl=False)
                 typer.echo("")

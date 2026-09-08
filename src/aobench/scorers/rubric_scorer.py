@@ -143,7 +143,7 @@ def load_rubric(rubric_id: str, rubric_dir: Path | None = None) -> dict[str, Any
             f"Rubric '{rubric_id}' not found at {path}. "
             f"Available rubrics: {[p.stem for p in search_dir.glob('*.yaml')]}"
         )
-    with path.open() as f:
+    with path.open(encoding="utf-8") as f:
         loaded: object = yaml.safe_load(f)
     if not isinstance(loaded, dict):
         raise ValueError(f"Rubric '{rubric_id}' at {path} must contain a mapping.")

@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from aobench.reports.error_taxonomy import classify_error
-from aobench.schemas.result import BenchmarkResult
+from aobench.schemas.result import DIMENSION_NAMES, BenchmarkResult
 
 
 def _build_tool_use_block(r: BenchmarkResult) -> dict[str, Any]:
@@ -58,7 +58,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
 
     results: list[BenchmarkResult] = []
     for f in result_files:
-        with f.open() as fh:
+        with f.open(encoding="utf-8") as fh:
             results.append(BenchmarkResult.model_validate(json.load(fh)))
 
     scores = [r.aggregate_score for r in results if r.aggregate_score is not None]
@@ -71,6 +71,9 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
             "environment_id": r.environment_id,
             "adapter_name": r.adapter_name,
             "model_name": r.model_name,
+            # The profile is set per task by the spec, so a run mixes them. Without
+            # this the weights behind a row cannot be recovered from the summary.
+            "weight_profile_name": r.weight_profile_name,
             "hard_fail": r.hard_fail,
             "hard_fail_reason": r.hard_fail_reason,
             "error_category": classify_error(r),
@@ -82,6 +85,7 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
             "efficiency": r.dimension_scores.efficiency,
             "grounding": r.dimension_scores.grounding,
             "robustness": r.dimension_scores.robustness,
+            "workflow": r.dimension_scores.workflow,
             "prompt_tokens": r.prompt_tokens,
             "completion_tokens": r.completion_tokens,
             "total_tokens": r.total_tokens,
@@ -97,6 +101,22 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
         cat = row["error_category"]
         category_counts[cat] = category_counts.get(cat, 0) + 1
 
+    # Run-level mean per dimension. Reported alongside the headline score because a
+    # single aggregate cannot say *where* an agent lost points, and the leaderboard
+    # asks submitters for exactly this breakdown.
+    dimension_means: dict[str, float | None] = {}
+    for dim in DIMENSION_NAMES:
+        vals = [
+            v
+            for v in (getattr(r.dimension_scores, dim) for r in results)
+            if v is not None
+        ]
+        dimension_means[dim] = round(sum(vals) / len(vals), 4) if vals else None
+
+    profile_counts: dict[str, int] = {}
+    for r in results:
+        profile_counts[r.weight_profile_name] = profile_counts.get(r.weight_profile_name, 0) + 1
+
     total_cost = sum(r.cost_estimate_usd for r in results if r.cost_estimate_usd is not None)
     total_tokens = sum(r.total_tokens for r in results if r.total_tokens is not None)
     latencies = [r.latency_seconds for r in results if r.latency_seconds is not None]
@@ -109,6 +129,8 @@ def build_run_summary(run_dir: str | Path) -> dict[str, Any]:
         "run_id": results[0].run_id if results else run_dir.name,
         "task_count": len(results),
         "mean_aggregate_score": mean_score,
+        "mean_dimension_scores": dimension_means,
+        "weight_profiles": profile_counts,
         "hard_fail_count": sum(1 for r in results if r.hard_fail),
         "total_cost_usd": round(total_cost, 6) if total_cost else None,
         "total_tokens": total_tokens or None,
@@ -163,6 +185,6 @@ def write_run_summary(run_dir: str | Path) -> Path:
     run_dir = Path(run_dir)
     summary = build_run_summary(run_dir)
     out = run_dir / "run_summary.json"
-    with out.open("w") as fh:
+    with out.open("w", encoding="utf-8") as fh:
         json.dump(summary, fh, indent=2, default=str)
     return out

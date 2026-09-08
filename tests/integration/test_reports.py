@@ -55,6 +55,30 @@ def test_json_report_summary(tmp_path):
         assert "outcome" in t
 
 
+def test_json_report_reports_every_dimension(tmp_path):
+    """Per-dimension means and all seven dimensions, per issue #60.
+
+    ``workflow`` carries 0.10 weight in ``default_hpc_v01`` but was missing from
+    every task row, and the summary carried no run-level per-dimension breakdown
+    at all — so a leaderboard submitter could not fill in the field the form asks
+    for, and the headline score could not be reconciled against its parts.
+    """
+    from aobench.reports.json_report import build_run_summary
+    from aobench.schemas.result import DIMENSION_NAMES
+
+    run_id = _run_all_tasks(tmp_path)
+    summary = build_run_summary(tmp_path / run_id)
+
+    means = summary["mean_dimension_scores"]
+    assert set(means) == set(DIMENSION_NAMES)
+    for dim, value in means.items():
+        assert value is None or 0.0 <= value <= 1.0, f"{dim} out of range: {value}"
+
+    for row in summary["tasks"]:
+        for dim in DIMENSION_NAMES:
+            assert dim in row, f"task row is missing the {dim!r} dimension"
+
+
 def test_json_report_written_to_disk(tmp_path):
     from aobench.reports.json_report import write_run_summary
 

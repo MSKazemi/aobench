@@ -18,6 +18,13 @@ class DimensionScores(BaseModel):
     workflow: Optional[float] = None      # 0–1  WorfEval graph-matching score
 
 
+#: Canonical ordered list of every scored dimension, derived from the model itself
+#: so a new dimension cannot be added to :class:`DimensionScores` and then silently
+#: dropped by a report, exporter or diff that hard-codes its own list.
+#: See ``tests/unit/test_dimension_coverage.py``.
+DIMENSION_NAMES: tuple[str, ...] = tuple(DimensionScores.model_fields)
+
+
 class CheckpointResult(BaseModel):
     """Pass/fail outcome for a single checkpoint in a task run."""
 
