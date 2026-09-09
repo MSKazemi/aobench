@@ -34,6 +34,12 @@
   weeks. Apologised for in full on the issue, with first refusal on new work offered.
 - Neither the parallel contributor nor their PR is at fault — four and a half hours is no
   time to see a claim.
+- **@aawhan0 accepted the apology within minutes and is contributing again**, taking
+  `docs/getting-started/quickstart.md` on #62. Their claim is recorded in the #20 table and
+  on the wall under **Work in flight**.
+- **#61 and #62 opened**: the last 10 `mypy --strict` errors in `tools/` (one root cause
+  across five files), and a docs-command verification pass over 136 fenced commands on 24
+  pages that nothing currently checks.
 
 ### Changed — the contributor wall now credits reports, not only commits
 

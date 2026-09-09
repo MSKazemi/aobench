@@ -202,6 +202,7 @@ before it lands rather than only afterwards.
 |---|---|---|
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
 | [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
+| [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
 
 **Claiming an issue protects it.** Comment to say you are taking something and it is yours;
 nothing will be merged over you. That promise is written down because it was

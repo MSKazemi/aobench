@@ -174,6 +174,15 @@ a claim.
 - **[@userfypp](https://github.com/userfypp)** — writing a second DOCS_USR task on the PII
   storage policy ([#26](https://github.com/MSKazemi/aobench/issues/26)), claimed
   2026-08-11, unblocked once the docs-retrieval bug they found was fixed.
+- **[@aawhan0](https://github.com/aawhan0)** — verifying that the 136 documented shell
+  commands actually do what their pages claim, from a clean checkout, starting with
+  `docs/getting-started/quickstart.md` ([#62](https://github.com/MSKazemi/aobench/issues/62)),
+  claimed 2026-09-10. They volunteered for precisely this work on
+  [#32](https://github.com/MSKazemi/aobench/issues/32) on 2026-08-27 and the claim was
+  never acknowledged before a parallel PR closed the issue — see the
+  [apology](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851). The
+  claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
+  that failure.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
