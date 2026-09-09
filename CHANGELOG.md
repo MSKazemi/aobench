@@ -2,6 +2,39 @@
 
 ## Unreleased
 
+### Changed — the contributor wall now credits design input and work in flight too
+
+- **A full census of every account that has ever touched the repository** — issue and PR
+  comments, review comments, discussions, forks and stars — found two more people credited
+  nowhere. [@adhabnr-ux](https://github.com/adhabnr-ux) mapped `TaskSpec` / `Trace` /
+  `BenchmarkResult` onto an eval-interchange schema field by field in discussion #51, read
+  from `src/aobench/schemas/` rather than the README, and identified the one thing that
+  does not map: an RBAC hard fail is a statement about the validity of a whole row, which
+  no per-dimension grader slot can express. [@hoti-code](https://github.com/hoti-code)
+  settled the `litellm:<model>` adapter-string format by asking before writing code. Both
+  now appear on the wall, under **Design and interoperability** and **Work in flight**.
+- **Claims are now recorded and protected.** #20 carries a live table of who has claimed
+  what, and both the wall and that issue state that nothing will be merged over a claim.
+  This is written down because it was broken — see below.
+- **`.mailmap` added**, so `git shortlog` and GitHub stop splitting one contributor across
+  two rows. `LeoZhaoo` and `LobsterQBA` were counted separately.
+- The wall carries a single **"If you want your work seen"** section, so the request that
+  contributors link their own work is made once, in one place, and never attached to a
+  review as a condition.
+
+### Fixed — a contributor claimed an issue and was silently overtaken
+
+- **@aawhan0 claimed #32 at 07:29 on 2026-08-27.** A parallel pull request doing the same
+  work was opened at 12:00 the same day, merged on 2026-09-01, and the issue was closed
+  crediting the other contributor **without any reply to @aawhan0 at any point.** They
+  learned that the issue they had claimed was gone from a close notification. The project
+  promises a first response within three working days and its contributor page already
+  carried an apology for letting an overlapping implementation land on someone's PR once
+  before; this was a faster version of the same failure and it went unnoticed for two
+  weeks. Apologised for in full on the issue, with first refusal on new work offered.
+- Neither the parallel contributor nor their PR is at fault — four and a half hours is no
+  time to see a claim.
+
 ### Changed — the contributor wall now credits reports, not only commits
 
 - **@hari760 and @userfypp appeared in this changelog but on neither contributor

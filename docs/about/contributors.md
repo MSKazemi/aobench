@@ -163,6 +163,50 @@ Both of those are scoring- or portability-integrity bugs found from the outside,
 using the benchmark rather than reading it. That is the argument for running AOBench
 somewhere unusual and saying what broke: it is worth more than the score.
 
+## Design and interoperability
+
+Reading a codebase carefully enough to find where its model is *wrong* is a contribution,
+and it does not require a commit.
+
+<ul class="wall">
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/adhabnr-ux.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🧩</span>
+  </span>
+  <span class="wall-name">Sahi</span>
+  <span class="wall-handle"><a href="https://github.com/adhabnr-ux">@adhabnr-ux</a></span>
+  <span class="wall-role">Design input</span>
+  <span class="wall-tag">Eval-interchange mapping &middot; the hard-constraint question</span>
+</li>
+</ul>
+
+[@adhabnr-ux](https://github.com/adhabnr-ux) proposed an
+[EvalPort](https://github.com/adhabnr-ux/evalport) interchange adapter in
+[discussion #51](https://github.com/MSKazemi/aobench/discussions/51) with a complete
+field-by-field mapping of `TaskSpec` / `Trace` / `BenchmarkResult` onto the schema —
+derived from reading `src/aobench/schemas/` rather than the README, and correct in the
+places that are easy to get wrong. The valuable part is what it *could not* map: an RBAC
+hard fail zeroes an entire task, including dimensions the agent handled well, and no
+per-dimension grader slot can express that. Rather than paper over it, the mismatch was
+flagged as an open question about how eval interchange formats should model hard
+constraints at all. That is a genuine gap in the field, not just in one adapter, and it was
+raised before a line of code was written.
+
+## Work in flight
+
+Named here so nobody duplicates the effort, and because a claim is worth acknowledging
+before it lands rather than only afterwards.
+
+| Who | What | Since |
+|---|---|---|
+| [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
+| [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
+
+**Claiming an issue protects it.** Comment to say you are taking something and it is yours;
+nothing will be merged over you. That promise is written down because it was
+[broken once](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851).
+
 ## How you get on this wall
 
 Every merged contribution earns a place here, whatever its size, and so does a report
@@ -205,6 +249,31 @@ while an overlapping implementation was written and merged in parallel, which is
 thing a maintainer most owes a contributor not to do. The [rework of that
 PR](https://github.com/MSKazemi/aobench/pull/25) preserves the contributor's commits and
 credit precisely because the mistake was ours.
+
+## If you want your work seen
+
+This is said once, here, so it never has to be attached as a condition to a review.
+
+**AOBench's bottleneck is discovery, not interest.** The code gets used and the fixes get
+merged; almost nobody knows the project exists. That is a problem you can help with more
+cheaply than by writing any more code, and doing so happens to serve you too:
+
+- **This page is public and linkable.** Your entry has a stable URL and your own words
+  describing what you did. Put it in a CV, a portfolio, or a profile — it is third-party
+  evidence of your work, which is worth more than a self-description.
+- **Link your own pull request, not the repository.** "Cleared the strict-typing debt in
+  the CLI of an open HPC agent benchmark, and found a latent crash doing it" is a better
+  sentence about you than any link to us. The credit is yours; point at it.
+- **Release notes name you** for the version your change shipped in, and the
+  [changelog](changelog.md) puts your handle next to the fix.
+- **A ⭐ is the strongest discovery signal GitHub surfaces**, and the project is early
+  enough that each one measurably moves it. If you know someone working on agent
+  evaluation, HPC operations or LLM benchmarking, pointing them here is worth more to this
+  project than another feature.
+
+All of that is **entirely optional and always will be.** It is never a condition of
+review, it changes nothing about how your next pull request is read, and nobody will ask
+you twice.
 
 ## Acknowledgements
 

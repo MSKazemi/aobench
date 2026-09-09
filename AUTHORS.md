@@ -143,6 +143,38 @@ is now a fix on `main`.
   Snippets are now windows centred on the most selective matched term, with regression
   tests in `tests/unit/test_docs_tool_snippet.py` built from the exact queries reported.
 
+## Design and interoperability
+
+- **Sahi** ([@adhabnr-ux](https://github.com/adhabnr-ux)) — proposed an
+  [EvalPort](https://github.com/adhabnr-ux/evalport) eval-interchange adapter in
+  [discussion #51](https://github.com/MSKazemi/aobench/discussions/51), with a complete
+  field-by-field mapping of `TaskSpec` / `Trace` / `BenchmarkResult` onto the schema and a
+  working code sketch. The mapping was derived from reading `src/aobench/schemas/` rather
+  than the README, and is correct in the places that are easy to get wrong — including
+  routing `dimension_scores` to one grader result per dimension and carrying
+  `weight_profile_name` through to the result metadata. The contribution that matters,
+  though, is the part that did **not** map: an RBAC hard fail zeroes an entire task
+  including the dimensions the agent handled well, and a per-dimension grader slot cannot
+  express a statement about the validity of the whole row. That was raised as an open
+  question about how interchange formats should model hard constraints in general, before
+  any code was written, rather than resolved silently in one direction. It is a real gap in
+  the field and not merely in one adapter.
+
+## Work in flight
+
+Recorded so effort is not duplicated, and because a claim deserves acknowledging before it
+lands rather than only after. **Claiming an issue protects it** — nothing gets merged over
+a claim.
+
+- **[@hoti-code](https://github.com/hoti-code)** — building the
+  [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) (one file, ~100
+  providers), claimed 2026-09-01. Asked whether `litellm:<model>` with the provider prefix
+  passed through was the intended adapter-string format *before* writing code, which is
+  why it will not need redoing in review.
+- **[@userfypp](https://github.com/userfypp)** — writing a second DOCS_USR task on the PII
+  storage policy ([#26](https://github.com/MSKazemi/aobench/issues/26)), claimed
+  2026-08-11, unblocked once the docs-retrieval bug they found was fixed.
+
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
 ## Acknowledgements

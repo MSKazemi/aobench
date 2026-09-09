@@ -1,0 +1,9 @@
+# Map commit identities to one entry per person, so `git shortlog -sne`,
+# `git log --author`, and GitHub's contributor counts do not split a single
+# contributor across several rows.
+#
+# Only genuine duplicates belong here, and only using addresses already
+# present in the public history. Add an entry when you notice a person
+# appearing twice in `git shortlog -sne`.
+
+Leo Zhao <101247207+LobsterQBA@users.noreply.github.com> <101247207+LobsterQBA@users.noreply.github.com>
