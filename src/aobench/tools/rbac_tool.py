@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 import yaml
 
@@ -26,7 +26,7 @@ class MockRBACTool(BaseTool):
             return yaml.safe_load(f) or {}
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
-        dispatch = {
+        dispatch: dict[str, Callable[..., ToolResult]] = {
             "check": self._check,
             "list_permissions": self._list_permissions,
             "get_allowed_tools": self._get_allowed_tools,

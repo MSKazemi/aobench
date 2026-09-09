@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from aobench.tools.base import BaseTool, ToolResult
 
@@ -24,7 +24,7 @@ class MockFacilityTool(BaseTool):
         self._role = role
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
-        dispatch = {
+        dispatch: dict[str, Callable[..., ToolResult]] = {
             "query_node_power": self._query_node_power,
             "query_cluster_energy": self._query_cluster_energy,
             "query_rack_telemetry": self._query_rack_telemetry,

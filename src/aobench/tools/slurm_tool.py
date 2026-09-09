@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from aobench.tools.base import BaseTool, ToolResult
 
@@ -24,10 +24,11 @@ class MockSlurmTool(BaseTool):
         if not p.exists():
             return {}
         with p.open(encoding="utf-8") as f:
-            return json.load(f)
+            data: dict[str, Any] = json.load(f)
+            return data
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
-        dispatch = {
+        dispatch: dict[str, Callable[..., ToolResult]] = {
             "query_jobs": self._query_jobs,
             "job_details": self._job_details_method,
             "list_nodes": self._list_nodes,
