@@ -2,7 +2,8 @@
 
 AOBench is built by the people below. **Every merged contribution earns a line here,
 whatever its size** — a typo fix in the docs is a real contribution to a project whose
-docs are the product.
+docs are the product. So does a bug report that turns out to be right; those are listed
+under [Reported and tested](#reported-and-tested).
 
 ## Maintainers
 
@@ -48,7 +49,7 @@ Added when a first PR merges, newest last.
   [#49](https://github.com/MSKazemi/aobench/issues/49) instead of quietly widening the
   PR — the scope discipline that makes a typing PR reviewable at all.
 
-- **LeoZhaoo** ([@LobsterQBA](https://github.com/LobsterQBA)) — took
+- **Leo Zhao** ([@LobsterQBA](https://github.com/LobsterQBA)) — took
   [issue #31](https://github.com/MSKazemi/aobench/issues/31) and wrote
   `examples/05_compare_two_adapters.py`, the side-by-side comparison the benchmark exists
   for and the one thing the first four examples never showed
@@ -105,6 +106,43 @@ Added when a first PR merges, newest last.
   `float | None` on `raw_outcome` was the cause rather than a symptom, and said so
   instead of widening the annotation.
 
+## Reported and tested
+
+Not every contribution is a commit. The people below ran AOBench somewhere the maintainer
+could not and reported what broke; each was correct on the first telling, and each report
+is now a fix on `main`.
+
+- **hari760** ([@hari760](https://github.com/hari760)) — submitted a three-run
+  `claude-sonnet-4-6` result on the dev split
+  ([#60](https://github.com/MSKazemi/aobench/issues/60)) and, in the process of filling in
+  the form honestly, found four defects. The headline one: a first run died at task 6 of
+  67 with a `UnicodeEncodeError`, and the diagnosis came attached and correct — text I/O
+  with no explicit `encoding=` falls back to the platform preferred encoding, which is
+  cp1252 on Windows, and model output contained an emoji. It was not one call site but
+  **259**, across `src/`, `tests/` and `scripts/`; the read path was equally exposed and
+  had simply not been reached, since the corpus itself contains em-dashes. Linux CI cannot
+  see this class of bug at all, so it is now a static gate (`make encoding-check`). The
+  other three came from the fields left blank rather than guessed: the missing
+  per-dimension breakdown exposed that `workflow` — 0.10 weight in `default_hpc_v01` — was
+  absent from every task row, from the OTel export and from `compare runs --show-dims`, so
+  the breakdown could never have reconciled against the aggregate it explained; the
+  scoring-profile field asked for one profile where the corpus sets it per task, 60
+  `alpha1_grounding` to 28 `default_hpc_v01`, which was worked out unaided and reported
+  precisely; and the documented submission command redirected a command that prints prose,
+  not JSON. Four defects from one submission, right about all of them.
+
+- **userfypp** ([@userfypp](https://github.com/userfypp)) — took the DOCS_USR cell on
+  [#26](https://github.com/MSKazemi/aobench/issues/26), checked the proposed task against
+  `env_21` **before** writing the spec, and stopped when the gold answer turned out to be
+  unreachable. `MockDocsTool._retrieve` matched on a document's full text and then returned
+  `content[:500]` as the snippet, so the match succeeded and the evidence was discarded —
+  the tool reported a hit whose snippet contained none of the query terms. The consequence
+  is worse than truncation: an agent could be scored on grounding against evidence the tool
+  would never surface, silently capping the grounding dimension on any task whose answer
+  lives late in a long document, under a comment that read as though it were intentional.
+  Snippets are now windows centred on the most selective matched term, with regression
+  tests in `tests/unit/test_docs_tool_snippet.py` built from the exact queries reported.
+
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
 ## Acknowledgements
@@ -119,8 +157,9 @@ Added when a first PR merges, newest last.
 
 ## Recognition policy
 
-- **Code, docs, tests, corpus, and review** all count. Reviewing someone else's PR
-  carefully is a contribution, and it gets listed.
+- **Code, docs, tests, corpus, review, and bug reports** all count. Reviewing someone
+  else's PR carefully is a contribution, and so is a report that turns out to be right —
+  both get listed.
 - **Release notes name contributors** for the version their change shipped in.
 - **Substantial corpus or methodological contributions may warrant co-authorship** on a
   paper that depends on them. If you believe that applies to your work, say so — the

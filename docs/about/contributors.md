@@ -65,7 +65,7 @@ they worked on; the line underneath says it in words.
     <img src="https://github.com/LobsterQBA.png?size=144" alt="" loading="lazy">
     <span class="wall-badge" aria-hidden="true">⚖️</span>
   </span>
-  <span class="wall-name">LeoZhaoo</span>
+  <span class="wall-name">Leo Zhao</span>
   <span class="wall-handle"><a href="https://github.com/LobsterQBA">@LobsterQBA</a></span>
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">Side-by-side comparison · report error messages</span>
@@ -124,16 +124,57 @@ and silently omitting `JOB_USR_001`. A second person's test found what the autho
 tests were structurally unable to see. That is the argument for contributing here, and it
 is the reason the list being short is a reason to add to it rather than a reason to wait.
 
+## Reported and tested
+
+A benchmark is checked by people who run it somewhere the maintainer cannot and report
+what happened. Every person below found a **real defect that is now fixed**, and each was
+right on the first telling — no reproduction work was needed on any of them.
+
+<ul class="wall">
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/hari760.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🐛</span>
+  </span>
+  <span class="wall-name">hari760</span>
+  <span class="wall-handle"><a href="https://github.com/hari760">@hari760</a></span>
+  <span class="wall-role">Reporter</span>
+  <span class="wall-tag">The Windows portability class &middot; four defects from one run</span>
+</li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/userfypp.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🐛</span>
+  </span>
+  <span class="wall-name">userfypp</span>
+  <span class="wall-handle"><a href="https://github.com/userfypp">@userfypp</a></span>
+  <span class="wall-role">Reporter</span>
+  <span class="wall-tag">The truncated-snippet grounding bug</span>
+</li>
+</ul>
+
+| Reporter | What their report found | |
+|---|---|---|
+| [@hari760](https://github.com/hari760) | Ran the dev split on Windows and lost it at task 6 of 67 to a `UnicodeEncodeError`, with the correct diagnosis attached: text I/O with no `encoding=` falls back to cp1252. **259 call sites** across `src/`, `tests/` and `scripts/` had it — so Windows contributors could not run the test suite either. There is a static gate for it now (`make encoding-check`), because Linux CI can never see this class of bug | [#60](https://github.com/MSKazemi/aobench/issues/60) |
+| [@hari760](https://github.com/hari760) | Left the per-dimension field blank because nothing emitted it — which exposed that `workflow`, carrying 0.10 weight, was **missing from every task row**, from the OTel export and from `compare runs --show-dims`. The published breakdown could not have reconciled against the aggregate it explained. Also caught that the submission form demanded one scoring profile where the corpus uses two, and that a documented submission command captured prose rather than JSON | [#60](https://github.com/MSKazemi/aobench/issues/60) |
+| [@userfypp](https://github.com/userfypp) | Checked a proposed task against `env_21` before writing it and found `MockDocsTool._retrieve` returned characters 0–500 rather than the match. The tool reported a hit whose snippet contained none of the query terms — so an agent could be **scored on grounding against evidence the tool would never surface**, silently capping the dimension on any task whose answer lives late in a long document | [#26](https://github.com/MSKazemi/aobench/issues/26) |
+
+Both of those are scoring- or portability-integrity bugs found from the outside, by people
+using the benchmark rather than reading it. That is the argument for running AOBench
+somewhere unusual and saying what broke: it is worth more than the score.
+
 ## How you get on this wall
 
-Every merged contribution earns a place here, whatever its size. A typo fix in the docs is
-a real contribution to a project whose documentation *is* the product.
+Every merged contribution earns a place here, whatever its size, and so does a report
+that turns out to be right. A typo fix in the docs is a real contribution to a project
+whose documentation *is* the product — and so is telling us that the benchmark crashed
+on your machine.
 
 | If you want to… | Start here |
 |---|---|
 | Fix something small and well-specified | [Good first issues](https://github.com/MSKazemi/aobench/labels/good%20first%20issue) — each names the files, the tests, and an honest time estimate |
 | Improve a page that confused you | Edit it directly; the pencil icon at the top of every page opens a PR |
-| Report a bug or request a feature | [Open an issue](https://github.com/MSKazemi/aobench/issues/new/choose) |
+| Report a bug or request a feature | [Open an issue](https://github.com/MSKazemi/aobench/issues/new/choose) — a correct report earns a place on this page as surely as a patch does |
 | Propose a task or an environment | [Contributing guide](contributing.md) |
 | Ask something | [Discussions](https://github.com/MSKazemi/aobench/discussions) — questions are welcome and expected |
 
@@ -142,8 +183,9 @@ on a laptop, and the `direct_qa` adapter needs no API key.
 
 ## What recognition means here
 
-- **Code, docs, tests, corpus, and review all count.** Reviewing someone else's PR
-  carefully is a contribution, and it gets listed.
+- **Code, docs, tests, corpus, review, and bug reports all count.** Reviewing someone
+  else's PR carefully is a contribution, and so is a report that turns out to be right —
+  both get listed.
 - **Release notes name contributors** for the version their change shipped in, and the
   [changelog](changelog.md) links the person next to the fix.
 - **Substantial corpus or methodological contributions may warrant co-authorship** on a

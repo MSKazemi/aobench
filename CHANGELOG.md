@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Changed — the contributor wall now credits reports, not only commits
+
+- **@hari760 and @userfypp appeared in this changelog but on neither contributor
+  surface.** Both found real defects that are now fixed — the cp1252 portability class
+  and the truncated-snippet grounding bug — and both were right on the first telling. The
+  wall and `AUTHORS.md` now carry a **Reported and tested** section, and the recognition
+  policy on both says explicitly that a correct bug report earns a place the same way a
+  patch does.
+- `LeoZhaoo` corrected to **Leo Zhao**, the name on his GitHub profile.
+
 ### Fixed — text I/O now declares UTF-8, so runs no longer die on Windows
 
 - **43 call sites opened text files without an `encoding=`.** Python then falls back to
