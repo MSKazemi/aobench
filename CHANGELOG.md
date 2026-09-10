@@ -44,7 +44,9 @@
   (@Akimbo92i on #61, within half an hour of it opening; @aawhan0 on #62).
 - `CONTRIBUTING.md` said `mypy --strict` debt sat in "8 of 25 packages". It is 2 of 25. The
   sentence now points at `mypy_baseline.json` instead of restating a number that goes stale
-  every time someone pays debt down.
+  every time someone pays debt down. The link to it must be an absolute GitHub URL:
+  `CONTRIBUTING.md` is published as `about/contributing.md`, so a relative link to a
+  repo-root file escapes the docs tree and fails `mkdocs build --strict`.
 
 ### Changed — the contributor wall now credits reports, not only commits
 

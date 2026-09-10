@@ -259,7 +259,7 @@ Write tests in `tests/unit/test_my_scorer.py`.
 
 **`uv run mypy src/aobench/` does not pass, and you are not expected to make it
 pass.** `--strict` still reports pre-existing debt. The per-package budgets in
-[`mypy_baseline.json`](mypy_baseline.json) are the current, authoritative list — read that
+[`mypy_baseline.json`](https://github.com/MSKazemi/aobench/blob/main/mypy_baseline.json) are the current, authoritative list — read that
 rather than a number written here, which would go stale every time someone pays debt down.
 Do not try to clear debt as a side effect of your PR, and do not add `# type: ignore` to
 quieten something you did not touch.
