@@ -184,6 +184,13 @@ a claim.
   claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
   that failure.
 
+- **[@Akimbo92i](https://github.com/Akimbo92i)** — taking the last package-sized slice of
+  the `mypy --strict` epic: the 10 remaining errors in `src/aobench/tools/`
+  ([#61](https://github.com/MSKazemi/aobench/issues/61)), claimed 2026-09-10 within half an
+  hour of the issue being opened. Described them as the *heterogeneous* dispatch maps,
+  which is the crux — four of the five mock tools have handlers that happen to share a
+  shape and `facility_tool` does not, which is why it alone reports a different error.
+
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
 ## Acknowledgements

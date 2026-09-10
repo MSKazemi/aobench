@@ -40,6 +40,11 @@
 - **#61 and #62 opened**: the last 10 `mypy --strict` errors in `tools/` (one root cause
   across five files), and a docs-command verification pass over 136 fenced commands on 24
   pages that nothing currently checks.
+- **Both were claimed the same day, one of them by a first-time contributor**
+  (@Akimbo92i on #61, within half an hour of it opening; @aawhan0 on #62).
+- `CONTRIBUTING.md` said `mypy --strict` debt sat in "8 of 25 packages". It is 2 of 25. The
+  sentence now points at `mypy_baseline.json` instead of restating a number that goes stale
+  every time someone pays debt down.
 
 ### Changed — the contributor wall now credits reports, not only commits
 
