@@ -478,16 +478,6 @@ Agent Operations in Realistic Environments. https://github.com/MSKazemi/aobench
 
 The source is mirrored at <https://gitlab.com/mskazemi/aobench>.
 
-## Other projects by the same author
-
-- **[KubeIntellect](https://github.com/MSKazemi/kubeintellect)** — a human-governed AI SRE for
-  Kubernetes. Investigates with real tools, then pauses for your approval before it changes
-  anything. Peer-reviewed, *Journal of Grid Computing* (2026).
-- **[YazSes](https://github.com/MSKazemi/yazses)** — offline voice dictation for Linux, macOS
-  and Windows. Hold a key, speak, release; speech-to-text runs on your own CPU and nothing is
-  sent to a server. Apache-2.0, and [good first issues are tagged and
-  waiting](https://github.com/MSKazemi/yazses/issues?q=is%3Aopen+label%3A%22good+first+issue%22).
-
 ## License
 
 Apache 2.0 — see [LICENSE](LICENSE).
