@@ -14,6 +14,7 @@ Reference for all AOBench CLI commands and Makefile targets.
 | `aobench list qcats` \| `roles` \| `adapters` \| `profiles` \| `scorers` | Other views over the corpus |
 | `aobench list coverage` | QCAT x role task-count matrix, with thin cells called out |
 | `aobench new task` | Scaffold a valid task spec for a QCAT x role cell — the contributor's starting point |
+| `aobench review task` | Run the corpus review checklist against ONE task, before you open a PR |
 | `aobench validate benchmark` | Validate all task specs and environment bundles |
 | `aobench run task` | Run a single benchmark task against an environment |
 | `aobench run all` | Run all benchmark tasks (one run dir, one trace per task) |
@@ -189,6 +190,44 @@ that wrote it. Those fields are yours.
 
 The full authoring workflow, including the review checklist a reviewer will apply, is in
 [Adding a task](../guides/adding-a-task.md).
+
+### `aobench review`
+
+Every other validator is corpus-wide. This one answers the question an author actually has:
+**is _mine_ right?**
+
+```bash
+aobench review task JOB_USR_001             # by task ID
+aobench review task path/to/spec.json       # or by path, before it is in the corpus
+aobench review task JOB_USR_001 --json      # machine-readable, for CI
+```
+
+It mirrors the review checklist in [Adding a task](../guides/adding-a-task.md) item for
+item, so what you see before opening a PR is what the reviewer will work through:
+
+| Row | What it checks |
+|---|---|
+| Schema | `TaskSpec` accepts the file |
+| Finished | no `TODO` scaffold text, `validation_status` moved on |
+| Environment | the named bundle exists |
+| Evidence | every `gold_evidence_refs` path exists in that bundle, and `required_evidence_refs` is a subset |
+| Tools | tool families are real, and within what the bundle's RBAC policy lists for the role |
+| Scoring | deterministic unless a rubric is genuinely needed |
+| Coverage | nearest sibling in the same cell, so a near-duplicate gets a second look |
+
+Statuses are deliberately graded, and only one of them blocks:
+
+- **`✓ PASS`** — checked, fine.
+- **`✗ FAIL`** — provably wrong; exits non-zero.
+- **`! WARN`** — a judgement call for a human. An over-grant of tools is a WARN, not a
+  FAIL, because `ToolRegistry` gates on the task's own `allowed_tools` and never intersects
+  it with the bundle policy — so it is a question, not a proven defect.
+- **`… TODO`** — the author has not finished. A scaffold is not a broken task.
+- **`- SKIP`** — the check could not run, said out loud rather than reported as fine.
+
+What it deliberately cannot tell you is whether the question is one the role would really
+ask and whether the gold answer is right. Those need an operator, and they are what review
+is for.
 
 ### Locating the benchmark corpus
 

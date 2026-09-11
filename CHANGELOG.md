@@ -2,6 +2,39 @@
 
 ## Unreleased
 
+### Added — `aobench review task`, the review checklist as a command
+
+- Every validator in this project was corpus-wide: `validate benchmark` loads all 88 tasks,
+  `validate tasks` prints an 88-row table, `validate authoring` cross-compares the corpus.
+  None of them answered the only question a first-time author has, which is "is *mine*
+  right?" — and the published review checklist was enforced by the maintainer's attention,
+  one task at a time, which is what caps corpus review at one person.
+- `aobench review task <ID|path>` runs that checklist against a single task and mirrors
+  `docs/guides/adding-a-task.md` row for row: schema, unfinished-scaffold markers,
+  environment, evidence refs, tool families vs. the bundle's RBAC policy, scoring mode, and
+  nearest-sibling similarity within the cell. `--json` for CI.
+- Statuses are graded and only `FAIL` blocks. An over-grant of tools is a `WARN`, not a
+  `FAIL`, because `ToolRegistry` gates on the task's own `allowed_tools` and never
+  intersects it with the bundle policy — so it is a question for a reviewer, not a proven
+  defect. A scaffold reports `TODO`, not failure. A check that cannot run says `SKIP` rather
+  than reporting silence as success.
+
+### Found — 10 tasks grant tool families that do not exist
+
+- Running the new checker over the corpus surfaced that `ARCH_*` and `DATA_*` tasks list
+  `topology`, `inventory` and `filesystem` in `allowed_tools`. Only five tool families are
+  registered (`slurm`, `telemetry`, `docs`, `rbac`, `facility`), and
+  `ToolRegistry.available_tool_names` is `_allowed & _tools` — so those names are dropped
+  in silence.
+- **`ARCH_RES_001`, `ARCH_SYS_001` and `ARCH_USR_001` therefore hand the agent no tools at
+  all**, while their `gold_evidence_refs` point at `topology/cluster_topology.json` —
+  evidence that exists in the bundle but that nothing can reach. Eight of the ten are in the
+  `dev` split, and none is in `EXCLUDE_FROM_SCORING`.
+- Not fixed here: repairing them changes published aggregates, which is a maintainer
+  decision, not a side effect of adding a linter. Recorded as a ratchet in
+  `tests/unit/test_review_cmd.py::_KNOWN_FAILING` so the list can only shrink and no new
+  task can join it.
+
 ### Added — `aobench new task`, a scaffolder for corpus contributions
 
 - `aobench list coverage` could tell a contributor that a QCAT x role cell was thin and

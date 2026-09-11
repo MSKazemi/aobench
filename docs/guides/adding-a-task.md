@@ -161,7 +161,17 @@ churns.
 
 ## Review checklist
 
-What a reviewer will check, so you can check it first:
+Run it first, and see what the reviewer will see:
+
+```bash
+aobench review task JOB_USR_042
+```
+
+That covers the mechanical rows below — schema, evidence, tools, scoring mode, and whether
+the task is a near-duplicate of one already in its cell. It does **not** cover the two rows
+that need an operator, which are the ones worth a human's time.
+
+The full list a reviewer works through:
 
 - [ ] `aobench validate benchmark` passes
 - [ ] The role could plausibly ask this question
