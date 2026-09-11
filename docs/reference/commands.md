@@ -229,6 +229,16 @@ What it deliberately cannot tell you is whether the question is one the role wou
 ask and whether the gold answer is right. Those need an operator, and they are what review
 is for.
 
+**In CI.** The `Corpus review` workflow runs this over every task spec a pull request
+changes and renders the checklist into the run summary. It uses the step summary rather
+than a bot comment on purpose: that needs no write permission and no secret, so it behaves
+identically on a fork PR. Reproduce it locally with:
+
+```bash
+make review            # every spec your branch changed
+make review-task TASK=JOB_USR_001
+```
+
 ### Locating the benchmark corpus
 
 Every command that reads the corpus resolves it in this order: `$AOBENCH_BENCHMARK_ROOT`,

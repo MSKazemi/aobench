@@ -205,6 +205,14 @@ langfuse-reset:  ## Stop Langfuse and DELETE all data (volume removed)
 validate:  ## Validate all benchmark data (tasks + environments)
 	$(AOBENCH) validate benchmark
 
+.PHONY: review
+review:  ## Review the task specs your branch changed, exactly as CI will
+	$(PYTHON) scripts/review_changed_tasks.py
+
+.PHONY: review-task
+review-task:  ## Review one task against the corpus checklist  (TASK= overridable)
+	$(AOBENCH) review task $(TASK)
+
 .PHONY: run-alpha0
 run-alpha0:  ## Run Alpha-0 slice: JOB_USR_001 + env_01 + direct_qa
 	$(AOBENCH) run task --task JOB_USR_001 --env env_01 --adapter direct_qa

@@ -45,6 +45,26 @@ uv run mypy src/aobench       # advisory — not all findings block a PR
 
 ---
 
+## Contributing a task
+
+Corpus contributions have their own two commands. `aobench new task` scaffolds a valid spec
+so you never hand-write the shape, and `aobench review task` runs the same checklist a
+reviewer will:
+
+```bash
+aobench new task --thinnest        # fill the emptiest QCAT x role cell
+# ...write the question, the gold answer, and the evidence refs...
+make review                        # review every spec your branch changed, as CI will
+```
+
+`make review` is exactly what the **Corpus review** workflow runs on your pull request, and
+it renders the checklist into the run summary — so on a fork PR you get the same feedback
+with no bot and no write access needed. Only a `FAIL` blocks; `WARN` and `TODO` are there
+for the reviewer to judge.
+
+The full authoring workflow is in
+[docs/guides/adding-a-task.md](docs/guides/adding-a-task.md).
+
 ## What to expect from us
 
 - **First response within 3 working days.** A first response may just be "seen,

@@ -1,0 +1,47 @@
+name: Corpus review
+
+# Runs the published task-review checklist against the specs a pull request changes, and
+# renders it into the run summary. Reviewing corpus PRs by hand is what caps this project
+# at one maintainer; most of that checklist is mechanical, so the machine does that half
+# and a human spends their time on whether the question is real and the gold answer right.
+#
+# Deliberately uses the step summary rather than a bot comment: the summary needs no write
+# permission and no secret, so this behaves identically on a fork PR, which is where most
+# first contributions come from.
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "benchmark/tasks/specs/**"
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Full history: the review diffs the branch against its merge base.
+          fetch-depth: 0
+
+      - name: Install uv
+        # Pinned to an immutable release tag for the same supply-chain reason as ci.yml.
+        uses: astral-sh/setup-uv@v10.0.1
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Fetch the base branch
+        # checkout leaves the PR merge commit checked out; the base branch needs to exist
+        # as a remote-tracking ref before a three-dot diff can find the merge base.
+        run: git fetch --no-tags origin "+refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}"
+
+      - name: Review changed task specs
+        # Exits non-zero only on a blocking FAIL. WARN and TODO are rendered for the
+        # reviewer and never gate the PR.
+        run: uv run python scripts/review_changed_tasks.py --base "origin/${{ github.base_ref }}"

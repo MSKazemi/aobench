@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Added — corpus review runs in CI
+
+- `scripts/review_changed_tasks.py` runs `aobench review task --json` over every task spec a
+  branch changed and renders the result as a markdown checklist, one section per task. With
+  no arguments it diffs against `origin/main`, so a contributor sees the same output locally
+  that CI will produce.
+- New `Corpus review` workflow, triggered only on pull requests touching
+  `benchmark/tasks/specs/**`. It writes the checklist to `$GITHUB_STEP_SUMMARY` rather than
+  posting a bot comment: the step summary needs no write permission and no secret, so it
+  behaves identically on a **fork** PR, which is where most first contributions arrive.
+- Only a `FAIL` exits non-zero. `WARN`, `TODO` and `SKIP` are rendered for the reviewer and
+  never gate a PR — a gate that blocks on judgement calls teaches people to route around it.
+- `make review` (the specs your branch changed) and `make review-task TASK=...` (one task).
+- Why: reviewing corpus PRs by hand is the ceiling on how many tasks this project can accept.
+  The mechanical half of the published checklist now runs itself, so review time goes to the
+  half that needs an operator — whether the question is real and whether the gold answer is
+  right. The summary says so explicitly, so the check is never mistaken for an approval.
+
 ### Added — `aobench review task`, the review checklist as a command
 
 - Every validator in this project was corpus-wide: `validate benchmark` loads all 88 tasks,
