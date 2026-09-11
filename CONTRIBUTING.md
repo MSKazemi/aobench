@@ -7,8 +7,13 @@ git clone https://github.com/MSKazemi/aobench
 cd aobench
 make install        # creates .venv and installs all deps
 make validate       # verifies benchmark data loads cleanly
-make test           # ~1510 tests should pass
+make test           # 1590 passed, 24 skipped — that is green
 ```
+
+**24 skipped is the expected result on a fresh clone, not a broken setup.** Those tests
+need fixture files that are not published with the repository, and each prints its own
+reason when you run with `-rs`. If your run is green with roughly that many skips, you are
+set up correctly.
 
 Requires [uv](https://github.com/astral-sh/uv). Python 3.11+.
 

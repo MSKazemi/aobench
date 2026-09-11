@@ -128,7 +128,7 @@ AOBench/
 ├── prompts/judge/          # LLM-judge rubric + error taxonomy templates
 ├── docs/                   # Documentation (see Documentation section)
 ├── scripts/                # Bundle generation, validity gates, rubric tooling
-└── tests/                  # 83 test files, ~1510 tests (unit + integration)
+└── tests/                  # 89 test files, ~1600 tests (unit + integration)
 ```
 
 ## Quick start
@@ -432,8 +432,12 @@ From clone to green tests in three commands:
 ```bash
 git clone https://github.com/MSKazemi/aobench && cd aobench
 make install     # creates .venv and installs everything
-make test        # ~1510 tests should pass
+make test        # 1590 passed, 24 skipped — that is green
 ```
+
+The 24 skips are expected on a fresh clone and are not a broken setup: those tests need
+fixture files that are not part of the published repository, and each one prints its own
+reason for skipping.
 
 **What you can expect from us:** a first response within 3 working days — even if
 that response is just "seen, I'll look properly on Friday". If a PR of yours goes
