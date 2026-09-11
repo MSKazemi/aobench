@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from aobench.tools.base import BaseTool, ToolResult
 
@@ -25,7 +25,7 @@ class MockDocsTool(BaseTool):
         return result
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
-        dispatch = {
+        dispatch: dict[str, Callable[..., ToolResult]] = {
             "retrieve": self._retrieve,
             "list_docs": self._list_docs,
         }

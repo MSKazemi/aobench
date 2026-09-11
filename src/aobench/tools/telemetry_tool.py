@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from aobench.tools.base import BaseTool, ToolResult
 
@@ -20,7 +20,7 @@ class MockTelemetryTool(BaseTool):
         self._role = role
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
-        dispatch = {
+        dispatch: dict[str, Callable[..., ToolResult]] = {
             "query_memory_events": self._query_memory_events,
             "list_metrics": self._list_metrics,
             "query_timeseries": self._query_timeseries,
