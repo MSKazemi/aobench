@@ -8,6 +8,20 @@
   type for scheduler state (#66). Runtime behavior and corpus files are unchanged.
   Tests cover both detail shapes, all state snapshots, and missing files.
 
+### Fixed — Langfuse exporter test isolation
+
+- `tests/unit/test_langfuse_exporter.py` imported `aobench.exporters.langfuse_exporter`
+  from *inside* six `patch.dict(sys.modules, ...)` blocks. `patch.dict` restores the
+  snapshot it took on entry, so if the module was not yet in `sys.modules` when the block
+  opened, the import added it and leaving the block removed it again — a later
+  `importlib.reload` on the still-live module object then raised `ImportError: module ...
+  not in sys.modules`. Order-dependent: `pytest tests/unit -k tool` failed while the full
+  suite passed, because an earlier test in the full run imports the module first and the
+  snapshot restore becomes a no-op. Fixed by importing the module once at module scope,
+  outside every `patch.dict` block ([#65](https://github.com/MSKazemi/aobench/issues/65),
+  [PR #67](https://github.com/MSKazemi/aobench/pull/67) by
+  [@motodriver](https://github.com/motodriver)). Runtime exporter behaviour is unchanged.
+
 ### Fixed — `mypy --strict` is now clean everywhere except one third-party import
 
 - **The mock HPC tool layer is typed** ([#61](https://github.com/MSKazemi/aobench/issues/61),
