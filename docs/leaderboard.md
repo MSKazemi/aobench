@@ -107,6 +107,26 @@ jq .mean_dimension_scores data/runs/<run_id>/run_summary.json
 }
 ```
 
+!!! note "`null` is a valid value here — it means *not measured*, not zero"
+    Two of the seven cannot be derived from a single pass over a single task, so a
+    narrow run reports them as `null`:
+
+    - **`robustness`** needs the *same* task run repeatedly, which is what
+      `aobench robustness` does — a one-shot run has nothing to vary.
+    - **`workflow`** compares the trace against a task's `ground_truth_workflow` and is
+      `null` for tasks that do not define one.
+
+    Verified on a single-task run:
+
+    ```json
+    {"outcome": 0.24, "tool_use": 0.0, "grounding": 0.0, "governance": 1.0,
+     "robustness": null, "efficiency": 1.0, "workflow": null}
+    ```
+
+    **Report `null` as `n/a`, never as `0`.** Writing zero claims the agent scored nothing
+    on a dimension that was never measured, which drags an aggregate that never included
+    it. A full `--split dev` run populates `workflow` for the tasks that define one.
+
 The same seven appear per task under `.tasks[]`, which is what to look at when one
 dimension drags the aggregate down and you want to know which tasks did it. Each task row
 also carries its own `weight_profile_name`, and `.weight_profiles` gives the run-level
