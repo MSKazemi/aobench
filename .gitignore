@@ -65,6 +65,11 @@ site/
 # ── Runtime benchmark artifacts (large, run-specific) ────────────────────────
 data/runs/*/
 data/runs/*.json
+# `aobench clear run` defaults --output to the bare name `clear_report.json`, so it
+# lands in the caller's working directory rather than beside the run it describes.
+# Anyone following issue #27 (run a model, submit a CLEAR scorecard) gets one in
+# their repo root; without this line it shows up untracked in their clone.
+clear_report.json
 data/logs/ollama_batch_20260506_031425.log
 
 # Large data artifacts. NOTE: a few benchmark telemetry parquet files were
