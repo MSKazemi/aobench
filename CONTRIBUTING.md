@@ -7,13 +7,14 @@ git clone https://github.com/MSKazemi/aobench
 cd aobench
 make install        # creates .venv and installs all deps
 make validate       # verifies benchmark data loads cleanly
-make test           # 1590 passed, 24 skipped — that is green
+make test           # 1610 passed, 4 skipped — that is green
 ```
 
-**24 skipped is the expected result on a fresh clone, not a broken setup.** Those tests
-need fixture files that are not published with the repository, and each prints its own
-reason when you run with `-rs`. If your run is green with roughly that many skips, you are
-set up correctly.
+**4 skipped is the expected result, not a broken setup, and nothing is missing from your
+clone.** Four of the 29 environment bundles — `env_04`, `env_21`, `env_22`, `env_23` — carry
+no `slurm/slurm_state.json`, because they are documentation- and filesystem-oriented
+snapshots rather than scheduler ones. The SLURM schema test is parametrized over every
+bundle, so it skips those four by design. Run `make test` with `-rs` to see each reason.
 
 Requires [uv](https://github.com/astral-sh/uv). Python 3.11+.
 
