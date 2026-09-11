@@ -31,6 +31,24 @@ If you are unsure, open a
 [task proposal issue](https://github.com/MSKazemi/aobench/issues/new/choose) before
 writing. That costs you ten minutes and can save a day.
 
+## Start with the scaffolder
+
+You do not have to type the shape of a spec from memory:
+
+```bash
+aobench new task --thinnest        # fills the emptiest QCAT x role cell
+aobench new task --cell DOCS_DES   # or choose the cell yourself
+```
+
+It allocates the next free task ID, picks an environment that comparable tasks already
+use, and prints the files that exist in that snapshot so you can cite them without going
+exploring. What it writes is valid from the first byte — but the `title`, `query_text` and
+`gold_answer` are `TODO`, because those are the parts worth having a human write. A
+generated gold answer would just measure the model that generated it.
+
+Read the rest of this page while you fill those in; it explains what each field is for and
+what a reviewer will check.
+
 ## The anatomy of a task spec
 
 Task specs are JSON in `benchmark/tasks/specs/<TASK_ID>.json`, validated against the
@@ -97,7 +115,11 @@ node failed, and why?", do.
 ## The workflow
 
 ```bash
-# 1. Write the spec
+# 0. Scaffold it — picks the next free ID, suggests the environment comparable tasks use,
+#    and lists the evidence files that actually exist in that snapshot.
+aobench new task --cell JOB_USR          # or --thinnest to fill the emptiest cell
+
+# 1. Write the parts that matter: the question, the gold answer, the evidence refs.
 $EDITOR benchmark/tasks/specs/JOB_USR_042.json
 
 # 2. Does it load and type-check?

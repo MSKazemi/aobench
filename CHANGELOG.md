@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+### Added — `aobench new task`, a scaffolder for corpus contributions
+
+- `aobench list coverage` could tell a contributor that a QCAT x role cell was thin and
+  then left them to hand-write JSON with 8 required fields, 25 optional ones, a task_id
+  convention that existed nowhere in code, and `gold_evidence_refs` pointing into a
+  snapshot they had to explore by hand. That was the highest-friction step in the project,
+  and it sat on the contribution type with the most headroom: 32 of the 50 cells hold one
+  task or fewer.
+- `aobench new task` does the mechanical half. `--thinnest` picks the emptiest cell,
+  `--cell DOCS_DES` (or `--qcat`/`--role`) names one explicitly. It allocates the next free
+  task ID, suggests the environment comparable tasks already use, and lists the files that
+  genuinely exist in that snapshot as evidence candidates.
+- What it emits is structurally valid immediately — `validate benchmark` passes on a fresh
+  scaffold — but deliberately unfinished: `title`, `query_text` and `gold_answer` are
+  `TODO`, `gold_evidence_refs` is empty, and the spec carries
+  `validation_status: not_started` / `scoring_readiness: blocked` so it announces itself as
+  work in progress. The scaffolder does not invent a gold answer: a benchmark whose answers
+  were generated measures the generator, not the agent.
+- The cell, role and QCAT vocabulary is imported from `list_cmd` rather than restated, so
+  "thin cell" cannot come to mean two different things in two commands.
+- Documented in `docs/guides/adding-a-task.md` (now step 0 of the workflow) and
+  `docs/reference/commands.md`. 24 tests in `tests/unit/test_new_cmd.py`.
+
 ### Fixed — SLURM snapshot return types
 
 - `_load_json` now describes list-shaped job details while retaining the mapping
