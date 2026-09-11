@@ -432,13 +432,15 @@ From clone to green tests in three commands:
 ```bash
 git clone https://github.com/MSKazemi/aobench && cd aobench
 make install     # creates .venv and installs everything
-make test        # 1610 passed, 4 skipped — that is green
+make test        # every test passes, ~24 skipped — that is green
 ```
 
-The 4 skips are expected and are not a broken setup — nothing is missing from your clone.
-Four of the 29 environment bundles carry no `slurm/slurm_state.json` because they are
-documentation- and filesystem-oriented snapshots, so the SLURM schema test skips them by
-design. Run `uv run pytest tests/ -rs` to see the reason for each.
+Roughly two dozen skips are expected and are not a broken setup: **4** because four of the
+29 environment bundles carry no `slurm/slurm_state.json` (they are documentation- and
+filesystem-oriented snapshots, so the SLURM schema test skips them by design), and **20**
+because the rubric-validation fixtures are not part of the published repository. Run
+`uv run pytest tests/ -rs` to see the reason for each. The pass count is not quoted because
+it changes whenever a test is added — what matters is that nothing fails.
 
 **What you can expect from us:** a first response within 3 working days — even if
 that response is just "seen, I'll look properly on Friday". If a PR of yours goes
