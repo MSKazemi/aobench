@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed — SLURM snapshot return types
+
+- `_load_json` now describes list-shaped job details while retaining the mapping
+  type for scheduler state (#66). Runtime behavior and corpus files are unchanged.
+  Tests cover both detail shapes, all state snapshots, and missing files.
+
 ### Fixed — `mypy --strict` is now clean everywhere except one third-party import
 
 - **The mock HPC tool layer is typed** ([#61](https://github.com/MSKazemi/aobench/issues/61),
