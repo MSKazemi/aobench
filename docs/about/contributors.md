@@ -110,6 +110,26 @@ they worked on; the line underneath says it in words.
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">The last ten type errors &middot; a test-isolation bug found by running one extra gate</span>
 </li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/motodriver.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">Enzo</span>
+  <span class="wall-handle"><a href="https://github.com/motodriver">@motodriver</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">Fixed the Langfuse test-isolation bug Akimbo92i found</span>
+</li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/QIU-Guanzong.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">Qiu Guanzong</span>
+  <span class="wall-handle"><a href="https://github.com/QIU-Guanzong">@QIU-Guanzong</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">A type signature the corpus disagreed with, three snapshots out of seven</span>
+</li>
 </ul>
 
 | Contributor | What they added | |
@@ -126,6 +146,8 @@ they worked on; the line underneath says it in words.
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `mypy --strict` clean across `reports/`, `leaderboard/` and `judge/`, and a judge that now rejects a non-object JSON reply instead of returning it as a dict | [#53](https://github.com/MSKazemi/aobench/pull/53), [#54](https://github.com/MSKazemi/aobench/pull/54), [#55](https://github.com/MSKazemi/aobench/pull/55) |
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `scorers/` from 26 `mypy --strict` errors to 1, including the reachable Anthropic content-block bug in the rubric judge | [#59](https://github.com/MSKazemi/aobench/pull/59) |
 | [@Akimbo92i](https://github.com/Akimbo92i) | The last ten `mypy --strict` errors, in the five mock HPC tools every task runs through — `tools` now carries no budget at all, so it cannot rot back | [#64](https://github.com/MSKazemi/aobench/pull/64) |
+| [@motodriver](https://github.com/motodriver) | Fixed the order-dependent Langfuse exporter test failure — one root cause (`patch.dict` evicting a module it imported) applied at all six call sites | [#67](https://github.com/MSKazemi/aobench/pull/67) |
+| [@QIU-Guanzong](https://github.com/QIU-Guanzong) | `MockSlurmTool._load_json`'s return type now says what the corpus actually contains — an `@overload` pair instead of one signature that couldn't cover both shapes | [#68](https://github.com/MSKazemi/aobench/pull/68) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
@@ -214,6 +236,7 @@ before it lands rather than only afterwards.
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
 | [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
 | [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
+| [@BillP313](https://github.com/BillP313) | A 30-second demo [GIF for the README](https://github.com/MSKazemi/aobench/issues/9) | 2026-09-11 |
 
 **Claiming an issue protects it.** Comment to say you are taking something and it is yours;
 nothing will be merged over you. That promise is written down because it was

@@ -126,6 +126,32 @@ Added when a first PR merges, newest last.
   and saying so instead of quietly re-running until it went green — filed as
   [#65](https://github.com/MSKazemi/aobench/issues/65).
 
+- **Enzo** ([@motodriver](https://github.com/motodriver)) — closed
+  [issue #65](https://github.com/MSKazemi/aobench/issues/65), the test-isolation bug found
+  by [@Akimbo92i](https://github.com/Akimbo92i) above
+  ([PR #67](https://github.com/MSKazemi/aobench/pull/67)). `patch.dict(sys.modules, ...)`
+  restores the snapshot it took on entry, so a module first imported *inside* the block gets
+  evicted again on exit; a later `importlib.reload` on the still-live module object then
+  raises. The fix is one idea applied at all six call sites in
+  `test_langfuse_exporter.py`: import the module once at module scope, before any
+  `patch.dict` block opens, so the snapshot already contains it and restoring is a no-op.
+  Disclosed substantial AI assistance (TRAE) in the PR description, as `CONTRIBUTING.md`
+  asks.
+
+- **Qiu Guanzong** ([@QIU-Guanzong](https://github.com/QIU-Guanzong)) — closed
+  [issue #66](https://github.com/MSKazemi/aobench/issues/66):
+  `MockSlurmTool._load_json` was annotated `-> dict[str, Any]`, but three of the seven
+  `job_details.json` corpus snapshots are top-level lists, and `_job_details_method` already
+  branched on `isinstance(..., list)` to handle both — the annotation was a claim mypy
+  accepted without checking ([PR #68](https://github.com/MSKazemi/aobench/pull/68)). A
+  single widened return type would not have worked on its own, since `_query_jobs` calls
+  `self._state.get("jobs", [])` and `list` has no `.get`. The fix is a `@overload` pair: a
+  `Literal["slurm/slurm_state.json"]` overload keeps the state-snapshot path typed as a
+  mapping, and the general path returns the true `dict | list` union that `job_details`
+  actually has — runtime unchanged by construction. Added parametrized regression tests
+  pinning both snapshot shapes across the whole corpus. Disclosed AI assistance (Codex) in
+  the PR description.
+
 ## Reported and tested
 
 Not every contribution is a commit. The people below ran AOBench somewhere the maintainer
@@ -203,6 +229,8 @@ a claim.
   [apology](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851). The
   claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
   that failure.
+- **[@BillP313](https://github.com/BillP313)** — recording a 30-second demo GIF for the
+  README ([#9](https://github.com/MSKazemi/aobench/issues/9)), claimed 2026-09-11.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
