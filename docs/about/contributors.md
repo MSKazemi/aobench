@@ -100,6 +100,16 @@ they worked on; the line underneath says it in words.
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">Typed reports, leaderboard, judge &amp; scorers</span>
 </li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/Akimbo92i.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">Akimbo92i</span>
+  <span class="wall-handle"><a href="https://github.com/Akimbo92i">@Akimbo92i</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">The last ten type errors &middot; a test-isolation bug found by running one extra gate</span>
+</li>
 </ul>
 
 | Contributor | What they added | |
@@ -115,6 +125,7 @@ they worked on; the line underneath says it in words.
 | [@TrueFurina](https://github.com/TrueFurina) | *Your first 10 minutes with AOBench* — one unbranched path from `git clone` to reading a score, the route the five existing pages never drew | [#52](https://github.com/MSKazemi/aobench/pull/52) |
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `mypy --strict` clean across `reports/`, `leaderboard/` and `judge/`, and a judge that now rejects a non-object JSON reply instead of returning it as a dict | [#53](https://github.com/MSKazemi/aobench/pull/53), [#54](https://github.com/MSKazemi/aobench/pull/54), [#55](https://github.com/MSKazemi/aobench/pull/55) |
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `scorers/` from 26 `mypy --strict` errors to 1, including the reachable Anthropic content-block bug in the rubric judge | [#59](https://github.com/MSKazemi/aobench/pull/59) |
+| [@Akimbo92i](https://github.com/Akimbo92i) | The last ten `mypy --strict` errors, in the five mock HPC tools every task runs through — `tools` now carries no budget at all, so it cannot rot back | [#64](https://github.com/MSKazemi/aobench/pull/64) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
@@ -203,7 +214,6 @@ before it lands rather than only afterwards.
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
 | [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
 | [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
-| [@Akimbo92i](https://github.com/Akimbo92i) | The last 10 `mypy --strict` errors, in the mock tool layer ([#61](https://github.com/MSKazemi/aobench/issues/61)) — claimed within half an hour of the issue opening, and correctly identified the *heterogeneous* dispatch maps as the crux | 2026-09-10 |
 
 **Claiming an issue protects it.** Comment to say you are taking something and it is yours;
 nothing will be merged over you. That promise is written down because it was

@@ -2,6 +2,41 @@
 
 ## Unreleased
 
+### Fixed — `mypy --strict` is now clean everywhere except one third-party import
+
+- **The mock HPC tool layer is typed** ([#61](https://github.com/MSKazemi/aobench/issues/61),
+  [PR #64](https://github.com/MSKazemi/aobench/pull/64) by
+  [@Akimbo92i](https://github.com/Akimbo92i)). All five tools dispatched their methods
+  through an unannotated inline dict, so mypy inferred the value type from the *first*
+  entry — one concrete bound-method signature — and everything after that followed:
+  `Cannot call function of unknown type`, `Returning Any from function declared to return
+  "ToolResult"`, and in `facility_tool` an outright incompatible dict entry, because its
+  four handlers really do not share a shape. Each map is now annotated
+  `dict[str, Callable[..., ToolResult]]`, which says the true thing about this layer: the
+  tool boundary takes dynamic keyword arguments and the invariant worth enforcing is the
+  shared `ToolResult` return. Runtime behaviour is unchanged — deliberately, because these
+  five tools are what every task in the benchmark runs through, so a change here would move
+  published scores.
+- **`mypy_baseline.json` drops from 11 errors to 1**, and `tools` no longer has a budget at
+  all. A package absent from that map must report zero, so the ratchet now stops `tools`
+  rotting back rather than merely capping it. This closes the last package-sized slice of
+  [#7](https://github.com/MSKazemi/aobench/issues/7); the single remaining error is the
+  `pingouin` `import-untyped` in `scorers/`, left alone on purpose because following into it
+  only moves the error onto the ICC(A,1) path that #46 corrected.
+- **A five-month-old test-isolation bug surfaced with it**, reported unprompted rather than
+  re-run until green: `pytest tests/unit -k tool` fails on
+  `test_langfuse_exporter.py::test_non_tool_step_uses_span_as_type`, on `main` as well. A
+  fixture imports `aobench.exporters.langfuse_exporter` *inside*
+  `patch.dict(sys.modules, ...)`, so exiting the block evicts the module it just imported
+  and the next `importlib.reload` on it raises `ImportError`. The full suite hides it,
+  because some earlier test imports the module first. Filed as
+  [#65](https://github.com/MSKazemi/aobench/issues/65).
+- **`MockSlurmTool._load_json` is annotated `-> dict[str, Any]` but returns a list for three
+  of the seven `job_details.json` snapshots** (`env_04`, `env_09`, `env_19`). The runtime
+  handles both and is correct; the annotation has been wrong since the function was written
+  and predates this PR. Filed as [#66](https://github.com/MSKazemi/aobench/issues/66) rather
+  than folded into a typing change that promised no behaviour change.
+
 ### Changed — the contributor wall now credits design input and work in flight too
 
 - **A full census of every account that has ever touched the repository** — issue and PR

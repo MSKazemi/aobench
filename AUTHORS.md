@@ -106,6 +106,26 @@ Added when a first PR merges, newest last.
   `float | None` on `raw_outcome` was the cause rather than a symptom, and said so
   instead of widening the annotation.
 
+- **[@Akimbo92i](https://github.com/Akimbo92i)** — closed out the `mypy --strict` epic.
+  Took [issue #61](https://github.com/MSKazemi/aobench/issues/61) and cleared the last ten
+  errors, in the five mock HPC tools that every task in the benchmark runs through
+  ([PR #64](https://github.com/MSKazemi/aobench/pull/64)). `mypy_baseline.json` went from
+  11 errors to 1, and `tools` now carries **no budget at all** — a package with no recorded
+  budget must report zero, so the ratchet stops it rotting back. He also answered the
+  question the issue asked rather than only the one in its title. Told that `facility_tool`
+  alone reports a different error because its four handlers genuinely do not share a
+  signature, he argued that the heterogeneity *is* the contract — the tool boundary takes
+  dynamic keyword arguments, and the invariant worth enforcing there is the shared
+  `ToolResult` return — and annotated to that instead of forcing the layer into a uniform
+  shape it does not have. And he reported, unprompted, that `pytest tests/unit -k tool`
+  failed on a test his change never touched, together with the observation that it passed
+  alone and in a full run. It does that on `main` too: a fixture in
+  `test_langfuse_exporter.py` imports the module *inside* `patch.dict(sys.modules, ...)`,
+  so exiting the block evicts it again and the next `importlib.reload` raises. A
+  five-month-old test-isolation bug, found by running a gate nobody had asked him to run
+  and saying so instead of quietly re-running until it went green — filed as
+  [#65](https://github.com/MSKazemi/aobench/issues/65).
+
 ## Reported and tested
 
 Not every contribution is a commit. The people below ran AOBench somewhere the maintainer
@@ -183,13 +203,6 @@ a claim.
   [apology](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851). The
   claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
   that failure.
-
-- **[@Akimbo92i](https://github.com/Akimbo92i)** — taking the last package-sized slice of
-  the `mypy --strict` epic: the 10 remaining errors in `src/aobench/tools/`
-  ([#61](https://github.com/MSKazemi/aobench/issues/61)), claimed 2026-09-10 within half an
-  hour of the issue being opened. Described them as the *heterogeneous* dispatch maps,
-  which is the crux — four of the five mock tools have handlers that happen to share a
-  shape and `facility_tool` does not, which is why it alone reports a different error.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
