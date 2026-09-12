@@ -187,7 +187,7 @@ is now a fix on `main`.
 - **hari760** ([@hari760](https://github.com/hari760)) — submitted a three-run
   `claude-sonnet-4-6` result on the dev split
   ([#60](https://github.com/MSKazemi/aobench/issues/60)) and, in the process of filling in
-  the form honestly, found four defects. The headline one: a first run died at task 6 of
+  the form honestly, found five defects. The headline one: a first run died at task 6 of
   67 with a `UnicodeEncodeError`, and the diagnosis came attached and correct — text I/O
   with no explicit `encoding=` falls back to the platform preferred encoding, which is
   cp1252 on Windows, and model output contained an emoji. It was not one call site but
@@ -201,7 +201,15 @@ is now a fix on `main`.
   scoring-profile field asked for one profile where the corpus sets it per task, 60
   `alpha1_grounding` to 28 `default_hpc_v01`, which was worked out unaided and reported
   precisely; and the documented submission command redirected a command that prints prose,
-  not JSON. Four defects from one submission, right about all of them.
+  not JSON. The fifth is the most serious and arrived last, in the two task IDs that hard
+  failed: `AIOPS_USR_001` and `PERF_USR_001` both ask about the requester's **own** job
+  while the snapshot assigns that job to someone else, so a correct agent is RBAC
+  hard-failed and the task is zeroed — unpassable by construction
+  ([#63](https://github.com/MSKazemi/aobench/issues/63)). It was diagnosable only because
+  the same two tasks failed in all three runs; a single run would have been published as a
+  model result. One of the two was already known and excluded from scoring, the other was
+  not, and had been depressing aggregates unnoticed. Five defects from one submission,
+  right about all of them.
 
 - **userfypp** ([@userfypp](https://github.com/userfypp)) — took the DOCS_USR cell on
   [#26](https://github.com/MSKazemi/aobench/issues/26), checked the proposed task against

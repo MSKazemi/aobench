@@ -174,7 +174,7 @@ right on the first telling — no reproduction work was needed on any of them.
   <span class="wall-name">hari760</span>
   <span class="wall-handle"><a href="https://github.com/hari760">@hari760</a></span>
   <span class="wall-role">Reporter</span>
-  <span class="wall-tag">The Windows portability class &middot; four defects from one run</span>
+  <span class="wall-tag">The Windows portability class &middot; five defects from one run</span>
 </li>
 <li>
   <span class="wall-avatar">
@@ -192,6 +192,7 @@ right on the first telling — no reproduction work was needed on any of them.
 |---|---|---|
 | [@hari760](https://github.com/hari760) | Ran the dev split on Windows and lost it at task 6 of 67 to a `UnicodeEncodeError`, with the correct diagnosis attached: text I/O with no `encoding=` falls back to cp1252. **259 call sites** across `src/`, `tests/` and `scripts/` had it — so Windows contributors could not run the test suite either. There is a static gate for it now (`make encoding-check`), because Linux CI can never see this class of bug | [#60](https://github.com/MSKazemi/aobench/issues/60) |
 | [@hari760](https://github.com/hari760) | Left the per-dimension field blank because nothing emitted it — which exposed that `workflow`, carrying 0.10 weight, was **missing from every task row**, from the OTel export and from `compare runs --show-dims`. The published breakdown could not have reconciled against the aggregate it explained. Also caught that the submission form demanded one scoring profile where the corpus uses two, and that a documented submission command captured prose rather than JSON | [#60](https://github.com/MSKazemi/aobench/issues/60) |
+| [@hari760](https://github.com/hari760) | Reported the two task IDs that hard failed rather than only the score — and because the **same two failed in all three runs**, it was diagnosable as construction rather than behaviour. `AIOPS_USR_001` and `PERF_USR_001` ask about the requester's *own* job while the snapshot assigns it to someone else, so a correct agent is RBAC hard-failed and the task zeroed: **unpassable by any agent**. One was already excluded from scoring; the other was not, and had been depressing published aggregates unnoticed | [#63](https://github.com/MSKazemi/aobench/issues/63) |
 | [@userfypp](https://github.com/userfypp) | Checked a proposed task against `env_21` before writing it and found `MockDocsTool._retrieve` returned characters 0–500 rather than the match. The tool reported a hit whose snippet contained none of the query terms — so an agent could be **scored on grounding against evidence the tool would never surface**, silently capping the dimension on any task whose answer lives late in a long document | [#26](https://github.com/MSKazemi/aobench/issues/26) |
 
 Both of those are scoring- or portability-integrity bugs found from the outside, by people

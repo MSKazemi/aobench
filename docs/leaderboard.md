@@ -27,11 +27,64 @@ scale a floor: **any tool-using agent that does not clearly beat it is not using
 usefully.** A score *below* the floor generally means the agent is calling tools badly
 rather than not at all.
 
+## Community results
+
+Independent runs on independent hardware, submitted through
+[#27](https://github.com/MSKazemi/aobench/issues/27). Each row is the **submitter's own
+measurement**, published as submitted, with the submitter's `run_summary.json` attached to
+the linked issue so anyone can re-derive it.
+
+| Model | Score | Runs | Version | Split | Adapter | Hard fails | Cost/run | Submitted by |
+|---|---:|---:|---|---|---|---:|---:|---|
+| `claude-sonnet-4-6` | **0.622** | 3 | 0.4.1 | `dev` (67 tasks) | `anthropic` | 2 <sup>†</sup> | ~$2.06 | [@hari760](https://github.com/hari760) ([#60](https://github.com/MSKazemi/aobench/issues/60)) |
+
+Scoring profile is per task: 42 × `alpha1_grounding`, 25 × `default_hpc_v01`. The three
+runs scored 0.6132 / 0.6192 / 0.6335 — a spread of 0.020, which is what a well-behaved
+result looks like. Per-dimension means across the three runs:
+
+| Dimension | Mean | Range |
+|---|---:|---|
+| outcome | 0.489 | 0.486 – 0.494 |
+| tool_use | 0.837 | 0.821 – 0.860 |
+| grounding | 0.431 | 0.400 – 0.452 |
+| governance | 0.950 | 0.940 – 0.955 |
+| efficiency | 0.910 | 0.906 – 0.916 |
+
+`robustness` and `workflow` are unset in these runs, and that is expected rather than a
+gap: `robustness` is only produced by `aobench robustness task`, which re-runs a single
+task N times.
+
+!!! info "Re-deriving this row: the dev split was 67 tasks when it was run"
+    The corpus grew to **68** dev tasks after this submission, with `DOCS_USR_002`, while
+    the version string is still `0.4.1`. So re-running `--split dev` on `main` today scores
+    68 tasks and will not reproduce 0.622 exactly. That is a gap in this project's
+    versioning, not in the submission: the corpus is part of the version, and right now the
+    version does not say so. Compare against the attached `run_summary.json` on
+    [#60](https://github.com/MSKazemi/aobench/issues/60), which names the 67 tasks scored.
+
+!!! warning "† The two hard fails are defects in this benchmark, not behaviour of the model"
+    Both `AIOPS_USR_001` and `PERF_USR_001` ask the user about **their own** job, while the
+    environment snapshot gives that job a different owner than the hardcoded requester
+    (`alice`): job `910803` belongs to `bob`, job `902117` to `carol`. An agent that does
+    the right thing — the user asked about their own job, so look it up — receives a
+    `permission_denied`, which is an RBAC hard fail, which zeroes the whole task. No agent
+    behaviour passes either task. Tracked as
+    [#63](https://github.com/MSKazemi/aobench/issues/63).
+
+    **This score is therefore a floor, not this model's ceiling.** Both unwinnable tasks
+    are inside the 67 that the mean is taken over, so they depress it. The number above is
+    published exactly as submitted; it is not quietly recomputed, because how #63 is
+    resolved changes previously published figures and that decision belongs in the open on
+    the issue rather than in a leaderboard edit. When #63 lands, this row is re-derived
+    from the attached summaries and the change noted here.
+
 !!! note "Why this table is short"
     Model rows are added as runs are completed and verified against the submission
     requirements below. We would rather publish three rows anyone can reproduce than
     thirty nobody can. If you have run AOBench, **your submission is genuinely wanted** —
-    including a bad result, which is often the more informative kind.
+    including a bad result, which is often the more informative kind. The first community
+    submission found five defects in this project on its way to a score, which is the
+    better argument for sending one than any number it produced.
 
 ## Submitting a result
 

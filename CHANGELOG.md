@@ -131,8 +131,14 @@
 ### Fixed — SLURM snapshot return types
 
 - `_load_json` now describes list-shaped job details while retaining the mapping
-  type for scheduler state (#66). Runtime behavior and corpus files are unchanged.
-  Tests cover both detail shapes, all state snapshots, and missing files.
+  type for scheduler state ([#66](https://github.com/MSKazemi/aobench/issues/66),
+  [PR #68](https://github.com/MSKazemi/aobench/pull/68) by
+  [@QIU-Guanzong](https://github.com/QIU-Guanzong)). The annotation claimed
+  `dict[str, Any]` while three of the seven `job_details.json` snapshots (`env_04`,
+  `env_09`, `env_19`) are JSON *lists* — the runtime handled both correctly and the
+  type had been wrong since the function was written. Runtime behavior and corpus
+  files are unchanged. Tests cover both detail shapes, all state snapshots, and
+  missing files.
 
 ### Fixed — Langfuse exporter test isolation
 
