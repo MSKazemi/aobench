@@ -213,7 +213,7 @@ item, so what you see before opening a PR is what the reviewer will work through
 | Evidence | every `gold_evidence_refs` path exists in that bundle, and `required_evidence_refs` is a subset |
 | Tools | tool families are real, and within what the bundle's RBAC policy lists for the role |
 | Scoring | deterministic unless a rubric is genuinely needed |
-| Coverage | nearest sibling in the same cell, so a near-duplicate gets a second look |
+| Coverage | nearest sibling in the same cell by *authoring shape* — difficulty, evidence count, text lengths, whether `slurm` is granted. It is a coarse fingerprint, not a reading of your question, so a `WARN` here asks you to confirm the task adds coverage; it is not evidence that it duplicates anything |
 
 Statuses are deliberately graded. `FAIL` and objective scaffold `TODO` rows exit non-zero;
 `WARN` remains a human judgement call:
