@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added — second DOCS_USR task
+
+- Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
+  `env_21` that tests retrieval of the patient/PII storage compliance policy.
+
 ### Changed — `new task` says that a scaffold will be scored
 
 - A spec written into `benchmark/tasks/specs/` joins the `dev` split the moment it exists,

@@ -27,7 +27,7 @@ role-aware, permission-enforced, tool-using, trace-scored, and reproducible on a
 [![Python](https://img.shields.io/badge/python-3.10+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-4CAF50)](https://github.com/MSKazemi/aobench/blob/main/LICENSE)
 [![Version](https://img.shields.io/badge/version-0.4.1-1a237e)](https://github.com/MSKazemi/aobench/releases)
-[![Tasks](https://img.shields.io/badge/tasks-88-FF6F00)](reference/task-catalog.md)
+[![Tasks](https://img.shields.io/badge/tasks-89-FF6F00)](reference/task-catalog.md)
 [![Environments](https://img.shields.io/badge/environments-29-0288D1)](reference/environment-catalog.md)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854862.svg)](https://doi.org/10.5281/zenodo.21854862)
 </div>
