@@ -32,9 +32,9 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SPEC_PREFIX = "benchmark/tasks/specs/"
 
-# Only FAIL blocks. WARN and TODO are surfaced for the human and must not gate a PR --
-# a checker that blocks on judgement calls trains people to route around it.
-_BLOCKING = {"FAIL"}
+# FAIL is mechanically invalid and TODO is objective scaffold text. WARN remains a human
+# judgement call and must not gate a PR.
+_BLOCKING = {"FAIL", "TODO"}
 
 _ICON = {"PASS": "✅", "FAIL": "❌", "WARN": "⚠️", "TODO": "📝", "SKIP": "➖"}
 
@@ -53,7 +53,15 @@ def _changed_specs(base: str) -> list[str]:
     """Task spec paths added or modified relative to *base*."""
     try:
         out = subprocess.run(
-            ["git", "diff", "--name-only", "--diff-filter=d", f"{base}...HEAD", "--", f"{SPEC_PREFIX}*.json"],
+            [
+                "git",
+                "diff",
+                "--name-only",
+                "--diff-filter=d",
+                f"{base}...HEAD",
+                "--",
+                f"{SPEC_PREFIX}*.json",
+            ],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
@@ -61,9 +69,7 @@ def _changed_specs(base: str) -> list[str]:
             check=True,
         ).stdout
     except subprocess.CalledProcessError as exc:
-        raise DiffFailed(
-            f"could not diff against {base!r}: {exc.stderr.strip() or exc}"
-        ) from exc
+        raise DiffFailed(f"could not diff against {base!r}: {exc.stderr.strip() or exc}") from exc
     return [line.strip() for line in out.splitlines() if line.strip()]
 
 
@@ -119,7 +125,7 @@ def _render(reports: list[dict[str, object]]) -> str:
     lines += [
         "---",
         "",
-        "`FAIL` blocks. `WARN` and `TODO` are for the reviewer to judge and do not gate this PR.",
+        "`FAIL` and scaffold `TODO` rows block. `WARN` rows are for the reviewer to judge.",
         "",
         "What this check **cannot** tell you, and what review is actually for:",
         "",
@@ -149,8 +155,11 @@ def main() -> int:
         try:
             specs = _changed_specs(args.base)
         except DiffFailed as exc:
-            print(f"{exc}\n\nThe review could not determine what changed, so it is failing"
-                  " rather than reporting a clean run.", file=sys.stderr)
+            print(
+                f"{exc}\n\nThe review could not determine what changed, so it is failing"
+                " rather than reporting a clean run.",
+                file=sys.stderr,
+            )
             return 2
 
     specs = [s for s in specs if s.startswith(SPEC_PREFIX) and s.endswith(".json")]

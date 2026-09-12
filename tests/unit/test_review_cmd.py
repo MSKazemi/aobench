@@ -213,7 +213,8 @@ def test_no_new_task_fails_the_mechanical_checks():
     failing = set()
     for task_id in available_task_ids(root):
         result = runner.invoke(app, ["review", "task", task_id, "--json"])
-        if result.exit_code != 0:
+        payload = json.loads(result.output)
+        if payload["failed"]:
             failing.add(task_id)
 
     new_failures = failing - _KNOWN_FAILING
@@ -271,14 +272,24 @@ def test_json_output_is_machine_readable(tmp_path):
     }
 
 
-def test_a_scaffold_reviews_clean_apart_from_its_todos(tmp_path):
-    # The two commands are one workflow: `new task` then `review task` should tell the
-    # author what is left, not bury them in failures.
+def test_a_scaffold_fails_the_machine_readable_review(tmp_path):
+    # TODO is objective scaffold text, unlike WARN rows that need reviewer judgement.
     dest = tmp_path / "scaffold.json"
     assert runner.invoke(app, ["new", "task", "--cell", "DOCS_DES", "-o", str(dest)]).exit_code == 0
 
     result = runner.invoke(app, ["review", "task", str(dest), "--json"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code != 0, result.output
     payload = json.loads(result.output)
     assert payload["failed"] == 0
+    assert payload["ok"] is False
     assert _status(result.output, "Finished") == "TODO"
+
+
+def test_a_scaffold_human_review_does_not_claim_no_failures(tmp_path):
+    dest = tmp_path / "scaffold.json"
+    assert runner.invoke(app, ["new", "task", "--cell", "DOCS_DES", "-o", str(dest)]).exit_code == 0
+
+    result = runner.invoke(app, ["review", "task", str(dest)])
+    assert result.exit_code != 0, result.output
+    assert "No failures." not in result.output
+    assert "unfinished" in result.output

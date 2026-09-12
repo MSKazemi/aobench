@@ -243,7 +243,9 @@ def _check_scoring(spec: dict[str, Any]) -> _Check:
     """Prefer deterministic scoring; a rubric costs an LLM judge call on every run."""
     mode = (spec.get("hybrid_scoring") or {}).get("scoring_mode")
     if mode == "rubric":
-        return _Check("Scoring", _WARN, "rubric mode — is a deterministic check genuinely impossible?")
+        return _Check(
+            "Scoring", _WARN, "rubric mode — is a deterministic check genuinely impossible?"
+        )
     evaluation = (spec.get("eval_criteria") or {}).get("evaluation_mode")
     if not evaluation:
         return _Check("Scoring", _WARN, "no evaluation_mode set")
@@ -261,8 +263,8 @@ def review_task(
     Mirrors the checklist in `docs/guides/adding-a-task.md`, so running this before you open
     a pull request shows you the same list the reviewer will work through.
 
-    Exits non-zero if any check FAILs. ``WARN`` and ``TODO`` are reported but do not fail —
-    they are the rows a human still has to judge.
+    Exits non-zero if any check FAILs or the task still contains TODO scaffold text.
+    ``WARN`` rows are reported but do not fail because they need human judgement.
     """
     root = resolve_root(benchmark_root)
 
@@ -293,7 +295,9 @@ def review_task(
     ]
 
     failed = [c for c in checks if c.status == _FAIL]
+    unfinished = [c for c in checks if c.status == _TODO]
     open_rows = [c for c in checks if c.status in (_WARN, _TODO)]
+    blocking = failed or unfinished
 
     if as_json:
         typer.echo(
@@ -304,7 +308,7 @@ def review_task(
                     "checks": [c.as_dict() for c in checks],
                     "failed": len(failed),
                     "needs_judgement": len(open_rows),
-                    "ok": not failed,
+                    "ok": not blocking,
                 },
                 indent=2,
             )
@@ -318,6 +322,10 @@ def review_task(
         typer.echo("")
         if failed:
             typer.echo(f"{len(failed)} check(s) failed — fix these before opening a PR.")
+        elif unfinished:
+            typer.echo(
+                f"{len(unfinished)} unfinished check(s) — replace TODO scaffold text before opening a PR."
+            )
         elif open_rows:
             typer.echo(
                 f"No failures. {len(open_rows)} row(s) need a human judgement, "
@@ -333,5 +341,5 @@ def review_task(
             "\n  (then the same with a real model — it should be passable)"
         )
 
-    if failed:
+    if blocking:
         raise typer.Exit(code=1)

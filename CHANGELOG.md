@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed — review rejects unfinished task scaffolds
+
+- `aobench review task --json` now reports `ok: false` and exits non-zero when its
+  `Finished` row is `TODO`. Human-readable output names the task as unfinished rather than
+  claiming "No failures." `WARN` rows remain non-blocking judgement calls. This closes #73.
+
 ### Added — corpus review runs in CI
 
 - `scripts/review_changed_tasks.py` runs `aobench review task --json` over every task spec a

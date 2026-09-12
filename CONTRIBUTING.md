@@ -59,8 +59,8 @@ make review                        # review every spec your branch changed, as C
 
 `make review` is exactly what the **Corpus review** workflow runs on your pull request, and
 it renders the checklist into the run summary — so on a fork PR you get the same feedback
-with no bot and no write access needed. Only a `FAIL` blocks; `WARN` and `TODO` are there
-for the reviewer to judge.
+with no bot and no write access needed. `FAIL` and objective scaffold `TODO` rows block;
+`WARN` rows remain for the reviewer to judge.
 
 The full authoring workflow is in
 [docs/guides/adding-a-task.md](docs/guides/adding-a-task.md).
