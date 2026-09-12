@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+### Changed — `new task` says that a scaffold will be scored
+
+- A spec written into `benchmark/tasks/specs/` joins the `dev` split the moment it exists,
+  so `aobench run all --split dev` includes and scores it. An unfinished task does not
+  merely score badly: an empty `expected_tool_calls` currently earns a vacuous
+  `tool_use: 1.0`, which can make a placeholder the highest-scoring task in the run
+  ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `aobench new task` now says so at the point the file is created, because the scaffolder is
+  the only path by which that scoring bug is reachable — no shipped task has an empty
+  `expected_tool_calls`. The warning is skipped with `--output`, which means "give me a file
+  to work on" rather than "add this to the benchmark".
+- This is a mitigation, not the fix. The two root causes in #75 stand: `scoring_readiness` is
+  written into every spec and read nowhere in `src/`, and an empty expectation list scores as
+  a perfect match rather than as unmeasurable.
+
 ### Fixed — review rejects unfinished task scaffolds
 
 - `aobench review task --json` now reports `ok: false` and exits non-zero when its

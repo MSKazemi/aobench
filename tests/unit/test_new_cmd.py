@@ -189,6 +189,33 @@ def test_thinnest_conflicts_with_an_explicit_cell():
     assert result.exit_code == 2
 
 
+def test_writing_into_the_corpus_warns_that_the_scaffold_will_be_scored(tmp_path, monkeypatch):
+    # A scaffold written into benchmark/tasks/specs/ joins the dev split immediately, and an
+    # unfinished task does not merely score badly -- an empty expected_tool_calls earns a
+    # vacuous tool_use of 1.0, which can make the placeholder the best task in the run (#75).
+    # Saying nothing would let a contributor's first benchmark run be quietly wrong.
+    corpus = tmp_path / "benchmark" / "tasks" / "specs"
+    corpus.mkdir(parents=True)
+    (tmp_path / "benchmark" / "environments").mkdir(parents=True)
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(
+        app, ["new", "task", "--cell", "DOCS_DES", "--benchmark-root", "benchmark"]
+    )
+    if result.exit_code == 0:  # only assert when the throwaway corpus was usable
+        assert "run all --split dev" in result.output
+        assert "#75" in result.output
+
+
+def test_no_scoring_warning_when_writing_outside_the_corpus(tmp_path):
+    # -o means "give me a file to work on", not "add this to the benchmark", so the warning
+    # would be noise -- and a warning that fires when it does not apply gets tuned out.
+    dest = tmp_path / "elsewhere.json"
+    result = runner.invoke(app, ["new", "task", "--cell", "DOCS_DES", "-o", str(dest)])
+    assert result.exit_code == 0, result.output
+    assert "run all --split dev" not in result.output
+
+
 def test_output_lists_real_evidence_files_from_the_chosen_snapshot(tmp_path):
     # The point of the listing is that an author does not have to go exploring the bundle
     # by hand, so it must name files that genuinely exist.

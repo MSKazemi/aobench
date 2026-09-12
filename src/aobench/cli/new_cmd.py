@@ -49,9 +49,7 @@ _MAX_EVIDENCE_SHOWN = 25
 _TODO = "TODO"
 
 
-def _resolve_cell(
-    cell: Optional[str], qcat: Optional[str], role: Optional[str]
-) -> tuple[str, str]:
+def _resolve_cell(cell: Optional[str], qcat: Optional[str], role: Optional[str]) -> tuple[str, str]:
     """Return ``(qcat, role)`` from either ``--cell QCAT_CODE`` or the separate flags."""
     if cell:
         if qcat or role:
@@ -139,9 +137,7 @@ def _suggest_env(specs: list[dict[str, Any]], qcat: str, role: str, root: Path) 
     ]
     for predicate in predicates:
         envs = Counter(
-            str(s["environment_id"])
-            for s in specs
-            if predicate(s) and s.get("environment_id")
+            str(s["environment_id"]) for s in specs if predicate(s) and s.get("environment_id")
         )
         if envs:
             return envs.most_common(1)[0][0]
@@ -303,7 +299,21 @@ def new_task(  # noqa: PLR0913  (each flag maps to one spec field; grouping them
             typer.echo(f"  ... and {len(candidates) - len(shown)} more")
         typer.echo(
             "\nCite these in gold_evidence_refs, optionally with an anchor:"
-            "\n  \"slurm/job_details.json#oom_evidence\""
+            '\n  "slurm/job_details.json#oom_evidence"'
+        )
+
+    if output is None:
+        # The scaffold is now a corpus file, so `run all --split dev` will pick it up and
+        # score it like any other task -- and an unfinished one scores *well*: an empty
+        # `expected_tool_calls` currently earns a vacuous `tool_use: 1.0`, which can make a
+        # placeholder the highest-scoring task in the run (#75). Until `scoring_readiness`
+        # actually gates run selection, the honest thing is to say so here rather than let
+        # a contributor's first benchmark run be quietly wrong.
+        typer.echo(
+            f"\nNote: {dest} is in the corpus now, so `aobench run all --split dev` will"
+            "\ninclude and score it. An unfinished task still gets a score, and an empty"
+            "\n`expected_tool_calls` scores *higher* than a real task (#75) — so finish it,"
+            "\nor delete the file, before you run the benchmark."
         )
 
     typer.echo(
