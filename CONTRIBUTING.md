@@ -79,6 +79,21 @@ The full authoring workflow is in
 - **If an issue turns out to be already done, say so.** It happens — three of ours
   were. Flagging it is a real contribution and gets credited in `AUTHORS.md`; it is
   never something you should feel awkward about raising.
+- **Your name lands on a public page, in the same merge.** Every merged contribution gets
+  an entry in [`AUTHORS.md`](https://github.com/MSKazemi/aobench/blob/main/AUTHORS.md) and on the [contributor
+  wall](https://mskazemi.com/aobench/latest/about/contributors/), written in specific terms
+  about what you actually did rather than as a row of avatars — and the entry has a stable
+  URL, so it works as third-party evidence on a CV or a profile. Release notes name
+  contributors for the version their change shipped in. Code, docs, tests, corpus, review
+  and **bug reports** all count; a report that turns out to be right is listed like a patch.
+- **Co-authorship is genuinely on the table for corpus and methodological work.** The
+  [recognition policy](https://github.com/MSKazemi/aobench/blob/main/AUTHORS.md#recognition-policy) puts it this way: *"Substantial corpus
+  or methodological contributions may warrant co-authorship on a paper that depends on them.
+  If you believe that applies to your work, say so — the awkwardness of asking should not
+  decide who gets credit."* It says *may*, and it means may — it opens a conversation rather
+  than promising an author slot. Raising it is welcome and will not be held against you.
+- **You can opt out of being listed**, at any time, without explaining why. Say so in the PR
+  and it is honoured immediately. Contributions stay listed if you later step away.
 - **CI does not run on your first PR until a maintainer approves it.** GitHub
   holds workflow runs on pull requests from first-time contributors, so
   `gh pr checks` says *"no checks reported"* and the PR page shows nothing at
