@@ -3,7 +3,7 @@
 <a href="https://mskazemi.com/aobench/">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/assets/banner-dark.svg">
-    <img src="docs/assets/banner-light.svg" alt="AOBench — the open-source benchmark for AI agents that operate HPC systems. 88 tasks, 29 environments, 7 scored dimensions, 0 clusters required." width="100%">
+    <img src="docs/assets/banner-light.svg" alt="AOBench — the open-source benchmark for AI agents that operate HPC systems. 89 tasks, 29 environments, 7 scored dimensions, 0 clusters required." width="100%">
   </picture>
 </a>
 
@@ -14,7 +14,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21854862.svg)](https://doi.org/10.5281/zenodo.21854862)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![Tasks](https://img.shields.io/badge/tasks-88-FF6F00)](https://mskazemi.com/aobench/latest/reference/task-catalog/)
+[![Tasks](https://img.shields.io/badge/tasks-89-FF6F00)](https://mskazemi.com/aobench/latest/reference/task-catalog/)
 [![Environments](https://img.shields.io/badge/environments-29-0288D1)](https://mskazemi.com/aobench/latest/reference/environment-catalog/)
 [![Good first issues](https://img.shields.io/github/issues/MSKazemi/aobench/good%20first%20issue?label=good%20first%20issues&color=7057ff)](https://github.com/MSKazemi/aobench/labels/good%20first%20issue)
 
@@ -109,10 +109,10 @@ AOBench/
 │   └── taxonomy/           # 24-leaf TRAIL-adapted HPC error taxonomy
 │
 ├── benchmark/              # Static benchmark data (versioned in git)
-│   ├── tasks/specs/        # 88 JSON task specs (80 synthetic + 8 M100 ExaData)
+│   ├── tasks/specs/        # 89 JSON task specs (81 synthetic + 8 M100 ExaData)
 │   ├── tasks/task_set_v1.json   # 36 HPC v1 tasks (Souza 2025 schema)
 │   ├── tasks/task_set_v3.json   # v3 task index (88 tasks)
-│   ├── tasks/dataset_splits.py  # 67 dev / 21 test (synthetic core: 59 dev / 21 test)
+│   ├── tasks/dataset_splits.py  # 68 dev / 21 test (synthetic core: 60 dev / 21 test)
 │   ├── tasks/lite_manifest_v1.json  # AOBench-Lite curated subset
 │   ├── environments/           # 29 snapshot bundles (23 synthetic + 6 M100)
 │   ├── configs/            # scoring_profiles.yaml, hpc_tool_catalog.yaml,
@@ -161,7 +161,7 @@ That `0.334` is the tool-free floor a real agent has to beat. From there:
 ```bash
 aobench doctor                 # is my install healthy?
 aobench list tasks --qcat JOB  # what else can I run? (also: list envs / roles / adapters)
-aobench validate benchmark     # do all 88 tasks and 29 environments load?
+aobench validate benchmark     # do all 89 tasks and 29 environments load?
 aobench run task --task JOB_USR_001 --env env_01 --adapter direct_qa
 ```
 
@@ -239,7 +239,7 @@ walkthroughs, and [ROADMAP.md](ROADMAP.md) for surface status and what's next.
 
 | Item | Count | Location |
 |------|-------|----------|
-| Tasks | **88** — 80 synthetic core (10 QCATs × 5 roles) + 8 grounded in real Marconi100 ExaData | `benchmark/tasks/specs/` |
+| Tasks | **89** — 81 synthetic core (10 QCATs × 5 roles) + 8 grounded in real Marconi100 ExaData | `benchmark/tasks/specs/` |
 | Environments | **29** deterministic snapshot bundles — 23 synthetic + **6 built from real Marconi100 ExaData** | `benchmark/environments/` |
 | Roles (scored) | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/aobench/schemas/task.py` |
 | QCATs (scored) | 10 — `JOB`, `MON`, `ENERGY`, `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `benchmark/tasks/specs/` |
@@ -281,7 +281,7 @@ Reliability, Cost, and Latency into a single comparable score per model.
   the task.
 - **Reproduce and publish results.** Evaluate against deterministic snapshot
   bundles so runs are portable and safe to publish without live-cluster access.
-- **Author new tasks and environments.** Extend the 88-task / 29-environment
+- **Author new tasks and environments.** Extend the 89-task / 29-environment
   corpus using the versioned JSON specs and snapshot format.
 
 ## Comparison and alternatives
@@ -305,7 +305,7 @@ benchmark above.
 - **Not a live-cluster test.** AOBench runs against mock tools and deterministic
   snapshots by design; it does not execute against real production HPC
   infrastructure and does not measure real-world side effects.
-- **HPC-scoped.** The corpus covers 5 roles, 10 QCATs, 88 tasks, and 29
+- **HPC-scoped.** The corpus covers 5 roles, 10 QCATs, 89 tasks, and 29
   environments. It is not a general-purpose reasoning, web, or coding benchmark.
 - **API keys required for hosted models.** The `openai` and `anthropic` adapters
   need the corresponding API keys and incur provider cost; the `direct_qa`
@@ -366,7 +366,7 @@ tool-free `direct_qa` baseline for reference.
 | 🧭 | [Framework overview](https://mskazemi.com/aobench/latest/framework/overview/) | Principles and scope |
 | 🏗️ | [System architecture](https://mskazemi.com/aobench/latest/reference/system-architecture/) | Components, data flow, scoring pipeline |
 | 📐 | [Scoring dimensions](https://mskazemi.com/aobench/latest/framework/scoring-dimensions/) | What each of the 7 weighted dimensions measures |
-| 🗂️ | [Task catalog](https://mskazemi.com/aobench/latest/reference/task-catalog/) · [Environment catalog](https://mskazemi.com/aobench/latest/reference/environment-catalog/) | Generated inventories of all 88 tasks and 29 environments |
+| 🗂️ | [Task catalog](https://mskazemi.com/aobench/latest/reference/task-catalog/) · [Environment catalog](https://mskazemi.com/aobench/latest/reference/environment-catalog/) | Generated inventories of all 89 tasks and 29 environments |
 | 🧪 | [Environments](https://mskazemi.com/aobench/latest/framework/environments/) · [M100 ExaData](https://mskazemi.com/aobench/latest/guides/m100_environments/) | Snapshot format, and the real Marconi100 bundles |
 
 **For researchers**
