@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Redirecting</title>
-  <noscript>
-    <meta http-equiv="refresh" content="1; url=latest/" />
-  </noscript>
-  <script>
-    window.location.replace(
-      "latest/" + window.location.search + window.location.hash
-    );
-  </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AOBench — benchmark for AI agents that operate HPC systems</title>
+<meta name="description" content="Open-source benchmark for AI agents operating HPC systems: 88 tasks, 29 deterministic snapshots, RBAC-enforced, trace-scored. No cluster needed.">
+<link rel="canonical" href="https://mskazemi.com/aobench/latest/">
+<meta http-equiv="refresh" content="0; url=latest/">
+<script>window.location.replace("latest/" + window.location.search + window.location.hash);</script>
 </head>
 <body>
-  Redirecting to <a href="latest/">latest/</a>...
+<h1>AOBench — Agent Operations Benchmark</h1>
+<p>AOBench is an open-source benchmark for AI agents that operate High-Performance
+Computing systems: 88 tasks across 10 question categories and 5 operator roles, 29
+deterministic environment snapshots — 6 of them rebuilt from real CINECA Marconi100
+ExaData — role-based access control enforced so that a policy violation hard-fails
+the task, and 12 scorers over 7 weighted dimensions. It runs offline, with no
+cluster and no API key.</p>
+<p>Not to be confused with <em>aobench</em>, the ambient-occlusion ray-tracing
+microbenchmark by Syoyo Fujita.</p>
+<ul>
+<li><a href="latest/">Documentation (current release)</a></li>
+<li><a href="latest/leaderboard/">Leaderboard</a></li>
+<li><a href="https://github.com/MSKazemi/aobench">Source on GitHub</a></li>
+</ul>
 </body>
 </html>
