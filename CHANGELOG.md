@@ -2,7 +2,23 @@
 
 ## Unreleased
 
-### Added — second DOCS_USR task
+### Added — second DOCS_USR task, and the first corpus contribution from outside the project
+
+- `DOCS_USR_002` by [@userfypp](https://github.com/userfypp)
+  ([PR #78](https://github.com/MSKazemi/aobench/pull/78)) — a PII storage-compliance task
+  against `env_21`, grounded in `docs/data_management_policy.md#5-compliance`. Closes the
+  `DOCS_USR` half of [#26](https://github.com/MSKazemi/aobench/issues/26) and takes the
+  thin-cell count from **32 of 50 to 31**. Corpus: 88 → 89 tasks, 67 → 68 dev.
+- The task exists because of its author's own earlier bug report. They proposed it on
+  2026-08-11, found on 2026-09-01 that `MockDocsTool._retrieve` returned characters 0–500
+  while the Compliance clause begins at character 901, and stopped to ask rather than
+  reshaping the task around a broken tool. That was a scoring-integrity defect, not a
+  retrieval nicety, and fixing it unblocked this task.
+- Verified beyond CI before merge: `direct_qa` scores **0.348**, so the task is genuinely
+  gated on retrieval rather than answerable tool-free; querying the `docs` tool directly
+  against `env_21` returns all of `compliance`, `patient`, `tier4` and `suspension` in the
+  snippet.
+
 
 - Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
   `env_21` that tests retrieval of the patient/PII storage compliance policy.

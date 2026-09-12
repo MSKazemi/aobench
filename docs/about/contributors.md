@@ -149,6 +149,7 @@ they worked on; the line underneath says it in words.
 | [@motodriver](https://github.com/motodriver) | Fixed the order-dependent Langfuse exporter test failure — one root cause (`patch.dict` evicting a module it imported) applied at all six call sites | [#67](https://github.com/MSKazemi/aobench/pull/67) |
 | [@QIU-Guanzong](https://github.com/QIU-Guanzong) | `MockSlurmTool._load_json`'s return type now says what the corpus actually contains — an `@overload` pair instead of one signature that couldn't cover both shapes | [#68](https://github.com/MSKazemi/aobench/pull/68) |
 | [@mgalore](https://github.com/mgalore) | Caught that `review task --json` called an untouched scaffold `ok: true` — the one state the command is guaranteed to run in was the state it green-lit | [#77](https://github.com/MSKazemi/aobench/pull/77) |
+| [@userfypp](https://github.com/userfypp) | **The first corpus contribution from outside the project** — `DOCS_USR_002`, a PII storage-compliance task grounded in `env_21`, which took thin cells from 32 of 50 to 31. It exists because they stopped to report the retrieval bug that blocked it instead of reshaping the task around it | [#78](https://github.com/MSKazemi/aobench/pull/78) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
@@ -235,7 +236,6 @@ before it lands rather than only afterwards.
 | Who | What | Since |
 |---|---|---|
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
-| [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
 | [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
 | [@BillP313](https://github.com/BillP313) | A 30-second demo [GIF for the README](https://github.com/MSKazemi/aobench/issues/9) | 2026-09-11 |
 

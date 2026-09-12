@@ -138,6 +138,19 @@ Added when a first PR merges, newest last.
   Disclosed substantial AI assistance (TRAE) in the PR description, as `CONTRIBUTING.md`
   asks.
 
+- **[@userfypp](https://github.com/userfypp)** — wrote **AOBench's first corpus
+  contribution from outside the project**: `DOCS_USR_002`
+  ([PR #78](https://github.com/MSKazemi/aobench/pull/78)), a PII storage-compliance task
+  against `env_21`, closing the `DOCS_USR` half of
+  [#26](https://github.com/MSKazemi/aobench/issues/26) and taking the thin-cell count from
+  32 of 50 to 31. The task exists because of their own earlier bug report: they proposed it
+  on 2026-08-11, found on 2026-09-01 that `MockDocsTool._retrieve` returned characters
+  0–500 while the Compliance clause they needed begins at character 901, and **stopped to
+  ask rather than quietly reshaping the task around a broken tool**. The gold answer states
+  that the snapshot does not name a concrete permitted storage path rather than inventing
+  one to look complete — the discipline corpus authoring most depends on, and the one that
+  quietly ruins a benchmark when it is missing.
+
 - **[@mgalore](https://github.com/mgalore)** — closed
   [issue #73](https://github.com/MSKazemi/aobench/issues/73): `aobench review task --json`
   reported `"ok": true` and exited 0 for a spec that was still an untouched scaffold, with
@@ -230,9 +243,6 @@ a claim.
   providers), claimed 2026-09-01. Asked whether `litellm:<model>` with the provider prefix
   passed through was the intended adapter-string format *before* writing code, which is
   why it will not need redoing in review.
-- **[@userfypp](https://github.com/userfypp)** — writing a second DOCS_USR task on the PII
-  storage policy ([#26](https://github.com/MSKazemi/aobench/issues/26)), claimed
-  2026-08-11, unblocked once the docs-retrieval bug they found was fixed.
 - **[@aawhan0](https://github.com/aawhan0)** — verifying that the 136 documented shell
   commands actually do what their pages claim, from a clean checkout, starting with
   `docs/getting-started/quickstart.md` ([#62](https://github.com/MSKazemi/aobench/issues/62)),
