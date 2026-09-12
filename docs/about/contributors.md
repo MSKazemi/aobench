@@ -148,6 +148,7 @@ they worked on; the line underneath says it in words.
 | [@Akimbo92i](https://github.com/Akimbo92i) | The last ten `mypy --strict` errors, in the five mock HPC tools every task runs through — `tools` now carries no budget at all, so it cannot rot back | [#64](https://github.com/MSKazemi/aobench/pull/64) |
 | [@motodriver](https://github.com/motodriver) | Fixed the order-dependent Langfuse exporter test failure — one root cause (`patch.dict` evicting a module it imported) applied at all six call sites | [#67](https://github.com/MSKazemi/aobench/pull/67) |
 | [@QIU-Guanzong](https://github.com/QIU-Guanzong) | `MockSlurmTool._load_json`'s return type now says what the corpus actually contains — an `@overload` pair instead of one signature that couldn't cover both shapes | [#68](https://github.com/MSKazemi/aobench/pull/68) |
+| [@mgalore](https://github.com/mgalore) | Caught that `review task --json` called an untouched scaffold `ok: true` — the one state the command is guaranteed to run in was the state it green-lit | [#77](https://github.com/MSKazemi/aobench/pull/77) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed

@@ -61,13 +61,30 @@ def test_scaffold_markers_report_todo_not_fail():
     assert "title" in check.detail
 
 
-def test_not_started_status_reports_todo():
+def test_not_started_on_a_written_task_warns_rather_than_blocking():
+    # 34 of the 88 shipped tasks are fully written and still carry not_started. Treating
+    # that as scaffold text would block a contributor's PR over a workflow field they were
+    # never asked to touch -- see the ratchet below, which pins the real blocking set at 10.
     check = _check_unfinished(
         {
             "title": "real",
             "query_text": "real",
             "eval_criteria": {"gold_answer": "real"},
             "validation_status": "not_started",
+        }
+    )
+    assert check.status == "WARN"
+
+
+def test_generator_scaffold_text_still_reports_todo_even_when_status_moved_on():
+    # The blocking signal is the generator's text, not the status field: an author who
+    # flipped the status without writing the task is exactly who #73 is about.
+    check = _check_unfinished(
+        {
+            "title": "TODO: one-line summary",
+            "query_text": "real",
+            "eval_criteria": {"gold_answer": "real"},
+            "validation_status": "validated",
         }
     )
     assert check.status == "TODO"
@@ -213,8 +230,7 @@ def test_no_new_task_fails_the_mechanical_checks():
     failing = set()
     for task_id in available_task_ids(root):
         result = runner.invoke(app, ["review", "task", task_id, "--json"])
-        payload = json.loads(result.output)
-        if payload["failed"]:
+        if result.exit_code != 0:
             failing.add(task_id)
 
     new_failures = failing - _KNOWN_FAILING

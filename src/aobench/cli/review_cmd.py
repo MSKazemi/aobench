@@ -105,7 +105,17 @@ def _check_schema(spec: dict[str, Any]) -> _Check:
 
 
 def _check_unfinished(spec: dict[str, Any]) -> _Check:
-    """Catch a scaffold that was submitted before its author filled it in."""
+    """Catch a scaffold that was submitted before its author filled it in.
+
+    TODO is reserved for text the *generator* wrote and a human has not replaced. That
+    is objectively unfinished, so it blocks (see #73).
+
+    validation_status: not_started is deliberately NOT that. It is a workflow field, and
+    34 of the 88 shipped tasks carry it while being completely written -- treating it as
+    scaffold text would block a contributor's pull request over a status nobody asked them
+    to change. It is surfaced as a WARN instead, because "no one has validated this yet" is
+    worth a reviewer knowing and is not worth failing a build over.
+    """
     gold = (spec.get("eval_criteria") or {}).get("gold_answer") or ""
     todo_fields = [
         name
@@ -119,7 +129,7 @@ def _check_unfinished(spec: dict[str, Any]) -> _Check:
     if todo_fields:
         return _Check("Finished", _TODO, f"still scaffold text: {', '.join(todo_fields)}")
     if spec.get("validation_status") == "not_started":
-        return _Check("Finished", _TODO, "validation_status is still not_started")
+        return _Check("Finished", _WARN, "written, but validation_status is still not_started")
     return _Check("Finished", _PASS, "no scaffold markers left")
 
 

@@ -208,7 +208,7 @@ item, so what you see before opening a PR is what the reviewer will work through
 | Row | What it checks |
 |---|---|
 | Schema | `TaskSpec` accepts the file |
-| Finished | no `TODO` scaffold text, `validation_status` moved on |
+| Finished | no `TODO` scaffold text left by the generator |
 | Environment | the named bundle exists |
 | Evidence | every `gold_evidence_refs` path exists in that bundle, and `required_evidence_refs` is a subset |
 | Tools | tool families are real, and within what the bundle's RBAC policy lists for the role |
@@ -220,7 +220,9 @@ Statuses are deliberately graded. `FAIL` and objective scaffold `TODO` rows exit
 
 - **`✓ PASS`** — checked, fine.
 - **`✗ FAIL`** — provably wrong; exits non-zero.
-- **`! WARN`** — a judgement call for a human. An over-grant of tools is a WARN, not a
+- **`! WARN`** — a judgement call for a human. A written task whose
+  `validation_status` is still `not_started` lands here: worth a reviewer knowing, not worth
+  failing a build over. An over-grant of tools is a WARN, not a
   FAIL, because `ToolRegistry` gates on the task's own `allowed_tools` and never intersects
   it with the bundle policy — so it is a question, not a proven defect.
 - **`… TODO`** — the author has not finished. It clears `ok` in `--json` output and exits
