@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+### Fixed — review rejects unfinished task scaffolds
+
+- `aobench review task --json` now reports `ok: false` and exits non-zero when its
+  `Finished` row is `TODO`. Human-readable output names the task as unfinished rather than
+  claiming "No failures." `WARN` rows remain non-blocking judgement calls. This closes #73.
+  Reported and fixed by [@mgalore](https://github.com/mgalore), who spotted that the one
+  state `review task` is guaranteed to run in — "I just scaffolded this" — was the state it
+  called clean, which made the documented `--json` CI contract unable to fail on the most
+  common defect.
+- Follow-on fix from the same report: the `Finished` row was conflating two different
+  things. Literal `TODO` text left by `aobench new task` is objectively unfinished and now
+  blocks; `validation_status: not_started` is a workflow field that **44 of the 88 shipped
+  tasks carry, every one of them fully written**, and blocking on it would have failed a
+  contributor's pull request over a status nobody asked them to change. It is now a `WARN`.
+  Without this split the new exit code would have blocked 44 of 88 tasks instead of 10.
+
 ### Added — corpus review runs in CI
 
 - `scripts/review_changed_tasks.py` runs `aobench review task --json` over every task spec a

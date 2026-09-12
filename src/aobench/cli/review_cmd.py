@@ -105,7 +105,17 @@ def _check_schema(spec: dict[str, Any]) -> _Check:
 
 
 def _check_unfinished(spec: dict[str, Any]) -> _Check:
-    """Catch a scaffold that was submitted before its author filled it in."""
+    """Catch a scaffold that was submitted before its author filled it in.
+
+    TODO is reserved for text the *generator* wrote and a human has not replaced. That
+    is objectively unfinished, so it blocks (see #73).
+
+    validation_status: not_started is deliberately NOT that. It is a workflow field, and
+    all 44 of the 88 shipped tasks that carry it are fully written -- treating it as
+    scaffold text would block a contributor's pull request over a status nobody asked them
+    to change. It is surfaced as a WARN instead, because "no one has validated this yet" is
+    worth a reviewer knowing and is not worth failing a build over.
+    """
     gold = (spec.get("eval_criteria") or {}).get("gold_answer") or ""
     todo_fields = [
         name
@@ -119,7 +129,7 @@ def _check_unfinished(spec: dict[str, Any]) -> _Check:
     if todo_fields:
         return _Check("Finished", _TODO, f"still scaffold text: {', '.join(todo_fields)}")
     if spec.get("validation_status") == "not_started":
-        return _Check("Finished", _TODO, "validation_status is still not_started")
+        return _Check("Finished", _WARN, "written, but validation_status is still not_started")
     return _Check("Finished", _PASS, "no scaffold markers left")
 
 
@@ -243,7 +253,9 @@ def _check_scoring(spec: dict[str, Any]) -> _Check:
     """Prefer deterministic scoring; a rubric costs an LLM judge call on every run."""
     mode = (spec.get("hybrid_scoring") or {}).get("scoring_mode")
     if mode == "rubric":
-        return _Check("Scoring", _WARN, "rubric mode — is a deterministic check genuinely impossible?")
+        return _Check(
+            "Scoring", _WARN, "rubric mode — is a deterministic check genuinely impossible?"
+        )
     evaluation = (spec.get("eval_criteria") or {}).get("evaluation_mode")
     if not evaluation:
         return _Check("Scoring", _WARN, "no evaluation_mode set")
@@ -261,8 +273,8 @@ def review_task(
     Mirrors the checklist in `docs/guides/adding-a-task.md`, so running this before you open
     a pull request shows you the same list the reviewer will work through.
 
-    Exits non-zero if any check FAILs. ``WARN`` and ``TODO`` are reported but do not fail —
-    they are the rows a human still has to judge.
+    Exits non-zero if any check FAILs or the task still contains TODO scaffold text.
+    ``WARN`` rows are reported but do not fail because they need human judgement.
     """
     root = resolve_root(benchmark_root)
 
@@ -293,7 +305,9 @@ def review_task(
     ]
 
     failed = [c for c in checks if c.status == _FAIL]
+    unfinished = [c for c in checks if c.status == _TODO]
     open_rows = [c for c in checks if c.status in (_WARN, _TODO)]
+    blocking = failed or unfinished
 
     if as_json:
         typer.echo(
@@ -304,7 +318,7 @@ def review_task(
                     "checks": [c.as_dict() for c in checks],
                     "failed": len(failed),
                     "needs_judgement": len(open_rows),
-                    "ok": not failed,
+                    "ok": not blocking,
                 },
                 indent=2,
             )
@@ -318,6 +332,10 @@ def review_task(
         typer.echo("")
         if failed:
             typer.echo(f"{len(failed)} check(s) failed — fix these before opening a PR.")
+        elif unfinished:
+            typer.echo(
+                f"{len(unfinished)} unfinished check(s) — replace TODO scaffold text before opening a PR."
+            )
         elif open_rows:
             typer.echo(
                 f"No failures. {len(open_rows)} row(s) need a human judgement, "
@@ -333,5 +351,5 @@ def review_task(
             "\n  (then the same with a real model — it should be passable)"
         )
 
-    if failed:
+    if blocking:
         raise typer.Exit(code=1)

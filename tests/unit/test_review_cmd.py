@@ -61,13 +61,30 @@ def test_scaffold_markers_report_todo_not_fail():
     assert "title" in check.detail
 
 
-def test_not_started_status_reports_todo():
+def test_not_started_on_a_written_task_warns_rather_than_blocking():
+    # 44 of the 88 shipped tasks are fully written and still carry not_started. Treating
+    # that as scaffold text would block a contributor's PR over a workflow field they were
+    # never asked to touch -- see the ratchet below, which pins the real blocking set at 10.
     check = _check_unfinished(
         {
             "title": "real",
             "query_text": "real",
             "eval_criteria": {"gold_answer": "real"},
             "validation_status": "not_started",
+        }
+    )
+    assert check.status == "WARN"
+
+
+def test_generator_scaffold_text_still_reports_todo_even_when_status_moved_on():
+    # The blocking signal is the generator's text, not the status field: an author who
+    # flipped the status without writing the task is exactly who #73 is about.
+    check = _check_unfinished(
+        {
+            "title": "TODO: one-line summary",
+            "query_text": "real",
+            "eval_criteria": {"gold_answer": "real"},
+            "validation_status": "validated",
         }
     )
     assert check.status == "TODO"
@@ -271,14 +288,24 @@ def test_json_output_is_machine_readable(tmp_path):
     }
 
 
-def test_a_scaffold_reviews_clean_apart_from_its_todos(tmp_path):
-    # The two commands are one workflow: `new task` then `review task` should tell the
-    # author what is left, not bury them in failures.
+def test_a_scaffold_fails_the_machine_readable_review(tmp_path):
+    # TODO is objective scaffold text, unlike WARN rows that need reviewer judgement.
     dest = tmp_path / "scaffold.json"
     assert runner.invoke(app, ["new", "task", "--cell", "DOCS_DES", "-o", str(dest)]).exit_code == 0
 
     result = runner.invoke(app, ["review", "task", str(dest), "--json"])
-    assert result.exit_code == 0, result.output
+    assert result.exit_code != 0, result.output
     payload = json.loads(result.output)
     assert payload["failed"] == 0
+    assert payload["ok"] is False
     assert _status(result.output, "Finished") == "TODO"
+
+
+def test_a_scaffold_human_review_does_not_claim_no_failures(tmp_path):
+    dest = tmp_path / "scaffold.json"
+    assert runner.invoke(app, ["new", "task", "--cell", "DOCS_DES", "-o", str(dest)]).exit_code == 0
+
+    result = runner.invoke(app, ["review", "task", str(dest)])
+    assert result.exit_code != 0, result.output
+    assert "No failures." not in result.output
+    assert "unfinished" in result.output

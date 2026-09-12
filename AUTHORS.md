@@ -138,6 +138,19 @@ Added when a first PR merges, newest last.
   Disclosed substantial AI assistance (TRAE) in the PR description, as `CONTRIBUTING.md`
   asks.
 
+- **[@mgalore](https://github.com/mgalore)** — closed
+  [issue #73](https://github.com/MSKazemi/aobench/issues/73): `aobench review task --json`
+  reported `"ok": true` and exited 0 for a spec that was still an untouched scaffold, with
+  `title`, `query_text` and `gold_answer` literally reading `TODO`. The observation that
+  makes it a real defect rather than a rough edge is that this is *the one state the command
+  is guaranteed to be run in* — "I just scaffolded this and started editing" — and the
+  documented `--json` CI contract therefore could not fail on the most common defect there
+  is. The fix draws the line in the right place: generator scaffold text is objective and
+  blocks, while `WARN` rows stay non-blocking because they need a reviewer's judgement.
+  Reported the pre-existing type-ratchet state honestly in the PR checklist rather than
+  claiming a clean `make check`, and disclosed substantial AI assistance as
+  `CONTRIBUTING.md` asks.
+
 - **Qiu Guanzong** ([@QIU-Guanzong](https://github.com/QIU-Guanzong)) — closed
   [issue #66](https://github.com/MSKazemi/aobench/issues/66):
   `MockSlurmTool._load_json` was annotated `-> dict[str, Any]`, but three of the seven
