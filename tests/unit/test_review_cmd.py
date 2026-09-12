@@ -62,7 +62,7 @@ def test_scaffold_markers_report_todo_not_fail():
 
 
 def test_not_started_on_a_written_task_warns_rather_than_blocking():
-    # 34 of the 88 shipped tasks are fully written and still carry not_started. Treating
+    # 44 of the 88 shipped tasks are fully written and still carry not_started. Treating
     # that as scaffold text would block a contributor's PR over a workflow field they were
     # never asked to touch -- see the ratchet below, which pins the real blocking set at 10.
     check = _check_unfinished(

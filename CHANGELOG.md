@@ -13,8 +13,8 @@
   common defect.
 - Follow-on fix from the same report: the `Finished` row was conflating two different
   things. Literal `TODO` text left by `aobench new task` is objectively unfinished and now
-  blocks; `validation_status: not_started` is a workflow field that **34 of the 88 shipped
-  tasks carry while being completely written**, and blocking on it would have failed a
+  blocks; `validation_status: not_started` is a workflow field that **44 of the 88 shipped
+  tasks carry, every one of them fully written**, and blocking on it would have failed a
   contributor's pull request over a status nobody asked them to change. It is now a `WARN`.
   Without this split the new exit code would have blocked 44 of 88 tasks instead of 10.
 

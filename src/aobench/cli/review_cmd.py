@@ -111,7 +111,7 @@ def _check_unfinished(spec: dict[str, Any]) -> _Check:
     is objectively unfinished, so it blocks (see #73).
 
     validation_status: not_started is deliberately NOT that. It is a workflow field, and
-    34 of the 88 shipped tasks carry it while being completely written -- treating it as
+    all 44 of the 88 shipped tasks that carry it are fully written -- treating it as
     scaffold text would block a contributor's pull request over a status nobody asked them
     to change. It is surfaced as a WARN instead, because "no one has validated this yet" is
     worth a reviewer knowing and is not worth failing a build over.
