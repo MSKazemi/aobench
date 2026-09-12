@@ -1,6 +1,6 @@
 ---
 title: "Benchmark for AI agents that operate HPC systems"
-description: "Open-source benchmark for AI agents operating HPC systems: 88 tasks, 29 deterministic snapshots, RBAC-enforced, trace-scored. No cluster needed."
+description: "Open-source benchmark for AI agents operating HPC systems: 89 tasks, 29 deterministic snapshots, RBAC-enforced, trace-scored. No cluster needed."
 keywords:
   - HPC agent benchmark
   - AI agent evaluation
@@ -40,7 +40,7 @@ role-aware, permission-enforced, tool-using, trace-scored, and reproducible on a
 </div>
 
 <ul class="stat-strip">
-  <li><span class="stat-value">88</span><span class="stat-label">Tasks</span></li>
+  <li><span class="stat-value">89</span><span class="stat-label">Tasks</span></li>
   <li><span class="stat-value">29</span><span class="stat-label">Environments</span></li>
   <li><span class="stat-value">7</span><span class="stat-label">Dimensions</span></li>
   <li><span class="stat-value">5</span><span class="stat-label">Roles</span></li>
@@ -63,7 +63,7 @@ role-aware, permission-enforced, tool-using, trace-scored, and reproducible on a
 - **AOBench is not intended for** measuring general-purpose reasoning, software-engineering,
   or web-browsing agents, and it does not execute against real production clusters.
 
-Six of the 29 environments and eight of the 88 tasks are built from **real operational data**
+Six of the 29 environments and eight of the 89 tasks are built from **real operational data**
 from CINECA's 980-node Marconi100 Tier-0 supercomputer (the public
 [M100 ExaData release](guides/m100_environments.md)) — not synthesised.
 
