@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed — include the CI example in the Windows encoding gate
+
+- The encoding check now scans `examples/`, and the CI gate example reads its JSON
+  results as UTF-8. This closes the gap where the example itself could fail on Windows
+  while the check reported a clean tree ([#69](https://github.com/MSKazemi/aobench/issues/69)).
+
 ### Added — second DOCS_USR task, and the first corpus contribution from outside the project
 
 - `DOCS_USR_002` by [@userfypp](https://github.com/userfypp)
