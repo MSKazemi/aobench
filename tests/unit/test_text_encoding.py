@@ -35,7 +35,7 @@ def test_trace_writer_round_trips_non_ascii(tmp_path):
 
 
 def test_no_text_io_omits_an_encoding():
-    """Static gate over src, tests and scripts — not just the reported call.
+    """Static gate over src, tests, scripts and examples — not just the reported call.
 
     ``tests/`` counts: a contributor who cannot run the suite on Windows is as
     blocked as one whose benchmark run dies partway through.
