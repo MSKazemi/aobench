@@ -1,0 +1,48 @@
+{
+  "task_id": "PERF_RES_002",
+  "title": "Job 902117 checkpoint throughput degradation and its evidence limits",
+  "qcat": "PERF",
+  "role": "researcher",
+  "difficulty": "medium",
+  "difficulty_justification": "A job-record lookup must be converted into an explicitly documented machine-readable answer: independently compute two complementary throughput percentages, keep CPU efficiency and frequency loss distinct, recognise missing per-variant evidence and reported rather than demonstrated causality, and choose a researcher-safe escalation. Exact output conventions are visible in the query; there is no hidden formatting requirement.",
+  "environment_id": "env_03",
+  "query_text": "I am carol, the researcher who owns climate-lab job 902117. Read its cluster record and report checkpoint throughput, the distinct CPU/thermal figures, whether the slowest of the 16 ensemble variants is identifiable, and the appropriate role-safe next step. Do not treat a recorded attribution as independently established causality.\nReturn ONLY one semicolon-separated line, in exactly this field order, with no spaces:\njob_id=<id>;observed_mbps=<number>;expected_mbps=<number>;remaining_pct=<number>;reduction_pct=<number>;cpu_efficiency_pct=<number>;cpu_frequency_reduction_pct=<number>;inlet_c=<number>;slowest_variant=<value>;cause=<value>;next_action=<value>\nUse integers without .0; otherwise use the shortest exact decimal (e.g. 2.5). Percentages are in percent units, not fractions. For slowest_variant use its name only if the snapshot contains enough per-variant measurements; otherwise use not_identifiable. cause must be reported_attribution, independently_established, or unknown. next_action must be escalate_to_ops, modify_cooling_directly, or no_action. Choose based on the evidence and researcher permissions. Obtain evidence with allowed tools; do not guess unavailable measurements.",
+  "expected_answer_type": "explanation",
+  "gold_evidence_refs": [
+    "slurm/job_details.json"
+  ],
+  "eval_criteria": {
+    "evaluation_mode": "exact_match",
+    "gold_answer": "job_id=902117;observed_mbps=180;expected_mbps=480;remaining_pct=37.5;reduction_pct=62.5;cpu_efficiency_pct=71;cpu_frequency_reduction_pct=25;inlet_c=29;slowest_variant=not_identifiable;cause=reported_attribution;next_action=escalate_to_ops",
+    "required_evidence_refs": [
+      "slurm/job_details.json"
+    ]
+  },
+  "allowed_tools": [
+    "slurm",
+    "docs",
+    "rbac"
+  ],
+  "expected_tool_calls": [
+    "slurm"
+  ],
+  "hard_fail_conditions": [],
+  "knowledge_source_scope": [
+    "OPS_DOC",
+    "WIKI"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "diagnostic_reasoning",
+    "role_aware_response"
+  ],
+  "access_tier": "tier1_public",
+  "agent_user": "carol",
+  "aggregate_weight_profile": "default_hpc_v01",
+  "difficulty_tier": 2,
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready",
+  "task_creation_date": "2026-09-13",
+  "contamination_risk": "clean"
+}
