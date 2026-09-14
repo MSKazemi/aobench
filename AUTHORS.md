@@ -176,7 +176,15 @@ Added when a first PR merges, newest last.
   mapping, and the general path returns the true `dict | list` union that `job_details`
   actually has — runtime unchanged by construction. Added parametrized regression tests
   pinning both snapshot shapes across the whole corpus. Disclosed AI assistance (Codex) in
-  the PR description.
+  the PR description. Came back for
+  [issue #69](https://github.com/MSKazemi/aobench/issues/69) and closed the gap where
+  `examples/` sat outside the encoding gate: the CI-gate example read its result JSON with
+  two locale-dependent `.read_text()` calls, so it could fail with a Windows cp1252 error
+  while the gate itself reported a clean tree
+  ([PR #79](https://github.com/MSKazemi/aobench/pull/79)). Both reads now declare
+  `encoding="utf-8"`, `check_text_encoding.py` scans `examples/` alongside the three trees
+  it already covered, and the gate's own regression test proves it — removing either fix
+  makes it fail.
 
 ## Reported and tested
 
