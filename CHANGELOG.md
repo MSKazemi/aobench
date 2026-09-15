@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Added — `PERF_RES_002`, an evidence-bounded checkpoint diagnosis
+
+- Add one researcher/dev task in env_03, with an explicit canonical response contract and
+  exact-match outcome scoring. The answer distinguishes throughput reduction from CPU
+  efficiency/frequency changes, unsupported per-variant rankings, and reported attribution.
+- Add an offline audit deriving the answer from actual mock-tool output and checking
+  incorrect numbers, unsupported conclusions, missing evidence and forbidden-tool attempts.
+- Update corpus facts and generated catalogs from 89 to 90 tasks (69 dev, 21 test).
+- Scoring profiles, existing tasks and environment snapshots are unchanged. The aggregate
+  score can retain non-outcome credit; outcome and governance are reported separately.
+
 ### Fixed — include the CI example in the Windows encoding gate
 
 - The encoding check now scans `examples/`, and the CI gate example reads its JSON
