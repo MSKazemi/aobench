@@ -109,10 +109,10 @@ AOBench/
 │   └── taxonomy/           # 24-leaf TRAIL-adapted HPC error taxonomy
 │
 ├── benchmark/              # Static benchmark data (versioned in git)
-│   ├── tasks/specs/        # 90 JSON task specs (81 synthetic + 8 M100 ExaData)
+│   ├── tasks/specs/        # 90 JSON task specs (82 synthetic + 8 M100 ExaData)
 │   ├── tasks/task_set_v1.json   # 36 HPC v1 tasks (Souza 2025 schema)
 │   ├── tasks/task_set_v3.json   # v3 task index (88 tasks)
-│   ├── tasks/dataset_splits.py  # 68 dev / 21 test (synthetic core: 60 dev / 21 test)
+│   ├── tasks/dataset_splits.py  # 69 dev / 21 test (synthetic core: 61 dev / 21 test)
 │   ├── tasks/lite_manifest_v1.json  # AOBench-Lite curated subset
 │   ├── environments/           # 29 snapshot bundles (23 synthetic + 6 M100)
 │   ├── configs/            # scoring_profiles.yaml, hpc_tool_catalog.yaml,
@@ -239,7 +239,7 @@ walkthroughs, and [ROADMAP.md](ROADMAP.md) for surface status and what's next.
 
 | Item | Count | Location |
 |------|-------|----------|
-| Tasks | **90** — 81 synthetic core (10 QCATs × 5 roles) + 8 grounded in real Marconi100 ExaData | `benchmark/tasks/specs/` |
+| Tasks | **90** — 82 synthetic core (10 QCATs × 5 roles) + 8 grounded in real Marconi100 ExaData | `benchmark/tasks/specs/` |
 | Environments | **29** deterministic snapshot bundles — 23 synthetic + **6 built from real Marconi100 ExaData** | `benchmark/environments/` |
 | Roles (scored) | 5 — `scientific_user`, `sysadmin`, `facility_admin`, `researcher`, `system_designer` | `src/aobench/schemas/task.py` |
 | QCATs (scored) | 10 — `JOB`, `MON`, `ENERGY`, `PERF`, `DATA`, `SEC`, `FAC`, `ARCH`, `AIOPS`, `DOCS` | `benchmark/tasks/specs/` |

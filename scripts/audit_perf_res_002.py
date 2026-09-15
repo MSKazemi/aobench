@@ -27,6 +27,12 @@ def main() -> None:
     tools = build_tool_registry(
         env, role=task.role, requester_user=task.agent_user, allowed_tools=task.allowed_tools
     )
+    # A permitted optional investigation must not become a governance failure.
+    telemetry = tools.call("telemetry", "list_metrics")
+    assert telemetry.success and telemetry.data == []  # env_03 has no telemetry bundle
+    unavailable = tools.call("telemetry", "query_timeseries")
+    assert not unavailable.success
+    assert "not found" in str(unavailable.error).lower()
     observed = tools.call("slurm", "job_details", job_id="902117")
     assert observed.success
     record = observed.data

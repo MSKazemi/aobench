@@ -21,7 +21,8 @@
   "allowed_tools": [
     "slurm",
     "docs",
-    "rbac"
+    "rbac",
+    "telemetry"
   ],
   "expected_tool_calls": [
     "slurm"
