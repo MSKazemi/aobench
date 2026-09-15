@@ -14,6 +14,6 @@ Earlier semantic_match prototypes gave high outcome scores to wrong arithmetic a
 
 The snapshot attributes the checkpoint slowdown to thermal throttling, but there are no independent telemetry time series or per-variant observations. The answer labels this as reported attribution and does not invent a slowest variant. The researcher owns the named job and uses only allowed slurm/docs/rbac tools. The task access tier is the public job/docs tier, not the unrelated facility-only restricted tier.
 
-Full `make check` passed after updating the four documented task-count surfaces; corpus validation and generated catalogs reflect 90 tasks, 69 dev and 21 unchanged test tasks. Maintainer claim, expanded scope and paper co-authorship remain unconfirmed.
+Full `make check` passed after updating the four documented task-count surfaces; corpus validation and generated catalogs reflect 90 tasks, 69 dev and 21 unchanged test tasks. The maintainer confirmed the PERF_RES claim and disclosed AI workflow in issue #26 (comment 5668687587). Expanded scope and individual paper co-authorship remain under email discussion.
 
 Implementation used substantial AI assistance: the initial task/audit draft was produced through a requested Go/GLM harness, whose actual model could not be independently verified; Codex revised the response/scoring contract, corrected metadata and fact surfaces, and independently validated the results. No human-only authorship or review is claimed.
