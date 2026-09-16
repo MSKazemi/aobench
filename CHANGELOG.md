@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Fixed — blocked scaffolds no longer inflate dev runs
+
+- `aobench run all --split dev` now excludes task specs marked
+  `scoring_readiness: blocked`, so a freshly scaffolded task in
+  `benchmark/tasks/specs/` no longer joins scored dev runs by accident. Existing
+  `partial` tasks stay in the split, so the fix removes the scaffold leak without
+  silently rewriting the published corpus boundary ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `ToolUseScorer` now treats an empty `expected_tool_calls` set as **not measurable**
+  rather than a vacuous perfect match: the result records `tool_use=None` at the
+  benchmark-result layer, and the aggregate excludes that dimension instead of
+  counting it as either 0 or 1.0.
+- Verified on a clean clone with `make check`, `uv run python -m pytest tests/`,
+  and focused regression coverage for both the dev-split gating and the empty
+  `expected_tool_calls` path.
 ### Fixed — `mypy --strict` is now clean everywhere except one third-party import
 
 - **The mock HPC tool layer is typed** ([#61](https://github.com/MSKazemi/aobench/issues/61),

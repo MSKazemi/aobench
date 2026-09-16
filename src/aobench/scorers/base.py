@@ -17,6 +17,7 @@ class ScorerOutput:
     hard_fail: bool = False
     hard_fail_reason: str | None = None
     notes: str | None = None
+    not_measurable: bool = False
     # DangerousArgViolation objects from GovernanceScorer (untyped to avoid circular import)
     dangerous_arg_violations: list[Any] = field(default_factory=list)
     # ViolationVector from GovernanceScorer (untyped to avoid circular import)
