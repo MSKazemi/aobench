@@ -2,6 +2,47 @@
 
 ## Unreleased
 
+### Fixed — include the CI example in the Windows encoding gate
+
+- The encoding check now scans `examples/`, and the CI gate example reads its JSON
+  results as UTF-8. This closes the gap where the example itself could fail on Windows
+  while the check reported a clean tree ([#69](https://github.com/MSKazemi/aobench/issues/69)).
+
+### Added — second DOCS_USR task, and the first corpus contribution from outside the project
+
+- `DOCS_USR_002` by [@userfypp](https://github.com/userfypp)
+  ([PR #78](https://github.com/MSKazemi/aobench/pull/78)) — a PII storage-compliance task
+  against `env_21`, grounded in `docs/data_management_policy.md#5-compliance`. Closes the
+  `DOCS_USR` half of [#26](https://github.com/MSKazemi/aobench/issues/26) and takes the
+  thin-cell count from **32 of 50 to 31**. Corpus: 88 → 89 tasks, 67 → 68 dev.
+- The task exists because of its author's own earlier bug report. They proposed it on
+  2026-08-11, found on 2026-09-01 that `MockDocsTool._retrieve` returned characters 0–500
+  while the Compliance clause begins at character 901, and stopped to ask rather than
+  reshaping the task around a broken tool. That was a scoring-integrity defect, not a
+  retrieval nicety, and fixing it unblocked this task.
+- Verified beyond CI before merge: `direct_qa` scores **0.348**, so the task is genuinely
+  gated on retrieval rather than answerable tool-free; querying the `docs` tool directly
+  against `env_21` returns all of `compliance`, `patient`, `tier4` and `suspension` in the
+  snippet.
+
+- Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
+  `env_21` that tests retrieval of the patient/PII storage compliance policy.
+
+### Changed — `new task` says that a scaffold will be scored
+
+- A spec written into `benchmark/tasks/specs/` joins the `dev` split the moment it exists,
+  so `aobench run all --split dev` includes and scores it. An unfinished task does not
+  merely score badly: an empty `expected_tool_calls` currently earns a vacuous
+  `tool_use: 1.0`, which can make a placeholder the highest-scoring task in the run
+  ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `aobench new task` now says so at the point the file is created, because the scaffolder is
+  the only path by which that scoring bug is reachable — no shipped task has an empty
+  `expected_tool_calls`. The warning is skipped with `--output`, which means "give me a file
+  to work on" rather than "add this to the benchmark".
+- This is a mitigation, not the fix. The two root causes in #75 stand: `scoring_readiness` is
+  written into every spec and read nowhere in `src/`, and an empty expectation list scores as
+  a perfect match rather than as unmeasurable.
+
 ### Fixed — blocked scaffolds no longer inflate dev runs
 
 - `aobench run all --split dev` now excludes task specs marked
@@ -10,9 +51,9 @@
   `partial` tasks stay in the split, so the fix removes the scaffold leak without
   silently rewriting the published corpus boundary ([#75](https://github.com/MSKazemi/aobench/issues/75)).
 - `ToolUseScorer` now treats an empty `expected_tool_calls` set as **not measurable**
-  rather than a vacuous perfect match: the result records `tool_use=None` at the
-  benchmark-result layer, and the aggregate excludes that dimension instead of
-  counting it as either 0 or 1.0.
+  rather than a vacuous perfect match: the scorer still records `score=0.0` for the
+  raw tool-use check, while the benchmark-result layer lifts that to `tool_use=None`
+  and the aggregate excludes that dimension instead of counting it as either 0 or 1.0.
 - Verified on a clean clone with `make check`, `uv run python -m pytest tests/`,
   and focused regression coverage for both the dev-split gating and the empty
   `expected_tool_calls` path.
