@@ -7,7 +7,7 @@ git clone https://github.com/MSKazemi/aobench
 cd aobench
 make install        # creates .venv and installs all deps
 make validate       # verifies benchmark data loads cleanly
-make test           # ~1510 tests should pass
+make test           # ~1584 tests should pass
 ```
 
 Requires [uv](https://github.com/astral-sh/uv). Python 3.11+.

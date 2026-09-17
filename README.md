@@ -128,7 +128,7 @@ AOBench/
 ├── prompts/judge/          # LLM-judge rubric + error taxonomy templates
 ├── docs/                   # Documentation (see Documentation section)
 ├── scripts/                # Bundle generation, validity gates, rubric tooling
-└── tests/                  # 83 test files, ~1510 tests (unit + integration)
+└── tests/                  # 90 test files, ~1584 tests (unit + integration)
 ```
 
 ## Quick start
@@ -432,7 +432,7 @@ From clone to green tests in three commands:
 ```bash
 git clone https://github.com/MSKazemi/aobench && cd aobench
 make install     # creates .venv and installs everything
-make test        # ~1510 tests should pass
+make test        # ~1584 tests should pass
 ```
 
 **What you can expect from us:** a first response within 3 working days — even if
