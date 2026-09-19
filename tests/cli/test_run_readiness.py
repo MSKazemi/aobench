@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from aobench.cli.run_cmd import _is_run_ready, _load_split_ids
 from aobench.schemas.task import TaskSpec
 
@@ -26,11 +28,18 @@ def test_is_run_ready_only_accepts_ready_tasks():
     assert _is_run_ready(_task(task_id="DOCS_USR_003", scoring_readiness="blocked")) is False
 
 
-def test_dev_split_excludes_non_ready_scaffolds():
-    split_ids = _load_split_ids(
-        "dev",
-        "/Users/bytedance/Trae/GitHub热点日报/repos/aobench-fix75/benchmark",
-    )
+def test_dev_split_excludes_non_ready_scaffolds(tmp_path: Path):
+    specs_dir = tmp_path / "benchmark" / "tasks" / "specs"
+    specs_dir.mkdir(parents=True)
+    for task in (
+        _task(task_id="DOCS_USR_001", scoring_readiness="ready"),
+        _task(task_id="JOB_RES_001", scoring_readiness="partial"),
+        _task(task_id="DOCS_DES_002", scoring_readiness="blocked"),
+    ):
+        (specs_dir / f"{task.task_id}.json").write_text(task.model_dump_json(), encoding="utf-8")
+
+    split_ids = _load_split_ids("dev", str(tmp_path / "benchmark"))
+
     assert split_ids is not None
     assert "DOCS_DES_002" not in split_ids
     assert "JOB_RES_001" in split_ids
