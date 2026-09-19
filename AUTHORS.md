@@ -136,7 +136,26 @@ Added when a first PR merges, newest last.
   `test_langfuse_exporter.py`: import the module once at module scope, before any
   `patch.dict` block opens, so the snapshot already contains it and restoring is a no-op.
   Disclosed substantial AI assistance (TRAE) in the PR description, as `CONTRIBUTING.md`
-  asks.
+  asks. Came back for [issue #70](https://github.com/MSKazemi/aobench/issues/70): a
+  mocked `asyncio.run(...)` left the real `_run_async(...)` coroutine object alive inside
+  the mock's recorded call args, so pytest printed `RuntimeWarning: coroutine ... was
+  never awaited` from an unrelated later test — a red proof of the leak included in the PR
+  before the fix ([PR #80](https://github.com/MSKazemi/aobench/pull/80)). Then closed
+  [issue #75](https://github.com/MSKazemi/aobench/issues/75), a scaffold-leak bug with two
+  separate root causes: a task spec written into `benchmark/tasks/specs/` joined the
+  scored `dev` split the moment it existed, and an empty `expected_tool_calls` earned a
+  vacuous `tool_use: 1.0` rather than being treated as unmeasurable — together able to make
+  a still-`TODO` scaffold the highest-scoring task in a run
+  ([PR #82](https://github.com/MSKazemi/aobench/pull/82)). The PR's own regression test for
+  the split-gating logic pointed at an absolute path on the contributor's own machine and
+  would have failed on every other checkout, including this project's CI; caught in review
+  and rewritten against a `tmp_path` fixture before merge. Then closed
+  [issue #71](https://github.com/MSKazemi/aobench/issues/71): `scripts/check_facts.py`
+  guarded the corpus counts but not the test-suite counts quoted in `README.md` and
+  `CONTRIBUTING.md`, which had drifted to `~1510 tests` and `83 test files` against a real
+  94 files / 1683 collected — exactly the kind of drift the file exists to prevent, now
+  closed with a 4%-tolerance gate so ordinary suite growth doesn't force a doc edit for
+  every new test ([PR #83](https://github.com/MSKazemi/aobench/pull/83)).
 
 - **[@userfypp](https://github.com/userfypp)** — wrote **AOBench's first corpus
   contribution from outside the project**: `DOCS_USR_002`
@@ -185,6 +204,20 @@ Added when a first PR merges, newest last.
   `encoding="utf-8"`, `check_text_encoding.py` scans `examples/` alongside the three trees
   it already covered, and the gate's own regression test proves it — removing either fix
   makes it fail.
+
+- **Ziao Yang** ([@yangziao56](https://github.com/yangziao56)) — wrote `PERF_RES_002`
+  ([PR #81](https://github.com/MSKazemi/aobench/pull/81)), a researcher-role task on the
+  unchanged `env_03` snapshot that asks an agent to separate a job's checkpoint-throughput
+  reduction from its distinct CPU-efficiency and frequency figures, recognise that a
+  reported thermal cause is not the same as an independently established one, and say so
+  rather than inventing a slowest ensemble variant the snapshot cannot support. Shipped
+  with `scripts/audit_perf_res_002.py`, an offline audit that recomputes the gold answer
+  directly from the real mock-tool output with `Decimal` arithmetic and checks eleven
+  independently corrupted fields, an empty answer, an invented variant, a reversed ratio,
+  an asserted (rather than reported) causality claim, and a forbidden facility call all
+  score as they should. Addressed review feedback by adding the researcher-permitted
+  `telemetry` tool the task was missing and reconciling four documented task-count
+  surfaces that had drifted out of sync in the same PR.
 
 ## Reported and tested
 
