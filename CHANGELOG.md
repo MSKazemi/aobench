@@ -25,7 +25,6 @@
   against `env_21` returns all of `compliance`, `patient`, `tier4` and `suspension` in the
   snippet.
 
-
 - Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
   `env_21` that tests retrieval of the patient/PII storage compliance policy.
 
@@ -43,6 +42,22 @@
 - This is a mitigation, not the fix. The two root causes in #75 stand: `scoring_readiness` is
   written into every spec and read nowhere in `src/`, and an empty expectation list scores as
   a perfect match rather than as unmeasurable.
+
+### Fixed — blocked scaffolds no longer inflate dev runs
+
+- `aobench run all --split dev` now excludes task specs marked
+  `scoring_readiness: blocked`, so a freshly scaffolded task in
+  `benchmark/tasks/specs/` no longer joins scored dev runs by accident. Existing
+  `partial` tasks stay in the split, so the fix removes the scaffold leak without
+  silently rewriting the published corpus boundary ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `ToolUseScorer` now treats an empty `expected_tool_calls` set as **not measurable**
+  rather than a vacuous perfect match: the scorer still records `score=0.0` for the
+  raw tool-use check, while the benchmark-result layer lifts that to `tool_use=None`
+  and the aggregate excludes that dimension instead of counting it as either 0 or 1.0.
+- Verified on a clean clone with `make check`, `uv run python -m pytest tests/`,
+  and focused regression coverage for both the dev-split gating and the empty
+  `expected_tool_calls` path. Reported and fixed by [@motodriver](https://github.com/motodriver)
+  ([PR #82](https://github.com/MSKazemi/aobench/pull/82)).
 
 ### Fixed — review rejects unfinished task scaffolds
 
