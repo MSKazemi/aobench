@@ -214,8 +214,14 @@ def check_dimension_counts(expected: int) -> list[str]:
     Markdown surface rather than a hand-maintained list.
     """
     failures: list[str] = []
+    # ``AGENTS.md`` and ``CLAUDE.md`` are instruction files read by coding agents
+    # rather than humans, and a wrong number in them primes every future session
+    # with it. ``CLAUDE.md`` is private and absent from a public clone, which is
+    # exactly why it went unchecked while nine published docs were being fixed;
+    # the ``path.exists()`` guard below keeps this gate green where it is missing.
     roots = [ROOT / "docs", ROOT / "README.md", ROOT / "CONTRIBUTING.md",
-             ROOT / "llms.txt", ROOT / "llms-full.txt"]
+             ROOT / "llms.txt", ROOT / "llms-full.txt",
+             ROOT / "AGENTS.md", ROOT / "CLAUDE.md"]
     for root in roots:
         if root.is_dir():
             paths = sorted([*root.rglob("*.md"), *root.rglob("llms*.txt")])
