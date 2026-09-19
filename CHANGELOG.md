@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Added — `check_facts.py` guards the documented test-suite counts
+
+- The fact gate now compares the test file count and `pytest --collect-only` case count
+  quoted in `README.md` and `CONTRIBUTING.md` against the real suite, using pytest's own
+  collector so parametrized cases are counted the way contributors experience them. The
+  file count must match exactly; the collected-test count uses a 4% tolerance band so
+  ordinary suite growth doesn't force a doc edit for every new test, while still catching
+  material drift ([#71](https://github.com/MSKazemi/aobench/issues/71)). Reported and fixed
+  by [@motodriver](https://github.com/motodriver)
+  ([PR #83](https://github.com/MSKazemi/aobench/pull/83)).
+- This is what caught the drift it guards against: `README.md`'s tree diagram and
+  `CONTRIBUTING.md`'s setup block claimed `~1510 tests` and `83 test files` after the real
+  figures had moved to 94 files / 1683 collected tests. Both are corrected.
+
 ### Fixed — include the CI example in the Windows encoding gate
 
 - The encoding check now scans `examples/`, and the CI gate example reads its JSON

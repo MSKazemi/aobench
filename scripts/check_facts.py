@@ -17,19 +17,26 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
+import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 FACTS_PATH = ROOT / "benchmark" / "BENCHMARK_FACTS.json"
+_TEST_DOC_SURFACES = ("README.md", "CONTRIBUTING.md")
+_TEST_FILES_PATTERN = re.compile(r"\b(?P<count>\d+)\s+test files\b", re.IGNORECASE)
+_TEST_COUNT_PATTERN = re.compile(r"~(?P<count>\d+)\s+tests?\b", re.IGNORECASE)
+_TEST_COUNT_TOLERANCE = 0.04
 
 
 def derive_facts() -> dict[str, object]:
     """Read the corpus on disk and return the authoritative counts."""
     spec_dir = ROOT / "benchmark" / "tasks" / "specs"
     specs = sorted(spec_dir.glob("*.json"))
+    test_file_count, collected_test_count = _derive_test_suite_counts()
 
     splits: Counter[str] = Counter()
     qcats: set[str] = set()
@@ -67,9 +74,72 @@ def derive_facts() -> dict[str, object]:
         "scoring_dimensions": _scoring_dimensions(),
         "adapters": ["direct_qa", "openai", "anthropic", "mcp"],
         "tool_families": ["slurm", "telemetry", "docs", "rbac", "facility"],
+        "test_files_total": test_file_count,
+        "tests_collected": collected_test_count,
         "python_requires": _python_requires(),
         "license": "Apache-2.0",
     }
+
+
+def _derive_test_suite_counts() -> tuple[int, int]:
+    """Return the current test file count and collected pytest case count.
+
+    The file count is stable and cheap to derive from the tree. The collected test
+    count intentionally uses pytest's own collector rather than AST heuristics so
+    parametrized cases are counted the same way contributors experience them.
+    """
+    test_files = sorted((ROOT / "tests").rglob("test_*.py"))
+    proc = subprocess.run(
+        ["uv", "run", "python", "-m", "pytest", "tests/", "--collect-only", "-q"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    combined = "\n".join(part for part in (proc.stdout, proc.stderr) if part)
+    match = re.search(r"=+\s+(\d+)\s+tests collected", combined)
+    if not match:
+        raise SystemExit(
+            "check_facts: could not parse pytest --collect-only output for the collected test count"
+        )
+    return len(test_files), int(match.group(1))
+
+
+def documented_test_count_failures(
+    *,
+    actual_test_files: int,
+    actual_tests: int,
+    docs: dict[str, str],
+    tolerance: float = _TEST_COUNT_TOLERANCE,
+) -> list[str]:
+    """Check documented test counts against the actual suite size.
+
+    The test file count must stay exact. The collected test count uses a tolerance
+    band so normal suite growth does not force an immediate doc edit for every new
+    case, while still catching stale counts that are materially wrong.
+    """
+    failures: list[str] = []
+    low = math.floor(actual_tests * (1 - tolerance))
+    high = math.ceil(actual_tests * (1 + tolerance))
+
+    for rel, text in docs.items():
+        for lineno, line in enumerate(text.splitlines(), 1):
+            for match in _TEST_FILES_PATTERN.finditer(line):
+                documented = int(match.group("count"))
+                if documented != actual_test_files:
+                    failures.append(
+                        f"{rel}:{lineno}: documents {documented} test files, "
+                        f"but the tree has {actual_test_files}"
+                    )
+            for match in _TEST_COUNT_PATTERN.finditer(line):
+                documented = int(match.group("count"))
+                if not low <= documented <= high:
+                    failures.append(
+                        f"{rel}:{lineno}: documents ~{documented} tests, "
+                        f"but pytest currently collects {actual_tests} "
+                        f"(allowed range {low}-{high})"
+                    )
+    return failures
 
 
 def _scoring_dimensions() -> int:
@@ -277,6 +347,17 @@ def verify(facts: dict[str, object]) -> list[str]:
 
     failures.extend(_verify_weight_tables())
     failures.extend(check_dimension_counts(int(facts["scoring_dimensions"])))
+    failures.extend(
+        documented_test_count_failures(
+            actual_test_files=int(facts["test_files_total"]),
+            actual_tests=int(facts["tests_collected"]),
+            docs={
+                rel: (ROOT / rel).read_text(encoding="utf-8")
+                for rel in _TEST_DOC_SURFACES
+                if (ROOT / rel).exists()
+            },
+        )
+    )
 
     if FACTS_PATH.exists():
         stored = json.loads(FACTS_PATH.read_text(encoding="utf-8"))
