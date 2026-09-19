@@ -13,6 +13,31 @@
 - Scoring profiles, existing tasks and environment snapshots are unchanged. The aggregate
   score can retain non-outcome credit; outcome and governance are reported separately.
 
+### Fixed — `llms.txt` still said "six evaluation dimensions"
+
+- `llms.txt`, `docs/llms.txt`, `llms-full.txt` and `docs/llms-full.txt` all described
+  six weighted dimensions with a weight table that omitted `workflow` and misstated
+  `tool_use`/`grounding`. The `check_dimension_counts` gate in `scripts/check_facts.py`
+  didn't catch it because its regex expects a number immediately before "dimension"
+  (`six dimensions`), not "six **evaluation** dimensions" with a word in between — filed
+  as a follow-up to close that regex gap. Corrected the four files to the real seven
+  dimensions and their `default_hpc_v01` weights while touching them for the `PERF_RES_002`
+  task-count bump above.
+
+### Added — `check_facts.py` guards the documented test-suite counts
+
+- The fact gate now compares the test file count and `pytest --collect-only` case count
+  quoted in `README.md` and `CONTRIBUTING.md` against the real suite, using pytest's own
+  collector so parametrized cases are counted the way contributors experience them. The
+  file count must match exactly; the collected-test count uses a 4% tolerance band so
+  ordinary suite growth doesn't force a doc edit for every new test, while still catching
+  material drift ([#71](https://github.com/MSKazemi/aobench/issues/71)). Reported and fixed
+  by [@motodriver](https://github.com/motodriver)
+  ([PR #83](https://github.com/MSKazemi/aobench/pull/83)).
+- This is what caught the drift it guards against: `README.md`'s tree diagram and
+  `CONTRIBUTING.md`'s setup block claimed `~1510 tests` and `83 test files` after the real
+  figures had moved to 94 files / 1683 collected tests. Both are corrected.
+
 ### Fixed — include the CI example in the Windows encoding gate
 
 - The encoding check now scans `examples/`, and the CI gate example reads its JSON
@@ -36,7 +61,6 @@
   against `env_21` returns all of `compliance`, `patient`, `tier4` and `suspension` in the
   snippet.
 
-
 - Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
   `env_21` that tests retrieval of the patient/PII storage compliance policy.
 
@@ -54,6 +78,22 @@
 - This is a mitigation, not the fix. The two root causes in #75 stand: `scoring_readiness` is
   written into every spec and read nowhere in `src/`, and an empty expectation list scores as
   a perfect match rather than as unmeasurable.
+
+### Fixed — blocked scaffolds no longer inflate dev runs
+
+- `aobench run all --split dev` now excludes task specs marked
+  `scoring_readiness: blocked`, so a freshly scaffolded task in
+  `benchmark/tasks/specs/` no longer joins scored dev runs by accident. Existing
+  `partial` tasks stay in the split, so the fix removes the scaffold leak without
+  silently rewriting the published corpus boundary ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `ToolUseScorer` now treats an empty `expected_tool_calls` set as **not measurable**
+  rather than a vacuous perfect match: the scorer still records `score=0.0` for the
+  raw tool-use check, while the benchmark-result layer lifts that to `tool_use=None`
+  and the aggregate excludes that dimension instead of counting it as either 0 or 1.0.
+- Verified on a clean clone with `make check`, `uv run python -m pytest tests/`,
+  and focused regression coverage for both the dev-split gating and the empty
+  `expected_tool_calls` path. Reported and fixed by [@motodriver](https://github.com/motodriver)
+  ([PR #82](https://github.com/MSKazemi/aobench/pull/82)).
 
 ### Fixed — review rejects unfinished task scaffolds
 

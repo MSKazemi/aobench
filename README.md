@@ -128,7 +128,7 @@ AOBench/
 ├── prompts/judge/          # LLM-judge rubric + error taxonomy templates
 ├── docs/                   # Documentation (see Documentation section)
 ├── scripts/                # Bundle generation, validity gates, rubric tooling
-└── tests/                  # 89 test files, ~1600 tests (unit + integration)
+└── tests/                  # 94 test files, ~1683 tests (unit + integration)
 ```
 
 ## Quick start

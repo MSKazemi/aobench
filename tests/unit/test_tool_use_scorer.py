@@ -132,7 +132,10 @@ def test_lcs_no_overlap():
 
 def test_no_tools_no_required_scores_one():
     result = scorer.score(_task(allowed_tools=None), _empty_trace())
-    assert result.score == 1.0
+    assert result.score == 0.0
+    assert result.not_measurable is True
+    assert result.notes == "No expected tool calls; tool_use is not measurable"
+    assert result.tool_use_detail.tool_use_score == 0.0
 
 
 def test_no_tools_but_task_requires_them_scores_zero():

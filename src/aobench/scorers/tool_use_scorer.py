@@ -357,12 +357,13 @@ class ToolUseScorer(BaseScorer):
                     tool_use_detail=result,
                 )
             result = ToolUseResult(
-                tool_selection_score=1.0, argument_correctness_score=1.0,
-                forbidden_call_penalty=1.0, tool_use_score=1.0, clear_T=1.0,
+                tool_selection_score=0.0, argument_correctness_score=0.0,
+                forbidden_call_penalty=1.0, tool_use_score=0.0, clear_T=0.0,
             )
             return ScorerOutput(
-                dimension=self.dimension, score=1.0,
-                notes="No tools required, none called",
+                dimension=self.dimension, score=0.0,
+                notes="No expected tool calls; tool_use is not measurable",
+                not_measurable=True,
                 tool_use_detail=result,
             )
 
