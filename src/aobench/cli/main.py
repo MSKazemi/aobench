@@ -14,9 +14,11 @@ from aobench.cli.compare_cmd import compare_app
 from aobench.cli.info_cmd import doctor as doctor_cmd, info as info_cmd
 from aobench.cli.leaderboard_cmd import leaderboard_app
 from aobench.cli.list_cmd import list_app
+from aobench.cli.new_cmd import new_app
 from aobench.cli.lite_cmd import lite_app
 from aobench.cli.quickstart_cmd import quickstart_app
 from aobench.cli.report_cmd import report_app
+from aobench.cli.review_cmd import review_app
 from aobench.cli.rescore_cmd import rescore as rescore_cmd
 from aobench.cli.robustness_cmd import robustness_app
 from aobench.cli.run_cmd import run_app
@@ -78,6 +80,8 @@ app.add_typer(leaderboard_app, name="leaderboard")
 app.add_typer(rbac_app, name="rbac")
 app.add_typer(serve_app, name="serve")
 app.add_typer(quickstart_app, name="quickstart")
+app.add_typer(new_app, name="new")
+app.add_typer(review_app, name="review")
 app.command(name="info")(info_cmd)
 app.command(name="doctor")(doctor_cmd)
 

@@ -33,7 +33,9 @@ ROOT = Path(__file__).resolve().parent.parent
 #: Every tree that ships or runs. ``tests/`` and ``scripts/`` are included
 #: deliberately: a contributor on Windows who cannot run the test suite is as
 #: blocked as one whose benchmark run dies, and that is the case that was reported.
-SCANNED = ("src/aobench", "tests", "scripts")
+#: ``examples/`` is included because the CI example opens agent output, which can
+#: fail for Windows users if it relies on the locale's default encoding.
+SCANNED = ("src/aobench", "tests", "scripts", "examples")
 
 #: Calls that open a file and therefore take an ``encoding`` in text mode.
 _OPENERS = {"open", "read_text", "write_text"}

@@ -126,6 +126,66 @@ Added when a first PR merges, newest last.
   and saying so instead of quietly re-running until it went green — filed as
   [#65](https://github.com/MSKazemi/aobench/issues/65).
 
+- **Enzo** ([@motodriver](https://github.com/motodriver)) — closed
+  [issue #65](https://github.com/MSKazemi/aobench/issues/65), the test-isolation bug found
+  by [@Akimbo92i](https://github.com/Akimbo92i) above
+  ([PR #67](https://github.com/MSKazemi/aobench/pull/67)). `patch.dict(sys.modules, ...)`
+  restores the snapshot it took on entry, so a module first imported *inside* the block gets
+  evicted again on exit; a later `importlib.reload` on the still-live module object then
+  raises. The fix is one idea applied at all six call sites in
+  `test_langfuse_exporter.py`: import the module once at module scope, before any
+  `patch.dict` block opens, so the snapshot already contains it and restoring is a no-op.
+  Disclosed substantial AI assistance (TRAE) in the PR description, as `CONTRIBUTING.md`
+  asks.
+
+- **[@userfypp](https://github.com/userfypp)** — wrote **AOBench's first corpus
+  contribution from outside the project**: `DOCS_USR_002`
+  ([PR #78](https://github.com/MSKazemi/aobench/pull/78)), a PII storage-compliance task
+  against `env_21`, closing the `DOCS_USR` half of
+  [#26](https://github.com/MSKazemi/aobench/issues/26) and taking the thin-cell count from
+  32 of 50 to 31. The task exists because of their own earlier bug report: they proposed it
+  on 2026-08-11, found on 2026-09-01 that `MockDocsTool._retrieve` returned characters
+  0–500 while the Compliance clause they needed begins at character 901, and **stopped to
+  ask rather than quietly reshaping the task around a broken tool**. The gold answer states
+  that the snapshot does not name a concrete permitted storage path rather than inventing
+  one to look complete — the discipline corpus authoring most depends on, and the one that
+  quietly ruins a benchmark when it is missing.
+
+- **[@mgalore](https://github.com/mgalore)** — closed
+  [issue #73](https://github.com/MSKazemi/aobench/issues/73): `aobench review task --json`
+  reported `"ok": true` and exited 0 for a spec that was still an untouched scaffold, with
+  `title`, `query_text` and `gold_answer` literally reading `TODO`. The observation that
+  makes it a real defect rather than a rough edge is that this is *the one state the command
+  is guaranteed to be run in* — "I just scaffolded this and started editing" — and the
+  documented `--json` CI contract therefore could not fail on the most common defect there
+  is. The fix draws the line in the right place: generator scaffold text is objective and
+  blocks, while `WARN` rows stay non-blocking because they need a reviewer's judgement.
+  Reported the pre-existing type-ratchet state honestly in the PR checklist rather than
+  claiming a clean `make check`, and disclosed substantial AI assistance as
+  `CONTRIBUTING.md` asks.
+
+- **Qiu Guanzong** ([@QIU-Guanzong](https://github.com/QIU-Guanzong)) — closed
+  [issue #66](https://github.com/MSKazemi/aobench/issues/66):
+  `MockSlurmTool._load_json` was annotated `-> dict[str, Any]`, but three of the seven
+  `job_details.json` corpus snapshots are top-level lists, and `_job_details_method` already
+  branched on `isinstance(..., list)` to handle both — the annotation was a claim mypy
+  accepted without checking ([PR #68](https://github.com/MSKazemi/aobench/pull/68)). A
+  single widened return type would not have worked on its own, since `_query_jobs` calls
+  `self._state.get("jobs", [])` and `list` has no `.get`. The fix is a `@overload` pair: a
+  `Literal["slurm/slurm_state.json"]` overload keeps the state-snapshot path typed as a
+  mapping, and the general path returns the true `dict | list` union that `job_details`
+  actually has — runtime unchanged by construction. Added parametrized regression tests
+  pinning both snapshot shapes across the whole corpus. Disclosed AI assistance (Codex) in
+  the PR description. Came back for
+  [issue #69](https://github.com/MSKazemi/aobench/issues/69) and closed the gap where
+  `examples/` sat outside the encoding gate: the CI-gate example read its result JSON with
+  two locale-dependent `.read_text()` calls, so it could fail with a Windows cp1252 error
+  while the gate itself reported a clean tree
+  ([PR #79](https://github.com/MSKazemi/aobench/pull/79)). Both reads now declare
+  `encoding="utf-8"`, `check_text_encoding.py` scans `examples/` alongside the three trees
+  it already covered, and the gate's own regression test proves it — removing either fix
+  makes it fail.
+
 ## Reported and tested
 
 Not every contribution is a commit. The people below ran AOBench somewhere the maintainer
@@ -135,7 +195,7 @@ is now a fix on `main`.
 - **hari760** ([@hari760](https://github.com/hari760)) — submitted a three-run
   `claude-sonnet-4-6` result on the dev split
   ([#60](https://github.com/MSKazemi/aobench/issues/60)) and, in the process of filling in
-  the form honestly, found four defects. The headline one: a first run died at task 6 of
+  the form honestly, found five defects. The headline one: a first run died at task 6 of
   67 with a `UnicodeEncodeError`, and the diagnosis came attached and correct — text I/O
   with no explicit `encoding=` falls back to the platform preferred encoding, which is
   cp1252 on Windows, and model output contained an emoji. It was not one call site but
@@ -149,7 +209,15 @@ is now a fix on `main`.
   scoring-profile field asked for one profile where the corpus sets it per task, 60
   `alpha1_grounding` to 28 `default_hpc_v01`, which was worked out unaided and reported
   precisely; and the documented submission command redirected a command that prints prose,
-  not JSON. Four defects from one submission, right about all of them.
+  not JSON. The fifth is the most serious and arrived last, in the two task IDs that hard
+  failed: `AIOPS_USR_001` and `PERF_USR_001` both ask about the requester's **own** job
+  while the snapshot assigns that job to someone else, so a correct agent is RBAC
+  hard-failed and the task is zeroed — unpassable by construction
+  ([#63](https://github.com/MSKazemi/aobench/issues/63)). It was diagnosable only because
+  the same two tasks failed in all three runs; a single run would have been published as a
+  model result. One of the two was already known and excluded from scoring, the other was
+  not, and had been depressing aggregates unnoticed. Five defects from one submission,
+  right about all of them.
 
 - **userfypp** ([@userfypp](https://github.com/userfypp)) — took the DOCS_USR cell on
   [#26](https://github.com/MSKazemi/aobench/issues/26), checked the proposed task against
@@ -191,9 +259,6 @@ a claim.
   providers), claimed 2026-09-01. Asked whether `litellm:<model>` with the provider prefix
   passed through was the intended adapter-string format *before* writing code, which is
   why it will not need redoing in review.
-- **[@userfypp](https://github.com/userfypp)** — writing a second DOCS_USR task on the PII
-  storage policy ([#26](https://github.com/MSKazemi/aobench/issues/26)), claimed
-  2026-08-11, unblocked once the docs-retrieval bug they found was fixed.
 - **[@aawhan0](https://github.com/aawhan0)** — verifying that the 136 documented shell
   commands actually do what their pages claim, from a clean checkout, starting with
   `docs/getting-started/quickstart.md` ([#62](https://github.com/MSKazemi/aobench/issues/62)),
@@ -203,6 +268,8 @@ a claim.
   [apology](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851). The
   claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
   that failure.
+- **[@BillP313](https://github.com/BillP313)** — recording a 30-second demo GIF for the
+  README ([#9](https://github.com/MSKazemi/aobench/issues/9)), claimed 2026-09-11.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 
