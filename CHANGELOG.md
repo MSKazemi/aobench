@@ -20,9 +20,9 @@
   `tool_use`/`grounding`. The `check_dimension_counts` gate in `scripts/check_facts.py`
   didn't catch it because its regex expects a number immediately before "dimension"
   (`six dimensions`), not "six **evaluation** dimensions" with a word in between — filed
-  as a follow-up to close that regex gap. Corrected the four files to the real seven
-  dimensions and their `default_hpc_v01` weights while touching them for the `PERF_RES_002`
-  task-count bump above.
+  as [#84](https://github.com/MSKazemi/aobench/issues/84) to close that regex gap.
+  Corrected the four files to the real seven dimensions and their `default_hpc_v01`
+  weights while touching them for the `PERF_RES_002` task-count bump above.
 
 ### Added — `check_facts.py` guards the documented test-suite counts
 
