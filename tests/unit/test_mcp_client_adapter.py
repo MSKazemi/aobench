@@ -463,12 +463,15 @@ def test_run_async_no_answer_when_no_reasoning_step(mock_stdio, mock_cs_cls, moc
 
 @patch("aobench.adapters.mcp_client_adapter.asyncio.run")
 def test_adapter_run_calls_asyncio_run(mock_asyncio_run):
-    """MCPClientAdapter.run() delegates to asyncio.run(...)."""
+    """MCPClientAdapter.run() delegates to asyncio.run(...) and closes the coroutine the mock keeps alive."""
     mock_asyncio_run.return_value = MagicMock(spec=Trace)
     adapter = MCPClientAdapter(server="stdio:python server.py")
     ctx = _make_context()
     adapter.run(ctx)
     mock_asyncio_run.assert_called_once()
+    leaked_coro = mock_asyncio_run.call_args.args[0]
+    assert asyncio.iscoroutine(leaked_coro)
+    leaked_coro.close()
 
 
 # ── Import error handling ──────────────────────────────────────────────────────
