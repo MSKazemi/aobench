@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+### Added — `PERF_RES_002`, an evidence-bounded checkpoint diagnosis
+
+- Add one researcher/dev task in env_03, with an explicit canonical response contract and
+  exact-match outcome scoring. The answer distinguishes throughput reduction from CPU
+  efficiency/frequency changes, unsupported per-variant rankings, and reported attribution.
+- Add an offline audit deriving the answer from actual mock-tool output and checking
+  incorrect numbers, unsupported conclusions, missing evidence and forbidden-tool attempts.
+- Update corpus facts and generated catalogs from 89 to 90 tasks (69 dev, 21 test).
+- Scoring profiles, existing tasks and environment snapshots are unchanged. The aggregate
+  score can retain non-outcome credit; outcome and governance are reported separately.
+
+### Fixed — `llms.txt` still said "six evaluation dimensions"
+
+- `llms.txt`, `docs/llms.txt`, `llms-full.txt` and `docs/llms-full.txt` all described
+  six weighted dimensions with a weight table that omitted `workflow` and misstated
+  `tool_use`/`grounding`. The `check_dimension_counts` gate in `scripts/check_facts.py`
+  didn't catch it because its regex expects a number immediately before "dimension"
+  (`six dimensions`), not "six **evaluation** dimensions" with a word in between — filed
+  as a follow-up to close that regex gap. Corrected the four files to the real seven
+  dimensions and their `default_hpc_v01` weights while touching them for the `PERF_RES_002`
+  task-count bump above.
+
 ### Added — `check_facts.py` guards the documented test-suite counts
 
 - The fact gate now compares the test file count and `pytest --collect-only` case count
