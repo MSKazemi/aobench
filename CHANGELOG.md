@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added — a second README demo, recorded on Windows
+
+- `docs/assets/demo-windows.gif` ([issue #9](https://github.com/MSKazemi/aobench/issues/9),
+  [PR #87](https://github.com/MSKazemi/aobench/pull/87) by
+  [@BillP313](https://github.com/BillP313)): the same `aobench run task` /
+  `aobench clear run` sequence as the existing hero recording, captured from a Windows
+  PowerShell prompt with ScreenToGif rather than `vhs` (which the PR reports does not
+  produce output on Windows). Added as a second recording in a collapsed `<details>`
+  block under the original, rather than replacing it — both stay, since one demonstrates
+  the CLI output and the other demonstrates that the workflow needs no Unix-specific
+  tooling.
+
 ### Added — `PERF_RES_002`, an evidence-bounded checkpoint diagnosis
 
 - Add one researcher/dev task in env_03, with an explicit canonical response contract and

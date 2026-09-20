@@ -52,6 +52,15 @@ facility), so results are reproducible, portable, and safe to publish.
   Reproduce it with the two commands shown.</i></sub>
 </div>
 
+<details>
+<summary><sub>Same run, from a clean Windows PowerShell — contributed by <a href="https://github.com/BillP313">@BillP313</a></sub></summary>
+
+<div align="center">
+  <img src="docs/assets/demo-windows.gif" alt="Terminal recording of the same aobench run and CLEAR scorecard, from a Windows PowerShell prompt, proving the workflow needs no Unix-specific tooling." width="100%">
+</div>
+
+</details>
+
 > **In one line:** AOBench is an AI agent benchmark for HPC — an HPC agent
 > evaluation framework that is role-aware, permission-enforced, tool-using,
 > trace-based, and reproducible.
