@@ -23,6 +23,12 @@
   as [#84](https://github.com/MSKazemi/aobench/issues/84) to close that regex gap.
   Corrected the four files to the real seven dimensions and their `default_hpc_v01`
   weights while touching them for the `PERF_RES_002` task-count bump above.
+- `check_dimension_counts` now recognizes the optional `evaluation` qualifier
+  ([#84](https://github.com/MSKazemi/aobench/issues/84),
+  [PR #86](https://github.com/MSKazemi/aobench/pull/86) by
+  [@QIU-Guanzong](https://github.com/QIU-Guanzong)), with regression coverage for
+  stale scoring prose, unrelated non-scoring text, and the `-dimensional` adjective
+  form the tightened match now correctly leaves alone.
 
 ### Added — `check_facts.py` guards the documented test-suite counts
 
