@@ -2,6 +2,221 @@
 
 ## Unreleased
 
+### Added — `PERF_RES_002`, an evidence-bounded checkpoint diagnosis
+
+- Add one researcher/dev task in env_03, with an explicit canonical response contract and
+  exact-match outcome scoring. The answer distinguishes throughput reduction from CPU
+  efficiency/frequency changes, unsupported per-variant rankings, and reported attribution.
+- Add an offline audit deriving the answer from actual mock-tool output and checking
+  incorrect numbers, unsupported conclusions, missing evidence and forbidden-tool attempts.
+- Update corpus facts and generated catalogs from 89 to 90 tasks (69 dev, 21 test).
+- Scoring profiles, existing tasks and environment snapshots are unchanged. The aggregate
+  score can retain non-outcome credit; outcome and governance are reported separately.
+
+### Fixed — `llms.txt` still said "six evaluation dimensions"
+
+- `llms.txt`, `docs/llms.txt`, `llms-full.txt` and `docs/llms-full.txt` all described
+  six weighted dimensions with a weight table that omitted `workflow` and misstated
+  `tool_use`/`grounding`. The `check_dimension_counts` gate in `scripts/check_facts.py`
+  didn't catch it because its regex expects a number immediately before "dimension"
+  (`six dimensions`), not "six **evaluation** dimensions" with a word in between — filed
+  as [#84](https://github.com/MSKazemi/aobench/issues/84) to close that regex gap.
+  Corrected the four files to the real seven dimensions and their `default_hpc_v01`
+  weights while touching them for the `PERF_RES_002` task-count bump above.
+- `check_dimension_counts` now recognizes the optional `evaluation` qualifier
+  ([#84](https://github.com/MSKazemi/aobench/issues/84),
+  [PR #86](https://github.com/MSKazemi/aobench/pull/86) by
+  [@QIU-Guanzong](https://github.com/QIU-Guanzong)), with regression coverage for
+  stale scoring prose, unrelated non-scoring text, and the `-dimensional` adjective
+  form the tightened match now correctly leaves alone.
+
+### Added — `check_facts.py` guards the documented test-suite counts
+
+- The fact gate now compares the test file count and `pytest --collect-only` case count
+  quoted in `README.md` and `CONTRIBUTING.md` against the real suite, using pytest's own
+  collector so parametrized cases are counted the way contributors experience them. The
+  file count must match exactly; the collected-test count uses a 4% tolerance band so
+  ordinary suite growth doesn't force a doc edit for every new test, while still catching
+  material drift ([#71](https://github.com/MSKazemi/aobench/issues/71)). Reported and fixed
+  by [@motodriver](https://github.com/motodriver)
+  ([PR #83](https://github.com/MSKazemi/aobench/pull/83)).
+- This is what caught the drift it guards against: `README.md`'s tree diagram and
+  `CONTRIBUTING.md`'s setup block claimed `~1510 tests` and `83 test files` after the real
+  figures had moved to 94 files / 1683 collected tests. Both are corrected.
+
+### Fixed — include the CI example in the Windows encoding gate
+
+- The encoding check now scans `examples/`, and the CI gate example reads its JSON
+  results as UTF-8. This closes the gap where the example itself could fail on Windows
+  while the check reported a clean tree ([#69](https://github.com/MSKazemi/aobench/issues/69)).
+
+### Added — second DOCS_USR task, and the first corpus contribution from outside the project
+
+- `DOCS_USR_002` by [@userfypp](https://github.com/userfypp)
+  ([PR #78](https://github.com/MSKazemi/aobench/pull/78)) — a PII storage-compliance task
+  against `env_21`, grounded in `docs/data_management_policy.md#5-compliance`. Closes the
+  `DOCS_USR` half of [#26](https://github.com/MSKazemi/aobench/issues/26) and takes the
+  thin-cell count from **32 of 50 to 31**. Corpus: 88 → 89 tasks, 67 → 68 dev.
+- The task exists because of its author's own earlier bug report. They proposed it on
+  2026-08-11, found on 2026-09-01 that `MockDocsTool._retrieve` returned characters 0–500
+  while the Compliance clause begins at character 901, and stopped to ask rather than
+  reshaping the task around a broken tool. That was a scoring-integrity defect, not a
+  retrieval nicety, and fixing it unblocked this task.
+- Verified beyond CI before merge: `direct_qa` scores **0.348**, so the task is genuinely
+  gated on retrieval rather than answerable tool-free; querying the `docs` tool directly
+  against `env_21` returns all of `compliance`, `patient`, `tier4` and `suspension` in the
+  snippet.
+
+- Added `DOCS_USR_002`, a `scientific_user` documentation task grounded in
+  `env_21` that tests retrieval of the patient/PII storage compliance policy.
+
+### Changed — `new task` says that a scaffold will be scored
+
+- A spec written into `benchmark/tasks/specs/` joins the `dev` split the moment it exists,
+  so `aobench run all --split dev` includes and scores it. An unfinished task does not
+  merely score badly: an empty `expected_tool_calls` currently earns a vacuous
+  `tool_use: 1.0`, which can make a placeholder the highest-scoring task in the run
+  ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `aobench new task` now says so at the point the file is created, because the scaffolder is
+  the only path by which that scoring bug is reachable — no shipped task has an empty
+  `expected_tool_calls`. The warning is skipped with `--output`, which means "give me a file
+  to work on" rather than "add this to the benchmark".
+- This is a mitigation, not the fix. The two root causes in #75 stand: `scoring_readiness` is
+  written into every spec and read nowhere in `src/`, and an empty expectation list scores as
+  a perfect match rather than as unmeasurable.
+
+### Fixed — blocked scaffolds no longer inflate dev runs
+
+- `aobench run all --split dev` now excludes task specs marked
+  `scoring_readiness: blocked`, so a freshly scaffolded task in
+  `benchmark/tasks/specs/` no longer joins scored dev runs by accident. Existing
+  `partial` tasks stay in the split, so the fix removes the scaffold leak without
+  silently rewriting the published corpus boundary ([#75](https://github.com/MSKazemi/aobench/issues/75)).
+- `ToolUseScorer` now treats an empty `expected_tool_calls` set as **not measurable**
+  rather than a vacuous perfect match: the scorer still records `score=0.0` for the
+  raw tool-use check, while the benchmark-result layer lifts that to `tool_use=None`
+  and the aggregate excludes that dimension instead of counting it as either 0 or 1.0.
+- Verified on a clean clone with `make check`, `uv run python -m pytest tests/`,
+  and focused regression coverage for both the dev-split gating and the empty
+  `expected_tool_calls` path. Reported and fixed by [@motodriver](https://github.com/motodriver)
+  ([PR #82](https://github.com/MSKazemi/aobench/pull/82)).
+
+### Fixed — review rejects unfinished task scaffolds
+
+- `aobench review task --json` now reports `ok: false` and exits non-zero when its
+  `Finished` row is `TODO`. Human-readable output names the task as unfinished rather than
+  claiming "No failures." `WARN` rows remain non-blocking judgement calls. This closes #73.
+  Reported and fixed by [@mgalore](https://github.com/mgalore), who spotted that the one
+  state `review task` is guaranteed to run in — "I just scaffolded this" — was the state it
+  called clean, which made the documented `--json` CI contract unable to fail on the most
+  common defect.
+- Follow-on fix from the same report: the `Finished` row was conflating two different
+  things. Literal `TODO` text left by `aobench new task` is objectively unfinished and now
+  blocks; `validation_status: not_started` is a workflow field that **44 of the 88 shipped
+  tasks carry, every one of them fully written**, and blocking on it would have failed a
+  contributor's pull request over a status nobody asked them to change. It is now a `WARN`.
+  Without this split the new exit code would have blocked 44 of 88 tasks instead of 10.
+
+### Added — corpus review runs in CI
+
+- `scripts/review_changed_tasks.py` runs `aobench review task --json` over every task spec a
+  branch changed and renders the result as a markdown checklist, one section per task. With
+  no arguments it diffs against `origin/main`, so a contributor sees the same output locally
+  that CI will produce.
+- New `Corpus review` workflow, triggered only on pull requests touching
+  `benchmark/tasks/specs/**`. It writes the checklist to `$GITHUB_STEP_SUMMARY` rather than
+  posting a bot comment: the step summary needs no write permission and no secret, so it
+  behaves identically on a **fork** PR, which is where most first contributions arrive.
+- Only a `FAIL` exits non-zero. `WARN`, `TODO` and `SKIP` are rendered for the reviewer and
+  never gate a PR — a gate that blocks on judgement calls teaches people to route around it.
+- `make review` (the specs your branch changed) and `make review-task TASK=...` (one task).
+- Why: reviewing corpus PRs by hand is the ceiling on how many tasks this project can accept.
+  The mechanical half of the published checklist now runs itself, so review time goes to the
+  half that needs an operator — whether the question is real and whether the gold answer is
+  right. The summary says so explicitly, so the check is never mistaken for an approval.
+
+### Added — `aobench review task`, the review checklist as a command
+
+- Every validator in this project was corpus-wide: `validate benchmark` loads all 88 tasks,
+  `validate tasks` prints an 88-row table, `validate authoring` cross-compares the corpus.
+  None of them answered the only question a first-time author has, which is "is *mine*
+  right?" — and the published review checklist was enforced by the maintainer's attention,
+  one task at a time, which is what caps corpus review at one person.
+- `aobench review task <ID|path>` runs that checklist against a single task and mirrors
+  `docs/guides/adding-a-task.md` row for row: schema, unfinished-scaffold markers,
+  environment, evidence refs, tool families vs. the bundle's RBAC policy, scoring mode, and
+  nearest-sibling similarity within the cell. `--json` for CI.
+- Statuses are graded and only `FAIL` blocks. An over-grant of tools is a `WARN`, not a
+  `FAIL`, because `ToolRegistry` gates on the task's own `allowed_tools` and never
+  intersects it with the bundle policy — so it is a question for a reviewer, not a proven
+  defect. A scaffold reports `TODO`, not failure. A check that cannot run says `SKIP` rather
+  than reporting silence as success.
+
+### Found — 10 tasks grant tool families that do not exist
+
+- Running the new checker over the corpus surfaced that `ARCH_*` and `DATA_*` tasks list
+  `topology`, `inventory` and `filesystem` in `allowed_tools`. Only five tool families are
+  registered (`slurm`, `telemetry`, `docs`, `rbac`, `facility`), and
+  `ToolRegistry.available_tool_names` is `_allowed & _tools` — so those names are dropped
+  in silence.
+- **`ARCH_RES_001`, `ARCH_SYS_001` and `ARCH_USR_001` therefore hand the agent no tools at
+  all**, while their `gold_evidence_refs` point at `topology/cluster_topology.json` —
+  evidence that exists in the bundle but that nothing can reach. Eight of the ten are in the
+  `dev` split, and none is in `EXCLUDE_FROM_SCORING`.
+- Not fixed here: repairing them changes published aggregates, which is a maintainer
+  decision, not a side effect of adding a linter. Recorded as a ratchet in
+  `tests/unit/test_review_cmd.py::_KNOWN_FAILING` so the list can only shrink and no new
+  task can join it.
+
+### Added — `aobench new task`, a scaffolder for corpus contributions
+
+- `aobench list coverage` could tell a contributor that a QCAT x role cell was thin and
+  then left them to hand-write JSON with 8 required fields, 25 optional ones, a task_id
+  convention that existed nowhere in code, and `gold_evidence_refs` pointing into a
+  snapshot they had to explore by hand. That was the highest-friction step in the project,
+  and it sat on the contribution type with the most headroom: 32 of the 50 cells hold one
+  task or fewer.
+- `aobench new task` does the mechanical half. `--thinnest` picks the emptiest cell,
+  `--cell DOCS_DES` (or `--qcat`/`--role`) names one explicitly. It allocates the next free
+  task ID, suggests the environment comparable tasks already use, and lists the files that
+  genuinely exist in that snapshot as evidence candidates.
+- What it emits is structurally valid immediately — `validate benchmark` passes on a fresh
+  scaffold — but deliberately unfinished: `title`, `query_text` and `gold_answer` are
+  `TODO`, `gold_evidence_refs` is empty, and the spec carries
+  `validation_status: not_started` / `scoring_readiness: blocked` so it announces itself as
+  work in progress. The scaffolder does not invent a gold answer: a benchmark whose answers
+  were generated measures the generator, not the agent.
+- The cell, role and QCAT vocabulary is imported from `list_cmd` rather than restated, so
+  "thin cell" cannot come to mean two different things in two commands.
+- Documented in `docs/guides/adding-a-task.md` (now step 0 of the workflow) and
+  `docs/reference/commands.md`. 24 tests in `tests/unit/test_new_cmd.py`.
+
+### Fixed — SLURM snapshot return types
+
+- `_load_json` now describes list-shaped job details while retaining the mapping
+  type for scheduler state ([#66](https://github.com/MSKazemi/aobench/issues/66),
+  [PR #68](https://github.com/MSKazemi/aobench/pull/68) by
+  [@QIU-Guanzong](https://github.com/QIU-Guanzong)). The annotation claimed
+  `dict[str, Any]` while three of the seven `job_details.json` snapshots (`env_04`,
+  `env_09`, `env_19`) are JSON *lists* — the runtime handled both correctly and the
+  type had been wrong since the function was written. Runtime behavior and corpus
+  files are unchanged. Tests cover both detail shapes, all state snapshots, and
+  missing files.
+
+### Fixed — Langfuse exporter test isolation
+
+- `tests/unit/test_langfuse_exporter.py` imported `aobench.exporters.langfuse_exporter`
+  from *inside* six `patch.dict(sys.modules, ...)` blocks. `patch.dict` restores the
+  snapshot it took on entry, so if the module was not yet in `sys.modules` when the block
+  opened, the import added it and leaving the block removed it again — a later
+  `importlib.reload` on the still-live module object then raised `ImportError: module ...
+  not in sys.modules`. Order-dependent: `pytest tests/unit -k tool` failed while the full
+  suite passed, because an earlier test in the full run imports the module first and the
+  snapshot restore becomes a no-op. Fixed by importing the module once at module scope,
+  outside every `patch.dict` block ([#65](https://github.com/MSKazemi/aobench/issues/65),
+  [PR #67](https://github.com/MSKazemi/aobench/pull/67) by
+  [@motodriver](https://github.com/motodriver)). Runtime exporter behaviour is unchanged.
+
 ### Fixed — `mypy --strict` is now clean everywhere except one third-party import
 
 - **The mock HPC tool layer is typed** ([#61](https://github.com/MSKazemi/aobench/issues/61),

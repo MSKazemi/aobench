@@ -7,8 +7,23 @@ git clone https://github.com/MSKazemi/aobench
 cd aobench
 make install        # creates .venv and installs all deps
 make validate       # verifies benchmark data loads cleanly
-make test           # ~1510 tests should pass
+make test           # every test passes, ~24 skipped — that is green
 ```
+
+**Roughly two dozen skips is the expected result on a clone of this repository, not a
+broken setup.** They come from two places, and `make test` with `-rs` prints the reason for
+every one:
+
+- **4** — four of the 29 environment bundles (`env_04`, `env_21`, `env_22`, `env_23`) carry
+  no `slurm/slurm_state.json`, because they are documentation- and filesystem-oriented
+  snapshots rather than scheduler ones. The SLURM schema test is parametrized over every
+  bundle, so it skips those four by design.
+- **20** — the rubric-validation tests need response fixtures that are **not part of the
+  published repository**, so they skip rather than fail.
+
+The pass count is deliberately not quoted here: it changes every time a test is added, and
+a number that rots is worse than no number. **What matters is that nothing fails.** (If you
+are a maintainer with the unpublished fixtures present, you will see only the 4.)
 
 Requires [uv](https://github.com/astral-sh/uv). Python 3.11+.
 
@@ -30,6 +45,26 @@ uv run mypy src/aobench       # advisory — not all findings block a PR
 
 ---
 
+## Contributing a task
+
+Corpus contributions have their own two commands. `aobench new task` scaffolds a valid spec
+so you never hand-write the shape, and `aobench review task` runs the same checklist a
+reviewer will:
+
+```bash
+aobench new task --thinnest        # fill the emptiest QCAT x role cell
+# ...write the question, the gold answer, and the evidence refs...
+make review                        # review every spec your branch changed, as CI will
+```
+
+`make review` is exactly what the **Corpus review** workflow runs on your pull request, and
+it renders the checklist into the run summary — so on a fork PR you get the same feedback
+with no bot and no write access needed. `FAIL` and objective scaffold `TODO` rows block;
+`WARN` rows remain for the reviewer to judge.
+
+The full authoring workflow is in
+[docs/guides/adding-a-task.md](docs/guides/adding-a-task.md).
+
 ## What to expect from us
 
 - **First response within 3 working days.** A first response may just be "seen,
@@ -44,6 +79,21 @@ uv run mypy src/aobench       # advisory — not all findings block a PR
 - **If an issue turns out to be already done, say so.** It happens — three of ours
   were. Flagging it is a real contribution and gets credited in `AUTHORS.md`; it is
   never something you should feel awkward about raising.
+- **Your name lands on a public page, in the same merge.** Every merged contribution gets
+  an entry in [`AUTHORS.md`](https://github.com/MSKazemi/aobench/blob/main/AUTHORS.md) and on the [contributor
+  wall](https://mskazemi.com/aobench/latest/about/contributors/), written in specific terms
+  about what you actually did rather than as a row of avatars — and the entry has a stable
+  URL, so it works as third-party evidence on a CV or a profile. Release notes name
+  contributors for the version their change shipped in. Code, docs, tests, corpus, review
+  and **bug reports** all count; a report that turns out to be right is listed like a patch.
+- **Co-authorship is genuinely on the table for corpus and methodological work.** The
+  [recognition policy](https://github.com/MSKazemi/aobench/blob/main/AUTHORS.md#recognition-policy) puts it this way: *"Substantial corpus
+  or methodological contributions may warrant co-authorship on a paper that depends on them.
+  If you believe that applies to your work, say so — the awkwardness of asking should not
+  decide who gets credit."* It says *may*, and it means may — it opens a conversation rather
+  than promising an author slot. Raising it is welcome and will not be held against you.
+- **You can opt out of being listed**, at any time, without explaining why. Say so in the PR
+  and it is honoured immediately. Contributions stay listed if you later step away.
 - **CI does not run on your first PR until a maintainer approves it.** GitHub
   holds workflow runs on pull requests from first-time contributors, so
   `gh pr checks` says *"no checks reported"* and the PR page shows nothing at

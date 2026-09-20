@@ -1,7 +1,7 @@
 # Contributors
 
 **Thank you.** AOBench is a benchmark, which means its value is not in the code — it is in
-how carefully the 88 tasks, the 29 environments, the scoring rules, and the documentation
+how carefully the 90 tasks, the 29 environments, the scoring rules, and the documentation
 have been checked by people who were not the person who wrote them. Every fix, every
 question that exposed an unclear page, every "this crashed for me" is that checking. This
 page is where those people are named.
@@ -110,6 +110,36 @@ they worked on; the line underneath says it in words.
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">The last ten type errors &middot; a test-isolation bug found by running one extra gate</span>
 </li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/motodriver.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">Enzo</span>
+  <span class="wall-handle"><a href="https://github.com/motodriver">@motodriver</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">Fixed the Langfuse test-isolation bug Akimbo92i found · a leaked coroutine · a scaffold-scoring bug · the test-count fact gate</span>
+</li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/QIU-Guanzong.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🔎</span>
+  </span>
+  <span class="wall-name">Qiu Guanzong</span>
+  <span class="wall-handle"><a href="https://github.com/QIU-Guanzong">@QIU-Guanzong</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">A type signature the corpus disagreed with · closed the encoding gate's own blind spot · a stale-dimension-count regex gap</span>
+</li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/yangziao56.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🧩</span>
+  </span>
+  <span class="wall-name">Ziao Yang</span>
+  <span class="wall-handle"><a href="https://github.com/yangziao56">@yangziao56</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">`PERF_RES_002`, a checkpoint-throughput task with its own independent evidence audit</span>
+</li>
 </ul>
 
 | Contributor | What they added | |
@@ -126,6 +156,16 @@ they worked on; the line underneath says it in words.
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `mypy --strict` clean across `reports/`, `leaderboard/` and `judge/`, and a judge that now rejects a non-object JSON reply instead of returning it as a dict | [#53](https://github.com/MSKazemi/aobench/pull/53), [#54](https://github.com/MSKazemi/aobench/pull/54), [#55](https://github.com/MSKazemi/aobench/pull/55) |
 | [@lorenzo-benites](https://github.com/lorenzo-benites) | `scorers/` from 26 `mypy --strict` errors to 1, including the reachable Anthropic content-block bug in the rubric judge | [#59](https://github.com/MSKazemi/aobench/pull/59) |
 | [@Akimbo92i](https://github.com/Akimbo92i) | The last ten `mypy --strict` errors, in the five mock HPC tools every task runs through — `tools` now carries no budget at all, so it cannot rot back | [#64](https://github.com/MSKazemi/aobench/pull/64) |
+| [@motodriver](https://github.com/motodriver) | Fixed the order-dependent Langfuse exporter test failure — one root cause (`patch.dict` evicting a module it imported) applied at all six call sites | [#67](https://github.com/MSKazemi/aobench/pull/67) |
+| [@QIU-Guanzong](https://github.com/QIU-Guanzong) | `MockSlurmTool._load_json`'s return type now says what the corpus actually contains — an `@overload` pair instead of one signature that couldn't cover both shapes | [#68](https://github.com/MSKazemi/aobench/pull/68) |
+| [@QIU-Guanzong](https://github.com/QIU-Guanzong) | Brought `examples/` inside the encoding gate — the CI-gate example itself could fail with a Windows cp1252 error while the gate it exercises reported a clean tree | [#79](https://github.com/MSKazemi/aobench/pull/79) |
+| [@QIU-Guanzong](https://github.com/QIU-Guanzong) | Closed the `check_dimension_counts` regex gap that missed "six evaluation dimensions" — a qualifying word between the number and "dimension" the old pattern never allowed for | [#86](https://github.com/MSKazemi/aobench/pull/86) |
+| [@mgalore](https://github.com/mgalore) | Caught that `review task --json` called an untouched scaffold `ok: true` — the one state the command is guaranteed to run in was the state it green-lit | [#77](https://github.com/MSKazemi/aobench/pull/77) |
+| [@userfypp](https://github.com/userfypp) | **The first corpus contribution from outside the project** — `DOCS_USR_002`, a PII storage-compliance task grounded in `env_21`, which took thin cells from 32 of 50 to 31. It exists because they stopped to report the retrieval bug that blocked it instead of reshaping the task around it | [#78](https://github.com/MSKazemi/aobench/pull/78) |
+| [@motodriver](https://github.com/motodriver) | A mocked `asyncio.run(...)` left the real coroutine alive in the mock's call args, leaking a `RuntimeWarning` into unrelated later tests | [#80](https://github.com/MSKazemi/aobench/pull/80) |
+| [@motodriver](https://github.com/motodriver) | Stopped scaffolded/unready tasks from joining scored `dev` runs, and made an empty `expected_tool_calls` score as unmeasurable instead of a vacuous perfect 1.0 | [#82](https://github.com/MSKazemi/aobench/pull/82) |
+| [@motodriver](https://github.com/motodriver) | `check_facts.py` now guards the documented test-suite counts too, closing the exact class of drift that let `README.md` say `~1510 tests` long after the real count moved | [#83](https://github.com/MSKazemi/aobench/pull/83) |
+| [@yangziao56](https://github.com/yangziao56) | `PERF_RES_002` — a researcher task that separates throughput reduction from CPU/thermal figures and treats a reported thermal cause as reported, not established — shipped with its own offline audit script that independently re-derives the gold answer from the real mock-tool output | [#81](https://github.com/MSKazemi/aobench/pull/81) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
@@ -150,7 +190,7 @@ right on the first telling — no reproduction work was needed on any of them.
   <span class="wall-name">hari760</span>
   <span class="wall-handle"><a href="https://github.com/hari760">@hari760</a></span>
   <span class="wall-role">Reporter</span>
-  <span class="wall-tag">The Windows portability class &middot; four defects from one run</span>
+  <span class="wall-tag">The Windows portability class &middot; five defects from one run</span>
 </li>
 <li>
   <span class="wall-avatar">
@@ -168,6 +208,7 @@ right on the first telling — no reproduction work was needed on any of them.
 |---|---|---|
 | [@hari760](https://github.com/hari760) | Ran the dev split on Windows and lost it at task 6 of 67 to a `UnicodeEncodeError`, with the correct diagnosis attached: text I/O with no `encoding=` falls back to cp1252. **259 call sites** across `src/`, `tests/` and `scripts/` had it — so Windows contributors could not run the test suite either. There is a static gate for it now (`make encoding-check`), because Linux CI can never see this class of bug | [#60](https://github.com/MSKazemi/aobench/issues/60) |
 | [@hari760](https://github.com/hari760) | Left the per-dimension field blank because nothing emitted it — which exposed that `workflow`, carrying 0.10 weight, was **missing from every task row**, from the OTel export and from `compare runs --show-dims`. The published breakdown could not have reconciled against the aggregate it explained. Also caught that the submission form demanded one scoring profile where the corpus uses two, and that a documented submission command captured prose rather than JSON | [#60](https://github.com/MSKazemi/aobench/issues/60) |
+| [@hari760](https://github.com/hari760) | Reported the two task IDs that hard failed rather than only the score — and because the **same two failed in all three runs**, it was diagnosable as construction rather than behaviour. `AIOPS_USR_001` and `PERF_USR_001` ask about the requester's *own* job while the snapshot assigns it to someone else, so a correct agent is RBAC hard-failed and the task zeroed: **unpassable by any agent**. One was already excluded from scoring; the other was not, and had been depressing published aggregates unnoticed | [#63](https://github.com/MSKazemi/aobench/issues/63) |
 | [@userfypp](https://github.com/userfypp) | Checked a proposed task against `env_21` before writing it and found `MockDocsTool._retrieve` returned characters 0–500 rather than the match. The tool reported a hit whose snippet contained none of the query terms — so an agent could be **scored on grounding against evidence the tool would never surface**, silently capping the dimension on any task whose answer lives late in a long document | [#26](https://github.com/MSKazemi/aobench/issues/26) |
 
 Both of those are scoring- or portability-integrity bugs found from the outside, by people
@@ -212,8 +253,8 @@ before it lands rather than only afterwards.
 | Who | What | Since |
 |---|---|---|
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
-| [@userfypp](https://github.com/userfypp) | A second [DOCS_USR task](https://github.com/MSKazemi/aobench/issues/26) on the PII storage policy, unblocked once the retrieval bug they found was fixed | 2026-08-11 |
 | [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
+| [@BillP313](https://github.com/BillP313) | A 30-second demo [GIF for the README](https://github.com/MSKazemi/aobench/issues/9) | 2026-09-11 |
 
 **Claiming an issue protects it.** Comment to say you are taking something and it is yours;
 nothing will be merged over you. That promise is written down because it was

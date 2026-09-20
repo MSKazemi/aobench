@@ -9,6 +9,7 @@ import pytest
 
 pytest.importorskip("langfuse", reason="langfuse not installed; install with: uv pip install -e '.[langfuse]' --python .venv/bin/python")
 
+from aobench.exporters import langfuse_exporter
 from aobench.schemas.result import BenchmarkResult, DimensionScores
 from aobench.schemas.task import TaskSpec
 from aobench.schemas.trace import Observation, Trace, TraceStep, ToolCall
@@ -123,7 +124,6 @@ def _build_mock_exporter():
     with patch.dict(sys.modules, {
         "langfuse": mock_lf_module,
     }):
-        from aobench.exporters import langfuse_exporter
         importlib.reload(langfuse_exporter)
         exporter = langfuse_exporter.LangfuseExporter(
             public_key="pk-test",
@@ -164,7 +164,6 @@ class TestLangfuseExporterInit:
 
         mock_lf_module = MagicMock()
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             with pytest.raises(ValueError, match="Langfuse credentials missing"):
                 langfuse_exporter.LangfuseExporter()
@@ -182,7 +181,6 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 
@@ -202,7 +200,6 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 
@@ -224,7 +221,6 @@ class TestLangfuseExporterInit:
         mock_lf_module.Langfuse = mock_lf_class
 
         with patch.dict(sys.modules, {"langfuse": mock_lf_module}):
-            from aobench.exporters import langfuse_exporter
             importlib.reload(langfuse_exporter)
             langfuse_exporter.LangfuseExporter()
 

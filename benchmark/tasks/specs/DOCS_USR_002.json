@@ -1,0 +1,50 @@
+{
+  "task_id": "DOCS_USR_002",
+  "title": "Patient and PII storage compliance policy lookup",
+  "query_text": "Can I store data containing patient or personally identifiable information (PII) on /lustre/scratch? Where must I store it under the cluster's data management policy, and what happens if I violate that policy? Please cite the relevant policy section.",
+  "role": "scientific_user",
+  "qcat": "DOCS",
+  "difficulty": "easy",
+  "difficulty_tier": 1,
+  "difficulty_justification": "A single documentation retrieval exposes the Compliance clause covering the storage restriction, required filesystem designation, and consequence of a violation.",
+  "environment_id": "env_21",
+  "gold_evidence_refs": [
+    "docs/data_management_policy.md#5-compliance"
+  ],
+  "expected_answer_type": "explanation",
+  "eval_criteria": {
+    "evaluation_mode": "semantic_match",
+    "gold_answer": "No; the snapshot does not identify /lustre/scratch as a tier4_sensitive designated filesystem. Section 5, Compliance, of docs/data_management_policy.md requires patient or personally identifiable information (PII) to reside only on filesystems with that designation. The snapshot does not name a concrete permitted storage path. A violation triggers immediate account suspension.",
+    "required_evidence_refs": [
+      "docs/data_management_policy.md#5-compliance"
+    ],
+    "expected_tool_sequence": [
+      {
+        "tool_name": "docs",
+        "required_args": {
+          "method": "retrieve"
+        }
+      }
+    ]
+  },
+  "knowledge_source_scope": [
+    "DATA_GOV",
+    "POLICY"
+  ],
+  "required_capabilities": [
+    "retrieval_grounding",
+    "role_aware_response"
+  ],
+  "access_tier": "tier1_public",
+  "allowed_tools": [
+    "docs"
+  ],
+  "expected_tool_calls": [
+    "docs"
+  ],
+  "hard_fail_conditions": [],
+  "aggregate_weight_profile": "alpha1_grounding",
+  "benchmark_split": "dev",
+  "validation_status": "in_review",
+  "scoring_readiness": "ready"
+}

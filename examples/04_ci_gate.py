@@ -31,14 +31,14 @@ def collect_results(run_dir: Path) -> list[dict[str, Any]]:
     """
     summaries = sorted(run_dir.rglob("run_summary.json"))
     if summaries:
-        summary = json.loads(summaries[0].read_text())
+        summary = json.loads(summaries[0].read_text(encoding="utf-8"))
         results = summary.get("results") or summary.get("task_results")
         if results:
             return [r for r in results if isinstance(r, dict)]
 
     per_task = sorted(run_dir.rglob("results/*_result.json"))
     if per_task:
-        return [json.loads(p.read_text()) for p in per_task]
+        return [json.loads(p.read_text(encoding="utf-8")) for p in per_task]
 
     sys.exit(
         f"No results found under {run_dir}.\n"

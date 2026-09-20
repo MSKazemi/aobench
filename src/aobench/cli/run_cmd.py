@@ -69,6 +69,11 @@ _AZURE_DEPLOYMENT_MAP: dict[str, str] = {
 }
 
 
+def _is_run_ready(task: "TaskSpec") -> bool:
+    """True when a task is eligible for scored batch runs."""
+    return getattr(task, "scoring_readiness", None) != "blocked"
+
+
 def resolve_model(token: str) -> tuple[type, str]:
     """Map a token to (AdapterClass, model_name).
 
@@ -300,7 +305,7 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
 
     if split == "dev":
         specs_dir = Path(benchmark_root) / "tasks" / "specs"
-        all_ids = {t.task_id for t in load_tasks_from_dir(specs_dir)}
+        all_ids = {t.task_id for t in load_tasks_from_dir(specs_dir) if _is_run_ready(t)}
         return all_ids - set(TEST_TASK_IDS)
 
     if split == "m100":

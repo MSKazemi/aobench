@@ -52,8 +52,14 @@ class AggregateScorer:
 
     def score(self, task: TaskSpec, trace: Trace, run_id: str) -> BenchmarkResult:
         outputs = {s.dimension: s.score(task, trace) for s in _SCORERS}
-        logger.debug("scorer outputs for %s: %s", task.task_id,
-                     {k: round(v.score, 4) for k, v in outputs.items()})
+        logger.debug(
+            "scorer outputs for %s: %s",
+            task.task_id,
+            {
+                k: (None if getattr(v, "not_measurable", False) else round(v.score, 4))
+                for k, v in outputs.items()
+            },
+        )
 
         governance_output = outputs["governance"]
         violation_vector_early = getattr(governance_output, "violation_vector", None)
@@ -75,7 +81,7 @@ class AggregateScorer:
 
         rbac_compliant = governance_output.score == 1.0 and not governance_output.hard_fail
 
-        raw_outcome: float = outputs["outcome"].score
+        raw_outcome = outputs["outcome"].score
 
         # --- Checkpoint scoring (runs when task has checkpoints defined) ---
         task_checkpoint_defs = getattr(task, "checkpoints", None)
@@ -136,7 +142,10 @@ class AggregateScorer:
 
         dim_scores = DimensionScores(
             outcome=effective_outcome,
-            tool_use=outputs["tool_use"].score,
+            tool_use=(
+                None if getattr(outputs["tool_use"], "not_measurable", False)
+                else outputs["tool_use"].score
+            ),
             grounding=outputs["grounding"].score,
             governance=outputs["governance"].score,
             efficiency=outputs["efficiency"].score,

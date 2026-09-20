@@ -13,6 +13,8 @@ Reference for all AOBench CLI commands and Makefile targets.
 | `aobench list envs` | List environment bundles and their grounding |
 | `aobench list qcats` \| `roles` \| `adapters` \| `profiles` \| `scorers` | Other views over the corpus |
 | `aobench list coverage` | QCAT x role task-count matrix, with thin cells called out |
+| `aobench new task` | Scaffold a valid task spec for a QCAT x role cell — the contributor's starting point |
+| `aobench review task` | Run the corpus review checklist against ONE task, before you open a PR |
 | `aobench validate benchmark` | Validate all task specs and environment bundles |
 | `aobench run task` | Run a single benchmark task against an environment |
 | `aobench run all` | Run all benchmark tasks (one run dir, one trace per task) |
@@ -145,6 +147,100 @@ Thin cells are where a contribution helps most — see
 for t in $(aobench list tasks --qcat SEC --ids-only); do
   aobench run task --task "$t" --env env_01 --adapter direct_qa
 done
+```
+
+### `aobench new`
+
+Scaffold a corpus contribution. `list coverage` tells you *which* cell is thin; `new task`
+gets you from there to a valid file, so the only work left is the part that carries the
+value — the question, the gold answer, and the evidence behind it.
+
+```bash
+aobench new task --thinnest                     # fill the emptiest cell in the matrix
+aobench new task --cell DOCS_DES                # a specific QCAT x role cell
+aobench new task --qcat JOB --role sysadmin     # the same, spelled out
+aobench new task --cell DOCS_DES --env env_21   # choose the snapshot yourself
+aobench new task --cell DOCS_DES --dry-run      # print it, write nothing
+```
+
+It allocates the next free `task_id` for the cell, suggests the environment that
+comparable tasks already use, and prints the files that actually exist in that snapshot so
+you can cite them in `gold_evidence_refs` without exploring the bundle by hand.
+
+What it writes is **structurally valid immediately** — `aobench validate benchmark` passes
+on a fresh scaffold — but deliberately unfinished: `title`, `query_text` and
+`eval_criteria.gold_answer` are `TODO` markers, `gold_evidence_refs` is empty, and the
+spec carries `validation_status: not_started` / `scoring_readiness: blocked` so it
+announces itself as work in progress rather than looking like a reviewed task.
+
+A generated gold answer would be worth nothing to a benchmark — it would measure the model
+that wrote it. Those fields are yours.
+
+| Option | Meaning |
+|---|---|
+| `--cell QCAT_ROLECODE` | The cell to fill, e.g. `DOCS_DES` |
+| `--qcat` / `--role` | The same, separately; `--role` takes `USR` or `scientific_user` |
+| `--thinnest` | Let AOBench pick the emptiest cell |
+| `--env` | Environment id (default: what comparable tasks use) |
+| `--difficulty` | `easy` \| `medium` \| `hard` \| `adversarial` (default `medium`) |
+| `--answer-type` | Expected answer type (default `diagnosis`) |
+| `-o, --output` | Write elsewhere than the corpus spec directory |
+| `--dry-run` | Print the spec, write nothing |
+| `--force` | Overwrite an existing file |
+
+The full authoring workflow, including the review checklist a reviewer will apply, is in
+[Adding a task](../guides/adding-a-task.md).
+
+### `aobench review`
+
+Every other validator is corpus-wide. This one answers the question an author actually has:
+**is _mine_ right?**
+
+```bash
+aobench review task JOB_USR_001             # by task ID
+aobench review task path/to/spec.json       # or by path, before it is in the corpus
+aobench review task JOB_USR_001 --json      # machine-readable, for CI
+```
+
+It mirrors the review checklist in [Adding a task](../guides/adding-a-task.md) item for
+item, so what you see before opening a PR is what the reviewer will work through:
+
+| Row | What it checks |
+|---|---|
+| Schema | `TaskSpec` accepts the file |
+| Finished | no `TODO` scaffold text left by the generator |
+| Environment | the named bundle exists |
+| Evidence | every `gold_evidence_refs` path exists in that bundle, and `required_evidence_refs` is a subset |
+| Tools | tool families are real, and within what the bundle's RBAC policy lists for the role |
+| Scoring | deterministic unless a rubric is genuinely needed |
+| Coverage | nearest sibling in the same cell by *authoring shape* — difficulty, evidence count, text lengths, whether `slurm` is granted. It is a coarse fingerprint, not a reading of your question, so a `WARN` here asks you to confirm the task adds coverage; it is not evidence that it duplicates anything |
+
+Statuses are deliberately graded. `FAIL` and objective scaffold `TODO` rows exit non-zero;
+`WARN` remains a human judgement call:
+
+- **`✓ PASS`** — checked, fine.
+- **`✗ FAIL`** — provably wrong; exits non-zero.
+- **`! WARN`** — a judgement call for a human. A written task whose
+  `validation_status` is still `not_started` lands here: worth a reviewer knowing, not worth
+  failing a build over. An over-grant of tools is a WARN, not a
+  FAIL, because `ToolRegistry` gates on the task's own `allowed_tools` and never intersects
+  it with the bundle policy — so it is a question, not a proven defect.
+- **`… TODO`** — the author has not finished. It clears `ok` in `--json` output and exits
+  non-zero so a CI gate cannot green-light an untouched scaffold.
+- **`- SKIP`** — the check could not run, said out loud rather than reported as fine.
+
+What it deliberately cannot tell you is whether the question is one the role would really
+ask and whether the gold answer is right. Those need an operator, and they are what review
+is for.
+
+**In CI.** The `Corpus review` workflow runs this over every task spec a pull request
+changes and renders the checklist into the run summary. It uses the step summary rather
+than a bot comment on purpose: that needs no write permission and no secret, so it behaves
+identically on a fork PR. Reproduce it locally with:
+
+```bash
+make review            # every spec your branch changed
+make review-task TASK=JOB_USR_001
 ```
 
 ### Locating the benchmark corpus

@@ -23,7 +23,7 @@ aobench list envs --json
 |---|---|---|---|---:|---|---|
 | <a id="env_01"></a>`env_01` | synthetic | aobench-cluster-a | job_failure | 10 | slurm, telemetry, docs, rbac, incidents | User OOM Failure |
 | <a id="env_02"></a>`env_02` | synthetic | aobench-cluster-a | queue_congestion | 9 | slurm, telemetry, docs, rbac, incidents | Queue Congestion / Long Pending Jobs |
-| <a id="env_03"></a>`env_03` | synthetic | aobench-cluster-a | thermal_power | 10 | slurm, telemetry, power, inventory, docs, rbac, incidents | Thermal and Power Monitoring |
+| <a id="env_03"></a>`env_03` | synthetic | aobench-cluster-a | thermal_power | 11 | slurm, telemetry, power, inventory, docs, rbac, incidents | Thermal and Power Monitoring |
 | <a id="env_04"></a>`env_04` | synthetic | aobench-cluster-a | rack_energy | 4 | power, inventory, docs, rbac, slurm | Rack Energy Comparison |
 | <a id="env_05"></a>`env_05` | synthetic | aobench-cluster-a | cooling_failure | 7 | power, rack, inventory, cooling, incidents, docs, rbac | Cooling Unit Failure |
 | <a id="env_06"></a>`env_06` | synthetic | aobench-cluster-a | energy_anomaly | 2 | slurm, telemetry, docs, rbac, incidents | GPU Power Spike |
@@ -41,7 +41,7 @@ aobench list envs --json
 | <a id="env_18"></a>`env_18` | synthetic | aobench-cluster-a | job_failure | 1 | slurm, telemetry, docs, rbac, incidents | Checkpoint File Missing Restart Fails |
 | <a id="env_19"></a>`env_19` | synthetic | aobench-cluster-a | energy_anomaly | 1 | slurm, telemetry, docs, rbac, incidents | GPU Idle Energy Waste Not Released |
 | <a id="env_20"></a>`env_20` | synthetic | aobench-cluster-a | multi_job_interference | 1 | slurm, telemetry, docs, rbac, incidents | Lustre IO Contention Multi-Job Interference |
-| <a id="env_21"></a>`env_21` | synthetic | aobench-cluster-a | storage_management | 7 | filesystem, docs, rbac | Storage Quota Pressure |
+| <a id="env_21"></a>`env_21` | synthetic | aobench-cluster-a | storage_management | 8 | filesystem, docs, rbac | Storage Quota Pressure |
 | <a id="env_22"></a>`env_22` | synthetic | aobench-cluster-b | facility_incident | 8 | bms, telemetry, docs, rbac | Cooling Alarm Response |
 | <a id="env_23"></a>`env_23` | synthetic | aobench-cluster-c | architecture_review | 7 | topology, inventory, docs, rbac | Capacity Expansion Planning |
 | <a id="env_m100_01"></a>`env_m100_01` | **real M100** | marconi100 | node_degradation | 2 | slurm, telemetry, docs, rbac, incidents | M100 GPU Thermal Hotspot |

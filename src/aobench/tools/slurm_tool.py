@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, Literal, overload
 
 from aobench.tools.base import BaseTool, ToolResult
 
@@ -19,12 +19,19 @@ class MockSlurmTool(BaseTool):
         self._state = self._load_json("slurm/slurm_state.json")
         self._job_details = self._load_json("slurm/job_details.json")
 
-    def _load_json(self, rel_path: str) -> dict[str, Any]:
+    @overload
+    def _load_json(self, rel_path: Literal["slurm/slurm_state.json"]) -> dict[str, Any]: ...
+
+    @overload
+    def _load_json(self, rel_path: str) -> dict[str, Any] | list[dict[str, Any]]: ...
+
+    def _load_json(self, rel_path: str) -> dict[str, Any] | list[dict[str, Any]]:
+        # State snapshots are mappings; job details may contain multiple records.
         p = Path(self._env_root) / rel_path
         if not p.exists():
             return {}
         with p.open(encoding="utf-8") as f:
-            data: dict[str, Any] = json.load(f)
+            data: dict[str, Any] | list[dict[str, Any]] = json.load(f)
             return data
 
     def call(self, method: str, **kwargs: Any) -> ToolResult:
