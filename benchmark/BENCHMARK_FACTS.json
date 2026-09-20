@@ -43,7 +43,7 @@
     "facility"
   ],
   "test_files_total": 94,
-  "tests_collected": 1685,
+  "tests_collected": 1686,
   "python_requires": ">=3.10",
   "license": "Apache-2.0"
 }

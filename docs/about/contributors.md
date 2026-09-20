@@ -128,7 +128,7 @@ they worked on; the line underneath says it in words.
   <span class="wall-name">Qiu Guanzong</span>
   <span class="wall-handle"><a href="https://github.com/QIU-Guanzong">@QIU-Guanzong</a></span>
   <span class="wall-role">Contributor</span>
-  <span class="wall-tag">A type signature the corpus disagreed with · closed the encoding gate's own blind spot</span>
+  <span class="wall-tag">A type signature the corpus disagreed with · closed the encoding gate's own blind spot · a stale-dimension-count regex gap</span>
 </li>
 <li>
   <span class="wall-avatar">
@@ -159,6 +159,7 @@ they worked on; the line underneath says it in words.
 | [@motodriver](https://github.com/motodriver) | Fixed the order-dependent Langfuse exporter test failure — one root cause (`patch.dict` evicting a module it imported) applied at all six call sites | [#67](https://github.com/MSKazemi/aobench/pull/67) |
 | [@QIU-Guanzong](https://github.com/QIU-Guanzong) | `MockSlurmTool._load_json`'s return type now says what the corpus actually contains — an `@overload` pair instead of one signature that couldn't cover both shapes | [#68](https://github.com/MSKazemi/aobench/pull/68) |
 | [@QIU-Guanzong](https://github.com/QIU-Guanzong) | Brought `examples/` inside the encoding gate — the CI-gate example itself could fail with a Windows cp1252 error while the gate it exercises reported a clean tree | [#79](https://github.com/MSKazemi/aobench/pull/79) |
+| [@QIU-Guanzong](https://github.com/QIU-Guanzong) | Closed the `check_dimension_counts` regex gap that missed "six evaluation dimensions" — a qualifying word between the number and "dimension" the old pattern never allowed for | [#86](https://github.com/MSKazemi/aobench/pull/86) |
 | [@mgalore](https://github.com/mgalore) | Caught that `review task --json` called an untouched scaffold `ok: true` — the one state the command is guaranteed to run in was the state it green-lit | [#77](https://github.com/MSKazemi/aobench/pull/77) |
 | [@userfypp](https://github.com/userfypp) | **The first corpus contribution from outside the project** — `DOCS_USR_002`, a PII storage-compliance task grounded in `env_21`, which took thin cells from 32 of 50 to 31. It exists because they stopped to report the retrieval bug that blocked it instead of reshaping the task around it | [#78](https://github.com/MSKazemi/aobench/pull/78) |
 | [@motodriver](https://github.com/motodriver) | A mocked `asyncio.run(...)` left the real coroutine alive in the mock's call args, leaking a `RuntimeWarning` into unrelated later tests | [#80](https://github.com/MSKazemi/aobench/pull/80) |

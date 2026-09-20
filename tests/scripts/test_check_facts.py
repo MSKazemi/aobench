@@ -75,3 +75,16 @@ def test_dimension_counts_keep_non_scoring_prose_out_of_scope(tmp_path, monkeypa
     monkeypatch.setattr(check_facts, "ROOT", tmp_path)
 
     assert check_facts.check_dimension_counts(expected=7) == []
+
+
+def test_dimension_counts_do_not_match_dimensional_adjective(tmp_path, monkeypatch) -> None:
+    check_facts = _import_script("check_facts")
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "guide.md").write_text(
+        "The scoring profile embeds each trace in a six-dimensional feature space.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(check_facts, "ROOT", tmp_path)
+
+    assert check_facts.check_dimension_counts(expected=7) == []

@@ -203,7 +203,14 @@ Added when a first PR merges, newest last.
   ([PR #79](https://github.com/MSKazemi/aobench/pull/79)). Both reads now declare
   `encoding="utf-8"`, `check_text_encoding.py` scans `examples/` alongside the three trees
   it already covered, and the gate's own regression test proves it — removing either fix
-  makes it fail.
+  makes it fail. Came back for
+  [issue #84](https://github.com/MSKazemi/aobench/issues/84) and closed the regex gap in
+  `check_dimension_counts`: it matched a number immediately before "dimension" but missed
+  a qualifying word in between, which is exactly how `llms.txt` said "six evaluation
+  dimensions" long after the real count moved to seven and stayed uncaught
+  ([PR #86](https://github.com/MSKazemi/aobench/pull/86)). The widened pattern stays
+  narrow on purpose — the qualifier is `evaluation` specifically, not any word — with
+  regression coverage for the phrase it now catches and the unrelated prose it must not.
 
 - **Ziao Yang** ([@yangziao56](https://github.com/yangziao56)) — wrote `PERF_RES_002`
   ([PR #81](https://github.com/MSKazemi/aobench/pull/81)), a researcher-role task on the
