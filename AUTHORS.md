@@ -226,6 +226,17 @@ Added when a first PR merges, newest last.
   `telemetry` tool the task was missing and reconciling four documented task-count
   surfaces that had drifted out of sync in the same PR.
 
+- **[@BillP313](https://github.com/BillP313)** — took
+  [issue #9](https://github.com/MSKazemi/aobench/issues/9) and recorded
+  `docs/assets/demo-windows.gif` ([PR #87](https://github.com/MSKazemi/aobench/pull/87)),
+  the same `run task` / `clear run` sequence as the README's existing hero recording, from
+  a Windows PowerShell prompt. Reported that `vhs`, the scripted recorder the issue
+  suggested, produces no output on Windows, and used ScreenToGif instead rather than
+  quietly filing a recording that didn't match the request. Also hit and reported that
+  the task ID in the issue's own example (`M100_001`) had never existed in the corpus,
+  before recording against the corrected one. A university-project contribution, and the
+  project's first demo recorded on a platform other than the one the original was made on.
+
 ## Reported and tested
 
 Not every contribution is a commit. The people below ran AOBench somewhere the maintainer
@@ -308,8 +319,6 @@ a claim.
   [apology](https://github.com/MSKazemi/aobench/issues/32#issuecomment-5609993851). The
   claims table on [#20](https://github.com/MSKazemi/aobench/issues/20) exists because of
   that failure.
-- **[@BillP313](https://github.com/BillP313)** — recording a 30-second demo GIF for the
-  README ([#9](https://github.com/MSKazemi/aobench/issues/9)), claimed 2026-09-11.
 
 <!-- Add yourself in your first PR: - **Your Name** (@handle) — what you contributed -->
 

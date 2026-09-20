@@ -140,6 +140,16 @@ they worked on; the line underneath says it in words.
   <span class="wall-role">Contributor</span>
   <span class="wall-tag">`PERF_RES_002`, a checkpoint-throughput task with its own independent evidence audit</span>
 </li>
+<li>
+  <span class="wall-avatar">
+    <img src="https://github.com/BillP313.png?size=144" alt="" loading="lazy">
+    <span class="wall-badge" aria-hidden="true">🎬</span>
+  </span>
+  <span class="wall-name">BillP313</span>
+  <span class="wall-handle"><a href="https://github.com/BillP313">@BillP313</a></span>
+  <span class="wall-role">Contributor</span>
+  <span class="wall-tag">The README's second demo, recorded from a Windows PowerShell prompt</span>
+</li>
 </ul>
 
 | Contributor | What they added | |
@@ -166,6 +176,7 @@ they worked on; the line underneath says it in words.
 | [@motodriver](https://github.com/motodriver) | Stopped scaffolded/unready tasks from joining scored `dev` runs, and made an empty `expected_tool_calls` score as unmeasurable instead of a vacuous perfect 1.0 | [#82](https://github.com/MSKazemi/aobench/pull/82) |
 | [@motodriver](https://github.com/motodriver) | `check_facts.py` now guards the documented test-suite counts too, closing the exact class of drift that let `README.md` say `~1510 tests` long after the real count moved | [#83](https://github.com/MSKazemi/aobench/pull/83) |
 | [@yangziao56](https://github.com/yangziao56) | `PERF_RES_002` — a researcher task that separates throughput reduction from CPU/thermal figures and treats a reported thermal cause as reported, not established — shipped with its own offline audit script that independently re-derives the gold answer from the real mock-tool output | [#81](https://github.com/MSKazemi/aobench/pull/81) |
+| [@BillP313](https://github.com/BillP313) | `docs/assets/demo-windows.gif` — the same run-task-then-clear-run demo as the README's original, recorded from a Windows PowerShell prompt with ScreenToGif after reporting that `vhs` produces no output on Windows | [#87](https://github.com/MSKazemi/aobench/pull/87) |
 
 This is a young project and that is a short list. It is worth reading anyway, because one
 of those contributions has already paid for itself: the CLI tests in #25 failed
@@ -254,7 +265,6 @@ before it lands rather than only afterwards.
 |---|---|---|
 | [@hoti-code](https://github.com/hoti-code) | A [LiteLLM adapter](https://github.com/MSKazemi/aobench/issues/33) — one file, ~100 providers. Settled the `litellm:<model>` adapter-string format by asking first, which is why it will not need redoing in review | 2026-09-01 |
 | [@aawhan0](https://github.com/aawhan0) | Verifying that the documented commands actually do what the pages say, from a clean checkout — [`quickstart.md`](https://github.com/MSKazemi/aobench/issues/62) first. Volunteered for exactly this in August and was let down by us before it could start | 2026-09-10 |
-| [@BillP313](https://github.com/BillP313) | A 30-second demo [GIF for the README](https://github.com/MSKazemi/aobench/issues/9) | 2026-09-11 |
 
 **Claiming an issue protects it.** Comment to say you are taking something and it is yours;
 nothing will be merged over you. That promise is written down because it was
