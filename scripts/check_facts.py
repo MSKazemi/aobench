@@ -267,10 +267,14 @@ _SCORING_CONTEXT = re.compile(r"scor|weighted|profile", re.IGNORECASE)
 _NOT_SCORING = re.compile(r"\bCLEAR\b|taxonom", re.IGNORECASE)
 
 #: A number bound tightly to "dimension" — "six dimensions", "6 dimensions",
-#: "six-dimension scorecard". Digits are included: `llms.txt` said "12 scorers
-#: across 6 dimensions", and that file exists to be quoted by answer engines.
+#: "six-dimension scorecard", or "six evaluation dimensions". The optional
+#: qualifier is deliberately narrow: allowing arbitrary words here would turn
+#: unrelated counts earlier in a scoring sentence into dimension counts.
 _DIM_PHRASE = re.compile(
-    r"\b(\d{1,2}|" + "|".join(_NUMBER_WORDS) + r")[\s-]dimension", re.IGNORECASE
+    r"\b(\d{1,2}|"
+    + "|".join(_NUMBER_WORDS)
+    + r")(?:[\s-]+evaluation)?[\s-]+dimensions?\b",
+    re.IGNORECASE,
 )
 
 

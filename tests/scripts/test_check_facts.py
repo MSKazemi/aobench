@@ -45,3 +45,33 @@ def test_documented_test_counts_allow_small_growth() -> None:
     )
 
     assert failures == []
+
+
+def test_dimension_counts_catch_evaluation_qualifier(tmp_path, monkeypatch) -> None:
+    check_facts = _import_script("check_facts")
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "guide.md").write_text(
+        "The scoring profile reports six evaluation dimensions.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(check_facts, "ROOT", tmp_path)
+
+    failures = check_facts.check_dimension_counts(expected=7)
+
+    assert len(failures) == 1
+    assert "says 'six evaluation dimensions'" in failures[0]
+
+
+def test_dimension_counts_keep_non_scoring_prose_out_of_scope(tmp_path, monkeypatch) -> None:
+    check_facts = _import_script("check_facts")
+    docs = tmp_path / "docs"
+    docs.mkdir()
+    (docs / "guide.md").write_text(
+        "The model represents six evaluation dimensions in physical space.\n"
+        "The scoring profile reports seven evaluation dimensions.\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(check_facts, "ROOT", tmp_path)
+
+    assert check_facts.check_dimension_counts(expected=7) == []
