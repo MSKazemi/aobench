@@ -2,6 +2,35 @@
 
 ## Unreleased
 
+### Fixed — prevent new runs of blocked tasks and quarantine two unsupported PERF tasks
+
+- `PERF_FAC_001` (`ready` → `blocked`): its answer cannot be derived through the tools it
+  allows. `env_12/power/node_power_gpu_24h.csv` is a header row with no measurements, so
+  `facility.query_node_power` has nothing to return, and `telemetry.query_timeseries` only
+  reads `telemetry_timeseries.parquet`, never the `gpu_flops_counters_24h.parquet` the task
+  cites. The 2.3 GFLOPS/W gold answer is not reachable from the snapshot.
+- `PERF_DES_001` (`partial` → `blocked`): its env_17 snapshot describes an MPI network
+  fault and contains no current LINPACK results, memory-bandwidth measurements, or
+  hardware benchmarks from which its requested scaling calculation can be grounded.
+  Its cited telemetry and MPI troubleshooting document cannot establish the gold answer.
+- Only `scoring_readiness` changed. Queries, gold answers, evidence refs, checkpoints,
+  splits, environment snapshots and existing run results are untouched, and every other
+  `partial` task keeps running and scoring as before.
+- Until now only `run all --split dev` read `scoring_readiness`. `BenchmarkRunner.run` now
+  raises `BlockedTaskError` for a blocked task before the adapter runs, so no trace or score
+  is produced from any entry point that goes through the runner. `aobench run all` skips
+  blocked tasks on every split (`all`, `dev`, `lite`, `m100`), printing
+  `Skipping <task>: scoring_readiness is blocked …` for each one, and `aobench run task`
+  refuses a blocked task with a one-line error (exit 2) before it creates a run directory.
+- `quickstart` and `robustness` also avoid new blocked-task runs. The service returns a
+  typed `TaskBlocked` error (REST 409) rather than reporting an adapter failure.
+- Historical rescoring and explicit scoring of externally supplied traces remain available;
+  this gate applies to new runs through the runner, not retrospective invalidation or
+  rewriting of saved scores. Scored `dev` runs now contain 67 rather than 69 tasks, so
+  their aggregate results are not directly comparable with earlier 69-task runs.
+  Default `all` batches and unfiltered robustness suites similarly contain 88 rather
+  than 90 tasks; compare runs with the same eligible task set.
+
 ### Added — a second README demo, recorded on Windows
 
 - `docs/assets/demo-windows.gif` ([issue #9](https://github.com/MSKazemi/aobench/issues/9),

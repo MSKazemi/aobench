@@ -72,6 +72,9 @@ resolves the benchmark corpus, picks a representative task, runs it with the too
 `direct_qa` adapter, prints the per-dimension scorecard, and names the next commands.
 No API key, no network, and no cluster are required.
 
+Automatic selection skips blocked tasks. An explicit blocked task exits with code 2
+before creating run artifacts; choose a ready or partial task.
+
 ```bash
 aobench quickstart                       # zero-argument first run
 aobench quickstart --task MON_SYS_001    # a task you choose
@@ -172,6 +175,10 @@ on a fresh scaffold — but deliberately unfinished: `title`, `query_text` and
 `eval_criteria.gold_answer` are `TODO` markers, `gold_evidence_refs` is empty, and the
 spec carries `validation_status: not_started` / `scoring_readiness: blocked` so it
 announces itself as work in progress rather than looking like a reviewed task.
+
+New runs refuse a blocked scaffold. Derive its gold answer from snapshot evidence,
+validate and review the task, then mark it `partial` for scored authoring checks.
+Mark it `ready` only after those checks and review pass.
 
 A generated gold answer would be worth nothing to a benchmark — it would measure the model
 that wrote it. Those fields are yours.
@@ -434,6 +441,9 @@ aobench run [OPTIONS] COMMAND [ARGS]...
 #### run task
 
 Run a single benchmark task against an environment.
+Tasks with `scoring_readiness: blocked` are refused before a run directory is created
+(exit 2). Verify the gold answer against snapshot evidence before marking an
+unfinished task `partial` for scored authoring checks.
 
 ```bash
 aobench run task [OPTIONS]
@@ -515,7 +525,11 @@ LANGFUSE_HOST=http://localhost:3000 aobench run task -t JOB_USR_001 -e env_01 --
 
 #### run all
 
-Run all benchmark tasks. Uses each task's `environment_id` from its spec. Creates one run directory with a trace and result file for every task. Displays a `rich` progress bar showing the current task ID, overall progress %, elapsed time, and last score.
+Run selected benchmark tasks whose `scoring_readiness` is `ready` or `partial`.
+Uses each task's `environment_id` from its spec, skips blocked tasks with a reason,
+and creates one run directory with a trace and result file for each task run.
+Displays a `rich` progress bar showing the current task ID, overall progress %,
+elapsed time, and last score.
 
 ```bash
 aobench run all [OPTIONS]
@@ -536,8 +550,8 @@ aobench run all [OPTIONS]
 
 | Split | Description |
 |-------|-------------|
-| `all` | All tasks in `benchmark/tasks/specs/` (default) |
-| `dev` | All tasks except `TEST_TASK_IDS` (70% dev split) |
+| `all` | All ready or partial tasks in `benchmark/tasks/specs/` (default) |
+| `dev` | Ready or partial tasks except `TEST_TASK_IDS` |
 | `lite` | Tasks in `LITE_TASK_IDS` from `lite_manifest_v1.json` |
 | `test` | **Locked** — raises an error (held-out split, see `task_lite_spec.md §4.4`) |
 
@@ -743,6 +757,8 @@ aobench robustness [OPTIONS] COMMAND [ARGS]...
 
 Run a task N times with the same adapter and report score variance.
 
+A blocked task exits with code 2 before starting any repeated runs.
+
 ```bash
 aobench robustness task [OPTIONS]
 ```
@@ -793,7 +809,8 @@ Robustness   : 0.9876  (1 − σ)
 
 #### robustness all
 
-Run ALL benchmark tasks N times each and produce a suite-level pass^k report.
+Run non-blocked benchmark tasks N times each and produce a suite-level pass^k report.
+Blocked tasks are skipped with a reason before the run count is computed.
 
 ```bash
 aobench robustness all [OPTIONS]

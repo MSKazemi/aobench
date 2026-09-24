@@ -345,7 +345,12 @@ def review_task(
             typer.echo("All mechanical checks pass.")
         typer.echo(
             "\nStill only a human can answer: is this a question the role would really ask,"
-            "\nand is the gold answer right? Two commands that help:"
+            "\nand is the gold answer right? Derive it from snapshot evidence first."
+        )
+        if spec.get("scoring_readiness", "blocked") == "blocked":
+            typer.echo("Once verified, mark this task partial for scored authoring checks.")
+        typer.echo(
+            "Two commands that help:"
             f"\n  aobench run task --task {spec.get('task_id')} "
             f"--env {spec.get('environment_id')} --adapter direct_qa   # should FAIL"
             "\n  (then the same with a real model — it should be passable)"

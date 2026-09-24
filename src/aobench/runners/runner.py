@@ -19,6 +19,19 @@ from aobench.utils.logging import get_logger
 logger = get_logger(__name__)
 
 
+class BlockedTaskError(RuntimeError):
+    """A blocked task cannot start a new run through the runner."""
+
+    def __init__(self, task_id: str) -> None:
+        self.task_id = task_id
+        super().__init__(
+            f"task {task_id} has scoring_readiness: blocked and cannot be run; "
+            "verify its gold answer against snapshot evidence before marking it partial, "
+            "or pick a ready or partial task. For a shipped task, report an issue "
+            "rather than changing its readiness locally."
+        )
+
+
 class BenchmarkRunner:
     """Runs a benchmark task against an environment snapshot using a given adapter."""
 
@@ -44,6 +57,8 @@ class BenchmarkRunner:
 
         # 1. Load task and environment
         task = load_task(self._benchmark_root / "tasks" / "specs" / f"{task_id}.json")
+        if task.scoring_readiness == "blocked":
+            raise BlockedTaskError(task.task_id)
         env = load_environment(self._benchmark_root / "environments" / env_id)
         logger.debug("loaded task=%s env=%s role=%s", task.task_id, env.metadata.environment_id, task.role)
 
@@ -82,4 +97,3 @@ class BenchmarkRunner:
                 logger.exception("exporter failed — continuing without export")
 
         return result
-

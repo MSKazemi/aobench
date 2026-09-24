@@ -29,6 +29,8 @@ def _run_all_tasks(output_root: Path) -> str:
     registry.load_all()
     for task_id in registry.task_ids:
         task = registry.get_task(task_id)
+        if task.scoring_readiness == "blocked":
+            continue  # the runner refuses these, exactly as `aobench run all` skips them
         runner.run(task.task_id, task.environment_id, run_id=run_id)
 
     return run_id

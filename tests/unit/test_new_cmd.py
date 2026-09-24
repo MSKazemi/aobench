@@ -133,6 +133,18 @@ def test_written_spec_is_valid_and_marked_unfinished(tmp_path):
     assert spec.scoring_readiness == "blocked"
 
 
+def test_new_task_guidance_requires_evidence_before_scored_runs(tmp_path):
+    (tmp_path / "tasks" / "specs").mkdir(parents=True)
+    (tmp_path / "environments").mkdir()
+    result = runner.invoke(
+        app, ["new", "task", "--cell", "DOCS_DES", "--benchmark-root", str(tmp_path)]
+    )
+    assert result.exit_code == 0, result.output
+    assert "will be skipped by batch runs" in result.output
+    assert "gold answer is independently derived from snapshot" in result.output
+    assert "mark it partial" in result.output
+
+
 def test_the_value_bearing_fields_are_left_as_todo(tmp_path):
     # Generating a plausible gold answer would be worse than leaving it blank: a benchmark
     # whose answers were written by a model measures the model, not the agent.
@@ -189,11 +201,7 @@ def test_thinnest_conflicts_with_an_explicit_cell():
     assert result.exit_code == 2
 
 
-def test_writing_into_the_corpus_warns_that_the_scaffold_will_be_scored(tmp_path, monkeypatch):
-    # A scaffold written into benchmark/tasks/specs/ joins the dev split immediately, and an
-    # unfinished task does not merely score badly -- an empty expected_tool_calls earns a
-    # vacuous tool_use of 1.0, which can make the placeholder the best task in the run (#75).
-    # Saying nothing would let a contributor's first benchmark run be quietly wrong.
+def test_writing_into_the_corpus_explains_readiness_transition(tmp_path, monkeypatch):
     corpus = tmp_path / "benchmark" / "tasks" / "specs"
     corpus.mkdir(parents=True)
     (tmp_path / "benchmark" / "environments").mkdir(parents=True)
@@ -202,9 +210,10 @@ def test_writing_into_the_corpus_warns_that_the_scaffold_will_be_scored(tmp_path
     result = runner.invoke(
         app, ["new", "task", "--cell", "DOCS_DES", "--benchmark-root", "benchmark"]
     )
-    if result.exit_code == 0:  # only assert when the throwaway corpus was usable
-        assert "run all --split dev" in result.output
-        assert "#75" in result.output
+    assert result.exit_code == 0, result.output
+    assert "will be skipped by batch runs" in result.output
+    assert "mark it partial" in result.output
+    assert "mark it ready only after review" in result.output
 
 
 def test_no_scoring_warning_when_writing_outside_the_corpus(tmp_path):

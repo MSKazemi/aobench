@@ -30,7 +30,7 @@
   ],
   "benchmark_split": "dev",
   "validation_status": "not_started",
-  "scoring_readiness": "partial",
+  "scoring_readiness": "blocked",
   "checkpoints": [
     {
       "id": "current_perf_retrieved",

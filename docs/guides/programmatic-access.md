@@ -102,8 +102,12 @@ For long sweeps, submit with `wait=false` to get a job record immediately and po
 `GET /v1/jobs/{job_id}` until its `state` is terminal. (Single-process job tracking
 works out of the box; a durable arq/Redis worker is a drop-in backend upgrade.)
 
-Errors map to HTTP status codes: unknown task/env/run/job → `404`, locked split or
-forbidden role → `403`, adapter failure → `502`, bad report format → `400`.
+Synchronous errors map to HTTP status codes: unknown task/env/run/job → `404`, locked
+split or forbidden role → `403`, blocked task on a new run → `409`, adapter failure →
+`502`, bad report format → `400`. With `wait=false`, run failures instead appear in the
+returned job record; a blocked task has `state: failed` and an error beginning with
+`TaskBlocked:`. `POST /v1/score` still scores a supplied trace, including an external
+trace for a blocked task; it does not start a run.
 
 ---
 

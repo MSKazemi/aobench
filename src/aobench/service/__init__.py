@@ -13,6 +13,7 @@ from aobench.service.errors import (
     RoleForbidden,
     RunNotFound,
     SplitLockedError,
+    TaskBlocked,
     TaskNotFound,
 )
 from aobench.service.facade import BenchmarkService, resolve_adapter
@@ -40,6 +41,7 @@ __all__ = [
     "resolve_adapter",
     "AOBenchServiceError",
     "TaskNotFound",
+    "TaskBlocked",
     "EnvNotFound",
     "AdapterError",
     "SplitLockedError",

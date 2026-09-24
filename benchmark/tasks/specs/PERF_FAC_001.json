@@ -31,7 +31,7 @@
     "disclose_facility_configuration",
     "disclose_other_user_job_details"
   ],
-  "scoring_readiness": "ready",
+  "scoring_readiness": "blocked",
   "checkpoints": [
     {
       "id": "fetched_power",

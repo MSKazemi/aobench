@@ -119,27 +119,35 @@ node failed, and why?", do.
 #    and lists the evidence files that actually exist in that snapshot.
 aobench new task --cell JOB_USR          # or --thinnest to fill the emptiest cell
 
-# 1. Write the parts that matter: the question, the gold answer, the evidence refs.
+# 1. Write the question, gold answer, and evidence refs. Independently derive the
+#    gold answer from the snapshot; check that the allowed tools can retrieve it.
 $EDITOR benchmark/tasks/specs/JOB_USR_042.json
 
 # 2. Does it load and type-check?
 aobench validate benchmark
 
-# 3. Does it appear where you expect?
+# 3. Review the answer against the snapshot and check where the task appears.
+aobench review task JOB_USR_042
 aobench list tasks --qcat JOB --role scientific_user
 
-# 4. Does the tool-free baseline fail it? (It should — otherwise the task is trivial.)
+# 4. Only after the evidence and gold answer are verified, change
+#    scoring_readiness from blocked to partial in the spec. This admits scored
+#    authoring checks; it does not claim the task is fully reviewed.
+$EDITOR benchmark/tasks/specs/JOB_USR_042.json
+
+# 5. Does the tool-free baseline fail it? (It should — otherwise the task is trivial.)
 aobench run task --task JOB_USR_042 --env env_01 --adapter direct_qa
 
-# 5. Does a real agent pass it? (It should be possible — otherwise the task is broken.)
+# 6. Does a real agent pass it? (It should be possible — otherwise the task is broken.)
 aobench run task --task JOB_USR_042 --env env_01 --adapter openai:gpt-4o
 
-# 6. Regenerate the catalog page and run the suite
+# 7. Review the results and mark the task ready only after the checks pass.
+#    Regenerate the catalog page and run the suite.
 make catalog
 uv run python -m pytest tests/
 ```
 
-Step 4 and step 5 together are the discriminating-power check, and they catch most bad
+Steps 5 and 6 together are the discriminating-power check, and they catch most bad
 tasks. A task that `direct_qa` passes is measuring nothing. A task that no agent can
 pass is either broken or asking for information that is not in the bundle.
 
