@@ -16,6 +16,10 @@ class TaskNotFound(AOBenchServiceError):
     """The requested task_id has no spec under benchmark/tasks/specs/."""
 
 
+class TaskBlocked(AOBenchServiceError):
+    """The requested task cannot start a new run while scoring_readiness is blocked."""
+
+
 class EnvNotFound(AOBenchServiceError):
     """The requested env_id has no bundle under benchmark/environments/."""
 

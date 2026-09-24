@@ -9,6 +9,7 @@ from aobench.service import (
     BenchmarkService,
     RunNotFound,
     SplitLockedError,
+    TaskBlocked,
     TaskNotFound,
     resolve_adapter,
 )
@@ -104,6 +105,24 @@ def test_task_not_found(svc):
         svc.submit_run("DOES_NOT_EXIST_999", "env_01", "direct_qa")
 
 
+def test_blocked_task_is_typed_before_adapter_resolution(svc, monkeypatch, tmp_path):
+    from aobench.service import facade
+
+    def should_not_resolve(_name):
+        raise AssertionError("adapter should not be resolved for a blocked task")
+
+    monkeypatch.setattr(facade, "resolve_adapter", should_not_resolve)
+    with pytest.raises(TaskBlocked, match="scoring_readiness: blocked"):
+        svc.submit_run("PERF_FAC_001", "env_12", "direct_qa")
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_blocked_async_job_records_typed_error(svc):
+    job = svc.enqueue_run("PERF_FAC_001", "env_12", "direct_qa")
+    assert job.state == "failed"
+    assert job.error is not None and job.error.startswith("TaskBlocked:")
+
+
 def test_env_not_found(svc, a_task):
     from aobench.service import EnvNotFound
 
@@ -192,7 +211,7 @@ def test_get_report_json_ok(svc, a_task):
 def test_get_trace_task_filter_and_missing(svc, a_task):
     tid, eid = a_task
     h = svc.submit_run(tid, eid, "direct_qa", split="dev")
-    tr = svc.get_trace(h.run_id, task_id=tid)          # filter hit
+    tr = svc.get_trace(h.run_id, task_id=tid)  # filter hit
     assert tr is not None
     with pytest.raises(RunNotFound):
         svc.get_trace(h.run_id, task_id="NO_SUCH_TASK_123")  # filter miss → no trace

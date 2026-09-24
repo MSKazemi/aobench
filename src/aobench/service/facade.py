@@ -21,6 +21,7 @@ from aobench.service.errors import (
     EnvNotFound,
     RunNotFound,
     SplitLockedError,
+    TaskBlocked,
     TaskNotFound,
 )
 from aobench.service.jobs import InMemoryJobRegistry, JobRecord, JobResult, run_job
@@ -167,8 +168,13 @@ class BenchmarkService:
         returns status='queued' from the enqueuing layer.
         """
         self._check_split(split)
-        self._require_task(task_id)
+        from aobench.loaders.task_loader import load_task
+        from aobench.runners.runner import BlockedTaskError
+
+        task = load_task(self._require_task(task_id))
         self._require_env(env_id)
+        if task.scoring_readiness == "blocked":
+            raise TaskBlocked(str(BlockedTaskError(task.task_id)))
 
         adapter_obj = resolve_adapter(adapter)
 
@@ -183,6 +189,8 @@ class BenchmarkService:
         )
         try:
             result = runner.run(task_id, env_id, run_id=run_id)
+        except BlockedTaskError as exc:
+            raise TaskBlocked(str(exc)) from exc
         except (TaskNotFound, EnvNotFound, SplitLockedError):
             raise
         except Exception as exc:  # noqa: BLE001

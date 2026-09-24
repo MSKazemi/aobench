@@ -258,6 +258,15 @@ def test_quickstart_honours_an_explicit_task(tmp_path: Path) -> None:
     assert "JOB_SYS_001" in result.output
 
 
+def test_quickstart_refuses_blocked_task_without_artifacts(tmp_path: Path) -> None:
+    output = tmp_path / "runs"
+    result = runner.invoke(app, ["quickstart", "--task", "PERF_FAC_001", "--output", str(output)])
+    assert result.exit_code == 2
+    assert "scoring_readiness: blocked" in result.output
+    assert "aobench doctor" not in result.output
+    assert not output.exists()
+
+
 def test_quickstart_suggests_alternatives_for_a_mistyped_task(tmp_path: Path) -> None:
     result = runner.invoke(
         app, ["quickstart", "--task", "JOB_USR_01", "--output", str(tmp_path / "runs")]

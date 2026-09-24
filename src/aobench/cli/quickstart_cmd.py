@@ -58,12 +58,12 @@ def _pick_task(root: Path) -> tuple[str, str, str]:
         except (OSError, json.JSONDecodeError):
             continue
         env_id = str(data.get("environment_id", ""))
-        if env_id and (root / "environments" / env_id).is_dir():
+        if (data.get("scoring_readiness", "blocked") != "blocked"
+                and env_id and (root / "environments" / env_id).is_dir()):
             return str(data.get("task_id", path.stem)), env_id, str(data.get("title", ""))
 
     typer.echo(
-        f"No runnable task found in {specs_dir} — every spec is missing or names an "
-        "environment that is not present.",
+        f"No runnable task found in {specs_dir} — check task readiness and environments.",
         err=True,
     )
     raise typer.Exit(code=2)
@@ -90,7 +90,7 @@ def quickstart(
     from aobench.cli._common import require_task_spec, resolve_root
     from aobench.cli.run_cmd import _build_adapter
     from aobench.runners.run_artifacts import finalize_run_artifacts, write_run_manifest
-    from aobench.runners.runner import BenchmarkRunner
+    from aobench.runners.runner import BenchmarkRunner, BlockedTaskError
     from aobench.utils.ids import make_run_id
     from aobench.utils.logging import configure_logging
 
@@ -103,6 +103,11 @@ def quickstart(
         env_id, title = str(spec.get("environment_id", "")), str(spec.get("title", ""))
     else:
         task_id, env_id, title = _pick_task(root)
+        spec = json.loads((root / "tasks" / "specs" / f"{task_id}.json").read_text(encoding="utf-8"))
+
+    if spec.get("scoring_readiness", "blocked") == "blocked":
+        typer.echo(str(BlockedTaskError(task_id)), err=True)
+        raise typer.Exit(code=2)
 
     try:
         adapter_obj = _build_adapter(adapter)
@@ -153,5 +158,5 @@ def quickstart(
     typer.echo(f"\nRun written to: {run_dir.resolve()}")
     typer.echo("\nNext:")
     typer.echo(f"  aobench report json {run_dir}   — the full per-dimension report")
-    typer.echo("  aobench list tasks --split dev   — browse the open dev split")
+    typer.echo("  aobench list tasks --split dev   — browse the dev split (including blocked drafts)")
     typer.echo("  aobench list adapters            — evaluate a real model instead")

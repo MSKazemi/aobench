@@ -90,6 +90,27 @@ def test_unknown_task_404(client):
     assert r.status_code == 404
 
 
+def test_blocked_task_is_client_conflict_not_adapter_failure(client):
+    r = client.post(
+        "/v1/runs?wait=true",
+        json={"task_id": "PERF_FAC_001", "env_id": "env_12", "adapter": "direct_qa"},
+        headers=H,
+    )
+    assert r.status_code == 409
+    assert "scoring_readiness: blocked" in r.json()["detail"]
+
+
+def test_explicit_external_trace_scoring_remains_available_for_blocked_task(client):
+    trace = {
+        "trace_id": "external_1", "run_id": "adhoc", "task_id": "PERF_FAC_001",
+        "role": "facility_admin", "environment_id": "env_12",
+        "adapter_name": "external", "final_answer": "2.3 GFLOPS/W", "steps": [],
+    }
+    r = client.post("/v1/score", json={"task_id": "PERF_FAC_001", "trace": trace}, headers=H)
+    assert r.status_code == 200, r.text
+    assert isinstance(r.json()["aggregate_score"], float)
+
+
 def test_bad_adapter_502(client, a_task):
     tid, eid = a_task
     r = client.post("/v1/runs",

@@ -82,7 +82,7 @@ def _drop_blocked(tasks: list["TaskSpec"]) -> list["TaskSpec"]:
             ready.append(task)
         else:
             typer.echo(
-                f"Skipping {task.task_id}: scoring_readiness is blocked, so it is not run or scored.",
+                f"Skipping {task.task_id}: scoring_readiness is blocked, so it is not run.",
                 err=True,
             )
     return ready
@@ -558,8 +558,9 @@ def run_task(
 
     if not _is_run_ready(task_spec):
         typer.echo(
-            f"Task '{task_id}' has scoring_readiness: blocked and cannot be run or scored; "
-            "fix the task spec, or pick a ready or partial task (`aobench list tasks`).",
+            f"Task '{task_id}' has scoring_readiness: blocked and cannot be run; "
+            "verify its gold answer against snapshot evidence before marking it partial, "
+            "or pick a ready or partial task.",
             err=True,
         )
         raise typer.Exit(code=2)

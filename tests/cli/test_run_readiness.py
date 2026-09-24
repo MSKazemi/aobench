@@ -162,3 +162,49 @@ def test_run_task_still_runs_a_partial_task(tmp_path, run_calls):
 
     assert result.exit_code == 0, _output(result)
     assert run_calls == ["JOB_RES_001"]
+
+
+def test_robustness_task_refuses_blocked_task_before_runs(tmp_path, run_calls):
+    result = CliRunner().invoke(
+        app,
+        [
+            "robustness",
+            "task",
+            "--task",
+            "PERF_FAC_001",
+            "--env",
+            "env_12",
+            "--n",
+            "2",
+            "--output-root",
+            str(tmp_path),
+        ],
+    )
+    assert result.exit_code == 2
+    assert "scoring_readiness: blocked" in _output(result)
+    assert run_calls == []
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_robustness_all_skips_blocked_before_repeated_runs(tmp_path, run_calls):
+    root = _mini_corpus(tmp_path)
+    result = CliRunner().invoke(
+        app,
+        ["robustness", "all", "--n", "2", "--benchmark-root", str(root),
+         "--output-root", str(tmp_path / "runs")],
+    )
+    assert result.exit_code == 0, _output(result)
+    assert "Skipping PERF_FAC_001: scoring_readiness is blocked" in _output(result)
+    assert sorted(run_calls) == ["JOB_RES_001", "JOB_RES_001", "JOB_USR_001", "JOB_USR_001"]
+    assert "2 tasks × 2 runs" in _output(result)
+
+
+def test_quickstart_autopick_skips_blocked_task(tmp_path, run_calls):
+    root = _mini_corpus(tmp_path)
+    (root / "tasks" / "specs" / "JOB_USR_001.json").unlink()
+    result = CliRunner().invoke(
+        app,
+        ["quickstart", "--benchmark-root", str(root), "--output", str(tmp_path / "runs")],
+    )
+    assert result.exit_code == 0, _output(result)
+    assert run_calls == ["JOB_RES_001"]

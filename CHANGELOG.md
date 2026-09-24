@@ -9,10 +9,10 @@
   `facility.query_node_power` has nothing to return, and `telemetry.query_timeseries` only
   reads `telemetry_timeseries.parquet`, never the `gpu_flops_counters_24h.parquet` the task
   cites. The 2.3 GFLOPS/W gold answer is not reachable from the snapshot.
-- `PERF_DES_001` (`partial` → `blocked`): both of its `expected_tool_calls`,
-  `telemetry.query_benchmark_results` and `docs.lookup`, are methods no tool implements
-  (the tools answer `Unknown … method`), so a correct agent cannot match its tool-use
-  expectation.
+- `PERF_DES_001` (`partial` → `blocked`): its env_17 snapshot describes an MPI network
+  fault and contains no current LINPACK results, memory-bandwidth measurements, or
+  hardware benchmarks from which its requested scaling calculation can be grounded.
+  Its cited telemetry and MPI troubleshooting document cannot establish the gold answer.
 - Only `scoring_readiness` changed. Queries, gold answers, evidence refs, checkpoints,
   splits, environment snapshots and existing run results are untouched, and every other
   `partial` task keeps running and scoring as before.
@@ -22,8 +22,12 @@
   blocked tasks on every split (`all`, `dev`, `lite`, `m100`), printing
   `Skipping <task>: scoring_readiness is blocked …` for each one, and `aobench run task`
   refuses a blocked task with a one-line error (exit 2) before it creates a run directory.
-- Explicit rescoring of existing traces is unchanged for historical audit; this gate applies
-  to new execution, not retrospective invalidation or rewriting of saved scores.
+- `quickstart` and `robustness` also avoid new blocked-task runs. The service returns a
+  typed `TaskBlocked` error (REST 409) rather than reporting an adapter failure.
+- Historical rescoring and explicit scoring of externally supplied traces remain available;
+  this gate applies to new runs through the runner, not retrospective invalidation or
+  rewriting of saved scores. Scored `dev` runs now contain 67 rather than 69 tasks, so
+  their aggregate results are not directly comparable with earlier 69-task runs.
 
 ### Added — a second README demo, recorded on Windows
 

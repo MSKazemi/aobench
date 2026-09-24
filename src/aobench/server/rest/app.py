@@ -22,6 +22,7 @@ from aobench.service import (
     RoleForbidden,
     RunNotFound,
     SplitLockedError,
+    TaskBlocked,
     TaskNotFound,
 )
 
@@ -79,6 +80,8 @@ def _http_error(exc: Exception) -> "_HTTPExceptionType":
         return _HE(status_code=404, detail=str(exc) or exc.__class__.__name__)
     if isinstance(exc, (SplitLockedError, RoleForbidden)):
         return _HE(status_code=403, detail=str(exc) or exc.__class__.__name__)
+    if isinstance(exc, TaskBlocked):
+        return _HE(status_code=409, detail=str(exc))
     if isinstance(exc, AdapterError):
         return _HE(status_code=502, detail=str(exc))
     return _HE(status_code=500, detail=str(exc))

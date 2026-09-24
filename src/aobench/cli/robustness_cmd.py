@@ -70,13 +70,17 @@ def robustness_task(  # noqa: PLR0913
         require_task_spec,
         resolve_root,
     )
-    from aobench.runners.runner import BenchmarkRunner  # noqa: PLC0415
+    from aobench.loaders.task_loader import load_task  # noqa: PLC0415
+    from aobench.runners.runner import BenchmarkRunner, BlockedTaskError  # noqa: PLC0415
     from aobench.scorers.robustness_scorer import compute_robustness  # noqa: PLC0415
     from aobench.utils.ids import make_run_id  # noqa: PLC0415
 
     root = resolve_root(benchmark_root)
-    require_task_spec(root, task)
+    task_spec = load_task(require_task_spec(root, task))
     require_env_dir(root, env)
+    if task_spec.scoring_readiness == "blocked":
+        typer.echo(str(BlockedTaskError(task)), err=True)
+        raise typer.Exit(code=2)
 
     # Build adapter
     if adapter == "direct_qa":
@@ -247,6 +251,13 @@ def robustness_all(  # noqa: PLR0913
             typer.echo(f"No tasks with benchmark_split='{split}'", err=True)
             raise typer.Exit(1)
         typer.echo(f"Filtered to {len(tasks)} tasks with split={split}")
+
+    from aobench.cli.run_cmd import _drop_blocked  # noqa: PLC0415
+
+    tasks = _drop_blocked(tasks)
+    if not tasks:
+        typer.echo("No runnable tasks remain after readiness filtering.", err=True)
+        raise typer.Exit(code=2)
 
     # Determine which model tokens to use
     if models:

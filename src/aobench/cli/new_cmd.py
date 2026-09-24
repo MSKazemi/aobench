@@ -303,23 +303,20 @@ def new_task(  # noqa: PLR0913  (each flag maps to one spec field; grouping them
         )
 
     if output is None:
-        # The scaffold is now a corpus file, so `run all --split dev` will pick it up and
-        # score it like any other task -- and an unfinished one scores *well*: an empty
-        # `expected_tool_calls` currently earns a vacuous `tool_use: 1.0`, which can make a
-        # placeholder the highest-scoring task in the run (#75). Until `scoring_readiness`
-        # actually gates run selection, the honest thing is to say so here rather than let
-        # a contributor's first benchmark run be quietly wrong.
         typer.echo(
-            f"\nNote: {dest} is in the corpus now, so `aobench run all --split dev` will"
-            "\ninclude and score it. An unfinished task still gets a score, and an empty"
-            "\n`expected_tool_calls` scores *higher* than a real task (#75) — so finish it,"
-            "\nor delete the file, before you run the benchmark."
+            f"\nNote: {dest} is blocked and will be skipped by batch runs."
+            "\nKeep it blocked until the gold answer is independently derived from snapshot"
+            "\nevidence and the task passes validation and review. Then mark it partial"
+            "\nfor scored baseline and agent checks; mark it ready only after review."
         )
 
     typer.echo(
         f"\nNext, replace every {_TODO} in the file — the question, the gold answer, and the"
         "\nevidence that supports it. Then:"
-        "\n  aobench validate benchmark        # does it load and type-check?"
+        "\n  aobench validate benchmark        # check the spec and environment"
+        f"\n  aobench review task {task_id}  # check the evidence and gold answer"
+        "\n  # After verifying the gold answer from snapshot evidence, set"
+        "\n  # scoring_readiness to partial in the spec before these scored checks:"
         f"\n  aobench run task --task {task_id} --env {env_id} --adapter direct_qa"
         "\n                                    # the tool-free baseline should FAIL it"
         "\n\nThe full workflow, including the review checklist, is in"

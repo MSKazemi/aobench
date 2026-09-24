@@ -12,7 +12,7 @@ import json
 import pytest
 
 from aobench.server.mcp import handlers
-from aobench.service import BenchmarkService
+from aobench.service import BenchmarkService, TaskBlocked
 
 
 @pytest.fixture()
@@ -46,6 +46,11 @@ def test_run_task_and_report_and_trace(svc, a_task):
 
     trace = json.loads(handlers.run_trace(svc, run_id))
     assert "steps" in trace
+
+
+def test_blocked_run_handler_keeps_typed_error(svc):
+    with pytest.raises(TaskBlocked, match="scoring_readiness: blocked"):
+        handlers.run_task(svc, "PERF_FAC_001", "env_12")
 
 
 def test_score_trace_handler(svc, a_task):
