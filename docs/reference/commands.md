@@ -72,6 +72,9 @@ resolves the benchmark corpus, picks a representative task, runs it with the too
 `direct_qa` adapter, prints the per-dimension scorecard, and names the next commands.
 No API key, no network, and no cluster are required.
 
+Automatic selection skips blocked tasks. An explicit blocked task exits with code 2
+before creating run artifacts; choose a ready or partial task.
+
 ```bash
 aobench quickstart                       # zero-argument first run
 aobench quickstart --task MON_SYS_001    # a task you choose
@@ -754,6 +757,8 @@ aobench robustness [OPTIONS] COMMAND [ARGS]...
 
 Run a task N times with the same adapter and report score variance.
 
+A blocked task exits with code 2 before starting any repeated runs.
+
 ```bash
 aobench robustness task [OPTIONS]
 ```
@@ -804,7 +809,8 @@ Robustness   : 0.9876  (1 − σ)
 
 #### robustness all
 
-Run ALL benchmark tasks N times each and produce a suite-level pass^k report.
+Run non-blocked benchmark tasks N times each and produce a suite-level pass^k report.
+Blocked tasks are skipped with a reason before the run count is computed.
 
 ```bash
 aobench robustness all [OPTIONS]

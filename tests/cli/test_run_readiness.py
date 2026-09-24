@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import shutil
 from pathlib import Path
 
@@ -201,10 +202,31 @@ def test_robustness_all_skips_blocked_before_repeated_runs(tmp_path, run_calls):
 
 def test_quickstart_autopick_skips_blocked_task(tmp_path, run_calls):
     root = _mini_corpus(tmp_path)
-    (root / "tasks" / "specs" / "JOB_USR_001.json").unlink()
+    # The preferred task must be blocked despite having its environment present.
+    # Otherwise filename order or the environment check could make this pass alone.
+    preferred = root / "tasks" / "specs" / "JOB_USR_001.json"
+    spec = json.loads(preferred.read_text(encoding="utf-8"))
+    spec["scoring_readiness"] = "blocked"
+    preferred.write_text(json.dumps(spec), encoding="utf-8")
     result = CliRunner().invoke(
         app,
         ["quickstart", "--benchmark-root", str(root), "--output", str(tmp_path / "runs")],
     )
     assert result.exit_code == 0, _output(result)
     assert run_calls == ["JOB_RES_001"]
+
+
+def test_quickstart_mismatched_spec_id_fails_without_traceback(tmp_path, run_calls):
+    root = _mini_corpus(tmp_path)
+    preferred = root / "tasks" / "specs" / "JOB_USR_001.json"
+    spec = json.loads(preferred.read_text(encoding="utf-8"))
+    spec["task_id"] = "JOB_USR_999"
+    preferred.write_text(json.dumps(spec), encoding="utf-8")
+    output = tmp_path / "runs"
+    result = CliRunner().invoke(
+        app, ["quickstart", "--benchmark-root", str(root), "--output", str(output)]
+    )
+    assert result.exit_code == 2, _output(result)
+    assert "Unknown task ID 'JOB_USR_999'" in _output(result)
+    assert run_calls == []
+    assert not output.exists()

@@ -28,6 +28,8 @@
   this gate applies to new runs through the runner, not retrospective invalidation or
   rewriting of saved scores. Scored `dev` runs now contain 67 rather than 69 tasks, so
   their aggregate results are not directly comparable with earlier 69-task runs.
+  Default `all` batches and unfiltered robustness suites similarly contain 88 rather
+  than 90 tasks; compare runs with the same eligible task set.
 
 ### Added — a second README demo, recorded on Windows
 

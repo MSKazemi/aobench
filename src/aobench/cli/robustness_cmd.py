@@ -225,7 +225,7 @@ def robustness_all(  # noqa: PLR0913
     output_root: Annotated[str, _OPT_OUT_ROOT] = "data/runs",
     split: Annotated[str | None, typer.Option("--split", help="Only run tasks in this benchmark_split (dev/public_test/hidden_test)")] = None,
 ) -> None:
-    """Run ALL benchmark tasks N times each and report suite-level pass^k.
+    """Run non-blocked benchmark tasks N times each and report suite-level pass^k.
 
     Produces a robustness JSON with per-task pass^k (k=1,2,4,8), score
     variance, and cost/latency stats across all N*|tasks| runs.

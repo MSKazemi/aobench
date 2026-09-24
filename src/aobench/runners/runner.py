@@ -27,7 +27,8 @@ class BlockedTaskError(RuntimeError):
         super().__init__(
             f"task {task_id} has scoring_readiness: blocked and cannot be run; "
             "verify its gold answer against snapshot evidence before marking it partial, "
-            "or pick a ready or partial task."
+            "or pick a ready or partial task. For a shipped task, report an issue "
+            "rather than changing its readiness locally."
         )
 
 
@@ -96,4 +97,3 @@ class BenchmarkRunner:
                 logger.exception("exporter failed — continuing without export")
 
         return result
-

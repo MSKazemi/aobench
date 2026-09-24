@@ -35,8 +35,8 @@ def _pick_task(root: Path) -> tuple[str, str, str]:
     """Return ``(task_id, env_id, title)`` for the demo task.
 
     Prefers :data:`_PREFERRED_TASK`; otherwise falls back to the first dev-split task,
-    then to the first task of any split, so the command still works against a trimmed
-    or custom corpus.
+    then to the first task of any split. Blocked tasks are skipped, including the
+    preferred task, so the command also works against a trimmed or custom corpus.
     """
     specs_dir = root / "tasks" / "specs"
     preferred = specs_dir / f"{_PREFERRED_TASK}.json"
@@ -103,7 +103,7 @@ def quickstart(
         env_id, title = str(spec.get("environment_id", "")), str(spec.get("title", ""))
     else:
         task_id, env_id, title = _pick_task(root)
-        spec = json.loads((root / "tasks" / "specs" / f"{task_id}.json").read_text(encoding="utf-8"))
+        spec = json.loads(require_task_spec(root, task_id).read_text(encoding="utf-8"))
 
     if spec.get("scoring_readiness", "blocked") == "blocked":
         typer.echo(str(BlockedTaskError(task_id)), err=True)

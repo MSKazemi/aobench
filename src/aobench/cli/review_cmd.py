@@ -347,7 +347,7 @@ def review_task(
             "\nStill only a human can answer: is this a question the role would really ask,"
             "\nand is the gold answer right? Derive it from snapshot evidence first."
         )
-        if spec.get("scoring_readiness") == "blocked":
+        if spec.get("scoring_readiness", "blocked") == "blocked":
             typer.echo("Once verified, mark this task partial for scored authoring checks.")
         typer.echo(
             "Two commands that help:"

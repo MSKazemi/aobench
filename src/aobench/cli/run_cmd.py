@@ -449,9 +449,10 @@ def run_all(
     verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable DEBUG logging")] = False,
     system_prompt_prefix: Annotated[Optional[str], typer.Option("--system-prompt-prefix", help="Path to a text file prepended to the agent system prompt")] = None,
 ) -> None:
-    """Run all benchmark tasks. Uses each task's environment_id from its spec.
+    """Run non-blocked benchmark tasks using each task's environment_id from its spec.
 
-    Creates one run directory with traces and results for every task.
+    Creates one run directory with traces and results for every selected runnable task.
+    Blocked tasks are skipped with an explicit reason.
     Use --split lite|dev|all to filter which tasks are run.
     Use --models to run against multiple models in one invocation (each gets its own run dir).
     """
@@ -560,7 +561,8 @@ def run_task(
         typer.echo(
             f"Task '{task_id}' has scoring_readiness: blocked and cannot be run; "
             "verify its gold answer against snapshot evidence before marking it partial, "
-            "or pick a ready or partial task.",
+            "or pick a ready or partial task. For a shipped task, report an issue "
+            "rather than changing its readiness locally.",
             err=True,
         )
         raise typer.Exit(code=2)
