@@ -74,6 +74,20 @@ def _is_run_ready(task: "TaskSpec") -> bool:
     return getattr(task, "scoring_readiness", None) != "blocked"
 
 
+def _drop_blocked(tasks: list["TaskSpec"]) -> list["TaskSpec"]:
+    """Return the run-ready tasks, naming each blocked task that is skipped and why."""
+    ready: list["TaskSpec"] = []
+    for task in tasks:
+        if _is_run_ready(task):
+            ready.append(task)
+        else:
+            typer.echo(
+                f"Skipping {task.task_id}: scoring_readiness is blocked, so it is not run or scored.",
+                err=True,
+            )
+    return ready
+
+
 def resolve_model(token: str) -> tuple[type, str]:
     """Map a token to (AdapterClass, model_name).
 
@@ -257,9 +271,12 @@ def _check_fidelity_gate(env_id: str, fidelity_root: str = "data/fidelity") -> N
         pass  # Never block the run due to a fidelity-check error
 
 
-def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
+def _load_split_ids(
+    split: str, benchmark_root: str, *, include_blocked: bool = False
+) -> set[str] | None:
     """Return the set of task IDs for the requested split, or None (= all tasks).
 
+    include_blocked lets batch callers report excluded IDs before dropping them.
     Raises typer.Exit with an error message for the 'test' split (locked).
     """
     if split == "all":
@@ -305,7 +322,10 @@ def _load_split_ids(split: str, benchmark_root: str) -> set[str] | None:
 
     if split == "dev":
         specs_dir = Path(benchmark_root) / "tasks" / "specs"
-        all_ids = {t.task_id for t in load_tasks_from_dir(specs_dir) if _is_run_ready(t)}
+        all_ids = {
+            t.task_id for t in load_tasks_from_dir(specs_dir)
+            if include_blocked or _is_run_ready(t)
+        }
         return all_ids - set(TEST_TASK_IDS)
 
     if split == "m100":
@@ -465,14 +485,15 @@ def run_all(
         typer.echo(f"No tasks found in {specs_dir}", err=True)
         raise typer.Exit(1)
 
-    split_ids = _load_split_ids(split, str(root))
+    split_ids = _load_split_ids(split, str(root), include_blocked=True)
     if split_ids is not None:
         tasks = [t for t in all_tasks if t.task_id in split_ids]
         typer.echo(f"Split '{split}': {len(tasks)}/{len(all_tasks)} tasks selected.")
     else:
         tasks = all_tasks
+    tasks = _drop_blocked(tasks)
     if not tasks:
-        typer.echo(f"No tasks match split '{split}'.", err=True)
+        typer.echo(f"No run-ready tasks match split '{split}'.", err=True)
         raise typer.Exit(1)
 
     if model_tokens is not None:
@@ -532,8 +553,16 @@ def run_task(
     from aobench.runners.runner import BenchmarkRunner
 
     root = resolve_root(benchmark_root)
-    require_task_spec(root, task_id)
+    task_spec = load_task(require_task_spec(root, task_id))
     require_env_dir(root, env_id)
+
+    if not _is_run_ready(task_spec):
+        typer.echo(
+            f"Task '{task_id}' has scoring_readiness: blocked and cannot be run or scored; "
+            "fix the task spec, or pick a ready or partial task (`aobench list tasks`).",
+            err=True,
+        )
+        raise typer.Exit(code=2)
 
     try:
         adapter_obj = _build_adapter(adapter)
@@ -547,7 +576,6 @@ def run_task(
 
     # Apply system-prompt prefix if provided
     if system_prompt_prefix is not None and hasattr(adapter_obj, "_system_prompt"):
-        task_spec = load_task(root / "tasks" / "specs" / f"{task_id}.json")
         prefix = _load_system_prompt_prefix(system_prompt_prefix, task_spec)
         if prefix:
             adapter_obj._system_prompt = prefix + "\n\n" + adapter_obj._system_prompt
