@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Fixed — versioned documentation URLs no longer lose the path separator
+
+- Normalize mike's slashless versioned `site_url` before appending paths in the theme
+  override. The `llms.txt` alternate, Twitter preview image, changelog banner link, and
+  breadcrumb ancestor URLs now resolve under `/aobench/latest/` instead of malformed
+  paths such as `/aobench/latestllms.txt`.
+- Exclude `docs/overrides/**` from published documentation so raw Jinja source is not
+  exposed as a public page.
+- Extend the SEO gate with a no-trailing-slash versioned build and site-wide assertions
+  for these URLs, including breadcrumb resolution and the override-source leak.
+
 ### Fixed — structured data now matches Google's breadcrumb and Dataset requirements
 
 - Breadcrumb JSON-LD now emits only real navigable ancestors, gives every emitted
