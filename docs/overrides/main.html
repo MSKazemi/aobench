@@ -140,9 +140,9 @@
         "about": { "@id": "https://mskazemi.com/aobench/#software" },
         "author": { "@id": "https://mskazemi.com/#person" },
         "license": "https://www.apache.org/licenses/LICENSE-2.0"
-      },
+      }
       {%- if page and page.canonical_url != config.site_url %}
-      {
+      ,{
         "@type": "BreadcrumbList",
         "@id": "{{ page.canonical_url }}#breadcrumb",
         "itemListElement": [
