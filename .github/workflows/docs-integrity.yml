@@ -66,6 +66,18 @@ jobs:
       - name: Discoverability surfaces are published
         run: uv run python scripts/seo_check.py
 
+      - name: Mike-style versioned site_url is slash-safe
+        # mike rewrites site_url to a version path without a trailing slash. Reproduce
+        # that exact input so concatenation bugs cannot hide behind the normal config.
+        run: |
+          cp mkdocs.yml .mkdocs-versioned.yml
+          trap 'rm -f .mkdocs-versioned.yml; rm -rf site-versioned' EXIT
+          sed -i 's|^site_url:.*|site_url: https://mskazemi.com/aobench/latest|' .mkdocs-versioned.yml
+          uv run mkdocs build --strict -f .mkdocs-versioned.yml --site-dir site-versioned
+          uv run python scripts/seo_check.py \
+            --site-dir site-versioned \
+            --base-url https://mskazemi.com/aobench/latest/
+
       - name: Examples still run
         run: uv run python -m pytest tests/test_examples.py -q
 

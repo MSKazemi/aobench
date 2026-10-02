@@ -5,6 +5,11 @@ repo_url: https://github.com/MSKazemi/aobench
 repo_name: MSKazemi/aobench
 edit_uri: edit/main/docs/
 
+# The theme override lives under docs/ so Material can load it, but it is source code,
+# not public documentation. Without this exclusion MkDocs copies raw Jinja into the site.
+exclude_docs: |
+  overrides/**
+
 theme:
   name: material
   custom_dir: docs/overrides
