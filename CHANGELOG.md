@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Fixed — structured data now matches Google's breadcrumb and Dataset requirements
+
+- Breadcrumb JSON-LD now emits only real navigable ancestors, gives every emitted
+  `ListItem` an absolute `item` URL, and keeps positions contiguous when a grouping
+  section has no index page. The docs homepage no longer publishes an ineligible
+  single-item `BreadcrumbList`.
+- The AOBench `Dataset.creator` is explicitly typed as `Person`, and structured
+  discovery surfaces now report the current 90-task corpus.
+- `scripts/seo_check.py` now audits JSON-LD on every built documentation page, including
+  breadcrumb shape/link resolution and typed Dataset creators/distributions, so this
+  Search Console failure class is regression-gated.
+
 ### Added — a second README demo, recorded on Windows
 
 - `docs/assets/demo-windows.gif` ([issue #9](https://github.com/MSKazemi/aobench/issues/9),

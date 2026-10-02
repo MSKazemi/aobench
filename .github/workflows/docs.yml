@@ -103,7 +103,7 @@ jobs:
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width,initial-scale=1">
           <title>AOBench — benchmark for AI agents that operate HPC systems</title>
-          <meta name="description" content="Open-source benchmark for AI agents operating HPC systems: 88 tasks, 29 deterministic snapshots, RBAC-enforced, trace-scored. No cluster needed.">
+          <meta name="description" content="Open-source benchmark for AI agents operating HPC systems: 90 tasks, 29 deterministic snapshots, RBAC-enforced, trace-scored. No cluster needed.">
           <link rel="canonical" href="https://mskazemi.com/aobench/latest/">
           <meta http-equiv="refresh" content="0; url=latest/">
           <script>window.location.replace("latest/" + window.location.search + window.location.hash);</script>
@@ -111,7 +111,7 @@ jobs:
           <body>
           <h1>AOBench — Agent Operations Benchmark</h1>
           <p>AOBench is an open-source benchmark for AI agents that operate High-Performance
-          Computing systems: 88 tasks across 10 question categories and 5 operator roles, 29
+          Computing systems: 90 tasks across 10 question categories and 5 operator roles, 29
           deterministic environment snapshots — 6 of them rebuilt from real CINECA Marconi100
           ExaData — role-based access control enforced so that a policy violation hard-fails
           the task, and 12 scorers over 7 weighted dimensions. It runs offline, with no

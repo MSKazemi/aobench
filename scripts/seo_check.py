@@ -21,6 +21,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -32,7 +33,6 @@ REQUIRED_SCHEMA_TYPES = {
     "Person",
     "WebSite",
     "TechArticle",
-    "BreadcrumbList",
 }
 
 #: Crawlers that must not be blocked. Being absent from robots.txt is fine (the
@@ -173,8 +173,125 @@ class Checker:
             for node in data.get("@graph", [data]):
                 if isinstance(node, dict) and "@type" in node:
                     types.add(str(node["@type"]))
-        missing = REQUIRED_SCHEMA_TYPES - types
+        required = set(REQUIRED_SCHEMA_TYPES)
+        if rel != "index.html":
+            required.add("BreadcrumbList")
+        missing = required - types
         self.check(not missing, f"{rel}: JSON-LD schema types", f"missing {sorted(missing)}")
+
+    def _breadcrumb_target_exists(self, url: str) -> bool:
+        parsed = urlparse(url)
+        if parsed.scheme != "https" or parsed.netloc != "mskazemi.com":
+            return False
+        prefix = "/aobench/"
+        if not parsed.path.startswith(prefix):
+            return False
+        suffix = parsed.path[len(prefix) :].lstrip("/")
+        if not suffix:
+            return (self.site / "index.html").is_file()
+        target = self.site / suffix
+        if parsed.path.endswith("/"):
+            target = target / "index.html"
+        return target.is_file()
+
+    def check_structured_data(self, rel: str, html: str) -> None:
+        blocks = re.findall(
+            r'<script type=[\'"]?application/ld\+json[\'"]?>(.*?)</script>',
+            html,
+            re.DOTALL,
+        )
+        nodes: list[dict[str, object]] = []
+        for block in blocks:
+            try:
+                data = json.loads(block)
+            except json.JSONDecodeError:
+                continue
+            if not isinstance(data, dict):
+                continue
+            graph = data.get("@graph", [data])
+            if isinstance(graph, list):
+                nodes.extend(node for node in graph if isinstance(node, dict))
+
+        breadcrumbs = [node for node in nodes if node.get("@type") == "BreadcrumbList"]
+        if rel == "index.html":
+            self.check(
+                not breadcrumbs,
+                f"{rel}: homepage omits single-item BreadcrumbList",
+                "Google requires at least two ListItems",
+            )
+        else:
+            self.check(bool(breadcrumbs), f"{rel}: has BreadcrumbList")
+
+        for breadcrumb in breadcrumbs:
+            items = breadcrumb.get("itemListElement")
+            valid_items = isinstance(items, list) and len(items) >= 2
+            self.check(valid_items, f"{rel}: breadcrumb has at least two ListItems")
+            if not valid_items:
+                continue
+
+            positions = [
+                item.get("position") if isinstance(item, dict) else None for item in items
+            ]
+            self.check(
+                positions == list(range(1, len(items) + 1)),
+                f"{rel}: breadcrumb positions are contiguous",
+                f"found {positions}",
+            )
+
+            for position, item in enumerate(items, start=1):
+                is_list_item = isinstance(item, dict) and item.get("@type") == "ListItem"
+                self.check(is_list_item, f"{rel}: breadcrumb {position} is a ListItem")
+                if not isinstance(item, dict):
+                    continue
+                self.check(
+                    isinstance(item.get("name"), str) and bool(item.get("name")),
+                    f"{rel}: breadcrumb {position} has a name",
+                )
+                url = item.get("item")
+                valid_url = isinstance(url, str) and url.startswith("https://")
+                self.check(valid_url, f"{rel}: breadcrumb {position} has an absolute item URL")
+                if valid_url:
+                    self.check(
+                        self._breadcrumb_target_exists(url),
+                        f"{rel}: breadcrumb {position} resolves inside the built site",
+                        str(url),
+                    )
+
+        datasets = [node for node in nodes if node.get("@type") == "Dataset"]
+        for dataset in datasets:
+            creators = dataset.get("creator")
+            if not isinstance(creators, list):
+                creators = [creators]
+            typed_creators = bool(creators) and all(
+                isinstance(creator, dict)
+                and creator.get("@type") in {"Person", "Organization"}
+                for creator in creators
+            )
+            self.check(
+                typed_creators,
+                f"{rel}: Dataset.creator is typed Person/Organization",
+            )
+
+            distributions = dataset.get("distribution")
+            if not isinstance(distributions, list):
+                distributions = [distributions]
+            valid_distributions = bool(distributions) and all(
+                isinstance(distribution, dict)
+                and bool(distribution.get("contentUrl"))
+                and bool(distribution.get("encodingFormat"))
+                for distribution in distributions
+            )
+            self.check(
+                valid_distributions,
+                f"{rel}: Dataset distributions declare URL and encodingFormat",
+            )
+
+    def check_sitewide_structured_data(self) -> None:
+        pages = sorted(self.site.rglob("index.html"))
+        self.check(bool(pages), "structured-data audit found built pages")
+        for path in pages:
+            rel = path.relative_to(self.site).as_posix()
+            self.check_structured_data(rel, path.read_text(encoding="utf-8"))
 
 
 def main() -> int:
@@ -195,6 +312,7 @@ def main() -> int:
     checker.check_llms_txt()
     for page in KEY_PAGES:
         checker.check_page(page)
+    checker.check_sitewide_structured_data()
 
     if checker.failures:
         print(f"SEO check FAILED — {len(checker.failures)} problem(s):\n", file=sys.stderr)
