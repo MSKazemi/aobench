@@ -196,7 +196,7 @@ class Checker:
 
     def check_structured_data(self, rel: str, html: str) -> None:
         blocks = re.findall(
-            r'<script type=[\\'\"]?application/ld\\+json[\\'\"]?>(.*?)</script>',
+            r'<script type=[\'"]?application/ld\+json[\'"]?>(.*?)</script>',
             html,
             re.DOTALL,
         )
