@@ -75,11 +75,11 @@
         "@type": "Dataset",
         "@id": "https://mskazemi.com/aobench/#dataset",
         "name": "AOBench benchmark corpus",
-        "description": "88 HPC operational task specifications across 10 question categories and 5 operator roles, paired with 29 deterministic environment snapshot bundles. Six environments and eight tasks are grounded in the public Marconi100 ExaData release from CINECA.",
+        "description": "90 HPC operational task specifications across 10 question categories and 5 operator roles, paired with 29 deterministic environment snapshot bundles. Six environments and eight tasks are grounded in the public Marconi100 ExaData release from CINECA.",
         "url": "https://mskazemi.com/aobench/reference/task-catalog/",
         "license": "https://www.apache.org/licenses/LICENSE-2.0",
         "identifier": "https://doi.org/10.5281/zenodo.21854862",
-        "creator": { "@id": "https://mskazemi.com/#person" },
+        "creator": { "@type": "Person", "@id": "https://mskazemi.com/#person" },
         "isAccessibleForFree": true,
         "measurementTechnique": "Trace-based scoring across outcome correctness, tool-use correctness, governance/RBAC, grounding, robustness (pass^k), and efficiency",
         "variableMeasured": [
@@ -141,6 +141,7 @@
         "author": { "@id": "https://mskazemi.com/#person" },
         "license": "https://www.apache.org/licenses/LICENSE-2.0"
       },
+      {%- if page and page.canonical_url != config.site_url %}
       {
         "@type": "BreadcrumbList",
         "@id": "{{ page.canonical_url }}#breadcrumb",
@@ -149,38 +150,38 @@
             "@type": "ListItem",
             "position": 1,
             "name": "AOBench",
-            "item": "https://mskazemi.com/aobench/"
+            "item": "{{ config.site_url }}"
           }
-          {%- if page and page.ancestors %}
+          {%- set crumb = namespace(position=1) %}
+          {%- if page.ancestors %}
           {%- for ancestor in page.ancestors | reverse %}
+          {%- if ancestor.url %}
+          {%- set crumb.position = crumb.position + 1 %}
           ,{
             "@type": "ListItem",
-            "position": {{ loop.index + 1 }},
-            "name": {{ ancestor.title | string | tojson }}
-          }
-          {%- endfor %}
-          ,{
-            "@type": "ListItem",
-            "position": {{ page.ancestors | length + 2 }},
-            "name": {{ page_title | tojson }},
-            "item": "{{ page.canonical_url }}"
-          }
-          {%- elif page and page.canonical_url != config.site_url %}
-          ,{
-            "@type": "ListItem",
-            "position": 2,
-            "name": {{ page_title | tojson }},
-            "item": "{{ page.canonical_url }}"
+            "position": {{ crumb.position }},
+            "name": {{ ancestor.title | string | tojson }},
+            "item": "{{ config.site_url }}{{ ancestor.url }}"
           }
           {%- endif %}
+          {%- endfor %}
+          {%- endif %}
+          {%- set crumb.position = crumb.position + 1 %}
+          ,{
+            "@type": "ListItem",
+            "position": {{ crumb.position }},
+            "name": {{ page_title | tojson }},
+            "item": "{{ page.canonical_url }}"
+          }
         ]
       }
+      {%- endif %}
     ]
   }
   </script>
 {% endblock %}
 
 {% block announce %}
-  <strong>AOBench v0.4.1</strong> — 88 tasks · 29 environments · 6 grounded in real Marconi100 data.
+  <strong>AOBench v0.4.1</strong> — 90 tasks · 29 environments · 6 grounded in real Marconi100 data.
   &nbsp;<a href="{{ config.site_url }}about/changelog/">Read the changelog →</a>
 {% endblock %}
