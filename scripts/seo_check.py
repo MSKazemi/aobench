@@ -181,14 +181,6 @@ class Checker:
             f"{rel}: meta description",
         )
 
-        for suffix, label in (
-            ("llms.txt", "llms.txt alternate uses slash-safe base"),
-            ("assets/social-preview.png", "Twitter image uses slash-safe base"),
-            ("about/changelog/", "announcement link uses slash-safe base"),
-        ):
-            expected = self.base_url + suffix
-            self.check(expected in html, f"{rel}: {label}", expected)
-
         blocks = re.findall(
             r'<script type=[\'"]?application/ld\+json[\'"]?>(.*?)</script>', html, re.DOTALL
         )
@@ -315,6 +307,21 @@ class Checker:
                 f"{rel}: Dataset distributions declare URL and encodingFormat",
             )
 
+    def check_sitewide_base_urls(self) -> None:
+        pages = sorted(self.site.rglob("index.html"))
+        self.check(bool(pages), "slash-safe URL audit found built pages")
+        expected_refs = (
+            ("llms.txt", "llms.txt alternate uses slash-safe base"),
+            ("assets/social-preview.png", "Twitter image uses slash-safe base"),
+            ("about/changelog/", "announcement link uses slash-safe base"),
+        )
+        for path in pages:
+            rel = path.relative_to(self.site).as_posix()
+            html = path.read_text(encoding="utf-8")
+            for suffix, label in expected_refs:
+                expected = self.base_url + suffix
+                self.check(expected in html, f"{rel}: {label}", expected)
+
     def check_sitewide_structured_data(self) -> None:
         pages = sorted(self.site.rglob("index.html"))
         self.check(bool(pages), "structured-data audit found built pages")
@@ -347,6 +354,7 @@ def main() -> int:
     checker.check_template_leaks()
     for page in KEY_PAGES:
         checker.check_page(page)
+    checker.check_sitewide_base_urls()
     checker.check_sitewide_structured_data()
 
     if checker.failures:
