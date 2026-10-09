@@ -1,0 +1,339 @@
+/* ── Palette ──────────────────────────────────────────────────────────────
+   Deep navy primary with an amber accent, matching the logo and the README
+   banner. Both schemes are defined so the light/dark toggle stays coherent. */
+
+:root {
+  --md-primary-fg-color:        #1a237e;
+  --md-primary-fg-color--light: #3949ab;
+  --md-primary-fg-color--dark:  #0d1452;
+  --md-accent-fg-color:         #3f51b5;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-typeset-a-color:         #303f9f;
+
+  /* Brand tokens used by the hero and stat strip. */
+  --aob-amber:      #ff8f00;
+  --aob-hero-from:  #eef0fc;
+  --aob-hero-to:    #e3e6f7;
+  --aob-hero-edge:  #c5cae9;
+  --aob-hero-title: #1a237e;
+  --aob-hero-body:  #3949ab;
+  --aob-hero-muted: #5c6bc0;
+  --aob-card-bg:    #ffffff;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #3949ab;
+  --md-primary-fg-color--light: #5c6bc0;
+  --md-primary-fg-color--dark:  #1a237e;
+  --md-accent-fg-color:         #7986cb;
+  --md-primary-bg-color:        #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.7);
+  --md-typeset-a-color:         #9fa8da;
+
+  --aob-hero-from:  #171d3d;
+  --aob-hero-to:    #10152f;
+  --aob-hero-edge:  #2c3566;
+  --aob-hero-title: #ffffff;
+  --aob-hero-body:  #c5cae9;
+  --aob-hero-muted: #9fa8da;
+  --aob-card-bg:    var(--md-default-bg-color);
+}
+
+/* ── Homepage hero ────────────────────────────────────────────────────────
+   Every colour is a token above, so the block follows the theme toggle
+   instead of baking in a light background that goes unreadable in slate. */
+
+.hero {
+  background: linear-gradient(135deg, var(--aob-hero-from) 0%, var(--aob-hero-to) 100%);
+  border: 1px solid var(--aob-hero-edge);
+  border-radius: 14px;
+  margin: 0 0 2.4rem;
+  padding: 2.6rem 2rem 2.2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Amber-to-indigo accent rule along the top edge — the logo's trace colour. */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--aob-amber), var(--md-primary-fg-color--light) 60%, transparent);
+}
+
+.hero .hero-logo {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 1rem;
+}
+
+.hero .hero-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--aob-hero-muted);
+  margin-bottom: 0.4rem;
+}
+
+.hero h1 {
+  color: var(--aob-hero-title) !important;
+  font-size: 2.4rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.6rem;
+}
+
+.hero .hero-sub {
+  color: var(--aob-hero-body);
+  font-size: 1.02rem;
+  max-width: 640px;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+
+.hero .badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0.9rem 0;
+  align-items: center;
+}
+
+.hero .btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.hero .btn {
+  padding: 0.62rem 1.4rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none !important;
+  display: inline-block;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.hero .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(26, 35, 126, 0.28);
+}
+
+.hero .btn-primary {
+  background: linear-gradient(135deg, var(--md-primary-fg-color--light), var(--md-primary-fg-color));
+  color: #ffffff !important;
+}
+
+.hero .btn-secondary {
+  background: var(--aob-card-bg);
+  color: var(--md-primary-fg-color) !important;
+  border: 1px solid var(--aob-hero-edge);
+}
+
+[data-md-color-scheme="slate"] .hero .btn-secondary {
+  color: var(--aob-hero-body) !important;
+}
+
+/* ── Stat strip ───────────────────────────────────────────────────────────
+   The four numbers that describe the corpus, echoing the README banner. */
+
+.md-typeset ul.stat-strip:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1rem;
+  margin: 0 0 2.4rem;
+  padding: 0;
+  list-style: none;
+}
+
+.md-typeset .stat-strip li {
+  margin: 0;
+  list-style: none;
+  padding: 1.1rem 0.9rem;
+  text-align: center;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 10px;
+  background: var(--aob-card-bg);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.md-typeset .stat-strip li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-2px);
+}
+
+.md-typeset .stat-strip .stat-value {
+  display: block;
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset .stat-strip li.stat-accent .stat-value { color: var(--aob-amber); }
+
+.md-typeset .stat-strip .stat-label {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.8;
+  /* Keep "Environments" on one line rather than hyphen-breaking mid-word. */
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+/* ── Grid cards ───────────────────────────────────────────────────────────
+   Material's built-in cards, lifted slightly on hover. */
+
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+  border-radius: 10px;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.10);
+}
+
+/* Table header row — tokenised so it survives the dark toggle, which the
+   previous hard-coded #e8eaf6 on #1a237e did not. */
+.md-typeset table:not([class]) th {
+  background: var(--aob-hero-from);
+  color: var(--aob-hero-title);
+  font-weight: 700;
+}
+
+.md-typeset table:not([class]) tr:hover td {
+  background: var(--md-default-fg-color--lightest);
+}
+
+/* ── Contributor wall ─────────────────────────────────────────────────────
+   Theme-aware: every colour comes from a Material CSS variable, so the wall
+   follows the light/slate toggle instead of hard-coding navy on white. */
+
+.md-typeset ul.wall:not([hidden]) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+  margin: 1.2rem 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+
+.md-typeset .wall li {
+  margin: 0;
+  list-style: none;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  background: var(--md-default-bg-color);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.md-typeset .wall li:hover {
+  border-color: var(--md-primary-fg-color);
+  transform: translateY(-2px);
+}
+
+.md-typeset .wall img,
+.md-typeset .wall .wall-initials {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  display: block;
+  margin: 0 auto 0.6rem;
+  object-fit: cover;
+}
+
+.md-typeset .wall .wall-initials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--md-primary-bg-color);
+  background: var(--md-primary-fg-color);
+}
+
+.md-typeset .wall .wall-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.78rem;
+  line-height: 1.3;
+}
+
+.md-typeset .wall .wall-handle {
+  display: block;
+  font-size: 0.7rem;
+  opacity: 0.75;
+}
+
+.md-typeset .wall .wall-role {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--md-primary-fg-color);
+  font-weight: 700;
+}
+
+/* Avatar wrapper — exists only so the emoji badge has something to anchor to.
+   The badge marks what the person contributed; the text tag below spells it out,
+   so the meaning never depends on reading an emoji. */
+.md-typeset .wall .wall-avatar {
+  position: relative;
+  display: inline-block;
+  margin: 0 auto 0.6rem;
+  line-height: 0;
+}
+
+.md-typeset .wall .wall-avatar img,
+.md-typeset .wall .wall-avatar .wall-initials {
+  margin: 0;
+}
+
+.md-typeset .wall .wall-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  line-height: 1;
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+}
+
+.md-typeset .wall .wall-tag {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+
+/* The empty-state card shown while a section is still waiting for its first name. */
+.md-typeset .wall li.wall-empty {
+  border-style: dashed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 960 860" width="960" height="860"
+       xmlns="http://www.w3.org/2000/svg"
+       style="border:1px solid #dee2e6; border-radius:5px; display:block; margin:0 auto;">
+    <defs>
+      <marker id="arr"  viewBox="0 0 8 6" markerWidth="8" markerHeight="6"
+              refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0,0 8,3 0,6" fill="#555"/>
+      </marker>
+      <marker id="arr-b"  viewBox="0 0 8 6" markerWidth="8" markerHeight="6"
+              refX="7" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0,0 8,3 0,6" fill="#1D4ED8"/>
+      </marker>
+      <marker id="arr-bl" viewBox="0 0 8 6" markerWidth="8" markerHeight="6"
+              refX="1" refY="3" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="8,0 0,3 8,6" fill="#1D4ED8"/>
+      </marker>
+    </defs>
+
+    <!-- ═══════════════════ BACKGROUND BANDS ═══════════════════ -->
+    <!-- Specification  y=0–175 -->
+    <rect x="0" y="0"   width="960" height="175" fill="#EFF6FF"/>
+    <rect x="0" y="0"   width="960" height="175" fill="none"
+          stroke="#BFDBFE" stroke-width="1" stroke-dasharray="5,3"/>
+    <!-- Execution  y=175–582 -->
+    <rect x="0" y="175" width="960" height="407" fill="#F0FDF4"/>
+    <rect x="0" y="175" width="960" height="407" fill="none"
+          stroke="#BBF7D0" stroke-width="1" stroke-dasharray="5,3"/>
+    <!-- Evaluation  y=582–712 -->
+    <rect x="0" y="582" width="960" height="130" fill="#FEFCE8"/>
+    <rect x="0" y="582" width="960" height="130" fill="none"
+          stroke="#FDE68A" stroke-width="1" stroke-dasharray="5,3"/>
+    <!-- Output  y=712–860 -->
+    <rect x="0" y="712" width="960" height="148" fill="#F8FAFC"/>
+    <rect x="0" y="712" width="960" height="148" fill="none"
+          stroke="#CBD5E1" stroke-width="1" stroke-dasharray="5,3"/>
+
+    <!-- Layer labels -->
+    <text x="10" y="87"  text-anchor="middle" font-size="9" font-weight="bold"
+          fill="#1D4ED8" letter-spacing="2" transform="rotate(-90,10,87)">SPECIFICATION</text>
+    <text x="10" y="378" text-anchor="middle" font-size="9" font-weight="bold"
+          fill="#15803D" letter-spacing="2" transform="rotate(-90,10,378)">EXECUTION</text>
+    <text x="10" y="647" text-anchor="middle" font-size="9" font-weight="bold"
+          fill="#B45309" letter-spacing="2" transform="rotate(-90,10,647)">EVALUATION</text>
+    <text x="10" y="786" text-anchor="middle" font-size="9" font-weight="bold"
+          fill="#475569" letter-spacing="2" transform="rotate(-90,10,786)">OUTPUT</text>
+
+    <!-- ═══════════════════ ROW 1 — SPECIFICATION ═══════════════════ -->
+
+    <!-- Task Specification -->
+    <rect x="25" y="14" width="215" height="152" rx="6"
+          fill="#DBEAFE" stroke="#2563EB" stroke-width="1.5"/>
+    <text x="132" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E3A8A">Task Specification</text>
+    <line x1="25" y1="43" x2="240" y2="43" stroke="#2563EB" stroke-width="0.7"/>
+    <text x="132" y="58"  text-anchor="middle" font-size="9.5" fill="#1D4ED8">80 tasks · 10 QCATs · 5 roles</text>
+    <text x="132" y="73"  text-anchor="middle" font-size="9.5" fill="#334155">task_id, role, qcat, difficulty</text>
+    <text x="132" y="87"  text-anchor="middle" font-size="9.5" fill="#334155">query_text, eval_criteria</text>
+    <text x="132" y="101" text-anchor="middle" font-size="9.5" fill="#334155">allowed_tools, hard_fail_cond.</text>
+    <text x="132" y="115" text-anchor="middle" font-size="9.5" fill="#334155">gold_trajectory, checkpoints</text>
+    <text x="132" y="129" text-anchor="middle" font-size="9.5" fill="#334155">hybrid_scoring_config</text>
+    <text x="132" y="155" text-anchor="middle" font-size="8.5" fill="#2563EB"
+          font-style="italic">schemas/task.py · TaskSpec</text>
+
+    <!-- Environment Bundle -->
+    <rect x="373" y="14" width="215" height="152" rx="6"
+          fill="#DCFCE7" stroke="#16A34A" stroke-width="1.5"/>
+    <text x="480" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#14532D">Environment Bundle</text>
+    <line x1="373" y1="43" x2="588" y2="43" stroke="#16A34A" stroke-width="0.7"/>
+    <text x="480" y="58"  text-anchor="middle" font-size="9.5" fill="#15803D">23 deterministic snapshots</text>
+    <text x="480" y="73"  text-anchor="middle" font-size="9.5" fill="#334155">slurm_state.json</text>
+    <text x="480" y="87"  text-anchor="middle" font-size="9.5" fill="#334155">rbac_policy.yaml (v1.1)</text>
+    <text x="480" y="101" text-anchor="middle" font-size="9.5" fill="#334155">telemetry/*.parquet, *.csv</text>
+    <text x="480" y="115" text-anchor="middle" font-size="9.5" fill="#334155">incident_metadata.json</text>
+    <text x="480" y="129" text-anchor="middle" font-size="9.5" fill="#334155">docs/*.md · inventory.json</text>
+    <text x="480" y="155" text-anchor="middle" font-size="8.5" fill="#16A34A"
+          font-style="italic">schemas/environment.py · EnvironmentBundle</text>
+
+    <!-- Agent Adapter -->
+    <rect x="720" y="14" width="215" height="152" rx="6"
+          fill="#FFEDD5" stroke="#EA580C" stroke-width="1.5"/>
+    <text x="827" y="36" text-anchor="middle" font-size="12" font-weight="bold" fill="#7C2D12">Agent Adapter</text>
+    <line x1="720" y1="43" x2="935" y2="43" stroke="#EA580C" stroke-width="0.7"/>
+    <text x="827" y="58"  text-anchor="middle" font-size="9.5" fill="#9A3412">pluggable LLM backends</text>
+    <text x="827" y="73"  text-anchor="middle" font-size="9.5" fill="#334155">direct_qa (zero-tool baseline)</text>
+    <text x="827" y="87"  text-anchor="middle" font-size="9.5" fill="#334155">openai:gpt-4o / gpt-4o-mini</text>
+    <text x="827" y="101" text-anchor="middle" font-size="9.5" fill="#334155">anthropic:claude-3-5-sonnet</text>
+    <text x="827" y="115" text-anchor="middle" font-size="9.5" fill="#334155">mcp (stdio / SSE transports)</text>
+    <text x="827" y="129" text-anchor="middle" font-size="9.5" fill="#334155">ollama (via OLLAMA_BASE_URL)</text>
+    <text x="827" y="155" text-anchor="middle" font-size="8.5" fill="#EA580C"
+          font-style="italic">adapters/base.py · BaseAdapter</text>
+
+    <!-- ═══════════════════ ARROWS: Spec → BenchmarkRunner ═══════════════════ -->
+    <path d="M132,166 L132,183 L295,183 L295,197"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+    <path d="M480,166 L480,197"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+    <path d="M827,166 L827,183 L665,183 L665,197"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ ROW 2 — BENCHMARKRUNNER ═══════════════════ -->
+    <rect x="295" y="197" width="370" height="52" rx="6"
+          fill="#E2E8F0" stroke="#334155" stroke-width="1.8"/>
+    <text x="480" y="221" text-anchor="middle" font-size="13.5" font-weight="bold" fill="#0F172A">BenchmarkRunner</text>
+    <text x="480" y="239" text-anchor="middle" font-size="9.5" fill="#475569">run(task_id, env_id) → BenchmarkResult</text>
+
+    <!-- Arrow BRunner → Execution loop -->
+    <path d="M480,249 L480,267"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ ROW 3 — EXECUTION LOOP ═══════════════════ -->
+    <!-- Outer dashed loop boundary -->
+    <rect x="22" y="267" width="641" height="176" rx="8"
+          fill="none" stroke="#15803D" stroke-width="1.5" stroke-dasharray="7,3"/>
+    <text x="38" y="284" font-size="9" font-weight="bold" fill="#15803D">
+      Execution Loop  (≤ 10 tool-call rounds per adapter)
+    </text>
+
+    <!-- LLM Agent sub-box -->
+    <rect x="40" y="289" width="180" height="140" rx="5"
+          fill="#FEF9C3" stroke="#854D0E" stroke-width="1.2"/>
+    <text x="130" y="307" text-anchor="middle" font-size="11" font-weight="bold" fill="#431407">LLM Agent</text>
+    <line x1="40" y1="314" x2="220" y2="314" stroke="#854D0E" stroke-width="0.6"/>
+    <text x="130" y="330" text-anchor="middle" font-size="9"   fill="#555">receives task prompt</text>
+    <text x="130" y="344" text-anchor="middle" font-size="9"   fill="#555">+ tool schemas (JSON)</text>
+    <text x="130" y="359" text-anchor="middle" font-size="9"   fill="#555">emits tool_call(s)</text>
+    <text x="130" y="374" text-anchor="middle" font-size="9"   fill="#555">receives observations</text>
+    <text x="130" y="389" text-anchor="middle" font-size="9"   fill="#555">emits stop → final_answer</text>
+    <text x="130" y="410" text-anchor="middle" font-size="8.5" fill="#854D0E" font-style="italic">run(context: ExecutionContext)</text>
+    <text x="130" y="423" text-anchor="middle" font-size="8.5" fill="#854D0E" font-style="italic">→ Trace</text>
+
+    <!-- Bidirectional arrows LLM Agent ↔ Tool Registry -->
+    <path d="M220,337 L263,337"
+          stroke="#1D4ED8" stroke-width="1.4" fill="none" marker-end="url(#arr-b)"/>
+    <text x="241" y="329" text-anchor="middle" font-size="8" fill="#1D4ED8">tool call</text>
+    <path d="M263,361 L220,361"
+          stroke="#1D4ED8" stroke-width="1.4" fill="none" marker-end="url(#arr-bl)"/>
+    <text x="241" y="376" text-anchor="middle" font-size="8" fill="#1D4ED8">observation</text>
+
+    <!-- Tool Registry sub-box -->
+    <rect x="263" y="289" width="230" height="140" rx="5"
+          fill="#F3E8FF" stroke="#7C3AED" stroke-width="1.2"/>
+    <text x="378" y="307" text-anchor="middle" font-size="11" font-weight="bold" fill="#4C1D95">Tool Registry</text>
+    <line x1="263" y1="314" x2="493" y2="314" stroke="#7C3AED" stroke-width="0.6"/>
+    <text x="378" y="330" text-anchor="middle" font-size="9"   fill="#555">role-filtered dispatch</text>
+    <text x="378" y="344" text-anchor="middle" font-size="9"   fill="#555">rbac_policy.yaml enforcement</text>
+    <text x="378" y="359" text-anchor="middle" font-size="9"   fill="#C00">✕ denied → permission_denied obs.</text>
+    <text x="378" y="374" text-anchor="middle" font-size="9"   fill="#C00">✕ dangerous_arg → hard_fail flag</text>
+    <text x="378" y="390" text-anchor="middle" font-size="9"   fill="#555">hpc_tool_catalog.yaml</text>
+    <text x="378" y="405" text-anchor="middle" font-size="9"   fill="#555">16 methods across 5 families</text>
+    <text x="378" y="423" text-anchor="middle" font-size="8.5" fill="#7C3AED" font-style="italic">tools/registry.py · ToolRegistry</text>
+
+    <!-- Arrow: Tool Registry → Mock HPC compact box -->
+    <path d="M493,357 L537,357"
+          stroke="#555" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
+
+    <!-- Mock HPC compact box (inside loop) -->
+    <rect x="537" y="289" width="114" height="140" rx="5"
+          fill="#CCFBF1" stroke="#0D9488" stroke-width="1.2"/>
+    <text x="594" y="307" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0F4339">Mock</text>
+    <text x="594" y="320" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#0F4339">HPC Tools</text>
+    <line x1="537" y1="327" x2="651" y2="327" stroke="#0D9488" stroke-width="0.6"/>
+    <text x="594" y="344" text-anchor="middle" font-size="9" fill="#334155">slurm</text>
+    <text x="594" y="359" text-anchor="middle" font-size="9" fill="#334155">telemetry</text>
+    <text x="594" y="374" text-anchor="middle" font-size="9" fill="#334155">docs</text>
+    <text x="594" y="389" text-anchor="middle" font-size="9" fill="#334155">rbac</text>
+    <text x="594" y="404" text-anchor="middle" font-size="9" fill="#334155">facility</text>
+    <text x="594" y="422" text-anchor="middle" font-size="8.5" fill="#0D9488" font-style="italic">tools/*.py</text>
+
+    <!-- Arrow: Mock HPC → HPC detail box -->
+    <path d="M651,357 L673,357"
+          stroke="#555" stroke-width="1.2" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ HPC TOOL FAMILIES DETAIL (right, tall) ═══════════════════ -->
+    <rect x="673" y="267" width="262" height="243" rx="6"
+          fill="#ECFDF5" stroke="#059669" stroke-width="1.3"/>
+    <text x="804" y="285" text-anchor="middle" font-size="11" font-weight="bold" fill="#064E3B">HPC Tool Families</text>
+    <line x1="673" y1="292" x2="935" y2="292" stroke="#059669" stroke-width="0.6"/>
+    <!-- slurm -->
+    <text x="681" y="307" font-size="8.5" font-weight="bold" fill="#064E3B">slurm (4)</text>
+    <text x="681" y="319" font-size="8.5" fill="#334155">  query_jobs, job_details,</text>
+    <text x="681" y="331" font-size="8.5" fill="#334155">  list_nodes, list_partitions</text>
+    <!-- telemetry -->
+    <text x="681" y="347" font-size="8.5" font-weight="bold" fill="#064E3B">telemetry (4)</text>
+    <text x="681" y="359" font-size="8.5" fill="#334155">  query_timeseries, query_node_metrics,</text>
+    <text x="681" y="371" font-size="8.5" fill="#334155">  query_memory_events, list_metrics</text>
+    <!-- docs -->
+    <text x="681" y="387" font-size="8.5" font-weight="bold" fill="#064E3B">docs (2)</text>
+    <text x="681" y="399" font-size="8.5" fill="#334155">  retrieve, list_docs</text>
+    <!-- rbac -->
+    <text x="681" y="415" font-size="8.5" font-weight="bold" fill="#064E3B">rbac (3)</text>
+    <text x="681" y="427" font-size="8.5" fill="#334155">  check, list_permissions,</text>
+    <text x="681" y="439" font-size="8.5" fill="#334155">  get_allowed_tools</text>
+    <!-- facility -->
+    <text x="681" y="455" font-size="8.5" font-weight="bold" fill="#064E3B">facility (4)</text>
+    <text x="681" y="467" font-size="8.5" fill="#334155">  query_node_power, query_cluster_energy,</text>
+    <text x="681" y="479" font-size="8.5" fill="#334155">  query_rack_telemetry, list_inventory</text>
+    <line x1="673" y1="488" x2="935" y2="488" stroke="#059669" stroke-width="0.6"/>
+    <text x="804" y="502" text-anchor="middle" font-size="8.5" fill="#059669">16 methods · hpc_tool_catalog.yaml</text>
+
+    <!-- TraceWriter annotation (below execution loop, above Trace) -->
+    <text x="230" y="457" text-anchor="middle" font-size="9" fill="#15803D"
+          font-style="italic">TraceWriter records each step</text>
+
+    <!-- Arrow: Execution loop → Trace (exit loop at bottom, route to Trace box) -->
+    <path d="M342,443 L342,462 L480,462 L480,516"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ ROW 4 — TRACE ═══════════════════ -->
+    <rect x="295" y="516" width="370" height="50" rx="6"
+          fill="#EDE9FE" stroke="#7C3AED" stroke-width="1.5"/>
+    <text x="480" y="538" text-anchor="middle" font-size="13" font-weight="bold" fill="#3B0764">Trace</text>
+    <text x="480" y="556" text-anchor="middle" font-size="9.5" fill="#5B21B6">
+      ordered steps · tool_calls · observations · final_answer · token counts
+    </text>
+
+    <!-- Arrow: Trace → AggregateScorer -->
+    <path d="M480,566 L480,582"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ ROW 5 — AGGREGATE SCORER (6 dims) ═══════════════════ -->
+    <rect x="25" y="582" width="910" height="122" rx="6"
+          fill="#FEFCE8" stroke="#D97706" stroke-width="1.8"/>
+    <text x="480" y="601" text-anchor="middle" font-size="12" font-weight="bold" fill="#92400E">
+      AggregateScorer  (profile: default_hpc_v01)
+    </text>
+    <line x1="25" y1="608" x2="935" y2="608" stroke="#D97706" stroke-width="0.7"/>
+
+    <!-- 6 scorer sub-boxes: w=138 gap=6 centered, start x=51, y=614 h=82 -->
+    <!-- Outcome  x=51 center=120 -->
+    <rect x="51" y="614" width="138" height="82" rx="4" fill="#FFF7ED" stroke="#9A3412" stroke-width="1"/>
+    <text x="120" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#7C2D12">Outcome</text>
+    <text x="120" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.30</text>
+    <text x="120" y="658" text-anchor="middle" font-size="9"   fill="#555">exact / numeric /</text>
+    <text x="120" y="671" text-anchor="middle" font-size="9"   fill="#555">semantic / hybrid</text>
+    <text x="120" y="688" text-anchor="middle" font-size="8.5" fill="#9A3412" font-style="italic">+HybridScorer path</text>
+
+    <!-- Tool Use  x=195 center=264 -->
+    <rect x="195" y="614" width="138" height="82" rx="4" fill="#FFF7ED" stroke="#9A3412" stroke-width="1"/>
+    <text x="264" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#7C2D12">Tool Use</text>
+    <text x="264" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.15</text>
+    <text x="264" y="658" text-anchor="middle" font-size="9"   fill="#555">selection · args</text>
+    <text x="264" y="671" text-anchor="middle" font-size="9"   fill="#555">sequence · penalty</text>
+    <text x="264" y="688" text-anchor="middle" font-size="8.5" fill="#9A3412" font-style="italic">BFCL-decomposed</text>
+
+    <!-- Grounding  x=339 center=408 -->
+    <rect x="339" y="614" width="138" height="82" rx="4" fill="#FFF7ED" stroke="#9A3412" stroke-width="1"/>
+    <text x="408" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#7C2D12">Grounding</text>
+    <text x="408" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.10</text>
+    <text x="408" y="658" text-anchor="middle" font-size="9"   fill="#555">answer ∩ observation</text>
+    <text x="408" y="671" text-anchor="middle" font-size="9"   fill="#555">token overlap</text>
+    <text x="408" y="688" text-anchor="middle" font-size="8.5" fill="#9A3412" font-style="italic">HPC entity matching</text>
+
+    <!-- Governance  x=483 center=552 (RED) -->
+    <rect x="483" y="614" width="138" height="82" rx="4" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.3"/>
+    <text x="552" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#991B1B">Governance</text>
+    <text x="552" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.20</text>
+    <text x="552" y="658" text-anchor="middle" font-size="9"   fill="#B91C1C">RBAC violations</text>
+    <text x="552" y="671" text-anchor="middle" font-size="9"   fill="#B91C1C">hard_fail → score = 0</text>
+    <text x="552" y="688" text-anchor="middle" font-size="8.5" fill="#DC2626" font-style="italic">violation_vector (6 flags)</text>
+
+    <!-- Efficiency  x=627 center=696 -->
+    <rect x="627" y="614" width="138" height="82" rx="4" fill="#FFF7ED" stroke="#9A3412" stroke-width="1"/>
+    <text x="696" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#7C2D12">Efficiency</text>
+    <text x="696" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.05</text>
+    <text x="696" y="658" text-anchor="middle" font-size="9"   fill="#555">step count</text>
+    <text x="696" y="671" text-anchor="middle" font-size="9"   fill="#555">≤5→1.0,  ≥20→0.0</text>
+    <text x="696" y="688" text-anchor="middle" font-size="8.5" fill="#9A3412" font-style="italic">linear interpolation</text>
+
+    <!-- Workflow  x=771 center=840 -->
+    <rect x="771" y="614" width="138" height="82" rx="4" fill="#F0F9FF" stroke="#0369A1" stroke-width="1.2"/>
+    <text x="840" y="630" text-anchor="middle" font-size="10" font-weight="bold" fill="#0C4A6E">Workflow</text>
+    <text x="840" y="644" text-anchor="middle" font-size="9"   fill="#555">weight = 0.10</text>
+    <text x="840" y="658" text-anchor="middle" font-size="9"   fill="#555">DAG structure matching</text>
+    <text x="840" y="671" text-anchor="middle" font-size="9"   fill="#555">WorfEval scoring</text>
+    <text x="840" y="688" text-anchor="middle" font-size="8.5" fill="#0369A1" font-style="italic">scorers/workflow_scorer.py</text>
+
+    <!-- ═══════════════════ ARROW: AggScorer → BenchmarkResult ═══════════════════ -->
+    <path d="M480,704 L480,718 L167,718 L167,728"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- ═══════════════════ ROW 6 — OUTPUT ═══════════════════ -->
+
+    <!-- BenchmarkResult -->
+    <rect x="25"  y="728" width="280" height="120" rx="6"
+          fill="#EFF6FF" stroke="#1E40AF" stroke-width="1.5"/>
+    <text x="165" y="748" text-anchor="middle" font-size="12" font-weight="bold" fill="#1E3A8A">BenchmarkResult</text>
+    <line x1="25" y1="755" x2="305" y2="755" stroke="#1E40AF" stroke-width="0.7"/>
+    <text x="165" y="769" text-anchor="middle" font-size="9"   fill="#334155">dimension_scores (6 dims)</text>
+    <text x="165" y="783" text-anchor="middle" font-size="9"   fill="#334155">aggregate_score ∈ [0, 1]</text>
+    <text x="165" y="797" text-anchor="middle" font-size="9"   fill="#C00">hard_fail · cup_score</text>
+    <text x="165" y="811" text-anchor="middle" font-size="9"   fill="#334155">violation_vector (6 flags)</text>
+    <text x="165" y="825" text-anchor="middle" font-size="9"   fill="#334155">cost_usd · latency_s · tokens</text>
+    <text x="165" y="841" text-anchor="middle" font-size="8.5" fill="#1E40AF"
+          font-style="italic">schemas/result.py — per task run</text>
+
+    <!-- Arrow: BenchmarkResult → CLEAR -->
+    <path d="M305,788 L340,788"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- CLEAR Scorecard -->
+    <rect x="340" y="728" width="280" height="120" rx="6"
+          fill="#F0FDF4" stroke="#15803D" stroke-width="1.5"/>
+    <text x="480" y="748" text-anchor="middle" font-size="12" font-weight="bold" fill="#14532D">CLEAR Scorecard</text>
+    <line x1="340" y1="755" x2="620" y2="755" stroke="#15803D" stroke-width="0.7"/>
+    <text x="480" y="769" text-anchor="middle" font-size="9"   fill="#334155">E — Efficacy  (mean outcome or s_partial)</text>
+    <text x="480" y="783" text-anchor="middle" font-size="9"   fill="#334155">A — Assurance (rbac_compliant rate)</text>
+    <text x="480" y="797" text-anchor="middle" font-size="9"   fill="#334155">R — Reliability (pass^k, k∈{1,2,4,8})</text>
+    <text x="480" y="811" text-anchor="middle" font-size="9"   fill="#334155">C — Cost (min-max, inverted)</text>
+    <text x="480" y="825" text-anchor="middle" font-size="9"   fill="#334155">L — Latency (min-max, inverted)</text>
+    <text x="480" y="841" text-anchor="middle" font-size="8.5" fill="#15803D"
+          font-style="italic">reports/clear_report.py — per run</text>
+
+    <!-- Arrow: CLEAR → Reports -->
+    <path d="M620,788 L655,788"
+          stroke="#555" stroke-width="1.3" fill="none" marker-end="url(#arr)"/>
+
+    <!-- Report Artifacts -->
+    <rect x="655" y="728" width="280" height="120" rx="6"
+          fill="#F8FAFC" stroke="#475569" stroke-width="1.5"/>
+    <text x="795" y="748" text-anchor="middle" font-size="12" font-weight="bold" fill="#0F172A">Report Artifacts</text>
+    <line x1="655" y1="755" x2="935" y2="755" stroke="#475569" stroke-width="0.7"/>
+    <text x="795" y="769" text-anchor="middle" font-size="9"   fill="#334155">JSON run summary</text>
+    <text x="795" y="783" text-anchor="middle" font-size="9"   fill="#334155">HTML self-contained report</text>
+    <text x="795" y="797" text-anchor="middle" font-size="9"   fill="#334155">Role × QCAT slice breakdown</text>
+    <text x="795" y="811" text-anchor="middle" font-size="9"   fill="#334155">Langfuse trace export</text>
+    <text x="795" y="825" text-anchor="middle" font-size="9"   fill="#334155">Leaderboard submission</text>
+    <text x="795" y="841" text-anchor="middle" font-size="8.5" fill="#475569"
+          font-style="italic">reports/ · exporters/ · leaderboard/</text>
+
+  </svg>

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 340" width="1280" height="340" role="img" aria-label="AOBench — the open-source benchmark for AI agents that operate HPC systems. 88 tasks, 29 environments, 7 scored dimensions, no cluster required.">
+  <title>AOBench — the benchmark for AI agents that operate HPC systems</title>
+  <defs>
+    <linearGradient id="bg-d" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#141a3a"/>
+      <stop offset="100%" stop-color="#0b1030"/>
+    </linearGradient>
+    <linearGradient id="tile-d" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5c6bc0"/>
+      <stop offset="100%" stop-color="#283593"/>
+    </linearGradient>
+    <linearGradient id="rule-d" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ff8f00"/>
+      <stop offset="55%" stop-color="#7986cb"/>
+      <stop offset="100%" stop-color="#7986cb" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="340" rx="20" fill="url(#bg-d)"/>
+
+  <!-- Faint node lattice, evoking a machine room -->
+  <g fill="#9fa8da" fill-opacity="0.10">
+    <circle cx="1010" cy="60" r="4"/><circle cx="1070" cy="60" r="4"/><circle cx="1130" cy="60" r="4"/><circle cx="1190" cy="60" r="4"/>
+    <circle cx="1010" cy="120" r="4"/><circle cx="1070" cy="120" r="4"/><circle cx="1130" cy="120" r="4"/><circle cx="1190" cy="120" r="4"/>
+    <circle cx="1010" cy="180" r="4"/><circle cx="1070" cy="180" r="4"/><circle cx="1130" cy="180" r="4"/><circle cx="1190" cy="180" r="4"/>
+    <circle cx="1010" cy="240" r="4"/><circle cx="1070" cy="240" r="4"/><circle cx="1130" cy="240" r="4"/><circle cx="1190" cy="240" r="4"/>
+    <circle cx="1010" cy="300" r="4"/><circle cx="1070" cy="300" r="4"/><circle cx="1130" cy="300" r="4"/><circle cx="1190" cy="300" r="4"/>
+  </g>
+
+  <!-- Mark -->
+  <g transform="translate(72, 92)">
+    <rect x="0" y="0" width="156" height="156" rx="36" fill="url(#tile-d)"/>
+    <g fill="#ffffff" fill-opacity="0.28" transform="translate(9.75, 9.75) scale(1.078)">
+      <circle cx="36" cy="36" r="7"/><circle cx="64" cy="36" r="7"/><circle cx="92" cy="36" r="7"/>
+      <circle cx="36" cy="64" r="7"/><circle cx="64" cy="64" r="7"/><circle cx="92" cy="64" r="7"/>
+      <circle cx="36" cy="92" r="7"/><circle cx="64" cy="92" r="7"/><circle cx="92" cy="92" r="7"/>
+    </g>
+    <g transform="translate(9.75, 9.75) scale(1.078)">
+      <polyline points="36,92 36,64 64,64 64,36 92,36" fill="none" stroke="#ff8f00"
+                stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="36" cy="92" r="7.5" fill="#ff8f00"/>
+      <circle cx="64" cy="64" r="7.5" fill="#ff8f00"/>
+      <circle cx="92" cy="36" r="11" fill="#ffffff"/>
+      <circle cx="92" cy="36" r="5.5" fill="#ff8f00"/>
+    </g>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="268" y="150" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="76" font-weight="700" fill="#ffffff" letter-spacing="-1.5">AOBench</text>
+
+  <rect x="270" y="172" width="360" height="5" rx="2.5" fill="url(#rule-d)"/>
+
+  <text x="268" y="216" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="25" font-weight="500" fill="#c5cae9">The open-source benchmark for AI agents that operate HPC systems</text>
+
+  <text x="268" y="256" font-family="Helvetica Neue, Helvetica, Arial, sans-serif"
+        font-size="19" fill="#9fa8da">Role-aware · Permission-enforced · Trace-scored · Runs on a laptop</text>
+
+  <!-- Stat strip -->
+  <g font-family="Helvetica Neue, Helvetica, Arial, sans-serif">
+    <text x="268" y="300" font-size="21" font-weight="700" fill="#ffffff">88</text>
+    <text x="296" y="300" font-size="17" fill="#9fa8da">tasks</text>
+    <text x="368" y="300" font-size="21" font-weight="700" fill="#ffffff">29</text>
+    <text x="396" y="300" font-size="17" fill="#9fa8da">environments</text>
+    <text x="546" y="300" font-size="21" font-weight="700" fill="#ffffff">7</text>
+    <text x="562" y="300" font-size="17" fill="#9fa8da">scored dimensions</text>
+    <text x="752" y="300" font-size="21" font-weight="700" fill="#ff8f00">0</text>
+    <text x="768" y="300" font-size="17" fill="#9fa8da">clusters required</text>
+  </g>
+</svg>

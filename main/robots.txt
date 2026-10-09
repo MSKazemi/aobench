@@ -1,0 +1,87 @@
+# robots.txt for https://mskazemi.com/aobench/
+#
+# NOTE — THIS FILE IS DOCUMENTATION OF INTENT, NOT AN ENFORCED POLICY.
+# robots.txt is only honoured at the DOMAIN ROOT. Crawlers read
+# https://mskazemi.com/robots.txt and never fetch this path, so neither the
+# rules nor the Sitemap: line below take effect. The authoritative policy and
+# the Sitemap: declaration for these docs must live in the root file, which is
+# maintained in the mskazemi.github.io repository.
+#
+# AOBench is public research software. Everything here is meant to be crawled,
+# indexed, quoted, and cited — by classic search engines and by AI answer
+# engines alike. Nothing is disallowed.
+#
+# Kept deliberately explicit rather than a bare "User-agent: *": naming the
+# major AI crawlers documents the intent, so a future reader does not have to
+# guess whether the omission was policy or oversight.
+
+# --- Classic search engines -------------------------------------------------
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# --- AI answer engines: live retrieval (user asked a question right now) -----
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# --- AI crawlers: training corpora ------------------------------------------
+# Allowed on purpose. A benchmark nobody's model has heard of is a benchmark
+# nobody runs; being in the training data is part of the point.
+User-agent: GPTBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+# --- Everyone else ----------------------------------------------------------
+User-agent: *
+Allow: /
+
+Sitemap: https://mskazemi.com/aobench/sitemap.xml
