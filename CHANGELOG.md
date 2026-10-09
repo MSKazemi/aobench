@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Fixed — unreleased docs no longer publish under the release label
+
+- Pushes to `main` now deploy the documentation to `/aobench/main/` instead of
+  overwriting the current release version and the `latest` alias. Only a release tag
+  moves `latest`, sets the default version and refreshes the root discovery files, so
+  `/aobench/latest/` always describes a released corpus (issue #94).
+- Tag deploys use the bare version (`0.5.0` for tag `v0.5.0`), matching the existing
+  docs versions and the root-sitemap step that looks them up.
+
 ### Fixed — versioned documentation URLs no longer lose the path separator
 
 - Normalize mike's slashless versioned `site_url` before appending paths in the theme
