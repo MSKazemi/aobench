@@ -74,8 +74,8 @@
     <text x="212" y="524" font-size="20" fill="#9fa8da">environments</text>
     <text x="432" y="490" font-size="46" font-weight="700" fill="#7986cb">5</text>
     <text x="432" y="524" font-size="20" fill="#9fa8da">roles</text>
-    <text x="552" y="490" font-size="46" font-weight="700" fill="#7986cb">12</text>
-    <text x="552" y="524" font-size="20" fill="#9fa8da">scorers</text>
+    <text x="552" y="490" font-size="46" font-weight="700" fill="#7986cb">7</text>
+    <text x="552" y="524" font-size="20" fill="#9fa8da">scored dimensions</text>
   </g>
 
   <!-- Footer -->
