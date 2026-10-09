@@ -44,19 +44,25 @@ jobs:
           git config user.name "Mohsen Seyedkazemi Ardebili"
           git config user.email "mohsen.seyedkazemi@gmail.com"
 
-      - name: Deploy current version (on push to main / manual dispatch)
+      # main is unreleased work. It publishes to /aobench/main/ ("dev" already names the
+      # evaluation split) and never touches a release label or `latest`. Before 2026-10-09
+      # it deployed as "$VERSION" + latest, so 158 unreleased commits were served under the
+      # 0.4.1 label (issue #94). Only a release tag moves `latest`; mkdocs.yml's
+      # `canonical_version: latest` keeps /main/ pages canonicalised to the release docs.
+      - name: Deploy unreleased docs to /main/ (on push to main / manual dispatch)
         if: github.ref == 'refs/heads/main'
-        run: |
-          VERSION=$(grep -m1 '^version' pyproject.toml | sed -E 's/.*"(.*)".*/\1/')
-          uv run mike deploy --push --update-aliases "$VERSION" latest
+        run: uv run mike deploy --push main
 
       - name: Deploy version + update latest (on tag)
         if: startsWith(github.ref, 'refs/tags/')
         run: |
-          VERSION=${GITHUB_REF#refs/tags/}
+          # Tags are vX.Y.Z; docs versions are X.Y.Z (matching pyproject and the existing
+          # 0.4.1 / 0.4.0 entries), which the discovery step below relies on.
+          VERSION=${GITHUB_REF#refs/tags/v}
           uv run mike deploy --push --update-aliases "$VERSION" latest
 
       - name: Set default version to latest
+        if: startsWith(github.ref, 'refs/tags/')
         run: uv run mike set-default --push latest
 
       # Discovery files are only useful at a path a crawler will actually try.
@@ -70,6 +76,7 @@ jobs:
       # The copy here is documentation of intent and a correct file should the docs
       # ever be served from their own host — it is not what controls crawling today.
       - name: Publish discovery files at the docs root
+        if: startsWith(github.ref, 'refs/tags/')
         run: |
           git fetch origin gh-pages
           git worktree add /tmp/ghp gh-pages
@@ -147,6 +154,7 @@ jobs:
           git push origin gh-pages
 
       - name: Verify the published docs root carries real content
+        if: startsWith(github.ref, 'refs/tags/')
         # `make seo-check` validates the mkdocs output in site/, which never contains the
         # mike/gh-pages root — so no existing gate could see the redirect-stub defect, and
         # it was found only by curling the live URL. This asserts against what is actually
