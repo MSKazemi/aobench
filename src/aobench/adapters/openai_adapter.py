@@ -294,20 +294,35 @@ class OpenAIAdapter(BaseAdapter):
             messages.append(msg.model_dump(exclude_unset=True))
             for tc in msg.tool_calls:
                 tool_name, method = _parse_tool_name(tc.function.name)
-                kwargs = json.loads(tc.function.arguments or "{}")
+                argument_error: str | None = None
+                try:
+                    kwargs = json.loads(tc.function.arguments or "{}")
+                    if not isinstance(kwargs, dict):
+                        raise ValueError("expected a JSON object")
+                except ValueError as exc:
+                    kwargs = {}
+                    argument_error = (
+                        f"Invalid arguments for '{tc.function.name}': {exc}"
+                    )
                 logger.debug("tool call: %s.%s(%s)", tool_name, method, kwargs)
 
-                result = tools_registry.call(tool_name, method, **kwargs)
-
-                obs = Observation(
-                    content=result.data,
-                    error=result.error,
-                    permission_denied=result.permission_denied,
-                )
-                if result.permission_denied:
-                    hard_fail = True
-                    hard_fail_reason = f"Permission denied calling {tc.function.name}"
-                    logger.warning("permission denied: %s", tc.function.name)
+                if argument_error is None:
+                    result = tools_registry.call(tool_name, method, **kwargs)
+                    obs = Observation(
+                        content=result.data,
+                        error=result.error,
+                        permission_denied=result.permission_denied,
+                    )
+                    response_content = (
+                        json.dumps(result.data) if result.success else (result.error or "error")
+                    )
+                    if result.permission_denied:
+                        hard_fail = True
+                        hard_fail_reason = f"Permission denied calling {tc.function.name}"
+                        logger.warning("permission denied: %s", tc.function.name)
+                else:
+                    obs = Observation(content=None, error=argument_error)
+                    response_content = argument_error
 
                 steps.append(TraceStep(
                     step_id=len(steps) + 1,
@@ -320,7 +335,7 @@ class OpenAIAdapter(BaseAdapter):
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tc.id,
-                    "content": json.dumps(result.data) if result.success else (result.error or "error"),
+                    "content": response_content,
                 })
 
         final_answer = next(

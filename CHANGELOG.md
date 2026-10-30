@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Fixed — malformed OpenAI tool arguments no longer abort a task
+
+- Invalid JSON and non-object function arguments are recorded as failed tool calls and
+  returned to the model as tool errors, so the adapter can continue the conversation
+  instead of raising out of the task. This does not change RBAC classification or scoring
+  weights.
+
 ### Fixed — unreleased docs no longer publish under the release label
 
 - Pushes to `main` now deploy the documentation to `/aobench/main/` instead of
