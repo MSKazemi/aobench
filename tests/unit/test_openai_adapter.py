@@ -87,7 +87,11 @@ def _message(content: str | None = None, tool_calls: list | None = None) -> Magi
     return message
 
 
-@pytest.mark.parametrize("arguments", ["{bad json", "[]", "null"])
+@pytest.mark.parametrize(
+    "arguments",
+    ["{bad json", "[]", "null", "[" * 10_000 + "0" + "]" * 10_000],
+    ids=["malformed-json", "array", "null", "deeply-nested"],
+)
 def test_malformed_tool_arguments_are_returned_as_tool_errors(
     monkeypatch: pytest.MonkeyPatch,
     arguments: str,

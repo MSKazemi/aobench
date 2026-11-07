@@ -299,7 +299,7 @@ class OpenAIAdapter(BaseAdapter):
                     kwargs = json.loads(tc.function.arguments or "{}")
                     if not isinstance(kwargs, dict):
                         raise ValueError("expected a JSON object")
-                except ValueError as exc:
+                except (ValueError, RecursionError) as exc:
                     kwargs = {}
                     argument_error = (
                         f"Invalid arguments for '{tc.function.name}': {exc}"
