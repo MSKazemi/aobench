@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Changed — ROADMAP.md carries a generated, dated status block
+
+- `ROADMAP.md` now opens with a **Current status** block (latest release, corpus counts
+  from the generated `benchmark/BENCHMARK_FACTS.json`, epic progress, and open issues per
+  milestone) with a `Last updated (UTC)` stamp. `scripts/gen_roadmap.py` writes it
+  (`make roadmap`). The stamp moves only when the content changes.
+- New `roadmap-sync` workflow regenerates the block every Monday, after each published
+  release, and on demand, then proposes the change as a pull request. It never pushes to
+  `main`.
+- Corrected stale roadmap text: v0.4 is released (v0.4.0, v0.4.1), not "in progress on a
+  feature branch", and the next-milestones list no longer points to closed issues (#6, #8).
+
 ### Fixed — unreleased docs no longer publish under the release label
 
 - Pushes to `main` now deploy the documentation to `/aobench/main/` instead of

@@ -118,6 +118,10 @@ facts-check:  ## Fail if a documented benchmark count drifts from the corpus
 facts-update:  ## Refresh benchmark/BENCHMARK_FACTS.json from the corpus
 	$(PYTHON) scripts/check_facts.py --write
 
+.PHONY: roadmap
+roadmap:  ## Regenerate the ROADMAP.md "Current status" block from GitHub (network; stamp moves only on change)
+	$(PYTHON) scripts/gen_roadmap.py --write
+
 .PHONY: catalog
 catalog:  ## Regenerate the task and environment catalog pages from the corpus
 	$(PYTHON) scripts/gen_catalog.py
