@@ -1267,6 +1267,7 @@ make run-all-anthropic MODEL=claude-sonnet-4-6
 | `make format` | Auto-format code with ruff |
 | `make typecheck` | Run mypy type checker |
 | `make check` | Run lint + typecheck + tests (full CI check) |
+| `make roadmap` | Regenerate the dated **Current status** block of `ROADMAP.md` from GitHub milestones, open issues and the generated facts (network; the stamp moves only when content changes). The `roadmap-sync` workflow runs it weekly and proposes the change as a PR. |
 
 ### Leaderboard
 
