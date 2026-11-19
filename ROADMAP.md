@@ -15,11 +15,17 @@ Legend: ✅ shipped · 🟡 partial (usable core shipped, sub-feature deferred) 
 
 ## Current status
 
-_Last updated (UTC): 2026-11-19 20:47_
+_Last updated (UTC): 2026-11-19 21:34_
 
 - **Latest release:** [v0.4.1](https://github.com/MSKazemi/aobench/releases/tag/v0.4.1) (2026-08-08).
 - **Corpus on `main`** (generated `benchmark/BENCHMARK_FACTS.json`, package version 0.4.1): 90 tasks (69 dev / 21 held-out test), 29 environments, 10 QCATs, 5 roles, 7 weighted scoring dimensions.
 - **Open issues:** 44 — [all issues](https://github.com/MSKazemi/aobench/issues) · [milestones](https://github.com/MSKazemi/aobench/milestones).
+
+### Epics
+
+| Epic | Sub-issues done |
+|---|---|
+| [#96](https://github.com/MSKazemi/aobench/issues/96) [EPIC][HF] Hugging Face Hub integration — dataset, verified leaderboard, safety arena, traces and OpenEnv | 0 / 14 |
 
 ### [Blocked — external dependency](https://github.com/MSKazemi/aobench/milestone/4)
 

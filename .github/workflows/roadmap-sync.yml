@@ -27,6 +27,7 @@ jobs:
     permissions:
       contents: write        # push the automation/roadmap-sync branch
       pull-requests: write   # open or update its PR
+      issues: read           # list open issues; without it the API returns an empty list
     env:
       BRANCH: automation/roadmap-sync
       GH_TOKEN: ${{ github.token }}

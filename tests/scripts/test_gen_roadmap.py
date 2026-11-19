@@ -112,6 +112,17 @@ def test_missing_markers_fail_loudly() -> None:
         gen.splice("# no markers here\n", "block")
 
 
+def test_incomplete_fetch_is_refused() -> None:
+    data = _data()
+    data["issues"] = [i for i in data["issues"] if not i.get("milestone")]  # milestone says 1 open
+    with pytest.raises(SystemExit, match="Incomplete fetch"):
+        gen.check_consistent(data)
+
+
+def test_consistent_fetch_passes() -> None:
+    gen.check_consistent(_data())
+
+
 def test_pipe_in_title_is_escaped() -> None:
     data = _data()
     data["issues"] = [_issue(5, "a | b")]

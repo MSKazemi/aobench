@@ -22,10 +22,13 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import http.client
 import json
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 from typing import Any
@@ -46,8 +49,15 @@ def _get(path: str) -> Any:
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(f"{API}{path}", headers=headers)
-    with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310 — fixed https host
-        return json.loads(resp.read().decode("utf-8"))
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:  # noqa: S310 — fixed https host
+                return json.loads(resp.read().decode("utf-8"))
+        except (http.client.IncompleteRead, urllib.error.URLError, TimeoutError):
+            if attempt == 2:
+                raise  # transient errors get three tries; then fail loudly, never write
+            time.sleep(2 * (attempt + 1))
+    raise AssertionError("unreachable")
 
 
 def _get_all(path: str) -> list[dict[str, Any]]:
@@ -71,7 +81,24 @@ def fetch(repo: str = REPO) -> dict[str, Any]:
     releases = _get_all(f"/repos/{repo}/releases")
     published = [r for r in releases if not r.get("draft") and not r.get("prerelease")]
     latest = max(published, key=lambda r: r["published_at"]) if published else None
-    return {"repo": repo, "milestones": milestones, "issues": issues, "latest_release": latest}
+    data = {"repo": repo, "milestones": milestones, "issues": issues, "latest_release": latest}
+    check_consistent(data)
+    return data
+
+
+def check_consistent(data: dict[str, Any]) -> None:
+    """Refuse to render from an incomplete fetch.
+
+    A token without ``issues: read`` gets an empty issue list (not an error) from the API,
+    which would silently wipe every table. Milestone counters are the cross-check.
+    """
+    expected = sum(m["open_issues"] for m in data["milestones"])
+    in_milestones = sum(1 for i in data["issues"] if i.get("milestone"))
+    if in_milestones < expected:
+        raise SystemExit(
+            f"Incomplete fetch: milestones report {expected} open issues but only "
+            f"{in_milestones} were returned. Does the token have issues: read?"
+        )
 
 
 def _issue_line(issue: dict[str, Any]) -> str:
